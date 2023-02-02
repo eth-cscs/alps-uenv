@@ -7,7 +7,6 @@ packages:
       specs:
       - cuda@11.8
       - python@3.10
-      - perl
       - py-mpi4py
       - py-h5py
       - py-numpy
@@ -24,11 +23,25 @@ packages:
       - costa
       - eigen
       - spfft +cuda cuda_arch=80
-      - spla +cuda cuda_arch=80
+      - spla +cuda
       - spglib
       mpi:
           spec: cray-mpich-binary
           gpu: Null
+      packages:
+      - perl
+      - git
+      - pkgconf
+      - readline
+      - ncurses
+      - patchelf
+      - diffutils
+      - libiconv
+      - openssl
+      - sqlite
+      - tar
+      - libxml2
+      - gettext
     nvhpc-env:
       compiler:
           - toolchain: llvm
@@ -38,7 +51,10 @@ packages:
       unify: true
       specs:
       - libxc%nvhpc
-      - perl%gcc
+      - cuda@11.8%gcc
       mpi:
           spec: cray-mpich-binary
           gpu: Null
+      packages:
+      - perl
+
