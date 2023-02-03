@@ -18,8 +18,8 @@ build stack:
     - PYTHON_VENV=/dev/shm/jenkssl/venv
     - python3 -m venv $PYTHON_VENV
     - source $PYTHON_VENV/bin/activate
-    - pip install -r sstool/requirements.txt
-    - env --chdir=sstool ./bin/sstool -b$BUILD_PATH -r$RECIPE_PATH -d
+    - pip install -r stackinator/requirements.txt
+    - env --chdir=stackinator ./bin/stack-config -b$BUILD_PATH -r$RECIPE_PATH -d
     - env --chdir="$BUILD_PATH" --ignore-environment PATH=/usr/bin:/bin:$BUILD_PATH/spack/bin make modules store.squashfs -j64
 
   # cleanup, runs always, independent of `script` exit status
