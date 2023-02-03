@@ -1,3 +1,3 @@
-[submodule "sstool"]
-	path = sstool
-	url = https://github.com/eth-cscs/sstool
+[submodule "stackinator"]
+	path = stackinator
+	url = https://github.com/eth-cscs/stackinator
