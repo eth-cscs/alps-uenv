@@ -6,9 +6,8 @@ build stack:
   script:
     - BUILD_PATH=/dev/shm/jenkssl/spack-stack-pe-dft
     - RECIPE_PATH=pe-dft
-    - sstool/bin/sstool -b$BUILD_PATH -r$RECIPE_PATH -d
-    - cd "$BUILD_PATH"
-    - env --ignore-environment PATH=/usr/bin:/bin:$PWD/spack/bin make modules store.squashfs -j64
+    - env --chdir=sstool ./bin/sstool -b$BUILD_PATH -r$RECIPE_PATH -d
+    - env --chdir="$BUILD_PATH" --ignore-environment PATH=/usr/bin:/bin:$PWD/spack/bin make modules store.squashfs -j64
   stage: build
   variables:
     CSCS_RUN_BARE_METAL: 'YES'
