@@ -7,7 +7,7 @@ build stack:
   variables:
     CSCS_RUN_BARE_METAL: 'YES'
     SLURM_JOB_NUM_NODES: 1
-    SLURM_TIMELIMIT: 03:00:00
+    SLURM_TIMELIMIT: '03:00:00'
     PULL_IMAGE: 'NO'
     SLURM_PARTITION: cpu
     GIT_SUBMODULE_STRATEGY: recursive
