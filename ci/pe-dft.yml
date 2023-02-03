@@ -5,7 +5,7 @@ build stack:
   tags: [hohgant-container]
   script:
     - BUILD_PATH=/dev/shm/jenkssl/spack-stack-pe-dft
-    - RECIPE_PATH=pe-dft
+    - RECIPE_PATH=$PWD/pe-dft
     - PYTHON_VENV=/dev/shm/jenkssl/venv
     - python3 -m venv $PYTHON_VENV
     - source $PYTHON_VENV/bin/activate
