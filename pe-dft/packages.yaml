@@ -16,7 +16,7 @@ packages:
       - py-scipy
       - py-voluptuous
       - cmake
-      - intel-oneapi-mkl
+      - intel-oneapi-mkl+cluster
       - libxc
       - gsl
       - hdf5
