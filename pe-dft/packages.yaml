@@ -20,7 +20,7 @@ packages:
       - libxc
       - gsl
       - hdf5
-      - costa
+      - costa +shared
       - eigen
       - spfft +cuda cuda_arch=80
       - spla +cuda

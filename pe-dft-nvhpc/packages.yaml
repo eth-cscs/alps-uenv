@@ -1,0 +1,17 @@
+packages:
+    nvhpc-env:
+      compiler:
+          - toolchain: llvm
+            spec: nvhpc@22.11
+      unify: true
+      specs:
+      - libxc
+      - cuda@11.8
+      - quantum-espresso +cuda +libxc ^intel-oneapi-mkl+cluster
+      mpi:
+          spec: cray-mpich-binary
+          gpu: Null
+      packages:
+      - perl
+      - git
+
