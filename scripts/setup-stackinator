@@ -1,6 +1,7 @@
 # to be sourced from stack-build
 
-tool_path="$(pwd)/stackinator"
+tool_base_path="$(pwd)"
+tool_path="${tool_base_path}/stackinator"
 tool_repo=https://github.com/eth-cscs/stackinator.git
 # support for --system flag in v1.1-dev
 tool_version=f367d76
@@ -8,19 +9,19 @@ tool_version=f367d76
 if [ ! -d "${tool_path}" ]; then
     log "installing stackinator from git in '${tool_path}'"
 
-    log "cloning git repository ${repo}"
-    git clone --quiet ${repo} "${tool_path}" || err "unable to clone stackinator git repository"
+    log "cloning git repository ${tool_repo}"
+    git clone --quiet "${tool_repo}" "${tool_path}" || err "unable to clone stackinator git repository"
 
-    log "checkout stackinator ${version}"
+    log "checkout stackinator ${tool_version}"
     cd "${tool_path}"
-    git checkout --quiet "${version}" || err "unable to checkout out requested version"
+    git checkout --quiet "${tool_version}" || err "unable to checkout out requested version"
 
     log "bootstrap stackinator"
     cd "${tool_path}"
     ./bootstrap.sh || err "bootstrap failed"
 
-    cd "${base_path}"
+    cd "${tool_base_path}"
     log "finished stackinator installation"
 fi
 
-export PATH="$(pwd)/stackinator/bin:$PATH"
+export PATH="${tool_path}/bin:$PATH"

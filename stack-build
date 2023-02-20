@@ -6,8 +6,8 @@ datetime () { date +"%Y-%m-%d %H:%M:%S"; }
 
 [[ -t 1 ]] && interm=yes
 
-red ()    { [[ "$interm" = "yes" ]] && echo "\e[1;31m$1\e[m" || echo "$1"; }
-yellow () { [[ "$interm" = "yes" ]] && echo "\e[1;33m$1\e[m" || echo "$1"; }
+red ()    { [[ "${interm}" = "yes" ]] && echo "\e[1;31m$1\e[m" || echo "$1"; }
+yellow () { [[ "${interm}" = "yes" ]] && echo "\e[1;33m$1\e[m" || echo "$1"; }
 log () { printf "$(yellow "[log $(datetime)]") $1\n"; }
 err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 
@@ -23,7 +23,6 @@ usage () {
     echo "  name:        the name of the stack"
     echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
     echo "  recipe-path: the location of the recipe"
-    echo "  build-path:  path where the build will be performed"
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -44,21 +43,24 @@ do
     esac
 done
 
-[[ "-" == "$system"      ]] && usage "missing system argument"
-[[ "-" == "$name"        ]] && usage "missing name argument"
-[[ "-" == "$recipe_path" ]] && usage "missing recipe-path argument"
-[[ "-" == "$build_path"  ]] && usage "missing build-path argument"
+[[ "-" == "${system}"      ]] && usage "missing system argument"
+[[ "-" == "${name}"        ]] && usage "missing name argument"
+[[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
+[[ "-" == "${build_path}"  ]] && usage "missing build-path argument"
 
 build_id=$(get_build_id)
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
-log "build-id    $build_id"
-log "name        $name"
-log "system      $system"
-log "recipe-path $recipe_path"
-log "build-path  $build_path"
+build_path="/dev/shm/stack/${name}/${build_id}"
+
+log "name        ${name}"
+log "system      ${system}"
+log "recipe-path ${recipe_path}"
+log "build-path  ${build_path}"
+log "build-id    ${build_id}"
+log "artifactory ${repo_path}"
 
 # Check if the recipe path exists
-[[ -d "$recipe_path" ]] || err "recipe path '$recipe_path' does not exist"
+[[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
 # Initialise the stackinator
 source ./scripts/setup-stackinator
@@ -66,15 +68,13 @@ source ./scripts/setup-stackinator
 # call stackinator
 log "configuring stack"
 
-echo "stack-config -r $recipe_path -b $build_path -s $system"
-stack-config -r "$recipe_path" -b "$build_path" -s "$system"
+echo "stack-config -r ${recipe_path} -b ${build_path} -s ${system}"
+stack-config -r "${recipe_path}" -b "${build_path}" -s "${system}"
 
-if [ ! $? -eq 0 ]; then
-    err "stack-config failed";
-fi
+[[ $? -eq 0 ]] || err "stack-config failed";
 
 # run build
-cd $build_path
+cd "${build_path}"
 log "building image"
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
 #env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64
@@ -88,8 +88,8 @@ fi
 
 # push to repository
 repo_image="${repo_path}/store.squashfs"
-log "pushing image to ''"
-jfrog rt upload --threads=16 "$build_path/store.squashfs" "${repo_image}" > result.json
+log "pushing image to '${recipe_image}'"
+jfrog rt upload --threads=16 "${build_path}/store.squashfs" "${repo_image}" > result.json
 [[ $? -eq 0 ]] || err "unable to push image to artifactory '${repo_image}'"
 failures=$(jq '.totals.failure' result.json)
 log "uploaded to jfrog with ${failures} failures"
