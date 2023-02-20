@@ -1,0 +1,20 @@
+stages:
+  - build
+
+build-mc:
+  tags: [hohgant-container]
+  stage: build
+  variables:
+    CSCS_RUN_BARE_METAL: 'YES'
+    SLURM_JOB_NUM_NODES: 1
+    SLURM_TIMELIMIT: '03:00:00'
+    PULL_IMAGE: 'NO'
+    SLURM_PARTITION: cpu
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - ./stack-build -n arbor-mc -s hohgant -r $(pwd)/recipes/arbor/multicore
+
+  # cleanup, runs always, independent of `script` exit status
+  after_script:
+    - rm -Rf /dev/shm/jenkssl

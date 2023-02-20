@@ -39,14 +39,12 @@ do
         n) name=${OPTARG};;
         s) system=${OPTARG};;
         r) recipe_path=${OPTARG};;
-        b) build_path=${OPTARG};;
     esac
 done
 
 [[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${name}"        ]] && usage "missing name argument"
 [[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
-[[ "-" == "${build_path}"  ]] && usage "missing build-path argument"
 
 build_id=$(get_build_id)
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
@@ -88,7 +86,7 @@ fi
 
 # push to repository
 repo_image="${repo_path}/store.squashfs"
-log "pushing image to '${recipe_image}'"
+log "pushing image to '${repo_image}'"
 jfrog rt upload --threads=16 "${build_path}/store.squashfs" "${repo_image}" > result.json
 [[ $? -eq 0 ]] || err "unable to push image to artifactory '${repo_image}'"
 failures=$(jq '.totals.failure' result.json)
