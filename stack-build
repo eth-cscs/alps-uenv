@@ -52,6 +52,10 @@ build_id=$(get_build_id)
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 build_path="/dev/shm/stack/${name}/${build_id}"
 
+log "curl \$CSCS_CI_MW_URL/credentials?token=\$CI_JOB_TOKEN&creds=jfrog"
+log "curl $CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=jfrog"
+log "$(curl $CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=jfrog)"
+
 log "name        ${name}"
 log "system      ${system}"
 log "recipe-path ${recipe_path}"
