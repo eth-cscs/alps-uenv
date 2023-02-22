@@ -85,7 +85,6 @@ if [ ! $? -eq 0 ]; then
 fi
 
 # push to repository
-log          "curl --silent $CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry"
 creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
 creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
 
@@ -95,15 +94,10 @@ destination_path="${artifactory_url}/${repo_path}/store.squashfs"
 source_path="${build_path}/store.squashfs"
 log "pushing '${source_path}' to '${destination_path}'"
 
-#log "curl -u ${creds_short} -X PUT ${destination_path} -T ${source_path}"
-curl -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
-
-#jfrog rt upload --threads=16 "${build_path}/store.squashfs" "${repo_image}" > result.json
-#[[ $? -eq 0 ]] || err "unable to push image to artifactory '${repo_image}'"
-#failures=$(jq '.totals.failure' result.json)
-#log "uploaded to jfrog with ${failures} failures"
+curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
+[[ $? -eq 0  ]] || err "failed to push image"
 
 log "image built and pushed to artifactory"
 log "clean up build path '${build_path}'"
-#rm -rf ${build_path}
+(rm -rf ${build_path})
 
