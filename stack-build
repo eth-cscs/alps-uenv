@@ -87,6 +87,7 @@ fi
 # push to repository
 log          "curl --silent $CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry"
 creds_json="$(curl --silent $CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry)"
+echo creds_json
 creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
 
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
