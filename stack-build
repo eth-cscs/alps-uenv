@@ -75,9 +75,7 @@ stack-config -r "${recipe_path}" -b "${build_path}" -s "${system}"
 cd "${build_path}"
 log "building image"
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
-#env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64
-(mkdir -p $(pwd)/tmp && echo "hello world" > tmp/hello.txt)
-mksquashfs $(pwd)/tmp store.squashfs
+env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64
 
 if [ ! $? -eq 0 ]; then
     log "TODO: save WIP of build an store it for later inspection"
