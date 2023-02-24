@@ -13,6 +13,8 @@ stages:
 .stack-build-hohgant:
   extends: .stack-build
   tags: [hohgant-spack-stack-builder]
+  variables:
+    SPACK_SYSTEM: hohgant
 .stack-build-hohgant-cpu:
   extends: .stack-build-hohgant
   variables:
