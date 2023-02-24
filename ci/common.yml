@@ -1,0 +1,27 @@
+stages:
+  - build
+
+.stack-build:
+  stage: build
+  variables:
+    SLURM_TIMELIMIT: 180
+  script:
+  - ./stack-build -n $STACK_RECIPE -s $STACK_SYSTEM -r $STACK_RECIPE
+  after_script:
+  - rm -Rf /dev/shm/jenkssl
+
+.stack-build-hohgant:
+  .extends: .stack-build
+  tags: [hohgant-spack-stack-builder]
+.stack-build-hohgant-cpu:
+  extends: .stack-build-hohgant
+  variables:
+    SLURM_PARTITION: cpu
+.stack-build-hohgant-a100:
+  extends: .stack-build-hohgant
+  variables:
+    SLURM_PARTITION: nvgpu
+.stack-build-hohgant-mi200:
+  extends: .stack-build-hohgant
+  variables:
+    SLURM_PARTITION: amdgpu
