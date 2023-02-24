@@ -11,7 +11,7 @@ stages:
   - rm -Rf /dev/shm/jenkssl
 
 .stack-build-hohgant:
-  .extends: .stack-build
+  extends: .stack-build
   tags: [hohgant-spack-stack-builder]
 .stack-build-hohgant-cpu:
   extends: .stack-build-hohgant
