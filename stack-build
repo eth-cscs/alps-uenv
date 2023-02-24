@@ -40,7 +40,7 @@ do
     case "${flag}" in
         n) name=${OPTARG};;
         s) system=${OPTARG};;
-        r) recipe_path=${OPTARG};;
+        r) recipe_path=$(realpath "${OPTARG}");;
     esac
 done
 

@@ -1,6 +1,13 @@
 stages:
   - build
 
+.stack-build:
+  stage: build
+  script:
+  - ./stack-build -n $STACK_RECIPE -s $STACK_SYSTEM -r $STACK_RECIPE
+  after_script:
+  - rm -Rf /dev/shm/jenkssl
+
 build-mc:
   tags: [hohgant-container]
   stage: build
@@ -18,3 +25,12 @@ build-mc:
   # cleanup, runs always, independent of `script` exit status
   after_script:
     - rm -Rf /dev/shm/jenkssl
+
+build-zinal-test:
+  extends: .stack-build
+  tags: [zinal-spack-stack-builder]
+  variables:
+    SLURM_TIMELIMIT: 180
+    STACK_NAME: arbor-mc
+    STACK_SYSTEM: hohgant
+    STACK_RECIPE: recipes/arbor/multicore
