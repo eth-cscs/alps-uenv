@@ -1,0 +1,10 @@
+name: jb-dev
+store: /user-environment
+system: hohgant
+spack:
+    repo: /scratch/e1000/biddisco/spack-hohgant
+    commit: paraview-egl
+mirror:
+  enable: false
+modules: false
+
