@@ -1,85 +1,54 @@
-gcc-nvgpu:
-  compiler:
-  - toolchain: gcc
-    spec: gcc@11.3
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
-  unify: true
-  specs:
-  - cmake
-  - ninja
-  - python
-  - paraview@5.11 +egl    build_edition=rendering +cuda +mpi +opengl2 +tbb +python use_vtkm=on
-  packages:
-  - perl
-  - diffutils
-  - gettext
-  - openssh
-  - openssl
-  - ncurses
-  - cpio
-  variants:
-  - +cuda
-  - cuda_arch=80
-  - ~fortran
-  - build_type=Release
-  - cxxstd=17
-  - ~examples
-
-gcc-nvgpu2:
-  compiler:
-  - toolchain: gcc
-    spec: gcc@11.3
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
-  unify: true
-  specs:
-  - cmake
-  - ninja
-  - python
-  - paraview@5.11 +egl    build_edition=rendering +cuda +mpi +opengl2 +tbb +python use_vtkm=off
-  packages:
-  - perl
-  - diffutils
-  - gettext
-  - openssh
-  - openssl
-  - ncurses
-  - cpio
-  variants:
-  - +cuda
-  - cuda_arch=80
-  - ~fortran
-  - build_type=Release
-  - cxxstd=17
-  - ~examples
-
-gcc-nvgpu3:
-  compiler:
-  - toolchain: gcc
-    spec: gcc@11.3
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
-  unify: true
-  specs:
-  - cmake
-  - ninja
-  - python
-  - paraview@5.11 +osmesa build_edition=rendering ~cuda +mpi +opengl2 +tbb +python use_vtkm=default
-  packages:
-  - perl
-  - diffutils
-  - gettext
-  - openssh
-  - openssl
-  - ncurses
-  - cpio
-  variants:
+#gcc-nvgpu:
+#  compiler:
+#  - toolchain: gcc
+#    spec: gcc@11.3
+#  mpi:
+#    spec: cray-mpich
+#    gpu: cuda
+#  unify: true
+#  specs:
+#  - cmake
+#  - ninja
+#  - python
+#  - paraview@5.11+egl+cuda+mpi+opengl2+tbb+ospray+python use_vtkm=on build_edition=rendering 
+#  packages:
+#  - perl
+#  - diffutils
+#  - gettext
+#  - openssh
+#  - openssl
+#  - ncurses
+#  - cpio
+#  variants:
 #  - +cuda
-  - cuda_arch=80
+#  - cuda_arch=80
+#  - ~fortran
+#  - build_type=Release
+#  - cxxstd=17
+#  - ~examples
+
+gcc-osmesa:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11.3
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - python
+  - paraview@5.11+osmesa~cuda+mpi+opengl2+tbb+ospray+python use_vtkm=default build_edition=rendering ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
+  packages:
+  - perl
+  - diffutils
+  - gettext
+  - openssh
+  - openssl
+  - ncurses
+  - cpio
+  variants:
   - ~fortran
   - build_type=Release
   - cxxstd=17
