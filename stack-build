@@ -50,19 +50,17 @@ done
 build_id=$(get_build_id)
 build_path="/dev/shm/stack/${name}/${build_id}"
 
-log "user        ${USER}"
 log "name        ${name}"
 log "system      ${system}"
 log "recipe-path ${recipe_path}"
 log "build-id    ${build_id}"
 log "build-path  ${build_path}"
-log "scratch     ${SCRATCH}"
 
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
 # Set up build cache mirror if a build cache exists on this system
-mirror_path=$SCRATCH/uenv-cache
+mirror_path=/scratch/e1000/jenkssl/uenv-cache
 key_path=${mirror_path}/push-key.gpg
 source ./scripts/generate-mirror
 
