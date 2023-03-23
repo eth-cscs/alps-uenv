@@ -73,6 +73,9 @@ log "configuring stack"
 echo "stack-config -r ${recipe_path} -b ${build_path} -s ${system}"
 stack-config -r "${recipe_path}" -b "${build_path}" -s "${system}"
 
+# delete stackinator tool once we have finished with it
+rm -rf $tool_path
+
 [[ $? -eq 0 ]] || err "stack-config failed";
 
 # run build
