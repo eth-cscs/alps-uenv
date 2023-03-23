@@ -1,7 +1,9 @@
 # to be sourced from stack-build
 
 tool_base_path="$(pwd)"
-tool_path="${tool_base_path}/stackinator"
+# check out a unique copy of stackinator for each ci task, so that
+# builds in the same pipeline do not conflict
+tool_path="${tool_base_path}/stackinator-${build_id}"
 tool_repo=https://github.com/eth-cscs/stackinator.git
 # support for --system flag in v1.1-dev
 tool_version=f367d76
