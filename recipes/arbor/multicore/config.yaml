@@ -5,4 +5,5 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: v0.19.0
 mirror:
-  enable: false
+  key: KEY_PLACEHOLDER
+
