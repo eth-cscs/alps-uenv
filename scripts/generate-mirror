@@ -1,0 +1,34 @@
+# to be sourced from stack-build
+
+log "generating build cache configuration"
+
+if [ -f ${key_path} ]
+then
+    log "cache found with in ${mirror_path}"
+
+    # update the config.yaml in the recipe
+    sed -i "s|KEY_PLACEHOLDER|${key_path}|g" ${recipe_path}/config.yaml
+
+    # create mirrors.yaml in the recipe
+    echo "mirrors:
+      alpscache:
+        fetch:
+          url: file://${mirror_path}
+          access_pair:
+          - null
+          - null
+          access_token: null
+          profile: null
+          endpoint_url: null
+        push:
+          url: file://${mirror_path}
+          access_pair:
+          - null
+          - null
+          access_token: null
+          profile: null
+          endpoint_url: null" > ${recipe_path}/mirrors.yaml
+else
+    log "no cache found with key ${key_path} - build cache is disabled"
+    sed -i 's/key:.*KEY_PLACEHOLDER/enable: false/g' ${recipe_path}/config.yaml
+fi

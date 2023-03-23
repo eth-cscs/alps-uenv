@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#usage: stack-build -r recipe -s system -b build_path
+#usage: stack-build -r recipe -s system -n name
 
 datetime () { date +"%Y-%m-%d %H:%M:%S"; }
 
@@ -33,7 +33,6 @@ usage () {
 system="-"
 name="-"
 recipe_path="-"
-build_path="-"
 
 while getopts n:s:r:b: flag
 do
@@ -54,11 +53,17 @@ build_path="/dev/shm/stack/${name}/${build_id}"
 log "name        ${name}"
 log "system      ${system}"
 log "recipe-path ${recipe_path}"
-log "build-path  ${build_path}"
 log "build-id    ${build_id}"
+log "build-path  ${build_path}"
 
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
+
+# Set up build cache mirror if a build cache exists on this system
+mirror_path=$SCRATCH/uenv-cache
+key_path=${mirror_path}/push-key.gpg
+ls $key_path
+source ./scripts/generate-mirror
 
 # Initialise the stackinator
 source ./scripts/setup-stackinator
