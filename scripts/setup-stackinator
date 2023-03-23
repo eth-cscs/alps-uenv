@@ -9,7 +9,7 @@ tool_repo=https://github.com/eth-cscs/stackinator.git
 # support for --system flag in v1.1-dev
 tool_version=f367d76
 
-if [ ! -d "${tool_path}" ]; then
+#if [ ! -d "${tool_path}" ]; then
     log "installing stackinator from git in '${tool_path}'"
 
     log "cloning git repository ${tool_repo}"
@@ -25,6 +25,6 @@ if [ ! -d "${tool_path}" ]; then
 
     cd "${tool_base_path}"
     log "finished stackinator installation"
-fi
+#fi
 
 export PATH="${tool_path}/bin:$PATH"
