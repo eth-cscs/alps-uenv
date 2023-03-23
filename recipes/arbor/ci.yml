@@ -5,3 +5,9 @@ build-mc:
   variables:
     STACK_NAME: arbor-mc
     STACK_RECIPE: recipes/arbor/multicore
+
+build-nvgpu:
+  extends: .stack-build-hohgant-a100
+  variables:
+    STACK_NAME: arbor-a100
+    STACK_RECIPE: recipes/arbor/cuda
