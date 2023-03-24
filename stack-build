@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#usage: stack-build -r recipe -s system -n name
+#usage: stack-build -r recipe -s system -n name -b build-root
 
 datetime () { date +"%Y-%m-%d %H:%M:%S"; }
 
@@ -19,12 +19,13 @@ get_build_id () {
 }
 
 usage () {
-    echo "usage: stack-build -n name -r recipe-path -s system -b build-path"
+    echo "usage: stack-build -n name -r recipe-path -s system -b build-root"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
     echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
     echo "  recipe-path: the location of the recipe"
+    echo '  build-root:  the root path in which to perform the build, e.g. /dev/shm/$USER'
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -33,6 +34,7 @@ usage () {
 system="-"
 name="-"
 recipe_path="-"
+build_root="-"
 
 while getopts n:s:r:b: flag
 do
@@ -40,29 +42,46 @@ do
         n) name=${OPTARG};;
         s) system=${OPTARG};;
         r) recipe_path=$(realpath "${OPTARG}");;
+        b) build_root=$(realpath "${OPTARG}");;
     esac
 done
 
 [[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${name}"        ]] && usage "missing name argument"
 [[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
+[[ "-" == "${build_root}" ]]  && usage "missing build-root argument"
 
 build_id=$(get_build_id)
-build_path="/dev/shm/stack/${name}/${build_id}"
+build_path="${build_root}/${name}/${build_id}"
 
+log "SCRATCH     ${SCRATCH}"
+log "USER        ${USER}"
 log "name        ${name}"
 log "system      ${system}"
 log "recipe-path ${recipe_path}"
 log "build-id    ${build_id}"
+log "build-root  ${build_root}"
 log "build-path  ${build_path}"
 
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
 # Set up build cache mirror if a build cache exists on this system
-mirror_path=/scratch/e1000/jenkssl/uenv-cache
-key_path=${mirror_path}/push-key.gpg
-source ./scripts/generate-mirror
+#mirror_path=/scratch/e1000/jenkssl/uenv-cache
+mirror_path=$SCRATCH/uenv-cache
+if [ -d "${mirror_path}" ]; then
+    log "found build cache at $mirror_path"
+    key_path=${mirror_path}/push-key.gpg
+    key_args="--read-only"
+    if [ -f "${key_path}" ]; then
+        key_args="--key=${key_path}"
+    fi
+    ./scripts/cache-configure $key_args --path="${mirror_path}" "${recipe_path}"
+else
+    log "no build cache at $mirror_path - disabling"
+    ./scripts/cache-configure --disable "${recipe_path}"
+fi
+#source ./scripts/generate-mirror
 
 # Initialise the stackinator
 source ./scripts/setup-stackinator
