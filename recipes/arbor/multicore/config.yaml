@@ -1,4 +1,4 @@
-name: arbor-cpy
+name: arbor-cpu
 store: /user-environment
 system: hohgant
 spack:
