@@ -4,5 +4,3 @@ system: hohgant
 spack:
   repo: https://github.com/spack/spack.git
   commit: v0.19.0
-mirror:
-  key: KEY_PLACEHOLDER

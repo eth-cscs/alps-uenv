@@ -91,6 +91,7 @@ else:
     }
 
     mirrors_path = recipe_path / 'mirrors.yaml'
+    print(yaml.dump(mirrors, default_flow_style=False))
     with mirrors_path.open("w") as f:
         f.write(yaml.dump(mirrors, default_flow_style=False))
         f.write("\n")
@@ -99,5 +100,6 @@ else:
 with config_path.open("w") as f:
     f.write(yaml.dump(config, default_flow_style=False))
     f.write("\n")
+print(yaml.dump(config, default_flow_style=False))
 print(f"wrote {config_path.as_posix()}")
 
