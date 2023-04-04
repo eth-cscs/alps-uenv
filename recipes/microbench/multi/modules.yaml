@@ -20,4 +20,5 @@ modules:
       exclude_implicits: true
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
-        all: '{name}/{version}'
+        all: '{name}/{version}-{compiler}'
+        cray-mpich: '{name}/{version}-{compiler}'
