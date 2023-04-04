@@ -8,7 +8,7 @@ zen-gcc:
   unify: true
   specs:
   - osu-micro-benchmarks@5.9
-  - babelstream
+  - babelstream +omp
   packages:
   - perl
   - diffutils
