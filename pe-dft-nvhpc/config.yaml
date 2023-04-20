@@ -1,8 +1,0 @@
-name: pe-dft-nvhpc
-store: /user-environment
-system: hohgant
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: 27c2ff6c64e0228ef66891e9618405abd1c1c200
-mirror:
-  enable: false

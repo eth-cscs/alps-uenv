@@ -21,6 +21,3 @@ modules:
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
         all: '{name}/{version}'
-        cray-mpich-binary: 'cray-mpich-{compiler.name}'
-        libxc: '{name}/{version}-{compiler.name}'
-        #        intel-oneapi-mkl: '{name}/{version}-{compiler.name}'
