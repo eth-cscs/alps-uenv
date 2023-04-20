@@ -1,0 +1,15 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - cmake@3.26
+  - ninja@1.11
+  - osu-micro-benchmarks@5.9
+  - python@3.11
+  variants:
+  - +mpi

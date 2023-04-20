@@ -1,6 +1,0 @@
-name: microbench
-store: /user-environment
-system: hohgant
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: releases/v0.19

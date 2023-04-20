@@ -3,6 +3,6 @@ include: '/ci/common.yml'
 build-mc:
   extends: .stack-build-hohgant-cpu
   variables:
-    STACK_NAME: microbench
-    STACK_RECIPE: recipes/microbench/multi
+    STACK_NAME: prgenv-gnu-mc
+    STACK_RECIPE: recipes/prgenv-gnu/multicore
 
