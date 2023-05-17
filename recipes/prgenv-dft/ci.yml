@@ -1,0 +1,8 @@
+include: '/ci/common.yml'
+
+build-mc:
+  extends: .stack-build-hohgant-cpu
+  variables:
+    STACK_NAME: prgenv-dft
+    STACK_RECIPE: recipes/prgenv-dft
+
