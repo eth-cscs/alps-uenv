@@ -6,7 +6,7 @@ tool_base_path="$(pwd)"
 #tool_path="${tool_base_path}/stackinator-${build_id}"
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
-tool_version=c02a2694f0bd0940fa0102aa67d62d27731a69b5
+tool_version=908c82066f2805cc6755db2192e2385a8530dcd7
 
 #if [ ! -d "${tool_path}" ]; then
     log "installing stackinator from git in '${tool_path}'"
