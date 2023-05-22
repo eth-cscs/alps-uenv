@@ -5,4 +5,7 @@ build-mc:
   variables:
     STACK_NAME: prgenv-dft
     STACK_RECIPE: recipes/prgenv-dft
-
+  artifacts:
+    when: always
+    paths:
+      - /tmp/jenkssl/spack-stage/*/*txt
