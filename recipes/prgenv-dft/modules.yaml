@@ -22,4 +22,4 @@ modules:
       projections:
         all: '{name}/{version}'
         #cray-mpich-binary: 'cray-mpich-{compiler.name}'
-        #libxc: '{name}/{version}-{compiler.name}'
+        libxc: '{name}/{version}-{compiler.name}'
