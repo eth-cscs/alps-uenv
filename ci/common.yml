@@ -13,6 +13,7 @@ stages:
     when: always
     paths:
     - spack-stage/*/*txt
+    - spack-stage/**/*log
 
 .stack-build-hohgant:
   extends: .stack-build
