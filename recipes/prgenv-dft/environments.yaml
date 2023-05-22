@@ -54,6 +54,7 @@ nvhpc-env:
   specs:
   - libxc@5.2.3%nvhpc
   - cuda@11.8%gcc
+  - patchelf@gcc
   mpi:
       spec: cray-mpich
       gpu: Null
