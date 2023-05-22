@@ -50,7 +50,7 @@ nvhpc-env:
         spec: nvhpc@23.3
       - toolchain: gcc
         spec: gcc@11
-  unify: true
+  unify: when_possible
   specs:
   - libxc@5.2.3%nvhpc
   - cuda@11.8%gcc
