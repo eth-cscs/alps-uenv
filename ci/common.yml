@@ -6,7 +6,7 @@ stages:
   variables:
     SLURM_TIMELIMIT: 180
   script:
-  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl
+  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl || cp -r /tmp/jenkssl/spack-stage $CI_PROJECT_DIR/
   after_script:
   - rm -Rf /dev/shm/jenkssl
 
