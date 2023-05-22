@@ -8,7 +8,7 @@ stages:
   script:
   - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl
   after_script:
-  - cp -r /tmp/jenkssl/spack-stage $CI_PROJECT_DIR/
+  - cp -r /tmp/jenkssl/spack-stage/ $CI_PROJECT_DIR/
   - rm -Rf /dev/shm/jenkssl
   artifacts:
     when: always
