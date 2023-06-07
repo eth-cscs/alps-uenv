@@ -126,8 +126,10 @@ log "pushing image '${source_path}' to '${destination_path}'"
 curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push image"
 
-log "pushing meta data '${source_path}/meta' to '${destination_path}'"
-curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}/meta"
+destination_path="${artifactory_url}/${repo_path}/meta"
+source_path="${build_path}/store/meta"
+log "pushing meta data '${source_path}' to '${destination_path}'"
+curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push meta data"
 
 log "image built and pushed to artifactory with meta data"
