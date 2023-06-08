@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#usage: run-reframe -s system -n name
+
+datetime () { date +"%Y-%m-%d %H:%M:%S"; }
+
+[[ -t 1 ]] && interm=yes
+
+red ()    { echo "\e[1;31m$1\e[m"; }
+yellow () { echo "\e[1;33m$1\e[m"; }
+log () { printf "$(yellow "[log $(datetime)]") $1\n"; }
+err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
+
+# return a unique id for the build
+get_build_id () {
+    [[ -z "${CI_JOB_ID}" ]] && (cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 10) || echo ${CI_JOB_ID}
+}
+
+usage () {
+    echo "usage: stack-build -n name -r recipe-path -s system -b build-root"
+    echo ""
+    echo "where:"
+    echo "  name:        the name of the stack"
+    echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
+    echo ""
+    [[ "" == "$1" ]] && exit 0
+    err "$1"
+}
+
+system="-"
+name="-"
+
+while getopts n:s: flag
+do
+    case "${flag}" in
+        n) name=${OPTARG};;
+        s) system=${OPTARG};;
+    esac
+done
+
+[[ "-" == "${system}"      ]] && usage "missing system argument"
+[[ "-" == "${name}"        ]] && usage "missing name argument"
+
+log "SCRATCH     ${SCRATCH}"
+log "USER        ${USER}"
+log "name        ${name}"
+log "system      ${system}"
+
+# Obtain credentials for JFrog - required to push the image and meta-data
+creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
+artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
+repo_path="alps-uenv/build/${build_id}/${system}/${name}"
+
+artifact_path="$CI_PROJECT_DIR/artifacts"
+log "using artifacts in $artifact_path"
+find "${artifact_path}"
+
+##
+# TODO: these were cut and paste from the container build repository
+##
+
+rm -rf cscs-reframe-tests
+rm -rf venv_reframe
+
+git clone https://github.com/eth-cscs/cscs-reframe-tests.git
+python3 -m venv venv_reframe
+source venv_reframe/bin/activate
+
+pip install reframe-hpc
+export RFM_AUTODETECT_XTHOSTNAME=1
+export RFM_REMOTE_DETECT=0
+log "REFRAME_COMMAND ${REFRAME_COMMAND}"
+${REFRAME_COMMAND}
+deactivate
+

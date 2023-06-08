@@ -2,3 +2,6 @@ log*
 stackinator
 recipes/*/*core/mirrors.yaml
 cache.yaml
+
+# vim temp files
+.*.sw[pnoq]

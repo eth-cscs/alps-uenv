@@ -145,8 +145,7 @@ log "pushing image '${source_path}' to '${destination_path}'"
 curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push image"
 
-
-# push the metadat to jfrog
+# push the metadata to jfrog
 destination_path="${artifactory_url}/${repo_path}"
 log "pushing meta data '${source_path}' to '${destination_path}'"
 for source in $(cd store; find meta -type f)
@@ -158,11 +157,11 @@ do
     fi
 done
 
-log "copying image and meta-data to $CI_PROJECT_DIR"
-generated_path="$CI_PROJECT_DIR/generated"
-mkdir "${generated_path}"
-cp -r store.squashfs "${generated_path}"
-cp -r store/meta "${generated_path}"
+artifact_path="$CI_PROJECT_DIR/artifacts"
+log "copying image and meta-data to ${artifact_path}"
+mkdir "${artifact_path}"
+cp -r store.squashfs "${artifact_path}"
+cp -r store/meta "${artifact_path}"
 
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})
