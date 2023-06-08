@@ -63,17 +63,13 @@ log "build-id    ${build_id}"
 log "build-root  ${build_root}"
 log "build-path  ${build_path}"
 
-# Obtain credentials for JFrog - required to push the image and meta-data
-# once the image is built.
-creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
-artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
-repo_path="alps-uenv/build/${build_id}/${system}/${name}"
-
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
-# Set up build cache if a build cache exists on this system
+##
+# Set up build cache flags if a build cache is available
+##
+
 #mirror_path=/scratch/e1000/jenkssl/uenv-cache
 mirror_path=$SCRATCH/uenv-cache
 if [ -d "${mirror_path}" ]; then
@@ -90,8 +86,16 @@ else
     cache_flags=""
 fi
 
+##
+# Clone the stackinator and alps cluster configuration
+##
+
 # Initialise the stackinator
 source ./scripts/setup-stackinator
+
+##
+# Configure the build
+##
 
 # call stackinator
 log "configuring stack"
@@ -108,7 +112,10 @@ fi
 # delete stackinator tool once it is no longer needed
 rm -rf "$tool_path" "$cluster_path"
 
-# run build
+##
+# Build the Spack stack
+##
+
 cd "${build_path}"
 log "building image in ${build_path}"
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
@@ -120,7 +127,17 @@ if [ ! $? -eq 0 ]; then
     err "error building image"
 fi
 
-# push to repository
+##
+# Push build artifacts to JFrog
+##
+
+# Obtain credentials for JFrog - required to push the image and meta-data
+creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
+artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
+repo_path="alps-uenv/build/${build_id}/${system}/${name}"
+
+# push the squashfs image to jfrog
 destination_path="${artifactory_url}/${repo_path}/store.squashfs"
 source_path="${build_path}/store.squashfs"
 
@@ -129,25 +146,24 @@ curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${sour
 [[ $? -eq 0  ]] || err "failed to push image"
 
 
-# test pushing the recipe to the artifactory
+# push the metadat to jfrog
 destination_path="${artifactory_url}/${repo_path}"
 log "pushing meta data '${source_path}' to '${destination_path}'"
 for source in $(cd store; find meta -type f)
 do
-    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T store/${source}"
+    log "pushing ${destination_path}/${source}"
     curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
     if [ ! $? -eq 0 ]; then
         err "unable to push meta data file store/$source"
     fi
 done
 
-log "image built and pushed to artifactory with meta data"
-log "clean up build path '${build_path}'"
-(rm -rf ${build_path})
-
 log "copying image and meta-data to $CI_PROJECT_DIR"
 generated_path="$CI_PROJECT_DIR/generated"
 mkdir "${generated_path}"
 cp -r store.squashfs "${generated_path}"
 cp -r store/meta "${generated_path}"
+
+log "clean up build path '${build_path}'"
+(rm -rf ${build_path})
 
