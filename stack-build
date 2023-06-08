@@ -158,9 +158,8 @@ do
 done
 
 artifact_path="$CI_PROJECT_DIR/artifacts"
-log "copying image and meta-data to ${artifact_path}"
+log "copying meta-data to ${artifact_path}"
 mkdir "${artifact_path}"
-cp -r store.squashfs "${artifact_path}"
 cp -r store/meta "${artifact_path}"
 
 log "clean up build path '${build_path}'"

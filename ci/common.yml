@@ -10,6 +10,9 @@ stages:
   - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl
   after_script:
   - rm -Rf /dev/shm/jenkssl
+  artifacts:
+    paths:
+    - artifacts/
 
 .run-reframe:
   stage: test

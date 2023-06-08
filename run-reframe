@@ -52,7 +52,13 @@ creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.usernam
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 
+
+# download the squashfs image from jfrog
 artifact_path="$CI_PROJECT_DIR/artifacts"
+squashfs_address="${artifactory_url}/${repo_path}/store.squashfs"
+wget "${squashfs_address}"
+mv store.squashfs "${artifact_path}"
+
 log "using artifacts in $artifact_path"
 find "${artifact_path}"
 
@@ -71,6 +77,8 @@ pip install reframe-hpc
 export RFM_AUTODETECT_XTHOSTNAME=1
 export RFM_REMOTE_DETECT=0
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
-${REFRAME_COMMAND}
+#${REFRAME_COMMAND}
+# TODO -- run reframe!!
+exit 1
 deactivate
 
