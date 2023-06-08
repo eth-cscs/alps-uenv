@@ -70,20 +70,6 @@ creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.usernam
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 
-# test pushing the recipe to the artifactory
-destination_path="${artifactory_url}/${repo_path}"
-
-for source in $(cd recipes; find prgenv-gnu -type f)
-do
-    log "recipes/${source} --> ${destination_path}/${source}"
-    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T recipes/${source}"
-    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "recipes/${source}"
-    if [ ! $? -eq 0 ]; then
-        err "unable to upload file $source"
-    fi
-done
-exit 1
-
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
@@ -142,11 +128,18 @@ log "pushing image '${source_path}' to '${destination_path}'"
 curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push image"
 
-destination_path="${artifactory_url}/${repo_path}/meta"
-source_path="${build_path}/store/meta"
+
+# test pushing the recipe to the artifactory
+destination_path="${artifactory_url}/${repo_path}"
 log "pushing meta data '${source_path}' to '${destination_path}'"
-curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
-[[ $? -eq 0  ]] || err "failed to push meta data"
+for source in $(cd store; find meta -type f)
+do
+    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T store/${source}"
+    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
+    if [ ! $? -eq 0 ]; then
+        err "unable to push meta data file store/$source"
+    fi
+done
 
 log "image built and pushed to artifactory with meta data"
 log "clean up build path '${build_path}'"
