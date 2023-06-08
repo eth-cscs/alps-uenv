@@ -73,9 +73,9 @@ repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 # test pushing the recipe to the artifactory
 destination_path="${artifactory_url}/${repo_path}"
 
-for source in $(cd store; find meta -type f)
+for source in $(cd recipes; find prgenv-gnu -type f)
 do
-    log "store/$source --> ${destination_path}/${source}"
+    log "store/${source} --> ${destination_path}/${source}"
     log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T store/${source}"
     curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
 done
