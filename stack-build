@@ -75,9 +75,12 @@ destination_path="${artifactory_url}/${repo_path}"
 
 for source in $(cd recipes; find prgenv-gnu -type f)
 do
-    log "store/${source} --> ${destination_path}/${source}"
-    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T store/${source}"
-    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
+    log "recipes/${source} --> ${destination_path}/${source}"
+    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T recipes/${source}"
+    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "recipes/${source}"
+    if [ ! $? -eq 0 ]; then
+        err "unable to upload file $source"
+    fi
 done
 exit 1
 
