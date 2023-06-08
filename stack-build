@@ -63,6 +63,24 @@ log "build-id    ${build_id}"
 log "build-root  ${build_root}"
 log "build-path  ${build_path}"
 
+# Obtain credentials for JFrog - required to push the image and meta-data
+# once the image is built.
+creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
+artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
+repo_path="alps-uenv/build/${build_id}/${system}/${name}"
+
+# test pushing the recipe to the artifactory
+destination_path="${artifactory_url}/${repo_path}"
+
+for source in $(cd store; find meta -type f)
+do
+    log "store/$source --> ${destination_path}/${source}"
+    log "curl --silent --fail -u ${creds_short} -X PUT ${destination_path}/${source} -T store/${source}"
+    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
+done
+exit 1
+
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
@@ -94,12 +112,12 @@ stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}"
 
 if [ ! $? -eq 0 ]; then
     # delete stackinator tool once it is no longer needed
-    rm -rf $tool_path
+    rm -rf "$tool_path" "$cluster_path"
     err "stack-config failed"
 fi
 
 # delete stackinator tool once it is no longer needed
-rm -rf $tool_path
+rm -rf "$tool_path" "$cluster_path"
 
 # run build
 cd "${build_path}"
@@ -114,11 +132,6 @@ if [ ! $? -eq 0 ]; then
 fi
 
 # push to repository
-creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
-
-artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
-repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 destination_path="${artifactory_url}/${repo_path}/store.squashfs"
 source_path="${build_path}/store.squashfs"
 
@@ -135,4 +148,10 @@ curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${sour
 log "image built and pushed to artifactory with meta data"
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})
+
+log "copying image and meta-data to $CI_PROJECT_DIR"
+generated_path="$CI_PROJECT_DIR/generated"
+mkdir "${generated_path}"
+cp -r store.squashfs "${generated_path}"
+cp -r store/meta "${generated_path}"
 
