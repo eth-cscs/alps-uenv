@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
 
 .stack-build:
   stage: build
