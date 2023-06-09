@@ -132,7 +132,7 @@ fi
 ##
 
 # Obtain credentials for JFrog - required to push the image and meta-data
-creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_json=$(curl --retry 5 --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
 creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
@@ -142,7 +142,8 @@ destination_path="${artifactory_url}/${repo_path}/store.squashfs"
 source_path="${build_path}/store.squashfs"
 
 log "pushing image '${source_path}' to '${destination_path}'"
-curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
+# note: use retry, because pushing to JFrog was not 100% reliable during development of this script.
+curl --retry 10 --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push image"
 
 # push the metadata to jfrog
@@ -151,7 +152,7 @@ log "pushing meta data '${source_path}' to '${destination_path}'"
 for source in $(cd store; find meta -type f)
 do
     log "pushing ${destination_path}/${source}"
-    curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
+    curl --retry 10 --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
     if [ ! $? -eq 0 ]; then
         err "unable to push meta data file store/$source"
     fi

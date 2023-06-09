@@ -46,20 +46,21 @@ log "USER        ${USER}"
 log "name        ${name}"
 log "system      ${system}"
 
+build_id=${CI_JOB_ID}
+
 # Obtain credentials for JFrog - required to push the image and meta-data
-creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_json=$(curl --silent "${CSCS_CI_MW_URL}/credentials?token=${CI_JOB_TOKEN}&creds=container_registry")
 creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 
-
 # download the squashfs image from jfrog
 artifact_path="$CI_PROJECT_DIR/artifacts"
-squashfs_address="${artifactory_url}/${repo_path}/store.squashfs"
-wget "${squashfs_address}"
-mv store.squashfs "${artifact_path}"
+squashfs_path="${artifact_path}/store.squashfs"
+squashfs_url="${artifactory_url}/${repo_path}/store.squashfs"
+curl --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 
-log "using artifacts in $artifact_path"
+log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
 ##
