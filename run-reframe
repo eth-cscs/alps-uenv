@@ -63,6 +63,8 @@ find "${artifact_path}"
 
 cp "$CI_PROJECT_DIR/artifacts/meta/extra/reframe.yaml" "${artifact_path}/${name}.yaml"
 
+[[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || MyVar="${system}:${SLURM_PARTITION}"
+
 # TODO: Use pip install once the prepare_cmds PR is included in a new release
 rm -rf reframe
 git clone -b develop https://github.com/reframe-hpc/reframe.git
@@ -77,7 +79,7 @@ cd reframe
 export UENV_FILE=${squashfs_path}
 export RFM_AUTODETECT_XTHOSTNAME=1
 
-REFRAME_COMMAND="./bin/reframe -C ../cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c ../cscs-reframe-tests/checks/uenv/ -r --system=${system}"
+REFRAME_COMMAND="./bin/reframe -C ../cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c ../cscs-reframe-tests/checks/uenv/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
