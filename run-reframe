@@ -58,6 +58,7 @@ repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 artifact_path="$CI_PROJECT_DIR/artifacts"
 squashfs_path="${artifact_path}/${name}.squashfs"
 squashfs_url="${artifactory_url}/${repo_path}/store.squashfs"
+log "Downloading squashfs image ${squashfs_url} to ${squashfs_path}"
 curl --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 
 log "Using artifacts in $artifact_path"
