@@ -17,7 +17,7 @@ get_build_id () {
 }
 
 usage () {
-    echo "usage: stack-build -n name -r recipe-path -s system -b build-root"
+    echo "usage: reframe-run -n name -s system"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
@@ -56,30 +56,30 @@ repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 
 # download the squashfs image from jfrog
 artifact_path="$CI_PROJECT_DIR/artifacts"
-squashfs_path="${artifact_path}/store.squashfs"
+squashfs_path="${artifact_path}/${name}.squashfs"
 squashfs_url="${artifactory_url}/${repo_path}/store.squashfs"
 curl --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
-##
-# TODO: these were cut and paste from the container build repository
-##
+cp "$CI_PROJECT_DIR/artifacts/meta/reframe.yaml" "${artifact_path}/${name}.yaml"
+
+# TODO: Use pip install once the prepare_cmds PR is included in a new release
+rm -rf reframe
+git clone -b develop https://github.com/reframe-hpc/reframe.git
 
 rm -rf cscs-reframe-tests
-rm -rf venv_reframe
+git clone -b test/uenv_tests https://github.com/teojgo/cscs-reframe-tests.git
 
-git clone https://github.com/eth-cscs/cscs-reframe-tests.git
-python3 -m venv venv_reframe
-source venv_reframe/bin/activate
+# Bootstrap ReFrame
+cd reframe
+./bootstrap.sh
 
-pip install reframe-hpc
+export UENV_FILE=${squashfs_path}
 export RFM_AUTODETECT_XTHOSTNAME=1
-export RFM_REMOTE_DETECT=0
-log "REFRAME_COMMAND ${REFRAME_COMMAND}"
-#${REFRAME_COMMAND}
-# TODO -- run reframe!!
-exit 1
-deactivate
 
+REFRAME_COMMAND="./bin/reframe -C ../cscs-reframe-tests/config/cscs-uenv.py -c ../cscs-reframe-tests/checks/uenv/ -r --system=${system}"
+
+log "REFRAME_COMMAND ${REFRAME_COMMAND}"
+${REFRAME_COMMAND}
