@@ -28,7 +28,7 @@ stages:
     paths:
     - reframe/report.xml
     reports:
-      junit: report.xml
+      junit: reframe/report.xml
 
 .stack-build-hohgant:
   extends: .stack-build
