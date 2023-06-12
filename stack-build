@@ -15,7 +15,7 @@ err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 
 # return a unique id for the build
 get_build_id () {
-    [[ -z "${CI_JOB_ID}" ]] && (cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 10) || echo ${CI_JOB_ID}
+    [[ -z "${CI_PIPELINE_ID}" ]] && (cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 10) || echo ${CI_PIPELINE_ID}
 }
 
 usage () {
