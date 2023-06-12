@@ -63,7 +63,7 @@ curl --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
-cp "$CI_PROJECT_DIR/artifacts/meta/reframe.yaml" "${artifact_path}/${name}.yaml"
+cp "$CI_PROJECT_DIR/artifacts/meta/extra/reframe.yaml" "${artifact_path}/${name}.yaml"
 
 # TODO: Use pip install once the prepare_cmds PR is included in a new release
 rm -rf reframe
