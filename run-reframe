@@ -63,7 +63,7 @@ find "${artifact_path}"
 
 cp "$CI_PROJECT_DIR/artifacts/meta/extra/reframe.yaml" "${artifact_path}/${name}.yaml"
 
-[[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || MyVar="${system}:${SLURM_PARTITION}"
+[[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 
 # TODO: Use pip install once the prepare_cmds PR is included in a new release
 rm -rf reframe
