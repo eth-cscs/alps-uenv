@@ -1,0 +1,8 @@
+name: sirius
+store: /user-environment
+system: hohgant
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.20.0
+  #mirror:
+  #  enable: false
