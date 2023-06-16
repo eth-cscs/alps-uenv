@@ -3,4 +3,5 @@ spack:
   commit: v0.20.0
   repo: https://github.com/spack/spack.git
 store: /user-environment
+description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
 
