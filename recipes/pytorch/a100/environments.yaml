@@ -1,0 +1,34 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+      spec: cray-mpich
+      gpu: cuda
+  unify: true
+  specs:
+  - cmake
+  - ninja@1.11
+  - osu-micro-benchmarks@5.9
+  - cuda
+  - cudnn
+  - nccl
+  - python@3.11
+  - py-pip
+  - py-numpy
+  - py-mpi4py
+  - py-pybind11
+  - py-cupy
+  - py-h5py
+  - py-matplotlib
+  - py-torch
+  - py-torchvision
+  - py-torchaudio
+  - py-torch-nvidia-apex@master
+  - py-pytorch-lightning
+  variants:
+  - cuda_arch=80
+  - +cuda
+  - +mpi
+  views:
+    default:
