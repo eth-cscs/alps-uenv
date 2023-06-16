@@ -28,4 +28,5 @@ gcc-env:
     default:
   packages:
   - git
+  - perl
 
