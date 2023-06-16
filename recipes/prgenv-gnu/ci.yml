@@ -6,3 +6,8 @@ build-mc:
     STACK_NAME: prgenv-gnu-mc
     STACK_RECIPE: recipes/prgenv-gnu/multicore
 
+test-mc:
+  extends: .run-reframe-hohgant-cpu
+  variables:
+    STACK_NAME: prgenv-gnu-mc
+

@@ -15,7 +15,7 @@ err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 
 # return a unique id for the build
 get_build_id () {
-    [[ -z "${CI_JOB_ID}" ]] && (cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 10) || echo ${CI_JOB_ID}
+    [[ -z "${CI_PIPELINE_ID}" ]] && (cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 10) || echo ${CI_PIPELINE_ID}
 }
 
 usage () {
@@ -66,66 +66,103 @@ log "build-path  ${build_path}"
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
-# Set up build cache mirror if a build cache exists on this system
+##
+# Set up build cache flags if a build cache is available
+##
+
 #mirror_path=/scratch/e1000/jenkssl/uenv-cache
 mirror_path=$SCRATCH/uenv-cache
 if [ -d "${mirror_path}" ]; then
     log "found build cache at $mirror_path"
-    key_path=${mirror_path}/push-key.gpg
-    key_args="--read-only"
-    if [ -f "${key_path}" ]; then
-        key_args="--key=${key_path}"
+    echo "root: $mirror_path" > cache.yaml
+    key_path="${mirror_path}/push-key.gpg"
+    if [[ -f "${key_path}" ]]; then
+        log "found build cache key at $key_path"
+        echo "key: ${mirror_path}/push-key.gpg" >> cache.yaml
     fi
-    ./scripts/cache-configure $key_args --path="${mirror_path}" "${recipe_path}"
+    cache_flags="--cache cache.yaml"
 else
-    log "no build cache at $mirror_path - disabling"
-    ./scripts/cache-configure --disable "${recipe_path}"
+    rm -f cache.yaml
+    cache_flags=""
 fi
-#source ./scripts/generate-mirror
+
+##
+# Clone the stackinator and alps cluster configuration
+##
 
 # Initialise the stackinator
 source ./scripts/setup-stackinator
 
+##
+# Configure the build
+##
+
 # call stackinator
 log "configuring stack"
 
-echo "stack-config -r ${recipe_path} -b ${build_path} -s ${system}"
-stack-config -r "${recipe_path}" -b "${build_path}" -s "${system}"
+echo "stack-config -r ${recipe_path} -b ${build_path} -s $cluster_path/${system} $cache_flags"
+stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}" $cache_flags
 
 if [ ! $? -eq 0 ]; then
-    # delete stackinator tool
-    rm -rf $tool_path
+    # delete stackinator tool once it is no longer needed
+    rm -rf "$tool_path" "$cluster_path"
     err "stack-config failed"
 fi
 
 # delete stackinator tool once it is no longer needed
-rm -rf $tool_path
+rm -rf "$tool_path" "$cluster_path"
 
-# run build
+##
+# Build the Spack stack
+##
+
 cd "${build_path}"
-log "building image"
+log "building image in ${build_path}"
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
 env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64
 
 if [ ! $? -eq 0 ]; then
     log "TODO: save WIP of build an store it for later inspection"
+    cp -r "${build_path}/tmp/jenkssl/spack-stage/" $CI_PROJECT_DIR
     err "error building image"
 fi
 
-# push to repository
-creds_json=$(curl --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
+##
+# Push build artifacts to JFrog
+##
 
+# Obtain credentials for JFrog - required to push the image and meta-data
+creds_json=$(curl --retry 5 --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
+
+# push the squashfs image to jfrog
 destination_path="${artifactory_url}/${repo_path}/store.squashfs"
 source_path="${build_path}/store.squashfs"
-log "pushing '${source_path}' to '${destination_path}'"
 
-curl --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
+log "pushing image '${source_path}' to '${destination_path}'"
+# note: use retry, because pushing to JFrog was not 100% reliable during development of this script.
+curl --retry 10 --silent --fail -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}"
 [[ $? -eq 0  ]] || err "failed to push image"
 
-log "image built and pushed to artifactory"
+# push the metadata to jfrog
+destination_path="${artifactory_url}/${repo_path}"
+log "pushing meta data '${source_path}' to '${destination_path}'"
+for source in $(cd store; find meta -type f)
+do
+    log "pushing ${destination_path}/${source}"
+    curl --retry 10 --silent --fail -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}"
+    if [ ! $? -eq 0 ]; then
+        err "unable to push meta data file store/$source"
+    fi
+done
+
+artifact_path="$CI_PROJECT_DIR/artifacts"
+log "copying meta-data to ${artifact_path}"
+mkdir "${artifact_path}"
+cp -r store/meta "${artifact_path}"
+
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})
 
