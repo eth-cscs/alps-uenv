@@ -4,7 +4,7 @@ gcc-env:
         spec: gcc@11
   mpi:
       spec: cray-mpich
-      gpu: Null
+      gpu: cuda
   unify: true
   specs:
   - cmake
@@ -22,18 +22,22 @@ gcc-env:
   - sirius@develop +fortran +cuda +scalapack +elpa ^elpa+cuda ^intel-oneapi-mkl+cluster
   variants:
   - +mpi
+  - +cuda
+  - cuda_arch=80
+  views:
+    default:
   packages:
-  - perl
+  #- perl
   - git
-  - pkgconf
-  - readline
-  - ncurses
-  - patchelf
-  - diffutils
-  - libiconv
-  - openssl
-  - sqlite
-  - tar
-  - libxml2
-  - gettext
+ #- pkgconf
+ #- readline
+ #- ncurses
+ #- patchelf
+ #- diffutils
+ #- libiconv
+ #- openssl
+ #- sqlite
+ #- tar
+ #- libxml2
+ #- gettext
 
