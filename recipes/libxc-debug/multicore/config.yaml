@@ -1,0 +1,7 @@
+name: prgenv-gnu
+spack:
+  commit: v0.19.0
+  repo: https://github.com/spack/spack.git
+store: /user-environment
+system: hohgant
+

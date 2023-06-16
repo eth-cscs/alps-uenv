@@ -1,0 +1,12 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - libxc@5.2.3
+  variants:
+  - +mpi
