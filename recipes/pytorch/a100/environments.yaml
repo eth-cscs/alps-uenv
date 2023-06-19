@@ -25,7 +25,7 @@ gcc-env:
   - py-torch
   - py-torchvision
   - py-torchaudio
-  - py-torch-nvidia-apex@master
+  # - py-torch-nvidia-apex@master
   - py-pytorch-lightning
   variants:
   - cuda_arch=80
