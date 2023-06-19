@@ -13,7 +13,8 @@ gcc-env:
   - cuda@11.8
   - cudnn
   - nccl
-  - python@3.11
+  # with spack v0.20 the version of py-protobuf conflicts with python@3.11
+  - python@3.10
   - py-pip
   - py-numpy
   - py-mpi4py
