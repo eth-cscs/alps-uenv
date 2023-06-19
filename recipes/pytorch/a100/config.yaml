@@ -1,4 +1,5 @@
-name: prgenv-gnu
+name: pytorch
+description: Pytorch and its dependencies for A100 GPU nodes on Alps.
 spack:
   commit: v0.20.0
   repo: https://github.com/spack/spack.git

@@ -16,7 +16,6 @@ stages:
 
 .run-reframe:
   stage: test
-  tags: ['hohgant-login-baremetal']
   variables:
     SLURM_TIMELIMIT: 30
   variables:
@@ -29,6 +28,10 @@ stages:
     - reframe/report.xml
     reports:
       junit: reframe/report.xml
+
+#
+# HOHGANT
+#
 
 .stack-build-hohgant:
   extends: .stack-build
@@ -50,6 +53,7 @@ stages:
 
 .run-reframe-hohgant:
   extends: .run-reframe
+  tags: ['hohgant-login-baremetal']
   variables:
     STACK_SYSTEM: hohgant
 .run-reframe-hohgant-cpu:
@@ -64,3 +68,27 @@ stages:
   extends: .run-reframe-hohgant
   variables:
     SLURM_PARTITION: amdgpu
+
+#
+# CLARIDEN
+#
+
+.stack-build-clariden:
+  extends: .stack-build
+  tags: [clariden-spack-stack-builder]
+  variables:
+    STACK_SYSTEM: clariden
+.stack-build-clariden-a100:
+  extends: .stack-build-clariden
+  variables:
+    SLURM_PARTITION: nvgpu
+
+.run-reframe-clariden:
+  extends: .run-reframe
+  tags: ['clariden-login-baremetal']
+  variables:
+    STACK_SYSTEM: clariden
+.run-reframe-clariden-a100:
+  extends: .run-reframe-clariden
+  variables:
+    SLURM_PARTITION: nvgpu
