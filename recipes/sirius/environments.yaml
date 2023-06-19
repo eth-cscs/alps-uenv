@@ -19,7 +19,7 @@ gcc-env:
   - py-scipy
   - py-voluptuous
   - libxc@5.2.3 ~cuda
-  - sirius@develop +fortran +cuda +scalapack +elpa ^elpa+cuda ^intel-oneapi-mkl+cluster
+  - sirius@develop +python +tests +fortran +cuda +scalapack +elpa ^elpa+cuda ^intel-oneapi-mkl+cluster
   variants:
   - +mpi
   - +cuda
