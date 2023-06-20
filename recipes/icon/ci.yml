@@ -9,5 +9,5 @@ build-a100:
 test-mc:
   extends: .run-reframe-hohgant-a100
   variables:
-    STACK_NAME: prgenv-gnu-mc
+    STACK_NAME: icon-a100
 
