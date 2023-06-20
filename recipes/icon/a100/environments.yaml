@@ -4,13 +4,13 @@ nvidia:
         spec: gcc
       - toolchain: llvm
         spec: nvhpc
-  unify: true
+  unify: when_possible
   mpi:
       spec: cray-mpich
       gpu: cuda
   specs:
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
-  - cmake@gcc
+  - cmake%gcc
   - cuda@11.8%gcc
   - hdf5 +fortran
   - hwloc%gcc
