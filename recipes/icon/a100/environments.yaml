@@ -12,10 +12,10 @@ nvidia:
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - cmake%gcc
   - cuda@11.8%gcc
-  - hdf5 +fortran
+  - hdf5%nvhpc +fortran
   - hwloc%gcc
-  - netcdf-c@%nvhpc
-  - netcdf-fortran@%nvhpc
+  - netcdf-c%nvhpc
+  - netcdf-fortran%nvhpc
   - numactl%gcc
   - osu-micro-benchmarks@5.9%nvhpc
   - perl%gcc
