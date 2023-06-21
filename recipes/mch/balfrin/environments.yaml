@@ -65,7 +65,7 @@ prgenv-gcc:
   unify: true
   mpi:
     spec: cray-mpich@8.1.25
-    gpu: None
+    gpu: null
   packages:
   - perl
   - curl
