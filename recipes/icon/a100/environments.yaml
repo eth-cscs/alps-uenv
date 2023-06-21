@@ -21,7 +21,7 @@ nvidia:
   - perl%gcc
   # The following are required to stop spack from using nvhpc to build
   # basic dependencies, some of which don't compile with nvc etc.
-  # Explicitly excluded as modules
+  # Explicitly excluded as modules.
   - autoconf%gcc
   - automake%gcc
   - ca-certificates-mozilla%gcc
@@ -36,11 +36,11 @@ nvidia:
   - xz%gcc
   - zlib%gcc
   - zstd%gcc
-  #- c-blosc%gcc
-  #- libaec%gcc
-  #- jasper%gcc
-  #- patchelf%gcc
-  #- gmake%gcc
+  - c-blosc%gcc
+  - libaec%gcc
+  - jasper%gcc
+  - patchelf%gcc
+  - gmake%gcc
   variants:
   - cuda_arch=80
   - +mpi
@@ -48,7 +48,5 @@ nvidia:
   packages:
   - curl
   - gmake
-  - patchelf
-  - pkgconf
   views:
     default:
