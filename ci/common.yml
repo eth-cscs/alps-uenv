@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
 
 .stack-build:
   stage: build
@@ -12,8 +13,25 @@ stages:
   artifacts:
     when: always
     paths:
-    - spack-stage/*/*txt
-    - spack-stage/**/*log
+    - artifacts/
+      #- spack-stage/*/*txt
+      #- spack-stage/**/*log
+
+.run-reframe:
+  stage: test
+  tags: ['hohgant-login-baremetal']
+  variables:
+    SLURM_TIMELIMIT: 30
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+  - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM
+  artifacts:
+    when: always
+    paths:
+    - reframe/report.xml
+    reports:
+      junit: reframe/report.xml
 
 .stack-build-hohgant:
   extends: .stack-build
@@ -30,5 +48,22 @@ stages:
     SLURM_PARTITION: nvgpu
 .stack-build-hohgant-mi200:
   extends: .stack-build-hohgant
+  variables:
+    SLURM_PARTITION: amdgpu
+
+.run-reframe-hohgant:
+  extends: .run-reframe
+  variables:
+    STACK_SYSTEM: hohgant
+.run-reframe-hohgant-cpu:
+  extends: .run-reframe-hohgant
+  variables:
+    SLURM_PARTITION: cpu
+.run-reframe-hohgant-a100:
+  extends: .run-reframe-hohgant
+  variables:
+    SLURM_PARTITION: nvgpu
+.run-reframe-hohgant-mi200:
+  extends: .run-reframe-hohgant
   variables:
     SLURM_PARTITION: amdgpu

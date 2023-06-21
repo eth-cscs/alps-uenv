@@ -13,3 +13,5 @@ gcc-env:
   - python@3.11
   variants:
   - +mpi
+  views:
+    default:
