@@ -94,15 +94,14 @@ prgenv-gcc:
   - cuda_arch=80
   - +mpi
   - +cuda
- views:
-   prgenv-gcc-serial:
-     exclude:
-       - hdf5+mpi
-       - netcdf-c+mpi
-       - netcdf-fortran ^netcdf-c+mpi
-   prgenv-gcc-parallel:
-     exclude:
-       - hdf5~mpi
-       - netcdf-c~mpi
-       - netcdf-fortran ^netcdf-c~mpi
-
+  views:
+    prgenv-gcc-serial:
+      exclude:
+      - hdf5+mpi
+      - netcdf-c+mpi
+      - netcdf-fortran ^netcdf-c+mpi
+    prgenv-gcc-parallel:
+      exclude:
+      - hdf5~mpi
+      - netcdf-c~mpi
+      - netcdf-fortran ^netcdf-c~mpi
