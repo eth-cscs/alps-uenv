@@ -1,0 +1,6 @@
+name: arbor
+store: /user-environment
+description: the tools for building gpu-enabled Arbor
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.20.0
