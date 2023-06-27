@@ -11,11 +11,8 @@ stages:
   after_script:
   - rm -Rf /dev/shm/jenkssl
   artifacts:
-    when: always
     paths:
     - artifacts/
-      #- spack-stage/*/*txt
-      #- spack-stage/**/*log
 
 .run-reframe:
   stage: test
