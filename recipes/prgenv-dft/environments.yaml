@@ -24,11 +24,13 @@ gcc-env:
   - hdf5
   - costa
   - eigen
-  - spfft +cuda cuda_arch=80
+  - spfft +cuda
   - spla +cuda
   - spglib
   variants:
   - +mpi
+  - +cuda
+  - cuda_arch=80
   packages:
   - perl
   - git
@@ -50,14 +52,19 @@ nvhpc-env:
         spec: nvhpc@23.3
       - toolchain: gcc
         spec: gcc@11
+  mpi:
+      spec: cray-mpich
+      gpu: Null
   unify: true
   specs:
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8%gcc
   - patchelf%gcc
   - quantum-espresso %nvhpc +libxc +cuda ^intel-oneapi-mkl+cluster ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
-  mpi:
-      spec: cray-mpich
-      gpu: Null
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=80
   packages:
   - perl
+  - git
