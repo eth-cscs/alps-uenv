@@ -60,7 +60,7 @@ nvhpc-env:
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8%gcc
   - patchelf%gcc
-  - quantum-espresso %nvhpc +libxc +cuda ^intel-oneapi-mkl+cluster ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
+  - quantum-espresso %nvhpc +libxc +cuda ^intel-oneapi-mkl+cluster%gcc ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
   variants:
   - +mpi
   - +cuda

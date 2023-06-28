@@ -1,5 +1,6 @@
 name: prgenv-dft
 store: /user-environment
+description: the tools to build DFT codes
 spack:
   repo: https://github.com/spack/spack.git
   commit: v0.20.0
