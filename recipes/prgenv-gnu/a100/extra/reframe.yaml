@@ -2,7 +2,7 @@ default:
   features:
     - cuda
     - mpi
-    - mpiosu-micro-benchmarks
+    - osu-micro-benchmarks
     - openmp
     - serial
   cc: mpicc
