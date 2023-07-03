@@ -65,21 +65,21 @@ cp "$CI_PROJECT_DIR/artifacts/meta/extra/reframe.yaml" "${artifact_path}/${name}
 
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 
-# TODO: Use pip install once the prepare_cmds PR is included in a new release
-rm -rf reframe
-git clone -b develop https://github.com/reframe-hpc/reframe.git
+rm -rf rfm_venv
+python3 -m venv rfm_venv
+source rfm_venv/bin/activate
+pip install --upgrade reframe-hpc
 
+# TODO Replace with the `alps` branch when PR is merged
 rm -rf cscs-reframe-tests
 git clone -b test/uenv_tests https://github.com/teojgo/cscs-reframe-tests.git
-
-# Bootstrap ReFrame
-cd reframe
-./bootstrap.sh
 
 export UENV_FILE=${squashfs_path}
 export RFM_AUTODETECT_XTHOSTNAME=1
 
-REFRAME_COMMAND="./bin/reframe -C ../cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c ../cscs-reframe-tests/checks/uenv/ -r --system=${RFM_SYSTEM}"
+REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c cscs-reframe-tests/checks/uenv/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
+
+deactivate
