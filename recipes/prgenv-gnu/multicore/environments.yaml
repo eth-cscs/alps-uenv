@@ -8,9 +8,13 @@ gcc-env:
   unify: true
   specs:
   - cmake
+  - fftw
+  - fmt
+  - hdf5
   - ninja@1.11
-  - osu-micro-benchmarks@5.9
   - python@3.11
+  - py-pybind11
+  - osu-micro-benchmarks@5.9
   variants:
   - +mpi
   views:
