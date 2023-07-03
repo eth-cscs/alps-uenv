@@ -14,7 +14,7 @@ gcc-env:
   - hdf5
   - ninja@1.11
   - python@3.11
-  - pybind11
+  - py-pybind11
   - osu-micro-benchmarks@5.9
   variants:
   - +mpi
