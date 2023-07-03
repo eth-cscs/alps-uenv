@@ -8,7 +8,7 @@ gcc-env:
   unify: true
   specs:
   - cmake
-  - cuda@3.11
+  - cuda@11.8
   - fftw
   - fmt
   - hdf5
