@@ -19,6 +19,6 @@ gcc-env:
   variants:
   - +mpi
   - +cuda
-  - +cuda_arch=80
+  - cuda_arch=80
   views:
     default:
