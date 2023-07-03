@@ -1,13 +1,23 @@
 include: '/ci/common.yml'
 
-build-a100:
+build-hohgant:
   extends: .stack-build-hohgant-a100
   variables:
     STACK_NAME: pytorch
     STACK_RECIPE: recipes/pytorch/a100
 
-test-a100:
+test-hohgant:
   extends: .run-reframe-hohgant-a100
   variables:
     STACK_NAME: pytorch
 
+build-clariden:
+  extends: .stack-build-clariden-a100
+  variables:
+    STACK_NAME: pytorch
+    STACK_RECIPE: recipes/pytorch/a100
+
+test-clariden:
+  extends: .run-reframe-clariden-a100
+  variables:
+    STACK_NAME: pytorch

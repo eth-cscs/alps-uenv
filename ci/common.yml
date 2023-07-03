@@ -46,10 +46,6 @@ stages:
   extends: .stack-build-hohgant
   variables:
     SLURM_PARTITION: nvgpu
-.stack-build-hohgant-mi200:
-  extends: .stack-build-hohgant
-  variables:
-    SLURM_PARTITION: amdgpu
 
 .run-reframe-hohgant:
   extends: .run-reframe
@@ -64,10 +60,6 @@ stages:
   extends: .run-reframe-hohgant
   variables:
     SLURM_PARTITION: nvgpu
-.run-reframe-hohgant-mi200:
-  extends: .run-reframe-hohgant
-  variables:
-    SLURM_PARTITION: amdgpu
 
 #
 # CLARIDEN
