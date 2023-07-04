@@ -147,7 +147,7 @@ source_path="${build_path}/store.squashfs"
 # `curl -v` will print on stderr all headers received back, i.e. also something like the string "< HTTP/2 200",
 # which we match. However it is on stderr, while output is on stdout, therefore we exchange the two and grep then
 # for the status code, which fails if 2XX cannot be found
-curl_opts="-v --retry 10 --retry-connrefused --silent --fail"
+curl_opts="-v --retry 10 --retry-connrefused --silent"
 log "pushing image '${source_path}' to '${destination_path}'"
 # note: use retry, because pushing to JFrog was not 100% reliable during development of this script.
 curl ${curl_opts} -u "${creds_short}b" -X PUT "${destination_path}" -T "${source_path}" 3>&1 1>&2 2>&3 | egrep -q '^< HTTP.*2[0-9]{2}[[:space:]]*$'
