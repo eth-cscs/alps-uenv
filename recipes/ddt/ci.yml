@@ -1,0 +1,10 @@
+include: '/ci/common.yml'
+
+build-ddt:
+  extends: .stack-build-hohgant
+  variables:
+    STACK_NAME: ddt
+    STACK_RECIPE: recipes/ddt
+
+# TODO: test
+

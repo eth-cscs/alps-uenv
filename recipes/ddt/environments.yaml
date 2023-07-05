@@ -1,0 +1,14 @@
+gcc-env:
+  compiler:
+     - toolchain: gcc
+       spec: gcc@11
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - ddt
+  variants:
+  - +mpi
+  views:
+    default:
