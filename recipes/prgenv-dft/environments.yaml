@@ -45,6 +45,8 @@ gcc-env:
   - tar
   - libxml2
   - gettext
+  views:
+    default:
 
 nvhpc-env:
   compiler:
@@ -68,3 +70,5 @@ nvhpc-env:
   packages:
   - perl
   - git
+  views:
+    default:
