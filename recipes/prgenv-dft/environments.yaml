@@ -46,7 +46,7 @@ gcc-env:
   - libxml2
   - gettext
   views:
-    default:
+    gcc-env:
 
 nvhpc-env:
   compiler:
@@ -62,6 +62,7 @@ nvhpc-env:
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8%gcc
   - patchelf%gcc
+  - openblas%gcc threads=openmp
     #  - quantum-espresso %nvhpc +libxc +cuda ^openblas ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
   variants:
   - +mpi
@@ -71,4 +72,4 @@ nvhpc-env:
   - perl
   - git
   views:
-    default:
+    nvhpc-env:
