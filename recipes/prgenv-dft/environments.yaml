@@ -18,7 +18,7 @@ gcc-env:
   - py-pyyaml
   - py-scipy
   - py-voluptuous
-  - openblas
+  - openblas threads=openmp
   - libxc@5.2.3~cuda
   - gsl
   - hdf5
