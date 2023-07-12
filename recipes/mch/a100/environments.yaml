@@ -4,10 +4,14 @@ tools:
       spec: gcc@11.3
   unify: when_possible
   specs:
-  - cmake
+  - ccache
+  - cmake@3.24
   - python@3.7
   - python@3.10
   - libtree
+  - meson
+  - ninja
+  - tmux
   - tree
   - ruby@3.1.0
   - r@4.0.5
@@ -34,7 +38,7 @@ prgenv-nvidia:
   - automake
   specs:
   - osu-micro-benchmarks@5.9%nvhpc
-  - cuda@11.8%gcc
+  - cuda@11.8
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - eccodes@2.19.1%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - netcdf-c@4.8.1%nvhpc
@@ -73,7 +77,7 @@ prgenv-gcc:
   unify: when_possible
   mpi:
     spec: cray-mpich@8.1.25
-    gpu: null
+    gpu: cuda
   packages:
   - perl
   - curl
