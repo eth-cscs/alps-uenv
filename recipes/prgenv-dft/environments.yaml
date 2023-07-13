@@ -64,7 +64,7 @@ nvhpc-env:
   - cuda@11.8%gcc
   - patchelf%gcc
   - openblas%gcc threads=openmp
-    #  - quantum-espresso %nvhpc +libxc +cuda ^openblas ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
+  - quantum-espresso %nvhpc +libxc +cuda ^openblas threads=openmp ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
   variants:
   - +mpi
   - +cuda
