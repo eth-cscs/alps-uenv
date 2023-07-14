@@ -51,7 +51,7 @@ gcc-env:
 nvhpc-env:
   compiler:
       - toolchain: llvm
-        spec: nvhpc@23.1
+        spec: nvhpc@22.5
       - toolchain: gcc
         spec: gcc@11
   mpi:
