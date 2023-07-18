@@ -2,7 +2,12 @@ gcc-env:
   compiler:
     - toolchain: gcc
       spec: gcc@11
+  mpi:
   unify: true
+  specs:
+  variants:
+  packages:
+  views:
 
 nvhpc-env:
   compiler:
@@ -39,4 +44,4 @@ nvhpc-env:
   - libxml2
   - gettext
   views:
-    nvhpc-env:
+    default:
