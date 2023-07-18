@@ -9,7 +9,9 @@ nvhpc-env:
     gpu: Null
   unify: true
   specs:
+  - git%gcc
   - cmake%gcc
+  - gmake%gcc
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8
   - patchelf%gcc
