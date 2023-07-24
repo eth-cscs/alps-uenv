@@ -1,7 +1,7 @@
 nvhpc-env:
   compiler:
     - toolchain: llvm
-      spec: nvhpc@23.1
+      spec: nvhpc@22.5
     - toolchain: gcc
       spec: gcc@11
   mpi:
@@ -15,7 +15,7 @@ nvhpc-env:
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8
   - patchelf%gcc
-  - quantum-espresso@7.1 %nvhpc +libxc +cuda ^openblas threads=openmp ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
+  - quantum-espresso@7.2 %nvhpc +libxc +cuda ^openblas threads=openmp ^cray-mpich ^libxc@5.2.3%nvhpc~cuda
   variants:
   - +mpi
   - +cuda
