@@ -1,0 +1,13 @@
+include: '/ci/common.yml'
+
+build-mch:
+  extends: .stack-build-hohgant-a100
+  variables:
+    STACK_NAME: mch
+    STACK_RECIPE: recipes/mch/a100
+
+test-mch:
+  extends: .run-reframe-hohgant-a100
+  variables:
+    STACK_NAME: mch
+

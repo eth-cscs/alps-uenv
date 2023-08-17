@@ -1,0 +1,110 @@
+tools:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@11.3
+  unify: when_possible
+  specs:
+  - ccache
+  - cmake@3.24
+  - python@3.7
+  - python@3.10
+  - libtree
+  - meson
+  - ninja
+  - tmux
+  - tree
+  - ruby@3.1.0
+  - r@4.0.5
+  packages:
+  - perl
+  views:
+    tools:
+      exclude: ['python@3.7']
+prgenv-nvidia:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@11.3
+    - toolchain: llvm
+      spec: nvhpc
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.18.4
+    gpu: cuda
+  packages:
+  - perl
+  - curl
+  - gmake
+  - autoconf
+  - automake
+  specs:
+  - osu-micro-benchmarks@5.9%nvhpc
+  - cuda@11.8
+  - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
+  - eccodes@2.19.1%nvhpc +tools +fortran +aec +openmp jp2k=jasper
+  - netcdf-c@4.8.1%nvhpc
+  - netcdf-fortran@4.5.4%nvhpc
+  - hdf5@1.12.2%nvhpc +szip +hl +fortran +mpi
+  - openblas@0.3.21%nvhpc
+  - libfyaml@0.7.12%nvhpc
+  # Explicitly concretise the packages below with gcc as they shouldn't be
+  # built with nvhpc.
+  - ca-certificates-mozilla%gcc
+  - jasper%gcc
+  - libaec%gcc
+  - libiconv%gcc
+  - libjpeg-turbo%gcc
+  - libtool%gcc
+  - libxml2%gcc
+  - m4%gcc
+  - nasm%gcc
+  - ncurses%gcc
+  - openssl%gcc
+  - patchelf%gcc
+  - pkgconf%gcc
+  - xz%gcc
+  - zlib%gcc
+  - nco@5.0.1%gcc
+  - cdo@2.0.5%gcc
+  variants:
+  - cuda_arch=80
+  - +mpi
+  - +cuda
+  views:
+    prgenv-icon:
+      exclude: ['eccodes@2.19.1']
+prgenv-gcc:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@11.3
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.18.4
+    gpu: cuda
+  packages:
+  - perl
+  - curl
+  specs:
+  - cuda@11.8
+  - osu-micro-benchmarks@5.9
+  - openblas@0.3.21
+  - libfyaml@0.7.12
+  - hdf5@1.12.2 +fortran +threadsafe ~mpi
+  - hdf5@1.12.2 +fortran +threadsafe +mpi
+  - netlib-scalapack@2.2.0
+  - eccodes@2.25.0 +tools +fortran +aec +openmp jp2k=jasper
+  - eccodes@2.19.1 +tools +fortran +aec +openmp jp2k=jasper
+  - netcdf-c@4.8.1+mpi ^hdf5+mpi api=v18
+  - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
+  - netcdf-fortran@4.5.4 ^netcdf-c+mpi
+  - netcdf-fortran@4.5.4 ^netcdf-c~mpi
+  variants:
+  - cuda_arch=80
+  - +mpi
+  - +cuda
+  views:
+    prgenv-gcc-serial:
+      exclude:
+      - hdf5+mpi
+      - netcdf-c+mpi
+      - netcdf-fortran ^netcdf-c+mpi
+      - eccodes@2.25.0

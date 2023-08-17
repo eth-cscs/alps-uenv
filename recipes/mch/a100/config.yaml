@@ -1,0 +1,6 @@
+name: mch-balfrin
+store: /user-environment
+spack:
+  commit: releases/v0.19
+  repo: https://github.com/spack/spack.git
+description: The compiler toolchains, libraries and tools required for the MCH production software stack.
