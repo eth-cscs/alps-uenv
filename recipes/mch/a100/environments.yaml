@@ -46,7 +46,8 @@ prgenv-nvidia:
   - hdf5@1.12.2%nvhpc +szip +hl +fortran +mpi
   - openblas@0.3.21%nvhpc
   - libfyaml@0.7.12%nvhpc
-  # these are explicitly concretised with gcc
+  # Explicitly concretise the packages below with gcc as they shouldn't be
+  # built with nvhpc.
   - ca-certificates-mozilla%gcc
   - jasper%gcc
   - libaec%gcc
@@ -77,7 +78,7 @@ prgenv-gcc:
       spec: gcc@11.3
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.25
+    spec: cray-mpich@8.1.18.4
     gpu: cuda
   packages:
   - perl
