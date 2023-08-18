@@ -1,0 +1,10 @@
+packages:
+  all:
+    providers:  
+      gl: [egl]
+  egl:
+    externals:
+    - spec: egl@1.0.0
+      prefix: /usr
+    buildable: false
+
