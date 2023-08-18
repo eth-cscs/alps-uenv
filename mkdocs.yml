@@ -1,0 +1,27 @@
+site_name: alps-uenv
+nav:
+  - Home: index.md
+  - 'Environments':
+    - 'gromacs': uenv-gromacs.md
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.tabs
+  palette:
+    primary: deep orange
+    accent: deep orange
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - tables
+  - toc:
+      permalink: true
+extra_css:
+  - stylesheets/extra.css
+repo_url: https://github.com/eth-cscs/alps-uenv
