@@ -8,7 +8,5 @@ gcc-env:
   unify: true
   specs:
   - ddt
-  variants:
-  - +mpi
   views:
     default:
