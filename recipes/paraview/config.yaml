@@ -1,14 +1,11 @@
-name: jb-dev
+name: paraview-jb-dev
 store: /user-environment
-system: hohgant
+description: ParaView visualization tool
 
 spack:
-    repo: /home/biddisco/opt/spack.git
-    commit: paraview-egl
+  commit: releases/v0.19
+  repo: https://github.com/spack/spack.git
 
 mirror:
   enable: true
   key: /tmp/gpg-spack-paraview
-
-modules: false
-
