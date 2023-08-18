@@ -3,7 +3,7 @@ store: /user-environment
 system: hohgant
 
 spack:
-    repo: /scratch/e1000/biddisco/spack-hohgant
+    repo: /home/biddisco/opt/spack.git
     commit: paraview-egl
 
 mirror:

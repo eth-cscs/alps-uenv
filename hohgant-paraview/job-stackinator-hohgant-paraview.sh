@@ -8,18 +8,22 @@
 #SBATCH --output=/users/biddisco/stackinator-output.txt
 #SBATCH --error=/users/biddisco/stackinator-error.txt
 
-export LC_ALL=en_US.UTF-8
 unalias cp
 
 echo "Setup build dir"
 BUILD_DIR=/dev/shm/biddisco
-# rm -rf ${BUILD_DIR}/*
+STACKINATOR_DIR=$HOME/stackinator
+STACK_DIR=$HOME/alps-spack-stacks/hohgant-paraview
+
+# STACKINATOR_DIR=/home/biddisco/src/stackinator/
+# STACK_DIR=/home/biddisco/src/alps-spack-stacks/hohgant-paraview/
+
+rm -rf   ${BUILD_DIR}/*
 mkdir -p ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/tmp
 
 echo "Execute stackinator"
-cd $HOME/stackinator
-./bin/stack-config -b ${BUILD_DIR} -r $HOME/alps-spack-stacks/hohgant-paraview --debug
+$STACKINATOR_DIR/bin/stack-config -b ${BUILD_DIR} -r $STACK_DIR --debug
 
 echo "Trigger build"
 cd ${BUILD_DIR}

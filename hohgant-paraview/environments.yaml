@@ -39,6 +39,8 @@ gcc-osmesa:
   - cmake
   - ninja
   - python
+  - mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
+  - vtk +osmesa ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
   - paraview@5.11+osmesa~cuda+mpi+opengl2+tbb+ospray+python use_vtkm=default build_edition=rendering ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
   packages:
   - perl
