@@ -8,9 +8,9 @@
 #SBATCH --output=/users/biddisco/stackinator-output.txt
 #SBATCH --error=/users/biddisco/stackinator-error.txt
 
-CLUSTER=clariden
+CLUSTER=oryx
 STACKI_DIR=$SRC/alps-vcluster/stackinator
-RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/a100
+RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/turing
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/$CLUSTER
 BUILD_DIR=/dev/shm/biddisco
 
