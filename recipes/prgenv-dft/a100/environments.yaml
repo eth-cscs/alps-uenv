@@ -15,7 +15,7 @@ nvhpc-env:
   - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8
   - patchelf%gcc
-  - quantum-espresso@7.2 %nvhpc +libxc +cuda ~scalapack ^openblas threads=openmp ^libxc
+  - quantum-espresso@7.1 %nvhpc +libxc +cuda ~scalapack ^openblas threads=openmp ^libxc
   variants:
   - +mpi
   - +cuda
