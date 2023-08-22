@@ -1,7 +1,7 @@
 nvhpc-env:
   compiler:
     - toolchain: llvm
-      spec: nvhpc@22.5
+      spec: nvhpc@22.11
     - toolchain: gcc
       spec: gcc@11
   mpi:
