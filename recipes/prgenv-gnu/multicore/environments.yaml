@@ -15,7 +15,7 @@ gcc-env:
   - openblas
   - python@3.11
   - py-pybind11
-  - osu-micro-benchmarks@5.9
+  - osu-micro-benchmarks@7.2
   variants:
   - +mpi
   views:
