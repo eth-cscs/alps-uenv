@@ -8,6 +8,7 @@
 #SBATCH --output=/users/biddisco/stackinator-output.txt
 #SBATCH --error=/users/biddisco/stackinator-error.txt
 
+SRC=/users/biddisco/src
 CLUSTER=clariden
 STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/a100
@@ -20,7 +21,10 @@ mkdir -p ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/tmp
 
 echo "Execute stackinator"
-$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug 
+$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug
+
+# if using develop branch of spack, add --develop
+#$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop 
 
 # build the squashfs image - bubblewrap is used inside the makefile
 echo "Trigger build"
