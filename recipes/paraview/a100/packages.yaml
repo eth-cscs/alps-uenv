@@ -1,6 +1,6 @@
 packages:
   all:
-    providers:  
+    providers:
       gl: [egl]
   egl:
     externals:
