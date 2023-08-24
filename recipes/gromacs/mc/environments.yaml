@@ -1,0 +1,30 @@
+gromacs:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11
+  mpi:
+      spec: cray-mpich
+      gpu: null
+  unify: when_possible
+  specs:
+  - cmake
+  - gromacs@2023.1 +blas +lapack +hwloc
+  - gromacs@2022.5 +plumed +blas +lapack +hwloc
+  - hwloc
+  - fftw
+  - openblas
+  - python@3.10
+  variants:
+  - +mpi
+  views:
+    develop:
+      exclude: ['gromacs']
+    gromacs:
+      exclude: ['gromacs+plumed']
+      link: run
+    plumed:
+      exclude: ['gromacs@2023.1']
+      link: run
+  packages:
+  - perl
+
