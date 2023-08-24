@@ -1,0 +1,38 @@
+nvhpc-env:
+  compiler:
+    - toolchain: llvm
+      spec: nvhpc@22.11
+    - toolchain: gcc
+      spec: gcc@11
+  mpi:
+    spec: cray-mpich
+    gpu: Null
+  unify: true
+  specs:
+  - git%gcc
+  - cmake%gcc
+  - gmake%gcc
+  - libxc@5.2.3%nvhpc~cuda
+  - cuda@11.8
+  - patchelf%gcc
+  - quantum-espresso@7.1 %nvhpc +libxc +cuda ~scalapack ^openblas threads=openmp ^libxc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=80
+  packages:
+  - perl
+  - git
+  - pkgconf
+  - readline
+  - ncurses
+  - patchelf
+  - diffutils
+  - libiconv
+  - openssl
+  - sqlite
+  - tar
+  - libxml2
+  - gettext
+  views:
+    default:
