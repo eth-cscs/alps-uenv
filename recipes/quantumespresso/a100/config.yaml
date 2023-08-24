@@ -4,5 +4,3 @@ description: QuantumESPRESSO application and dependencies.
 spack:
   repo: https://github.com/spack/spack.git
   commit: v0.20.1
-  #mirror:
-  #  enable: false

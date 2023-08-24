@@ -6,10 +6,16 @@ nvhpc-env:
       spec: gcc@11
   mpi:
     spec: cray-mpich
-    gpu: Null
+    gpu: null
   unify: true
   specs:
-  - git%gcc
+  # TODO: don't we pick up the system git?
+  # if not, look at adding a packages.yaml file to the recipe
+  #- git%gcc
+  # TODO: are there any other dependencies that we want to
+  # explicitly list here so that:
+  #   - modules are generated for developers who use modules
+  #   - we can have stricter control over versions
   - cmake%gcc
   - gmake%gcc
   - libxc@5.2.3%nvhpc~cuda
@@ -26,7 +32,6 @@ nvhpc-env:
   - pkgconf
   - readline
   - ncurses
-  - patchelf
   - diffutils
   - libiconv
   - openssl
@@ -36,3 +41,5 @@ nvhpc-env:
   - gettext
   views:
     default:
+    develop:
+      exclude: ['quantum-espresso']
