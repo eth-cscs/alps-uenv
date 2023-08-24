@@ -9,24 +9,20 @@ nvhpc-env:
     gpu: null
   unify: true
   specs:
-  # TODO: don't we pick up the system git?
-  # if not, look at adding a packages.yaml file to the recipe
-  #- git%gcc
-  # TODO: are there any other dependencies that we want to
-  # explicitly list here so that:
-  #   - modules are generated for developers who use modules
-  #   - we can have stricter control over versions
   - cmake%gcc
-  - gmake%gcc
-  - libxc@5.2.3%nvhpc~cuda
   - cuda@11.8
-  - patchelf%gcc
+  - fftw
+  - openblas
+  - libxc@5.2.3%nvhpc~cuda
   - quantum-espresso@7.1 %nvhpc +libxc +cuda ~scalapack ^openblas threads=openmp ^libxc
+  - patchelf%gcc
   variants:
   - +mpi
   - +cuda
   - cuda_arch=80
   packages:
+  - gmake
+  - m4
   - perl
   - git
   - pkgconf
