@@ -1,6 +1,5 @@
 from spack.package import *
 
-
 class Ddt(Package):
     """Linaro Forge DDT Debugger"""
     homepage = "https://www.linaroforge.com/downloadForge/"

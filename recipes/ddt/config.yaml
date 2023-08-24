@@ -1,7 +1,0 @@
-name: ddt
-spack:
-  commit: v0.20.0
-  repo: https://github.com/spack/spack.git
-store: /user-environment
-description: DDT Debugger
-

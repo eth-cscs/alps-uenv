@@ -1,0 +1,7 @@
+name: ddt
+store: /user-environment
+description: DDT Debugger for x86 nodes - can be used with and without GPUs.
+spack:
+  commit: releases/v0.20
+  repo: https://github.com/spack/spack.git
+

@@ -1,10 +1,10 @@
 include: '/ci/common.yml'
 
-build-ddt:
-  extends: .stack-build-hohgant
+build-ddt-x86:
+  extends: .stack-build-hohgant-a100
   variables:
     STACK_NAME: ddt
-    STACK_RECIPE: recipes/ddt
+    STACK_RECIPE: recipes/ddt/x86
 
 # TODO: test
 
