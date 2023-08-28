@@ -5,3 +5,9 @@ build-a100:
   variables:
     STACK_NAME: quantumespresso
     STACK_RECIPE: recipes/quantumespresso/a100
+
+build-cpu:
+  extends: .stack-build-hohgant-cpu
+  variables:
+    STACK_NAME: quantumespresso
+    STACK_RECIPE: recipes/quantumespresso/zen2
