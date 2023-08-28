@@ -8,7 +8,6 @@ nvhpc-env:
   unify: true
   specs:
   - cmake
-  - cuda@11.8
   - fftw
   - openblas
   - libxc@5.2.3
