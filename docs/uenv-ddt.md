@@ -47,7 +47,7 @@ and setup the connection:
       # here we tell the client to use the ddt installed in the uenv image
     - Remote Script:
     - Private Key: /Users/piccinal/.ssh/cscs-key
-      # replace piccinal with your laptop username
+      # replace /Users/piccinal with your laptop username
     - Proxy through login node: yes (check the box)
 ```
 
@@ -103,7 +103,7 @@ Given the unusual way of loading the uenv, the DDT client must be launched in `M
 ```
 - open the 'Manual Launch' menu and
 - set the fields, for example:
-    - Number of processes: 
+    - Number of processes: 12
     - CUDA: yes (check the box for gpu exeutables)
     - Memory Debugging: yes (check the box for memory debugging)
 ```
