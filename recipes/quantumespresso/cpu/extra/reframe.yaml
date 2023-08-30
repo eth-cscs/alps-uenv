@@ -1,8 +1,5 @@
 default:
-  features:
-    - mpi
-    - quantum-espresso
-    - serial
+  features: [quantum-espresso]
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
