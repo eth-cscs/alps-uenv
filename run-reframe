@@ -60,7 +60,7 @@ curl --fail --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 [[ $? -eq 0  ]] || err "failed to download image"
 
 log "Downloading ReFrame metadata ${rfm_meta_url} to ${artifact_path}/${name}.yaml"
-curl --fail --retry 5 -o "${rfm_meta_url}" "${artifact_path}/${name}.yaml"
+curl --fail --retry 5 -o "${artifact_path}/${name}.yaml" "${rfm_meta_url}"
 [[ $? -eq 0  ]] || err "failed to download ReFrame metadata"
 
 log "Using artifacts in $artifact_path"
