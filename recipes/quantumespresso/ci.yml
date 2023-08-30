@@ -10,4 +10,9 @@ build-cpu:
   extends: .stack-build-hohgant-cpu
   variables:
     STACK_NAME: quantumespresso
-    STACK_RECIPE: recipes/quantumespresso/zen2
+    STACK_RECIPE: recipes/quantumespresso/cpu
+
+test-cpu:
+  extends: .run-reframe-hohgant-cpu
+  variables:
+    STACK_NAME: quantumespresso
