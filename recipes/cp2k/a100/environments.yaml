@@ -62,3 +62,6 @@ tools:
   - pkgconfig
   - python@3.10
   - py-numpy
+  views:
+    tools:
+      exclude: [""]
