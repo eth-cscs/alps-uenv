@@ -18,9 +18,9 @@ cp2k-nvgpu:
     - cuda_arch=80
     - build_type=Release
   views:
-    dev:
+    cp2k-scalapack-dev:
       exclude: ["cp2k"]
-    scalapack:
+    cp2k-scalapack:
       exclude: [""]
   mpi:
     spec: cray-mpich
@@ -45,9 +45,9 @@ cp2k-nvgpu-elpa:
     - cuda_arch=80
     - build_type=Release
   views:
-    dev-elpa:
+    cp2k-elpa-dev:
       exclude: ["cp2k"]
-    elpa:
+    cp2k-elpa:
       exclude: [""]
   mpi:
     spec: cray-mpich
