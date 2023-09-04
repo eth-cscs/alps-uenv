@@ -26,9 +26,9 @@ stages:
   artifacts:
     when: always
     paths:
-    - reframe/report.xml
+    - report.xml
     reports:
-      junit: reframe/report.xml
+      junit: report.xml
 
 .stack-build-hohgant:
   extends: .stack-build
