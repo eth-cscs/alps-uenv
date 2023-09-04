@@ -5,3 +5,7 @@ cache.yaml
 
 # vim temp files
 .*.sw[pnoq]
+
+# documentation working files
+site
+env
