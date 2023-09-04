@@ -15,7 +15,7 @@ The following environment views are provided:
 
 ### Using modules
 
-To build your version of QE do the following steps:
+To build your version of CP2K do the following steps:
 
 ```bash
 # Load the required modules
