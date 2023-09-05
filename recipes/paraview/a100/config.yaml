@@ -3,6 +3,6 @@ store: /user-environment
 description: ParaView visualization tool
 
 spack:
-  repo: https://github.com/spack/spack.git
-  commit: v0.20.0
+  repo: https://github.com/biddisco/spack.git
+  commit: paraview-EGL
 

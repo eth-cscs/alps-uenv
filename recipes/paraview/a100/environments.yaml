@@ -8,18 +8,15 @@ gcc-nvgpu:
   unify: true
   specs:
   - cmake
-  - ninja@1.11.1%gcc@11.3.0+re2c build_system=generic arch=linux-sles15-zen3
-  - python@3.10.10%gcc@11.3.0+bz2+crypt+ctypes+dbm~debug+libxml2+lzma~nis~optimizations+pic+pyexpat+pythoncmd+readline+shared+sqlite3+ssl~tkinter+uuid+zlib build_system=generic patches=0d98e93,7d40923,f2fd060 arch=linux-sles15-zen3
-  - llvm@15.0.7%gcc@=11.3.0+clang+compiler-rt+cuda~flang~gold+internal_unwind~ipo+libcxx~link_llvm_dylib+lld+lldb+llvm_dylib~mlir+omp_as_runtime~omp_debug~omp_tsan+polly~python~split_dwarf~z3~zstd build_system=cmake build_type=Release cuda_arch=80 generator=ninja patches=3dc9bc1 shlib_symbol_version=none targets=none version_suffix=none arch=linux-sles15-zen3
-    #  - ispc@1.16.1%gcc@11.3.0~ipo build_system=cmake build_type=Release generator=make arch=linux-sles15-zen3
+  - ninja
+  - python
+  - py-pandas
+  - py-matplotlib
+  - llvm
   - tbb
-  - ispc@main ~ipo build_system=cmake build_type=Release generator=make arch=linux-sles15-zen3
     #  - ospray
-    #  - python
-    #  - py-pandas
-    #  - py-matplotlib@3.7.1
-    #  - ospray
-    #  - paraview@master +egl +cuda +mpi +hdf5 +opengl2 +tbb +ospray +python use_vtkm=on build_edition=rendering
+    #  We turn off hdf5 because vtk::hdf5 needs the internal hdf5 not the external one
+  - paraview@5.11 +egl +cuda +mpi ~hdf5 +opengl2 +tbb ~ospray +python use_vtkm=on build_edition=rendering
   packages:
   - git
   - perl
