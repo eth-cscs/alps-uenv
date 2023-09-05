@@ -112,7 +112,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         ' "default" lets the build_edition make the decision.'
         ' "on" or "off" will always override the build_edition.',
     )
-    variant("ospray", default=False, description="Enable raytracing using osrpray library")
 
     conflicts("~hdf5", when="+visitbridge")
     conflicts("+adios2", when="@:5.10 ~mpi")
@@ -140,9 +139,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         when="%xl_r",
         msg="Use paraview@5.9.0 with %xl_r. Earlier versions are not able to build with xl.",
     )
-
-    # Newer abseil-cpp requires C++14, but paraview uses C++11 by default
-    conflicts("^abseil-cpp@2023:")
 
     # We only support one single Architecture
     for _arch, _other_arch in itertools.permutations(CudaPackage.cuda_arch_values, 2):
@@ -233,10 +229,13 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("protobuf@3.4:3.18", when="@:5.10%intel@2021:")
     depends_on("protobuf@3.4:3.18", when="@:5.10%xl")
     depends_on("protobuf@3.4:3.18", when="@:5.10%xl_r")
+    # protobuf requires newer abseil-cpp, which in turn requires C++14,
+    # but paraview uses C++11 by default
+    depends_on("protobuf@3.4:3.21", when="@:5.11")
     depends_on("libxml2")
     depends_on("lz4")
     depends_on("xz")
-    depends_on("zlib")
+    depends_on("zlib-api")
     depends_on("libcatalyst@2:", when="+libcatalyst")
     depends_on("hip@5.2:", when="+rocm")
     for target in ROCmPackage.amdgpu_targets:
@@ -259,10 +258,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("nlohmann-json", when="@5.11:")
 
     # ParaView depends on proj@8.1.0 due to changes in MR
+    # v8.1.0 is required for VTK::GeoVis
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/8474
-    depends_on("proj@9: +curl", when="@5.11:")
-
-    depends_on("ospray@2.8:", when="+ospray")
+    depends_on("proj@8.1.0", when="@5.11:")
 
     patch("stl-reader-pv440.patch", when="@4.4.0")
 
@@ -434,15 +432,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             "-DVTK_USE_X:BOOL=%s" % use_x11(),
             "-DPARAVIEW_INSTALL_DEVELOPMENT_FILES:BOOL=%s" % includes,
             "-DBUILD_TESTING:BOOL=OFF",
-            "-DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX:BOOL=ON",
+            "-DOpenGL_GL_PREFERENCE:STRING=LEGACY",
             self.define_from_variant("PARAVIEW_ENABLE_VISITBRIDGE", "visitbridge"),
             self.define_from_variant("VISIT_BUILD_READER_Silo", "visitbridge"),
         ]
-
-        if "+ospray" in spec:
-            cmake_args.extend(
-                ["-DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON", "-DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON"]
-            )
 
         if "+egl" in spec:
             cmake_args.append("-DVTK_OPENGL_HAS_EGL:BOOL=ON")
@@ -470,7 +463,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                         "-DPARAVIEW_BUILD_EDITION:STRING=%s"
                         % spec.variants["build_edition"].value.upper(),
                         "-DPARAVIEW_USE_QT:BOOL=%s" % variant_bool("+qt"),
-                        "-DPARAVIEW_BUILD_WITH_EXTERNAL=OFF",
+                        "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
                     ]
                 )
                 if spec.satisfies("%cce"):
