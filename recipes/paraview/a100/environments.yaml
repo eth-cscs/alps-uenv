@@ -16,7 +16,7 @@ gcc-nvgpu:
   - tbb
     #  - ospray
     #  We turn off hdf5 because vtk::hdf5 needs the internal hdf5 not the external one
-  - paraview@5.11 +egl +cuda +mpi ~hdf5 +opengl2 +tbb ~ospray +python use_vtkm=on build_edition=rendering
+  - paraview@5.11 +egl +cuda +mpi ~hdf5 +opengl2 +tbb ~raytracing +python use_vtkm=on build_edition=rendering
   packages:
   - git
   - perl
@@ -42,7 +42,7 @@ gcc-nvgpu:
     #  - python
     #  - mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
     #  - vtk +osmesa ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
-    #  - paraview@5.11+osmesa~cuda+mpi+opengl2+tbb+ospray+python use_vtkm=default build_edition=rendering ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
+    #  - paraview@5.11+osmesa~cuda+mpi+opengl2+tbb +raytracing +python use_vtkm=default build_edition=rendering ^mesa+glx+llvm+opengl+osmesa swr=avx2 default_library=shared
     #  packages:
     #  - git
     #  - perl
