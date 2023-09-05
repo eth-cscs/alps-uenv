@@ -8,6 +8,8 @@
 #SBATCH --output=/users/biddisco/stackinator-output.txt
 #SBATCH --error=/users/biddisco/stackinator-error.txt
 
+export PYTHONUNBUFFERED=1
+
 CLUSTER=oryx
 STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/turing

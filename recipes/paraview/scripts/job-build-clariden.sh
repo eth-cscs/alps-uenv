@@ -8,6 +8,8 @@
 #SBATCH --output=/users/biddisco/stackinator-output.txt
 #SBATCH --error=/users/biddisco/stackinator-error.txt
 
+export PYTHONUNBUFFERED=1
+
 SRC=/users/biddisco/src
 CLUSTER=clariden
 STACKI_DIR=$SRC/alps-vcluster/stackinator
@@ -31,8 +33,8 @@ echo "Trigger build"
 cd /dev/shm/biddisco
 env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make store.squashfs -j32
 
-echo "Copy generated squashfs file"
 DATE=$(date +%F)
+echo "Copy generated squashfs file to $SCRATCH/$CLUSTER-paraview-$DATE.squashfs"
 cp /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-paraview-$DATE.squashfs
 
 # -----------------------------------------
