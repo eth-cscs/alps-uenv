@@ -1,0 +1,19 @@
+# environments.yaml
+gcc-amdgpu:
+  views:
+    default:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11.3
+  unify: true
+  specs:
+  - cmake@3.24.4
+  - hip@5.3
+  - hipify-clang
+  - rocthrust amdgpu_target=gfx90a
+  - rocprim amdgpu_target=gfx90a
+  - hipcub amdgpu_target=gfx90a
+  - hdf5 +mpi
+  mpi:
+    spec: cray-mpich
+    gpu: rocm
