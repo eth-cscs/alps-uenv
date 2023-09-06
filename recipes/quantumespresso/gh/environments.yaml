@@ -1,0 +1,41 @@
+nvhpc-env:
+  compiler:
+    - toolchain: llvm
+      spec: nvhpc@23.7
+    - toolchain: gcc
+      spec: gcc@12
+  mpi:
+    spec: mpich
+    gpu: null
+  unify: true
+  specs:
+  - cmake%gcc
+  - cuda@12
+  - fftw%nvhpc
+  - openblas
+  - libxc@5.2.3%nvhpc~cuda
+  - quantum-espresso@7.1 %nvhpc +libxc +cuda ~scalapack ^openblas threads=openmp ^libxc
+  - patchelf%gcc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  packages:
+  - gmake
+  - m4
+  - perl
+  - git
+  - pkgconf
+  - readline
+  - ncurses
+  - diffutils
+  - libiconv
+  - openssl
+  - sqlite
+  - tar
+  - libxml2
+  - gettext
+  views:
+    default:
+    develop:
+      exclude: ['quantum-espresso']
