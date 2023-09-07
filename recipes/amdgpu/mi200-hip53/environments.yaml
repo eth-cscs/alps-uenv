@@ -10,10 +10,12 @@ gcc-amdgpu:
   - cmake@3.24.4
   - hip@5.3
   - hipify-clang
-  - rocthrust amdgpu_target=gfx90a
-  - rocprim amdgpu_target=gfx90a
-  - hipcub amdgpu_target=gfx90a
+  - rocthrust
+  - rocprim
+  - hipcub
   - hdf5 +mpi
+  variants:
+  - amdgpu_target=gfx90a
   mpi:
     spec: cray-mpich
     gpu: rocm

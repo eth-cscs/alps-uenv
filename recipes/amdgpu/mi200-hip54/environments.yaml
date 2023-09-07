@@ -14,6 +14,8 @@ gcc-amdgpu:
   - rocprim amdgpu_target=gfx90a
   - hipcub amdgpu_target=gfx90a
   - hdf5 +mpi
+  variants:
+  - amdgpu_target=gfx90a
   mpi:
     spec: cray-mpich
     gpu: rocm

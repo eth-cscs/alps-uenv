@@ -2,5 +2,5 @@ name: gcc-amdgpu
 store: /user-environment
 spack:
     repo: https://github.com/spack/spack.git
-    commit: v0.20.1
+    commit: releases/v0.20
 modules: True
