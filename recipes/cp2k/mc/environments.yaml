@@ -6,7 +6,6 @@ cp2k-mc-scalapack:
   specs:
   - intel-oneapi-mkl +cluster
   - fftw@3.3.10 +openmp
-  - hdf5@1.14.0 +fortran +hl +mpi
   - libxc
   - sirius@7.4.3 +fortran +scalapack
   - dbcsr@2.6.0 +shared +openmp ^intel-oneapi-mkl ^cray-mpich
@@ -33,7 +32,6 @@ cp2k-mc-elpa:
   specs:
   - intel-oneapi-mkl +cluster
   - fftw@3.3.10 +openmp
-  - hdf5@1.14.0 +fortran +hl +mpi
   - libxc
   - sirius@7.4.3 +fortran + scalapack +elpa
   - dbcsr@2.6.0 +shared +openmp ^intel-oneapi-mkl ^cray-mpich
