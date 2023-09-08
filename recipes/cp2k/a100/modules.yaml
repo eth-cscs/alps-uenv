@@ -1,0 +1,25 @@
+modules:
+  prefix_inspections:
+    bin:
+      - PATH
+    lib:
+      - LD_LIBRARY_PATH
+    lib64:
+      - LD_LIBRARY_PATH
+
+  default:
+    arch_folder: false
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      hash_length: 0
+      exclude_implicits: true
+      exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
+      projections:
+        all: '{name}/{version}'
+        cp2k~elpa: 'cp2k/{version}'
+        sirius~elpa: 'sirius/{version}'
+        cp2k+elpa: 'cp2k+elpa/{version}'
+        sirius+elpa: 'sirius+elpa/{version}'
