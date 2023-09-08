@@ -8,14 +8,18 @@ gcc-amdgpu:
   unify: true
   specs:
   - cmake@3.24.4
+  - hdf5
   - hip@5.3
   - hipify-clang
-  - rocthrust
-  - rocprim
   - hipcub
-  - hdf5 +mpi
+  - rocblas
+  - rocfft
+  - rocprim
+  - rocsolver
+  - rocthrust
   variants:
   - amdgpu_target=gfx90a
+  - +mpi
   mpi:
     spec: cray-mpich
     gpu: rocm
