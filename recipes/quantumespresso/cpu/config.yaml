@@ -1,6 +1,6 @@
 name: quantumespresso
 store: /user-environment
-description: QuantumESPRESSO application and dependencies.
+description: QuantumESPRESSSO application and dependencies for multicore nodes.
 spack:
   repo: https://github.com/spack/spack.git
   commit: v0.20.1
