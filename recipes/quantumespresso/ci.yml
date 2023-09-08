@@ -1,10 +1,10 @@
 include: '/ci/common.yml'
 
-#build-a100:
-#  extends: .stack-build-hohgant-a100
-#  variables:
-#    STACK_NAME: quantumespresso
-#    STACK_RECIPE: recipes/quantumespresso/a100
+build-a100:
+  extends: .stack-build-hohgant-a100
+  variables:
+    STACK_NAME: quantumespresso
+    STACK_RECIPE: recipes/quantumespresso/a100
 
 build-cpu:
   extends: .stack-build-hohgant-cpu
