@@ -54,13 +54,13 @@ repo_path="alps-uenv/build/${build_id}/${system}/${name}"
 artifact_path="$CI_PROJECT_DIR/artifacts"
 squashfs_path="${artifact_path}/${name}.squashfs"
 squashfs_url="${artifactory_url}/${repo_path}/store.squashfs"
-rfm_meta_url="${artifactory_url}/${repo_path}/meta/recipe/extra/reframe.yaml"
+rfm_meta_url="${artifactory_url}/${repo_path}/meta/extra/reframe.yaml"
 log "Downloading squashfs image ${squashfs_url} to ${squashfs_path}"
 curl --fail --retry 5 -o "${squashfs_path}" "${squashfs_url}"
 [[ $? -eq 0  ]] || err "failed to download image"
 
 log "Downloading ReFrame metadata ${rfm_meta_url} to ${artifact_path}/${name}.yaml"
-curl --fail --retry 5 -o "${rfm_meta_url}" "${artifact_path}/${name}.yaml"
+curl --fail --retry 5 -o "${artifact_path}/${name}.yaml" "${rfm_meta_url}"
 [[ $? -eq 0  ]] || err "failed to download ReFrame metadata"
 
 log "Using artifacts in $artifact_path"
@@ -77,9 +77,9 @@ rm -rf cscs-reframe-tests
 git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
 export UENV_FILE=${squashfs_path}
-export RFM_AUTODETECT_XTHOSTNAME=1
+export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
-REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c cscs-reframe-tests/uenv_checks/ -r --system=${RFM_SYSTEM}"
+REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
