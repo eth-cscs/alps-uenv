@@ -3,13 +3,13 @@ include: '/ci/common.yml'
 build-a100:
   extends: .stack-build-hohgant-a100
   variables:
-    STACK_NAME: quantumespresso
+    STACK_NAME: quantumespresso-a100
     STACK_RECIPE: recipes/quantumespresso/a100
 
 build-cpu:
   extends: .stack-build-hohgant-cpu
   variables:
-    STACK_NAME: quantumespresso
+    STACK_NAME: quantumespresso-cpu
     STACK_RECIPE: recipes/quantumespresso/cpu
 
 test-cpu:
