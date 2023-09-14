@@ -15,4 +15,9 @@ build-cpu:
 test-cpu:
   extends: .run-reframe-hohgant-cpu
   variables:
-    STACK_NAME: quantumespresso
+    STACK_NAME: quantumespresso-cpu
+
+test-cpu:
+  extends: .run-reframe-hohgant-a100
+  variables:
+    STACK_NAME: quantumespresso-a100
