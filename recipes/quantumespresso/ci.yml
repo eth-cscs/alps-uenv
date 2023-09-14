@@ -12,12 +12,13 @@ build-cpu:
     STACK_NAME: quantumespresso-cpu
     STACK_RECIPE: recipes/quantumespresso/cpu
 
+test-a100:
+  extends: .run-reframe-hohgant-a100
+  variables:
+    STACK_NAME: quantumespresso-a100
+
 test-cpu:
   extends: .run-reframe-hohgant-cpu
   variables:
     STACK_NAME: quantumespresso-cpu
 
-test-cpu:
-  extends: .run-reframe-hohgant-a100
-  variables:
-    STACK_NAME: quantumespresso-a100
