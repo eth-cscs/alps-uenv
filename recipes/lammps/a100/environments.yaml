@@ -9,12 +9,15 @@ lammps:
   specs:
   - cmake
   - cuda@11.8
-  - lammps@20230328 +cuda +blas +lapack +hwloc +fftw-api
-  - lammps@20230328 +plumed +cuda +blas +lapack +hwloc +fftw-api
+  - lammps@20230328 +cuda
+  - lammps@20230328 +plumed +cuda
   - hwloc
   - python@3.10
   - vtk
   - kokkos
+  - blas
+  - lapack
+  - fftw-api
   variants:
   - +mpi
   - +cuda
