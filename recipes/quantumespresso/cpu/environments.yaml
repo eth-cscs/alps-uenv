@@ -11,7 +11,7 @@ nvhpc-env:
   - fftw
   - openblas
   - libxc@5.2.3
-  - quantum-espresso@7.1 %gcc +libxc +scalapack ^openblas threads=openmp ^libxc
+  - quantum-espresso@7.1 %gcc +libxc +scalapack +openmp ^openblas threads=openmp ^libxc
   - patchelf
   variants:
   - +mpi
