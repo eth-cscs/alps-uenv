@@ -179,8 +179,6 @@ echo oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
 oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
 [[ $? -eq 0  ]] || err "failed logging into oras - can't push image to uenv registry"
 
-log "build-path  ${build_path}"
-
 rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:build
 
