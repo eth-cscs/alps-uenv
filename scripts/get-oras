@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+version=1.1.0
+download_root=https://github.com/oras-project/oras/releases/download
+file=oras_${version}_linux_amd64.tar.gz
+url=${download_root}/v${version}/${file}
+
+mkdir tmp-oras-dl;
+
+(cd tmp-oras-dl; wget "$url")
+(cd tmp-oras-dl; tar -xzvf $file)
+cp tmp-oras-dl/oras .
+rm -rf tmp-oras-dl

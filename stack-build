@@ -170,6 +170,11 @@ source_path="${build_path}/store.squashfs"
 # note: use retry, because pushing to JFrog was not 100% reliable during development of this script.
 #curl ${curl_opts} -u "${creds_short}" -X PUT "${destination_path}" -T "${source_path}" 3>&1 1>&2 2>&3 | egrep -q '^< HTTP.*2[0-9]{2}[[:space:]]*$'
 
+log "downloading oras"
+./scrpts/get-oras
+[[ $? -eq 0  ]] || err "unable to download oras"
+
+log "logging in to jfrog.svc.cscs.ch with oras"
 echo oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
 oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
 [[ $? -eq 0  ]] || err "failed logging into oras - can't push image to uenv registry"
@@ -179,7 +184,8 @@ log "build-path  ${build_path}"
 rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:build
 
-oras push ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.sqfs
+log "pushing store.squashfs to ${rego}/${repo}"
+oras push ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs
 [[ $? -eq 0  ]] || err "failed to push image"
 
 # push the metadata to jfrog

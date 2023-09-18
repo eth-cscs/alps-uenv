@@ -9,3 +9,6 @@ cache.yaml
 # documentation working files
 site
 env
+
+# oras binary, downloaded during build
+oras
