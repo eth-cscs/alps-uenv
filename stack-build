@@ -149,8 +149,6 @@ echo ==== ORAS credentials
 echo username: ${oras_u}
 echo password: ${oras_p}
 
-oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
-
 rego="https://jfrog.svc.cscs.ch/artifactory/uenv"
 artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
 repo_path="alps-uenv/build/${build_id}/${system}/${name}"
@@ -176,7 +174,7 @@ log "downloading oras"
 
 log "logging in to jfrog.svc.cscs.ch with oras"
 echo oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
-oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
+./oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
 [[ $? -eq 0  ]] || err "failed logging into oras - can't push image to uenv registry"
 
 rego=jfrog.svc.cscs.ch/uenv
