@@ -79,7 +79,7 @@ git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 export UENV_FILE=${squashfs_path}
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
-REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
+REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
