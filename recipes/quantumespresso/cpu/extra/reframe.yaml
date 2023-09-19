@@ -1,5 +1,5 @@
 default:
-  features: [quantum-espresso]
+  features: [quantum-espresso, mpi, openmp]
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
