@@ -133,14 +133,17 @@ oras_bin=$(realpath oras)
 [[ $? -eq 0  ]] || err "unable to download oras"
 
 log "logging in to jfrog.svc.cscs.ch with buildah 1"
+echo buildah login -u "${jfrog_u}" -p "${jfrog_p}" jfrog.svc.cscs.ch
 buildah login -u "${jfrog_u}" -p "${jfrog_p}" jfrog.svc.cscs.ch
 log "logging in to jfrog.svc.cscs.ch with buildah 2"
+echo buildah login ${buildah_creds} jfrog.svc.cscs.ch
 buildah login ${buildah_creds} jfrog.svc.cscs.ch
 [[ $? -eq 0  ]] || err "failed buildah login to JFrog"
 
 log "logging in to jfrog.svc.cscs.ch with oras"
-log "${oras_bin} login jfrog.svc.cscs.ch --username ${jfrog_u} --password-stdin"
-echo "${jfrog_p}" | ${oras_bin} login jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
+#log "${oras_bin} login jfrog.svc.cscs.ch --username ${jfrog_u} --password-stdin"
+#echo "${jfrog_p}" | ${oras_bin} login jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
+${oras_bin} login ${oras_creds} jfrog.svc.cscs.ch 
 [[ $? -eq 0  ]] || err "failed oras login to JFrog - can't push image to uenv registry"
 
 ##
