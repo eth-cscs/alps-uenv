@@ -1,13 +1,32 @@
 #!/usr/bin/env bash
 
-version=1.1.0
-download_root=https://github.com/oras-project/oras/releases/download
-file=oras_${version}_linux_amd64.tar.gz
-url=${download_root}/v${version}/${file}
+oras_version=1.1.0
+oras_file=oras_${oras_version}_linux_amd64.tar.gz
+oras_url=https://github.com/oras-project/oras/releases/download/v${oras_version}/${oras_file}
 
-mkdir tmp-oras-dl;
+log "download and install oras $oras_url"
 
-(cd tmp-oras-dl; wget --quiet "$url")
-(cd tmp-oras-dl; tar -xzvf $file)
-cp tmp-oras-dl/oras .
-rm -rf tmp-oras-dl
+oras_path=`mktemp -d`
+
+(cd "$oras_path"; wget --quiet "$oras_url"; tar -xzf $oras_file; rm *.tar.gz)
+
+export PATH="$oras_path:$PATH"
+log "oras v$v installed in ${oras_path}"
+
+# Obtain credentials for JFrog - required to push the image and meta-data
+creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+oras_creds="$(echo ${creds_json} | jq --join-output '"--username " + .container_registry.username + " --password " +.container_registry.password')"
+
+jfrog_u="$(echo ${creds_json} | jq -r '.container_registry.username')"
+jfrog_p="$(echo ${creds_json} | jq -r '.container_registry.password')"
+
+log "${jfrog_u} ${jfrog_p}"
+
+log "logging in to jfrog.svc.cscs.ch with oras"
+
+echo ${jfrog_p} | oras login jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
+[[ $? -eq 0  ]] || err "failed oras login 1 to JFrog - can't push image to uenv registry"
+
+oras login ${oras_creds} jfrog.svc.cscs.ch
+[[ $? -eq 0  ]] || err "failed oras login 2 to JFrog - can't push image to uenv registry"
+
