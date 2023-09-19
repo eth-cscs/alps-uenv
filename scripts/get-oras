@@ -7,7 +7,7 @@ url=${download_root}/v${version}/${file}
 
 mkdir tmp-oras-dl;
 
-(cd tmp-oras-dl; wget "$url")
+(cd tmp-oras-dl; wget --quiet "$url")
 (cd tmp-oras-dl; tar -xzvf $file)
 cp tmp-oras-dl/oras .
 rm -rf tmp-oras-dl

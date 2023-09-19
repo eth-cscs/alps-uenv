@@ -136,7 +136,7 @@ oras_bin=$(realpath oras)
 
 log "logging in to jfrog.svc.cscs.ch with oras"
 echo oras login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
-${oras_bin} login jfrog.svc.cscs.ch --username "${oras_u}" --password "${oras_p}"
+echo "${oras_p}" | ${oras_bin} login jfrog.svc.cscs.ch --username "${oras_u}" --password-stdin
 [[ $? -eq 0  ]] || err "failed oras login to JFrog - can't push image to uenv registry"
 
 ##
