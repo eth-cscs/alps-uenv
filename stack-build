@@ -121,23 +121,26 @@ rm -rf "$tool_path" "$cluster_path"
 
 # Obtain credentials for JFrog - required to push the image and meta-data
 creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-oras_creds=$(echo ${creds_json} | jq --join-output '"--username " + .container_registry.username + " --password " +.container_registry.password')
+oras_creds="$(echo ${creds_json} | jq --join-output '"--username " + .container_registry.username + " --password " +.container_registry.password')"
+buildah_creds="$(echo ${creds_json} | jq --join-output '"-u " + .container_registry.username + " -p " +.container_registry.password')"
 
-oras_u="$(echo ${creds_json} | jq '.container_registry.username')"
-oras_p="$(echo ${creds_json} | jq '.container_registry.password')"
+jfrog_u="$(echo ${creds_json} | jq '.container_registry.username')"
+jfrog_p="$(echo ${creds_json} | jq '.container_registry.password')"
 
 log "downloading oras"
 get-oras
 oras_bin=$(realpath oras)
 [[ $? -eq 0  ]] || err "unable to download oras"
 
-log "logging in to jfrog.svc.cscs.ch with buildah"
-buildah login -u ${oras_u} -p ${oras_p} jfrog.svc.cscs.ch
+log "logging in to jfrog.svc.cscs.ch with buildah 1"
+buildah login -u "${jfrog_u}" -p "${jfrog_p}" jfrog.svc.cscs.ch
+log "logging in to jfrog.svc.cscs.ch with buildah 2"
+buildah login ${buildah_creds} jfrog.svc.cscs.ch
 [[ $? -eq 0  ]] || err "failed buildah login to JFrog"
 
 log "logging in to jfrog.svc.cscs.ch with oras"
-log "${oras_bin} login jfrog.svc.cscs.ch --username ${oras_u} --password-stdin"
-echo "${oras_p}" | ${oras_bin} login jfrog.svc.cscs.ch --username "${oras_u}" --password-stdin
+log "${oras_bin} login jfrog.svc.cscs.ch --username ${jfrog_u} --password-stdin"
+echo "${jfrog_p}" | ${oras_bin} login jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
 [[ $? -eq 0  ]] || err "failed oras login to JFrog - can't push image to uenv registry"
 
 ##
