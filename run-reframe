@@ -16,7 +16,7 @@ usage () {
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
-    echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
+    echo "  system:      the cluster name \(e.g. of balfrin, hohgant, clariden\)"
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -24,6 +24,8 @@ usage () {
 
 system="-"
 name="-"
+ci_path="$CI_PROJECT_DIR"
+test_path="$ci_path/$CI_JOB_TOKEN"
 
 while getopts n:s: flag
 do
@@ -43,28 +45,43 @@ log "USER        ${USER}"
 log "name        ${name}"
 log "system      ${system}"
 log "build_id    ${build_id}"
+log "ci_path     ${ci_path}"
+log "test_path   ${test_path}"
 
-# Obtain credentials for JFrog - required to push the image and meta-data
-creds_json=$(curl --silent "${CSCS_CI_MW_URL}/credentials?token=${CI_JOB_TOKEN}&creds=container_registry")
-creds_short=$(echo ${creds_json} | jq --join-output '.container_registry.username + ":" + .container_registry.password')
-artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
-repo_path="alps-uenv/build/${build_id}/${system}/${name}"
+# configure oras
+source ${ci_path}/scripts/setup-oras
+
+# create the path in which tests will run...
+mkdir -p ${test_path}
+cd ${test_path}
+artifact_path="${test_path}/artifacts"
+mkdir -p $artifact_path
+
+rego=jfrog.svc.cscs.ch/uenv
+repo_base=build/${CLUSTER_NAME}/${build_id}/${name}
+repo=${repo_base}:latest
 
 # download the squashfs image from jfrog
-artifact_path="$CI_PROJECT_DIR/artifacts"
-squashfs_path="${artifact_path}/${name}.squashfs"
-squashfs_url="${artifactory_url}/${repo_path}/store.squashfs"
-rfm_meta_url="${artifactory_url}/${repo_path}/meta/recipe/extra/reframe.yaml"
-log "Downloading squashfs image ${squashfs_url} to ${squashfs_path}"
-curl --fail --retry 5 -o "${squashfs_path}" "${squashfs_url}"
-[[ $? -eq 0  ]] || err "failed to download image"
+log "downloading squashfs image from ${rego}/${repo}"
+oras pull -d ${artifact_path} --registry-config ${jfrog_creds_path} -o "${artifact_path}" "${rego}/${repo}"
+[[ $? -eq 0  ]] || err "failed to download squashfs"
 
-log "Downloading ReFrame metadata ${rfm_meta_url} to ${artifact_path}/${name}.yaml"
-curl --fail --retry 5 -o "${rfm_meta_url}" "${artifact_path}/${name}.yaml"
-[[ $? -eq 0  ]] || err "failed to download ReFrame metadata"
+# download the squashfs image from jfrog
+
+meta_digest=$(oras discover --registry-config ${jfrog_creds_path} -o json --artifact-type 'uenv/meta' $rego/$repo | jq -r '.manifests[0].digest')
+log "metadata digest $meta_digest"
+
+log "downloading squashfs image from ${rego}/${repo_base}@$meta_digest"
+oras pull -d ${artifact_path} --registry-config ${jfrog_creds_path} -o "${artifact_path}" "${rego}/${repo_base}@$meta_digest"
+[[ $? -eq 0  ]] || err "failed to download meta data"
+
+squashfs_path="${artifact_path}/store.squashfs"
+rfm_meta_path="${artifact_path}/meta/recipe/extra/reframe.yaml"
 
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
+
+# TODO: check whether the ReFrame meta data is present
 
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 

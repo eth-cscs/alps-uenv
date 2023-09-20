@@ -24,14 +24,11 @@ log "${jfrog_u} ${jfrog_p}"
 
 log "logging in to jfrog.svc.cscs.ch with oras"
 
-echo ${jfrog_p} | oras login jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
-[[ $? -eq 0  ]] || err "failed oras login 1 to JFrog - can't push image to uenv registry"
-
-# create a unique credentials path for this job,
-# because by default credentials are stored in ~/.docker which
+# Create a unique credentials path for this job,
+# because by default credentials are stored in ~/.docker/config.json which
 # causes conflicts for concurrent jobs.
-jfrog_creds_path="${oras_path}/docker.json"
+jfrog_creds_path="${oras_path}/docker/config.json"
 
-oras login --registry-config ${jfrog_creds_path} ${oras_creds} jfrog.svc.cscs.ch
-[[ $? -eq 0  ]] || err "failed oras login 2 to JFrog - can't push image to uenv registry"
+echo ${jfrog_p} | oras login --registry-config ${jfrog_creds_path}  jfrog.svc.cscs.ch --username "${jfrog_u}" --password-stdin
+[[ $? -eq 0  ]] || err "failed oras login to JFrog - can't push image to uenv registry"
 

@@ -160,14 +160,6 @@ fi
 # Push build artifacts to JFrog
 ##
 
-rego="https://jfrog.svc.cscs.ch/artifactory/uenv"
-artifactory_url="https://jfrog.svc.cscs.ch/artifactory"
-repo_path="alps-uenv/build/${build_id}/${system}/${name}"
-
-# push the squashfs image to jfrog
-destination_path="${artifactory_url}/${repo_path}/store.squashfs"
-source_path="${build_path}/store.squashfs"
-
 rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:latest
 
@@ -178,6 +170,7 @@ back_off "oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --arti
 # push the metadata to jfrog
 log "pushing meta data to ${rego}/${repo}"
 back_off "oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./store/meta" 5
+oras attach --artifact-type uenv/meta jfrog.svc.cscs.ch/uenv/build/${CLUSTER_NAME}/${build_id}/${name}:latest ./store/meta
 
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})
