@@ -107,11 +107,19 @@ else
 fi
 
 ##
+# Download and configure oras
+##
+
+log "configuring oras"
+source ${ci_path}/scripts/setup-oras
+
+
+##
 # Clone the stackinator and alps cluster configuration
 ##
 
 # Initialise the stackinator
-source ./scripts/setup-stackinator
+source ${ci_path}/scripts/setup-stackinator
 
 ##
 # Configure the build
@@ -131,13 +139,6 @@ fi
 
 # delete stackinator tool once it is no longer needed
 rm -rf "$tool_path" "$cluster_path"
-
-##
-# Download oras in the build path
-##
-
-log "configuring oras"
-source ${ci_path}/scripts/get-oras
 
 ##
 # Build the Spack stack
@@ -171,12 +172,12 @@ rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:latest
 
 log "pushing store.squashfs to ${rego}/${repo}"
-back_off "oras push ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs" 5
+back_off "oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs" 5
 [[ $? -eq 0  ]] || err "failed to push image"
 
 # push the metadata to jfrog
 log "pushing meta data to ${rego}/${repo}"
-back_off "oras attach --artifact-type uenv/meta ${rego}/${repo} ./store/meta" 5
+back_off "oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./store/meta" 5
 
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})
