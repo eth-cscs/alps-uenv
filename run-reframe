@@ -63,16 +63,18 @@ repo=${repo_base}:latest
 
 # download the squashfs image from jfrog
 log "downloading squashfs image from ${rego}/${repo}"
-oras pull -d ${artifact_path} --registry-config ${jfrog_creds_path} -o "${artifact_path}" "${rego}/${repo}"
+oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo}"
 [[ $? -eq 0  ]] || err "failed to download squashfs"
 
 # download the squashfs image from jfrog
 
-meta_digest=$(oras discover --registry-config ${jfrog_creds_path} -o json --artifact-type 'uenv/meta' $rego/$repo | jq -r '.manifests[0].digest')
+# step 1: look up the digest of the meta data
+meta_digest=$(oras discover --registry-config ${jfrog_creds_path} --output json --artifact-type 'uenv/meta' $rego/$repo | jq -r '.manifests[0].digest')
 log "metadata digest $meta_digest"
 
-log "downloading squashfs image from ${rego}/${repo_base}@$meta_digest"
-oras pull -d ${artifact_path} --registry-config ${jfrog_creds_path} -o "${artifact_path}" "${rego}/${repo_base}@$meta_digest"
+# step 2: download the meta data
+log "downloading meta data image from ${rego}/${repo_base}@$meta_digest"
+oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo_base}@$meta_digest"
 [[ $? -eq 0  ]] || err "failed to download meta data"
 
 squashfs_path="${artifact_path}/store.squashfs"
