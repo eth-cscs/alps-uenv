@@ -1,5 +1,22 @@
 #!/bin/bash
 
+back_off() {
+  local command=$1
+  local max_retries=${2:-5}
+  local count=0
+
+  while true; do
+    $command && return 0
+    ((count++))
+
+    [[ $count -eq $max_retries ]] && return 1
+
+    sleep_time=$((2**count))
+    echo "Retrying in $sleep_time seconds"
+    sleep $sleep_time
+  done
+}
+
 datetime () { date +"%Y-%m-%d %H:%M:%S"; }
 
 [[ -t 1 ]] && interm=yes
@@ -154,27 +171,13 @@ rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:latest
 
 log "pushing store.squashfs to ${rego}/${repo}"
-oras push ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs
+back_off "oras push ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs" 5
 [[ $? -eq 0  ]] || err "failed to push image"
 
 # push the metadata to jfrog
+log "pushing meta data to ${rego}/${repo}"
+back_off "oras attach --artifact-type uenv/meta ${rego}/${repo} ./store/meta" 5
 
-#destination_path="${artifactory_url}/${repo_path}"
-#log "pushing meta data '${source_path}' to '${destination_path}'"
-#for source in $(cd store; find meta -type f)
-#do
-#    log "pushing ${destination_path}/${source}"
-#    curl ${curl_opts} -u "${creds_short}" -X PUT "${destination_path}/${source}" -T "store/${source}" 3>&1 1>&2 2>&3 | egrep -q '^< HTTP.*2[0-9]{2}[[:space:]]*$'
-#    if [ ! $? -eq 0 ]; then
-#        err "unable to push meta data file store/$source"
-#    fi
-#done
-
-#artifact_path="$CI_PROJECT_DIR/artifacts"
-#log "copying meta-data to ${artifact_path}"
-#mkdir "${artifact_path}"
-#cp -r store/meta "${artifact_path}"
-
-#log "clean up build path '${build_path}'"
-#(rm -rf ${build_path})
+log "clean up build path '${build_path}'"
+(rm -rf ${build_path})
 
