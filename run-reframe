@@ -76,10 +76,10 @@ pip install --upgrade reframe-hpc
 rm -rf cscs-reframe-tests
 git clone -b check-qe-uenv https://github.com/eth-cscs/cscs-reframe-tests.git
 
-export UENV_FILE=${squashfs_path}
+export UENV="${squashfs_path}:/user-environment"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
-REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM} --tag uenv"
+REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
