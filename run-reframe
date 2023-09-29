@@ -83,5 +83,8 @@ REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=rep
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
+exitcode=$?
 
 deactivate
+
+exit ${exitcode}
