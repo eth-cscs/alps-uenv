@@ -5,6 +5,7 @@ build-a100:
   variables:
     STACK_NAME: sirius-cuda
     STACK_RECIPE: recipes/sirius
+    SPACK_DEVELOP: '--develop'
 
 test-a100:
   extends: .run-reframe-hohgant-a100
