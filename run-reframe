@@ -61,12 +61,17 @@ rego=jfrog.svc.cscs.ch/uenv
 repo_base=build/${CLUSTER_NAME}/${build_id}/${name}
 repo=${repo_base}:latest
 
+#
 # download the squashfs image from jfrog
+#
+
 log "downloading squashfs image from ${rego}/${repo}"
 oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo}"
 [[ $? -eq 0  ]] || err "failed to download squashfs"
 
-# download the squashfs image from jfrog
+#
+# Download the meta data from jfrog
+#
 
 # step 1: look up the digest of the meta data
 meta_digest=$(oras discover --registry-config ${jfrog_creds_path} --output json --artifact-type 'uenv/meta' $rego/$repo | jq -r '.manifests[0].digest')
@@ -83,7 +88,11 @@ rfm_meta_path="${artifact_path}/meta/recipe/extra/reframe.yaml"
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
-# TODO: check whether the ReFrame meta data is present
+if [[ -f "${rfm_meta_path}" ]]
+then
+    log "no reframe meta data provided: skipping tests"
+    exit 0
+done
 
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 
@@ -95,12 +104,15 @@ pip install --upgrade reframe-hpc
 rm -rf cscs-reframe-tests
 git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
-export UENV_FILE=${squashfs_path}
-export RFM_AUTODETECT_XTHOSTNAME=1
+export UENV="${squashfs_path}:/user-environment"
+export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
-REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs-uenv.py --report-junit=report.xml -c cscs-reframe-tests/uenv_checks/ -r --system=${RFM_SYSTEM}"
+REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
+exitcode=$?
 
 deactivate
+
+exit ${exitcode}

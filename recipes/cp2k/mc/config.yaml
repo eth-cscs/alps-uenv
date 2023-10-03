@@ -1,4 +1,4 @@
-name: cp2k-nvgpu
+name: cp2k-mc
 store: /user-environment
 spack:
   repo: https://github.com/spack/spack.git
