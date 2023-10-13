@@ -1,0 +1,19 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11
+  mpi:
+      spec: cray-mpich@8.1.25
+      gpu: false
+  unify: true
+  specs:
+  - ncview
+  - cdo
+  - nco
+  - ferret
+  views:
+    default:
+  packages:
+  - git
+  - perl
+
