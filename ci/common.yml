@@ -6,8 +6,9 @@ stages:
   stage: build
   variables:
     SLURM_TIMELIMIT: 180
+    SPACK_DEVELOP: ""
   script:
-  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl
+  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP
   after_script:
   - rm -Rf /dev/shm/jenkssl
   artifacts:
@@ -26,9 +27,9 @@ stages:
   artifacts:
     when: always
     paths:
-    - reframe/report.xml
+    - report.xml
     reports:
-      junit: reframe/report.xml
+      junit: report.xml
 
 .stack-build-hohgant:
   extends: .stack-build
