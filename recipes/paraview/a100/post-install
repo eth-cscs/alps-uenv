@@ -20,7 +20,7 @@ echo
 echo "===== list all spack packages ====="
 spack -C $config_path find
 
-echo "====================================="
+echo "======  load packages prior to plugin build  ======"
 
 # =====================================
 # we need to source the spack environment before using 'spack load' etc
@@ -31,6 +31,7 @@ eval `spack -C $config_path load --sh paraview +egl`
 eval `spack -C $config_path load --sh tbb`
 eval `spack -C $config_path load --sh cuda`
 
+PARAVIEW_VERSION=5.11.2
 PARAVIEW_DIR=$( spack -C $config_path location -i 'paraview + egl' )
 
 git clone https://github.com/jfavre/ParaViewGadgetPlugin
@@ -38,8 +39,10 @@ cd ParaViewGadgetPlugin/
 mkdir build; cd build
 cmake -S .. \
       -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins    \
-      -DParaView_DIR=$PARAVIEW_DIR/lib64/cmake/paraview-5.11
+      -DParaView_DIR=$PARAVIEW_DIR/lib64/cmake/paraview-$PARAVIEW_VERSION
 make -j
 make install
 
 find $mount_path/paraview-plugins
+
+echo "========  Done  ========"
