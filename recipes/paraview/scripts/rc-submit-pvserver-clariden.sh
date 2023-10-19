@@ -65,8 +65,8 @@ export SPACK_USER_CACHE_PATH=/user-environment/cache
 source $SPACK_ROOT/share/spack/setup-env.sh
 
 # Which rendering backend are we using
-if [ "$7" = "clariden-5.11-NVIDIA" ]; then
-  # paraview 5.11 nvidia EGL 
+if [ "$7" = "clariden-5.11.2-NVIDIA" ]; then
+  # paraview 5.11.2 nvidia EGL 
   SQUASH_IMG=/scratch/aistor/biddisco/clariden-paraview-EGL-2023-08-23.squashfs
   SQUASH_CMD="squashfs-mount $SQUASH_IMG:/user-environment"
   PV_HASH="/sqd4oxb"
@@ -74,8 +74,8 @@ if [ "$7" = "clariden-5.11-NVIDIA" ]; then
   echo "Using hash $PV_HASH from squashfs $SQUASH_IMG"
   echo "pvserver : $PV_SERVER"
 
-elif [ "$7" = "clariden-5.11-osmesa" ]; then
-  # paraview 5.11 osmesa
+elif [ "$7" = "clariden-5.11.2-osmesa" ]; then
+  # paraview 5.11.2 osmesa
   PV_HASH="/ltilqh4"
   PV_SERVER=$($SQUASH_CMD spack location -i paraview $PV_HASH)/bin/pvserver
   OSMESA_PATH=$($SQUASH_CMD spack location -i /qadzwvd)/lib

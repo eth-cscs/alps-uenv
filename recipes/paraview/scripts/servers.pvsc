@@ -46,10 +46,10 @@
           </Enumeration>
         </Option>
         <Option name="VERSION" label="VERSION ?" save="true">
-          <Enumeration default="clariden-5.11-NVIDIA">
-            <Entry value="clariden-5.11-osmesa" label="v5.11-osmesa"/>
-            <Entry value="clariden-5.11-NVIDIA" label="v5.11-nvidia"/>
-            <Entry value="clariden-5.11-AMD" label="v5.11-amd"/>
+          <Enumeration default="clariden-5.11.2-NVIDIA">
+            <Entry value="clariden-5.11.2-osmesa" label="v5.11.2-osmesa"/>
+            <Entry value="clariden-5.11.2-NVIDIA" label="v5.11.2-nvidia"/>
+            <Entry value="clariden-5.11.2-AMD" label="v5.11.2-amd"/>
           </Enumeration>
         </Option>
         <Option name="PV_SERVER_PORT" label="pvserver port" save="true">
@@ -131,10 +131,10 @@
           </Enumeration>
         </Option>
         <Option name="VERSION" label="VERSION ?" save="true">
-          <Enumeration default="hohgant-5.11-NVIDIA">
-            <Entry value="hohgant-5.11-osmesa" label="v5.11-osmesa"/>
-            <Entry value="hohgant-5.11-NVIDIA" label="v5.11-nvidia"/>
-            <Entry value="hohgant-5.11-AMD" label="v5.11-amd"/>
+          <Enumeration default="hohgant-5.11.2-NVIDIA">
+            <Entry value="hohgant-5.11.2-osmesa" label="v5.11.2-osmesa"/>
+            <Entry value="hohgant-5.11.2-NVIDIA" label="v5.11.2-nvidia"/>
+            <Entry value="hohgant-5.11.2-AMD" label="v5.11.2-amd"/>
           </Enumeration>
         </Option>
         <Option name="PV_SERVER_PORT" label="pvserver port" save="true">
