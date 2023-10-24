@@ -22,7 +22,7 @@ mkdir -p ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/tmp
 
 echo "Execute stackinator"
-$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug 
+$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop
 
 # build the squashfs image - bubblewrap is used inside the makefile
 echo "Trigger build"
