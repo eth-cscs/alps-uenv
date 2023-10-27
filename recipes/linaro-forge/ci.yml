@@ -1,0 +1,7 @@
+include: '/ci/common.yml'
+
+build-a100:
+  extends: .stack-build-hohgant-a100
+  variables:
+    STACK_NAME: linaro-forge
+    STACK_RECIPE: recipes/linaro-forge/a100

@@ -1,0 +1,6 @@
+name: linaro
+store: /user-environment
+spack:
+    repo: https://github.com/spack/spack.git
+    commit: v0.20.2
+modules: True
