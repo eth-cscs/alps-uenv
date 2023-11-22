@@ -1,0 +1,19 @@
+clusters:
+  pilatus:
+    uarch: [zen2]
+  eiger:
+    uarch: [zen2]
+  clariden:
+    uarch: [a100, mi200]
+pipelines:
+  gromacs:
+    "2023":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        zen2: 2023/mc
+        zen3: 2023/mc
+        a100: 2023/a100
+      deploy:
+        # deploy to both the production and test clusters
+        eiger: [zen2]
+        clariden: [a100]

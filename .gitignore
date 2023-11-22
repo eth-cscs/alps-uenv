@@ -12,3 +12,6 @@ env
 
 # oras binary, downloaded during build
 oras
+
+config/.pyenv
+config/__pycache__

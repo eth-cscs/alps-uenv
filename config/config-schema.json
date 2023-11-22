@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Schema for uenv configurations",
+    "type": "object",
+    "required": ["clusters", "pipelines"],
+    "additionalProperties": false,
+    "properties": {
+        "clusters" : {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[a-z0-9]+$": {
+                    "type": "object",
+                    "required": ["uarch"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "uarch": {
+                            "type": "array",
+                            "items": {"enum": ["zen2", "zen3", "a100", "mi200"]}
+                        }
+                    }
+                }
+            }
+        },
+        "pipelines" : {
+            "type": "object",
+            "$comment": "a list of named uenv: e.g. gromacs, prgenv-gnu and cp2k",
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[\\w.-]+$": {
+                    "type": "object",
+                    "$comment": "a list of versions, e.g. 2023, v1, 23.1.0, 1.2-rc0",
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        "^[\\w.-]+$": {
+                            "type": "object",
+                            "required": ["recipes", "deploy"],
+                            "additionalProperties": false,
+                            "properties": {
+                                "$comment": "a dictionary with architecture types as keys",
+                                "recipes":{"type":"object"},
+                                "$comment": "a dictionary with clusters as keys, and lists of arch types values",
+                                "deploy": {"type":"object"}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
