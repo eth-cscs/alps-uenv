@@ -1,0 +1,20 @@
+lammps:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12
+  mpi:
+    spec: mpich
+    gpu: cuda
+  unify: true
+  specs:
+  - cuda@12
+  - lammps
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+        link: run
+  packages:
+   - perl
