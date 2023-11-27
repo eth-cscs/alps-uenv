@@ -16,9 +16,9 @@ test_path="$ci_path/$CI_JOB_TOKEN"
 # print status
 #
 
-system=clariden
-uarch=zen2
-uenv=gromacs:2023
+#system=clariden
+#uarch=zen2
+#uenv=gromacs:2023
 
 log "system=$system; uarch=$uarch; uenv=$uenv"
 
