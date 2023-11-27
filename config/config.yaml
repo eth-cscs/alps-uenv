@@ -1,11 +1,15 @@
 clusters:
-  pilatus:
-    uarch: [zen2]
   eiger:
     uarch: [zen2]
+    partition: [normal]
+    runner: f7s
   clariden:
     uarch: [a100, mi200]
-pipelines:
+    partition: [nvgpu, amdgpu]
+    runner:
+      slurm-tag: clariden-spack-stack-builder
+      baremetal-tag: clariden-login-baremetal
+uenvs:
   gromacs:
     "2023":
       recipes:

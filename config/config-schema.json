@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Schema for uenv configurations",
     "type": "object",
-    "required": ["clusters", "pipelines"],
+    "required": ["clusters", "uenvs"],
     "additionalProperties": false,
     "properties": {
         "clusters" : {
@@ -11,18 +11,39 @@
             "patternProperties": {
                 "^[a-z0-9]+$": {
                     "type": "object",
-                    "required": ["uarch"],
+                    "required": ["uarch", "partition", "runner"],
                     "additionalProperties": false,
                     "properties": {
                         "uarch": {
                             "type": "array",
-                            "items": {"enum": ["zen2", "zen3", "a100", "mi200"]}
+                            "items": {
+                                "type": "string",
+                                "enum": ["zen2", "zen3", "a100", "mi200"]
+                            }
+                        },
+                        "partition": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        "runner": {
+                            "oneOf": [
+                                {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "slurm-tag": {"type": "string"},
+                                        "baremetal-tag":  {"type": "string"}
+                                    }
+                                },
+                                {"enum": ["f7s"]}
+                            ],
+                            "default": "fjs"
                         }
                     }
                 }
             }
         },
-        "pipelines" : {
+        "uenvs" : {
             "type": "object",
             "$comment": "a list of named uenv: e.g. gromacs, prgenv-gnu and cp2k",
             "additionalProperties": false,
@@ -37,10 +58,28 @@
                             "required": ["recipes", "deploy"],
                             "additionalProperties": false,
                             "properties": {
-                                "$comment": "a dictionary with architecture types as keys",
-                                "recipes":{"type":"object"},
-                                "$comment": "a dictionary with clusters as keys, and lists of arch types values",
-                                "deploy": {"type":"object"}
+                                "recipes":{
+                                    "$comment": "a dictionary with architecture types as keys",
+                                    "type":"object",
+                                    "additionalProperties": false,
+                                    "patternProperties": {
+                                        "^(zen2|zen3|a100|mi200)$": {"type": "string"}
+                                    }
+                                },
+                                "deploy": {
+                                    "$comment": "a dictionary with clusters as keys, and lists of arch types values",
+                                    "type" : "object",
+                                    "additionalProperties": false,
+                                    "patternProperties": {
+                                        "^[\\w.-]+$": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["zen2", "zen3", "a100", "mi200"]
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

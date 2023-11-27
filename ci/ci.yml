@@ -1,0 +1,15 @@
+stages:
+  - configure
+  - build
+  - test
+
+configure:
+  stage: configure
+  before_script:
+    - 'echo "INFO: configuring XXX"'
+  after_script:
+    - ./config/configure.sh
+  artifacts:
+    paths:
+      - pipeline.yml
+

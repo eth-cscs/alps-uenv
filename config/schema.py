@@ -38,26 +38,8 @@ def py2yaml(data, indent):
     res = ("\n" + " " * indent).join(lines)
     return res
 
-
-
 # create validator for json schema
 config_schema = json.load(open(prefix / "config-schema.json"))
 validator = extend_with_default(jsonschema.Draft7Validator)
 config_validator = validator(config_schema)
 
-# load the configuration and validate
-config = yaml.load(open(prefix / "config.yaml"), Loader=yaml.Loader)
-config_validator.validate(config)
-
-pipelines = config["pipelines"]
-clusters = config["clusters"]
-
-print("=-= clusters =-=")
-for k in clusters.keys():
-    print(k, clusters[k]["uarch"])
-
-print()
-print("=-= pipelines =-=")
-for k in pipelines.keys():
-    print(k)
-    print(pipelines[k])
