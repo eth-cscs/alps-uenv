@@ -5,9 +5,8 @@ stages:
 
 configure:
   stage: configure
-  before_script:
-    - 'echo "INFO: configuring XXX"'
-  after_script:
+  tags: [clariden-spack-stack-builder]
+  script:
     - ./config/configure.sh
   artifacts:
     paths:
