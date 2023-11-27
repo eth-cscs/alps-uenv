@@ -50,4 +50,5 @@ log "installed python dependencies"
 
 log "tested configuration"
 
-touch pipeline.yml
+#touch pipeline.yml
+cp ci/pipeline.yml .

@@ -1,9 +1,8 @@
 stages:
   - configure
-  - build
-  - test
+  - run
 
-configure:
+pipeline-configure:
   stage: configure
   tags: [clariden-spack-stack-builder]
   script:
@@ -12,3 +11,9 @@ configure:
     paths:
       - pipeline.yml
 
+child-pipeline:
+  stage: run
+  trigger:
+    include:
+      - artifact: pipeline.yml
+        job: pipeline-configure

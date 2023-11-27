@@ -1,0 +1,13 @@
+# demo pipeline
+include: '/ci/common.yml'
+
+build-mc:
+  extends: .stack-build-clariden-cpu
+  variables:
+    STACK_NAME: prgenv-gnu-mc
+    STACK_RECIPE: recipes/prgenv-gnu/multicore
+
+test-mc:
+  extends: .run-reframe-clariden-cpu
+  variables:
+    STACK_NAME: prgenv-gnu-mc
