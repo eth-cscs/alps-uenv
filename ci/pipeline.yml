@@ -2,12 +2,12 @@
 include: '/ci/common.yml'
 
 build-mc:
-  extends: .stack-build-clariden-cpu
+  extends: .stack-build-clariden-a100
   variables:
     STACK_NAME: prgenv-gnu-mc
     STACK_RECIPE: recipes/prgenv-gnu/multicore
 
 test-mc:
-  extends: .run-reframe-clariden-cpu
+  extends: .run-reframe-clariden-a100
   variables:
     STACK_NAME: prgenv-gnu-mc
