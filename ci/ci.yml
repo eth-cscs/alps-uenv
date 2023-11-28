@@ -4,7 +4,7 @@ stages:
 
 pipeline-configure:
   stage: configure
-  tags: [clariden-spack-stack-builder]
+  tags: [clariden-login-baremetal]
   script:
     - ./config/configure.sh
   artifacts:
