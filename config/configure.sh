@@ -17,7 +17,7 @@ test_path="$ci_path/$CI_JOB_TOKEN"
 #
 
 #system=clariden
-#uarch=zen2
+#uarch=a100
 #uenv=gromacs:2023
 
 log "system=$system; uarch=$uarch; uenv=$uenv"
@@ -45,10 +45,10 @@ pip install --upgrade --quiet pip
 pip install --quiet -r ./config/requirements.txt
 log "installed python dependencies"
 
-./config/test.py
-[[ $? -eq 0  ]] || err "invalid configuration in config/config.yaml"
+./config/ci.py
+[[ $? -eq 0  ]] || err "unable to configure"
 
-log "tested configuration"
+log "configuration complete"
 
 #touch pipeline.yml
 cp ci/pipeline.yml .

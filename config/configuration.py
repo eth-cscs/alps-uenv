@@ -4,6 +4,7 @@ import jsonschema
 import pathlib
 import sys
 import yaml
+import util
 
 prefix = pathlib.Path(__file__).parent.resolve()
 root_path = prefix.parent.resolve()
@@ -13,6 +14,8 @@ sys.path = [prefix.as_posix()] + sys.path
 
 import schema
 
+valid_uarch = ["zen2", "zen3", "a100", "mi200"]
+
 class ConfigError(Exception):
     """ConfigError when an invalid configuration is entered.
     """
@@ -20,18 +23,6 @@ class ConfigError(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
-
-def colorize(string, color):
-    colors = {
-        "red":     "31",
-        "green":   "32",
-        "yellow":  "33",
-        "blue":    "34",
-        "magenta": "35",
-        "cyan":    "36",
-        "white":   "37",
-    }
-    return f"\033[1;{colors[color]}m{string}\033[0m"
 
 class Version:
     def __init__(self, name, desc, recipe_path):
@@ -88,7 +79,7 @@ class Config:
 
         # Verify that each target is a valid cluster.
         valid = True
-        print(colorize("Validating uenv configurations", "blue"))
+        print(util.colorize("Validating uenv configurations", "blue"))
         for uenv in self._uenvs:
             for version in uenv.versions:
                 for cluster, deployments in version.deployments.items():
@@ -97,38 +88,39 @@ class Config:
                         # verify that each deployment (cluster, uarch) exists
                         valid, reason = self.is_valid_target(cluster, uarch)
                         if not valid:
-                            print(f"{cstr} {colorize('FAIL', 'red')} {reason}")
+                            print(f"{cstr} {util.colorize('FAIL', 'red')} {reason}")
                             valid = False
                         # verify that this version has a recipe for the target uarch
                         elif uarch not in version.uarch:
-                            print(f"{cstr} {colorize('FAIL', 'red')} no recipe for {uarch}")
+                            print(f"{cstr} {util.colorize('FAIL', 'red')} no recipe for {uarch}")
                             valid = False
                         else:
-                            print(f"{cstr} {colorize('PASS', 'green')}")
+                            print(f"{cstr} {util.colorize('PASS', 'green')}")
 
                 for uarch in version.uarch:
                     cstr = f"{uenv.name+'/'+version.name:25s} recipe {uarch:18s}"
                     path = version.recipe(uarch)
                     if not path.exists():
-                        print(f"{cstr} {colorize('FAIL', 'red')} recipe path {path.as_posix()} does not exist")
+                        print(f"{cstr} {util.colorize('FAIL', 'red')} recipe path {path.as_posix()} does not exist")
                         valid = False
                     else:
-                        print(f"{cstr} {colorize('PASS', 'green')}")
+                        print(f"{cstr} {util.colorize('PASS', 'green')}")
+        print()
 
         # Verify clusters
-        print(colorize("Validating cluster configurations", "blue"))
+        print(util.colorize("Validating cluster configurations", "blue"))
         for name, cluster in self._clusters.items():
             cstr = f"{name}"
             # check that there is one partition for every uarch
             if len(cluster["partition"]) != len(cluster["uarch"]):
-                print(f"{cstr:25s} {colorize('FAIL', 'red')} there must be exactly one partition for each uarch")
+                print(f"{cstr:25s} {util.colorize('FAIL', 'red')} there must be exactly one partition for each uarch")
                 valid = False
             # check that the FirecREST runner hasn't been selected (not supported yet)
             elif cluster["runner"] == "f7s":
-                print(f"{cstr:25s} {colorize('WARN', 'cyan')} the FirecREST 'f7s' runner is not supported yet")
+                print(f"{cstr:25s} {util.colorize('WARN', 'cyan')} the FirecREST 'f7s' runner is not supported yet")
             else:
-                print(f"{cstr:25s} {colorize('PASS', 'green')}")
-
+                print(f"{cstr:25s} {util.colorize('PASS', 'green')}")
+        print()
 
         if not valid:
             raise ConfigError("configuration error - see log")
@@ -139,6 +131,31 @@ class Config:
         if uarch not in self._clusters[cluster]["uarch"]:
             return False, f"cluster {cluster} does not support {uarch}"
         return True, ""
+
+    def uenv(self, name):
+        """
+        return the uenv information for uenv with name.
+        returns None if no uenv matches name
+        """
+        for u in self.uenvs:
+            print("-- ", u)
+            if u.name == name:
+                return u
+        return None
+
+    def recipe(self, name, version, uarch):
+        """
+        return the recipe information for uenv name:version on target uarch.
+        returns None if no recipe fits the description.
+        """
+        u = self.uenv(name)
+        if u is not None:
+            print(u)
+            for v in u.versions:
+                if v.name==version and uarch in v.uarch:
+                    return v.recipe
+
+        return None
 
     @property
     def uenvs(self):
@@ -182,11 +199,11 @@ if __name__ == '__main__':
     except jsonschema.exceptions.ValidationError as e:
         print()
         where = e.json_path.replace("$.","").replace(".", ":")
-        print(f"config.yaml error: {where}")
+        print(f"util.colorize('config.yaml error ... ', 'red') {where}")
         print(f"  {e.message}")
         exit(1)
     except ConfigError as e:
         print()
-        print(f"{e.message}")
+        print(f"{util.colorize('error ... ', 'red')}{e.message}")
         exit(1)
 
