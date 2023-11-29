@@ -50,5 +50,5 @@ log "installed python dependencies"
 
 log "configuration complete"
 
-#touch pipeline.yml
-cp ci/pipeline.yml .
+log "the following pipeline was generated"
+cat pipeline.yml
