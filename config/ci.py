@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import jinja2
 import jsonschema
 import os
 import pathlib
@@ -77,17 +78,24 @@ def readenv(config):
     }
 
 if __name__ == '__main__':
-    os.environ["system"] = "clariden"
-    os.environ["uarch"] = "a100"
-    os.environ["uenv"] = "gromacs:2023"
+    ### TODO ###
+    # read CLI arguments
+    #   - output path for the pipeline.yml file (required)
+    #   - path of the configuration file (required)
+    #   - JOB_ID (if needed?)
+    if os.getenv("UENVCITEST", default=None) is not None:
+        os.environ["system"] = "clariden"
+        os.environ["uarch"] = "a100"
+        os.environ["uenv"] = "gromacs:2023"
 
     # read and validate the configuration
+    print(recipe_path)
     try:
         config = configuration.Config(prefix / "config.yaml", recipe_path)
     except jsonschema.exceptions.ValidationError as e:
         print()
         where = e.json_path.replace("$.","").replace(".", ":")
-        print(f"util.colorize('[error] ', 'red')  config.yaml:{where}")
+        print(f"{util.colorize('[error] ', 'red')}config.yaml:{where}")
         print(f"  {e.message}")
         exit(1)
     except ConfigError as e:
@@ -103,35 +111,39 @@ if __name__ == '__main__':
         print(f"{util.colorize('[error] ', 'red')}{e.message}")
         exit(1)
 
-    print(env)
+    cluster = config.cluster_template(env["system"], env["uarch"])
+    print('--- cluster -----------------------------------------')
+    for k,i in cluster.items():
+        print(f"{k:20s}: {i}")
+    recipe = config.recipe_template(env["uenv"], env["version"], env["uarch"])
+    print('--- recipe ------------------------------------------')
+    for k,i in recipe.items():
+        print(f"{k:20s}: {i}")
+    print('-----------------------------------------------------')
 
-### TODO ###
-# read CLI arguments
-#   - output path for the pipeline.yml file (required)
-#   - path of the configuration file (required)
-#   - JOB_ID (if needed?)
+    ### TODO ###
+    # build list of all builds (system-uarch-recipe)
+    # include meta-data like the path in which to build
 
-### TODO ###
-# build list of all builds (system-uarch-recipe)
-# include meta-data like the path in which to build
+    # load the jinja templating environment
+    template_path = prefix / "templates"
+    jinja_env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(template_path),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
 
-### TODO ###
-# generate the build runner config info for each build job
-# iterate over all builds and make a consolidated list of all target system+uarch
-# follow naming scheme {system}-build-{uarch}, e.g. clariden-build-a100
+    # generate top level makefiles
+    pipeline_template = jinja_env.get_template("pipeline.yml")
 
-### TODO ###
-# make a template jinja yaml file externally
+    with (root_path / "pipeline.yml").open("w") as f:
+        f.write(
+            pipeline_template.render(
+                recipe=recipe, cluster=cluster))
+        f.write("\n")
 
-### TODO ###
-# feed the tempalte to generate .yaml
+    ### TODO ###
+    # generate the build runner config info for each build job
+    # iterate over all builds and make a consolidated list of all target system+uarch
+    # follow naming scheme {system}-build-{uarch}, e.g. clariden-build-a100
 
-# for cluster in clusters:
-#   {cluster.name}-build-{cluster.uarch}:
-#   tags: [{cluster.runner}]
-#
-#   {cluster.name}-test-{cluster.uarch}:
-#   tags: [{cluster.bare_metal_runner}]
-
-# for uenv in uenvs:
-#   ...

@@ -28,21 +28,21 @@ stages:
     reports:
       junit: report.xml
 
-build-{{recipe.name}}:{{recipe.version}}-{{cluster.name}}:{{recipe.uarch}}:
+build-gromacs:2023-clariden:a100:
   extends: .base-build
-  tags: ["{{cluster.slurm_runner}}"]
+  tags: ["clariden-spack-stack-builder"]
   variables:
-    SPACK_DEVELOP:    "{{recipe.develop}}"
-    STACK_NAME:       "{{recipe.name}}"
-    STACK_SYSTEM:     "{{cluster.name}}"
-    SLURM_PARTITION:  "{{cluster.partition}}"
-    STACK_RECIPE:     "{{recipe.path}}"
+    SPACK_DEVELOP:    ""
+    STACK_NAME:       "gromacs"
+    STACK_SYSTEM:     "clariden"
+    SLURM_PARTITION:  "nvgpu"
+    STACK_RECIPE:     "/home/bcumming/software/github/alps-spack-stacks/recipes/gromacs/2023/a100"
 
-test-{{recipe.name}}:{{recipe.version}}-{{cluster.name}}:{{recipe.uarch}}:
+test-gromacs:2023-clariden:a100:
   extends: .base-test
-  tags: ["{{cluster.baremetal_runner}}"]
+  tags: ["clariden-login-baremetal"]
   variables:
-    STACK_NAME:       "{{recipe.name}}"
-    STACK_SYSTEM:     "{{cluster.name}}"
-    SLURM_PARTITION:  "{{cluster.partition}}"
+    STACK_NAME:       "gromacs"
+    STACK_SYSTEM:     "clariden"
+    SLURM_PARTITION:  "nvgpu"
 

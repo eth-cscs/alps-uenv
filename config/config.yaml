@@ -21,3 +21,4 @@ uenvs:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
+      #develop: False

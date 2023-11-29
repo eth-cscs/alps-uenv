@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#)!/usr/bin/env python3
 
 import jsonschema
 import pathlib
@@ -29,6 +29,7 @@ class Version:
         self._name = name
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
+        self._use_spack_develop = desc["develop"]
         self._recipe_path = recipe_path
 
         arch = self.uarch
@@ -36,6 +37,10 @@ class Version:
     @property
     def name(self):
         return self._name
+
+    @property
+    def spack_develop(self):
+        return self._use_spack_develop
 
     @property
     def uarch(self):
@@ -61,6 +66,12 @@ class Uenv:
     @property
     def versions(self):
         return self._versions
+
+    def version(self, version):
+        for v in self.versions:
+            if v.name == version:
+                return v
+        return None
 
 class Config:
     def __init__(self, config_path, recipe_path):
@@ -138,7 +149,6 @@ class Config:
         returns None if no uenv matches name
         """
         for u in self.uenvs:
-            print("-- ", u)
             if u.name == name:
                 return u
         return None
@@ -150,10 +160,9 @@ class Config:
         """
         u = self.uenv(name)
         if u is not None:
-            print(u)
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
-                    return v.recipe
+                    return v.recipe(uarch)
 
         return None
 
@@ -164,6 +173,41 @@ class Config:
     @property
     def clusters(self):
         return self._clusters
+
+    def cluster_template(self, name, uarch):
+        """
+        returns a dict that contains the information required to configure
+        a gitlab runner job on vcluster named name on uarch.
+        """
+
+        c = self.clusters[name]
+        part_idx = c["uarch"].index(uarch)
+
+        return {
+            "name": name,
+            "uarch": uarch,
+            "partition": c["partition"][part_idx],
+            "baremetal_runner": c["runner"]["baremetal-tag"],
+            "slurm_runner": c["runner"]["slurm-tag"],
+        }
+
+    def recipe_template(self, name, version, uarch):
+        """
+        returns a dict that contains the information required to configure
+        a recipe build on a target uarch
+        """
+
+        develop = ""
+        if self.uenv(name).version(version).spack_develop:
+            develop = "--develop"
+
+        return {
+            "name": name,
+            "version": version,
+            "uarch": uarch,
+            "path": self.recipe(name, version, uarch),
+            "develop": develop,
+        }
 
 # The user request
 class Request:
