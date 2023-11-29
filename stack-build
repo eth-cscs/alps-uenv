@@ -102,6 +102,7 @@ if [ -d "${mirror_path}" ]; then
     fi
     cache_flags="--cache cache.yaml"
 else
+    log "no build cache found at $mirror_path"
     rm -f cache.yaml
     cache_flags=""
 fi

@@ -7,6 +7,8 @@ pipeline-configure:
   tags: [clariden-login-baremetal]
   script:
     - ./config/configure.sh
+  variables:
+    CSCS_NOTIFICATION_CONTEXT: "configure"
   artifacts:
     paths:
       - pipeline.yml
