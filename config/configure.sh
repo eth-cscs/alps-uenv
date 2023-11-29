@@ -12,8 +12,6 @@ err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 ci_path="$CI_PROJECT_DIR"
 test_path="$ci_path/$CI_JOB_TOKEN"
 
-printenv
-
 #
 # print status
 #
