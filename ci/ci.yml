@@ -13,6 +13,8 @@ pipeline-configure:
 
 child-pipeline:
   stage: run
+  variables:
+    CSCS_CI_MW_URL: $CSCS_CI_MW_URL
   trigger:
     include:
       - artifact: pipeline.yml
