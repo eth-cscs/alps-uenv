@@ -44,6 +44,8 @@ usage () {
     err "$1"
 }
 
+printenv
+
 system="-"
 name="-"
 recipe_path="-"
