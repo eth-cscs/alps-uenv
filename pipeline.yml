@@ -28,6 +28,7 @@ stages:
     reports:
       junit: report.xml
 
+
 build-gromacs:2023-clariden:a100:
   extends: .base-build
   tags: ["clariden-spack-stack-builder"]
@@ -36,7 +37,7 @@ build-gromacs:2023-clariden:a100:
     STACK_NAME:       "gromacs"
     STACK_SYSTEM:     "clariden"
     SLURM_PARTITION:  "nvgpu"
-    STACK_RECIPE:     "/home/bcumming/software/github/alps-spack-stacks/recipes/gromacs/2023/a100"
+    STACK_RECIPE:     "None"
 
 test-gromacs:2023-clariden:a100:
   extends: .base-test
@@ -45,4 +46,3 @@ test-gromacs:2023-clariden:a100:
     STACK_NAME:       "gromacs"
     STACK_SYSTEM:     "clariden"
     SLURM_PARTITION:  "nvgpu"
-

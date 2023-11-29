@@ -77,7 +77,7 @@ def readenv(config):
         "recipe": recipe,
     }
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ### TODO ###
     # read CLI arguments
     #   - output path for the pipeline.yml file (required)
@@ -111,19 +111,18 @@ if __name__ == '__main__':
         print(f"{util.colorize('[error] ', 'red')}{e.message}")
         exit(1)
 
-    cluster = config.cluster_template(env["system"], env["uarch"])
-    print('--- cluster -----------------------------------------')
-    for k,i in cluster.items():
+    print(f"--- request -----------------------------------------")
+    for k,i in env.items():
         print(f"{k:20s}: {i}")
-    recipe = config.recipe_template(env["uenv"], env["version"], env["uarch"])
-    print('--- recipe ------------------------------------------')
-    for k,i in recipe.items():
-        print(f"{k:20s}: {i}")
-    print('-----------------------------------------------------')
 
-    ### TODO ###
-    # build list of all builds (system-uarch-recipe)
-    # include meta-data like the path in which to build
+    print(f"\n--- job template ------------------------------------")
+    job = config.job_template(env)
+    for k,i in job.items():
+        print(f"{k:20s}: {i}")
+
+    #
+    # write the pipeline.yml using jinja template
+    #
 
     # load the jinja templating environment
     template_path = prefix / "templates"
@@ -137,13 +136,6 @@ if __name__ == '__main__':
     pipeline_template = jinja_env.get_template("pipeline.yml")
 
     with (root_path / "pipeline.yml").open("w") as f:
-        f.write(
-            pipeline_template.render(
-                recipe=recipe, cluster=cluster))
-        f.write("\n")
+        f.write(pipeline_template.render(jobs=[job]))
 
-    ### TODO ###
-    # generate the build runner config info for each build job
-    # iterate over all builds and make a consolidated list of all target system+uarch
-    # follow naming scheme {system}-build-{uarch}, e.g. clariden-build-a100
 

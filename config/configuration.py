@@ -174,67 +174,35 @@ class Config:
     def clusters(self):
         return self._clusters
 
-    def cluster_template(self, name, uarch):
+    def job_template(self, env):
         """
         returns a dict that contains the information required to configure
-        a gitlab runner job on vcluster named name on uarch.
+        a gitlab runner job to build a recipe.
+        The input is a dictionary with the following fields (with example values):
+            system: clariden
+            uarch: a100
+            uenv: gromacs
+            version: 2023
+            recipe: /home/bcumming/software/github/alps-spack-stacks/recipes/gromacs/2023/a100
         """
+        c = self.clusters[env["system"]]
+        part_idx = c["uarch"].index(env["uarch"])
 
-        c = self.clusters[name]
-        part_idx = c["uarch"].index(uarch)
+        develop = ""
+        if self.uenv(env["uenv"]).version(env["version"]).spack_develop:
+            develop = "--develop"
 
         return {
-            "name": name,
-            "uarch": uarch,
+            "uenv": env["uenv"],
+            "version": env["version"],
+            "uarch": env["uarch"],
+            "recipe_path": self.recipe(env["uarch"], env["version"], env["uarch"]),
+            "spack_develop": develop,
+            "system": env["system"],
             "partition": c["partition"][part_idx],
             "baremetal_runner": c["runner"]["baremetal-tag"],
             "slurm_runner": c["runner"]["slurm-tag"],
         }
-
-    def recipe_template(self, name, version, uarch):
-        """
-        returns a dict that contains the information required to configure
-        a recipe build on a target uarch
-        """
-
-        develop = ""
-        if self.uenv(name).version(version).spack_develop:
-            develop = "--develop"
-
-        return {
-            "name": name,
-            "version": version,
-            "uarch": uarch,
-            "path": self.recipe(name, version, uarch),
-            "develop": develop,
-        }
-
-# The user request
-class Request:
-
-    def __init__(self, config):
-        self._cluster = os.getenv('cluster', None)
-        uenv = os.getenv('uenv', None)
-        self._uarch = os.getenv('uarch', None)
-
-        # error check, using config.
-
-        uenv_name, uenv_version = uenv.split
-        self._uenv = None
-        self._version = None
-
-    @property
-    def cluster(self):
-        return self._cluster
-
-    @property
-    def uenv(self):
-        return self._uenv, self._version
-
-    @property
-    def uarch(self):
-        return self._uarch
-
 
 # load the uenv and cluster configurations
 if __name__ == '__main__':
