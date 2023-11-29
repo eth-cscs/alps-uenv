@@ -1,0 +1,15 @@
+# demo pipeline
+#include: '/ci/common.yml'
+
+
+build-{{recipe.name}}:{{recipe.version}}-{{uarch}}:
+  extends: .stack-build-{{cluster}}-{{uarch}}
+  variables:
+    STACK_NAME: prgenv-gnu-mc
+    STACK_RECIPE: recipes/prgenv-gnu/multicore
+
+test-{{recipe.name}}:{{recipe.version}}-{{uarch}}:
+  extends: .run-reframe-{{cluster}}-{{uarch}}
+  variables:
+    STACK_NAME: {{recipe.name}}
+
