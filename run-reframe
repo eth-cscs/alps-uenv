@@ -62,14 +62,6 @@ repo_base=build/${CLUSTER_NAME}/${build_id}/${name}
 repo=${repo_base}:latest
 
 #
-# download the squashfs image from jfrog
-#
-
-log "downloading squashfs image from ${rego}/${repo}"
-oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo}"
-[[ $? -eq 0  ]] || err "failed to download squashfs"
-
-#
 # Download the meta data from jfrog
 #
 
@@ -82,7 +74,6 @@ log "downloading meta data image from ${rego}/${repo_base}@$meta_digest"
 oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo_base}@$meta_digest"
 [[ $? -eq 0  ]] || err "failed to download meta data"
 
-squashfs_path="${artifact_path}/store.squashfs"
 rfm_meta_path="${artifact_path}/meta/recipe/extra/reframe.yaml"
 
 log "Using artifacts in $artifact_path"
@@ -92,7 +83,17 @@ if [[ -f "${rfm_meta_path}" ]]
 then
     log "no reframe meta data provided: skipping tests"
     exit 0
-done
+fi
+
+#
+# download the squashfs image from jfrog
+#
+
+log "downloading squashfs image from ${rego}/${repo}"
+oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo}"
+[[ $? -eq 0  ]] || err "failed to download squashfs"
+squashfs_path="${artifact_path}/store.squashfs"
+
 
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 

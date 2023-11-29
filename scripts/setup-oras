@@ -11,7 +11,7 @@ oras_path=`mktemp -d`
 (cd "$oras_path"; wget --quiet "$oras_url"; tar -xzf $oras_file; rm *.tar.gz)
 
 export PATH="$oras_path:$PATH"
-log "oras v$v installed in ${oras_path}"
+log "oras v${oras_version} installed in ${oras_path}"
 
 # Obtain credentials for JFrog - required to push the image and meta-data
 creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
