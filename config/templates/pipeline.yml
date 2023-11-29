@@ -2,6 +2,7 @@ stages:
   - build
   - test
 
+
 .base-build:
   stage: build
   variables:
@@ -13,6 +14,7 @@ stages:
   artifacts:
     paths:
     - artifacts/
+
 
 .base-test:
   stage: test
@@ -28,9 +30,10 @@ stages:
     reports:
       junit: report.xml
 
+
 {% for job in jobs %}
 
-build-{{job.uenv}}:{{job.version}}-{{job.system}}:{{job.uarch}}:
+build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-build
   tags: ["{{job.slurm_runner}}"]
   variables:
@@ -40,7 +43,8 @@ build-{{job.uenv}}:{{job.version}}-{{job.system}}:{{job.uarch}}:
     SLURM_PARTITION:  "{{job.partition}}"
     STACK_RECIPE:     "{{job.recipe_path}}"
 
-test-{{job.uenv}}:{{job.version}}-{{job.system}}:{{job.uarch}}:
+
+test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-test
   tags: ["{{job.baremetal_runner}}"]
   variables:

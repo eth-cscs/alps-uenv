@@ -196,7 +196,7 @@ class Config:
             "uenv": env["uenv"],
             "version": env["version"],
             "uarch": env["uarch"],
-            "recipe_path": self.recipe(env["uarch"], env["version"], env["uarch"]),
+            "recipe_path": env["recipe"],
             "spack_develop": develop,
             "system": env["system"],
             "partition": c["partition"][part_idx],
