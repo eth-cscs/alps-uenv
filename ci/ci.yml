@@ -21,3 +21,4 @@ child-pipeline:
     include:
       - artifact: pipeline.yml
         job: pipeline-configure
+    strategy: depend
