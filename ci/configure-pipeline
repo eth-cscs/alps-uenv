@@ -28,7 +28,7 @@ log "config_path=$config_path"
 #
 # create temporary working path for python
 #
-tmp_path=/tmp/uenv$CI_JOB_TOKEN
+tmp_path=/tmp/uenv$CI_JOB_ID
 rm -rf $tmp_path
 mkdir -p $tmp_path
 

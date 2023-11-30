@@ -25,7 +25,7 @@ usage () {
 system="-"
 name="-"
 ci_path="$CI_PROJECT_DIR"
-test_path="$ci_path/$CI_JOB_TOKEN"
+test_path="$ci_path/$CI_JOB_ID"
 
 while getopts n:s: flag
 do
@@ -79,7 +79,7 @@ rfm_meta_path="${artifact_path}/meta/recipe/extra/reframe.yaml"
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
-if [[ -f "${rfm_meta_path}" ]]
+if [[ ! -f "${rfm_meta_path}" ]]
 then
     log "no reframe meta data provided: skipping tests"
     exit 0
