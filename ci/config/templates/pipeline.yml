@@ -5,7 +5,6 @@ stages:
 
 .base-build:
   stage: build
-  needs: [generated-pipeline]
   variables:
     SLURM_TIMELIMIT: 180
   script:
