@@ -6,7 +6,7 @@ pipeline-configure:
   stage: configure
   tags: [clariden-login-baremetal]
   script:
-    - ./config/configure.sh
+    - ./ci/configure.sh
   artifacts:
     paths:
       - pipeline.yml

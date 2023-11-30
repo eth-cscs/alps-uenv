@@ -39,7 +39,7 @@ def py2yaml(data, indent):
     return res
 
 # create validator for json schema
-config_schema = json.load(open(prefix / "config-schema.json"))
+config_schema = json.load(open(prefix / "schema" / "config.json"))
 validator = extend_with_default(jsonschema.Draft7Validator)
 config_validator = validator(config_schema)
 

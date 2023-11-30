@@ -8,7 +8,7 @@ import sys
 import yaml
 
 prefix = pathlib.Path(__file__).parent.resolve()
-root_path = prefix.parent.resolve()
+root_path = prefix.parent.resolve().parent.resolve()
 recipe_path = root_path / "recipes"
 
 sys.path = [prefix.as_posix()] + sys.path
@@ -91,14 +91,14 @@ if __name__ == "__main__":
     # read and validate the configuration
     print(recipe_path)
     try:
-        config = configuration.Config(prefix / "config.yaml", recipe_path)
+        config = configuration.Config(prefix / "../../config.yaml", recipe_path)
     except jsonschema.exceptions.ValidationError as e:
         print()
         where = e.json_path.replace("$.","").replace(".", ":")
         print(f"{util.colorize('[error] ', 'red')}config.yaml:{where}")
         print(f"  {e.message}")
         exit(1)
-    except ConfigError as e:
+    except configuration.ConfigError as e:
         print()
         print(f"{util.colorize('[error] ', 'red')}{e.message}")
         exit(1)
