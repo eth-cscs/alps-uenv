@@ -9,21 +9,20 @@ yellow () { echo "\e[1;33m$1\e[m"; }
 log () { printf "$(yellow "[log $(datetime)]") $1\n"; }
 err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 
-ci_path="$CI_PROJECT_DIR"
-test_path="$ci_path/$CI_JOB_TOKEN"
+script_path=$(realpath "$0")
+root_path=$(realpath "$script_path/..")
 
 #
 # print status
 #
 
-#system=clariden
-#uarch=a100
-#uenv=gromacs:2023
-
-log "system=$system; uarch=$uarch; uenv=$uenv"
+log "configuring cicd pipeline for alps uenv"
+log "      system = $system"
+log "      uarch  = $uarch"
+log "      uenv   = $uenv"
 
 #
-# create temporary working path
+# create temporary working path for python
 #
 tmp_path=/tmp/uenv-tmp/$CI_JOB_TOKEN
 rm -rf $tmp_path
@@ -45,7 +44,7 @@ pip install --upgrade --quiet pip
 pip install --quiet -r ./config/requirements.txt
 log "installed python dependencies"
 
-./config/ci.py
+$script_path/config/ci.py
 [[ $? -eq 0  ]] || err "unable to configure"
 
 log "configuration complete"
