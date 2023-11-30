@@ -126,8 +126,6 @@ if __name__ == "__main__":
 
     # load the jinja templating environment
     template_path = prefix / "templates"
-    print(f"TEMPLATE PATH: {template_path}")
-    print(f"existance: {template_path.is_dir()}")
     jinja_env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(template_path),
         trim_blocks=True,
