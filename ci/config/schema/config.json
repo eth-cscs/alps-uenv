@@ -35,7 +35,7 @@
                                         "baremetal-tag":  {"type": "string"}
                                     }
                                 },
-                                {"enum": ["f7s"]}
+                                {"enum": ["f7t"]}
                             ],
                             "default": "fjs"
                         }

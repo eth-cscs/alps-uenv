@@ -127,8 +127,8 @@ class Config:
                 print(f"{cstr:25s} {util.colorize('FAIL', 'red')} there must be exactly one partition for each uarch")
                 valid = False
             # check that the FirecREST runner hasn't been selected (not supported yet)
-            elif cluster["runner"] == "f7s":
-                print(f"{cstr:25s} {util.colorize('WARN', 'cyan')} the FirecREST 'f7s' runner is not supported yet")
+            elif cluster["runner"] == "f7t":
+                print(f"{cstr:25s} {util.colorize('WARN', 'cyan')} the FirecREST 'f7t' runner is not supported yet")
             else:
                 print(f"{cstr:25s} {util.colorize('PASS', 'green')}")
         print()

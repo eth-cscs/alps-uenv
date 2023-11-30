@@ -2,7 +2,7 @@ clusters:
   eiger:
     uarch: [zen2]
     partition: [normal]
-    runner: f7s
+    runner: f7t
   clariden:
     uarch: [a100, mi200]
     partition: [nvgpu, amdgpu]
