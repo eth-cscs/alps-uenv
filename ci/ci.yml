@@ -11,8 +11,9 @@ pipeline-configure:
     paths:
       - pipeline.yml
 
-child-pipeline:
+generated-pipeline:
   stage: run
+  needs: [pipeline-configure]
   variables:
     CSCS_CI_MW_URL: $CSCS_CI_MW_URL
   trigger:

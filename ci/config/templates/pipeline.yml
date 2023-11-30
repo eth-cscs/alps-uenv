@@ -5,6 +5,7 @@ stages:
 
 .base-build:
   stage: build
+  needs: [generated-pipeline]
   variables:
     SLURM_TIMELIMIT: 180
   script:
@@ -42,6 +43,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
 test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-test
   tags: ["{{job.baremetal_runner}}"]
+  needs: ["build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}"]
   variables:
     STACK_NAME:       "{{job.uenv}}"
     STACK_SYSTEM:     "{{job.system}}"
