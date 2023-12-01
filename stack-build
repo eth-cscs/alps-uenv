@@ -170,7 +170,7 @@ oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --artifact-type 
 
 # push the metadata to jfrog
 log "pushing meta data to ${rego}/${repo}"
-oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./store/meta
+(cd ./store; oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./meta)
 
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})

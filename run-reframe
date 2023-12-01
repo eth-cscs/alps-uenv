@@ -74,11 +74,12 @@ log "downloading meta data image from ${rego}/${repo_base}@$meta_digest"
 oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo_base}@$meta_digest"
 [[ $? -eq 0  ]] || err "failed to download meta data"
 
-rfm_meta_path="${artifact_path}/meta/recipe/extra/reframe.yaml"
+rfm_meta_path="${artifact_path}/meta/extra/reframe.yaml"
 
 log "Using artifacts in $artifact_path"
 find "${artifact_path}"
 
+log "looking for reframe metadata in ${rfm_meta_path}"
 if [[ ! -f "${rfm_meta_path}" ]]
 then
     log "no reframe meta data provided: skipping tests"
@@ -93,7 +94,6 @@ log "downloading squashfs image from ${rego}/${repo}"
 oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${rego}/${repo}"
 [[ $? -eq 0  ]] || err "failed to download squashfs"
 squashfs_path="${artifact_path}/store.squashfs"
-
 
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 
@@ -113,7 +113,6 @@ REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=rep
 log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
 exitcode=$?
-
 
 if [ "$success" -eq 0 ];
 then
