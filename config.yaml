@@ -4,8 +4,8 @@ clusters:
     partition: [normal]
     runner: f7t
   clariden:
-    uarch: [a100, mi200]
-    partition: [nvgpu, amdgpu]
+    uarch: [a100, mi200, zen3]
+    partition: [nvgpu, amdgpu, nvgpu]
     runner:
       slurm-tag: clariden-spack-stack-builder
       baremetal-tag: clariden-login-baremetal
@@ -22,3 +22,16 @@ uenvs:
         eiger: [zen2]
         clariden: [a100]
       #develop: False
+  prgenv-gnu:
+    "23.11":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        zen2: 23.11/mc
+        zen3: 23.11/mc
+        a100: 23.11/a100
+      deploy:
+        # deploy to both the production and test clusters
+        eiger: [zen2]
+        clariden: [a100]
+      #develop: False
+

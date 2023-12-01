@@ -30,6 +30,7 @@ class Version:
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
         self._use_spack_develop = desc["develop"]
+        self._mount = desc["mount"]
         self._recipe_path = recipe_path
 
         arch = self.uarch
@@ -41,6 +42,10 @@ class Version:
     @property
     def spack_develop(self):
         return self._use_spack_develop
+
+    @property
+    def mount(self):
+        return self._mount
 
     @property
     def uarch(self):
@@ -189,7 +194,8 @@ class Config:
         part_idx = c["uarch"].index(env["uarch"])
 
         develop = ""
-        if self.uenv(env["uenv"]).version(env["version"]).spack_develop:
+        version = self.uenv(env["uenv"]).version(env["version"])
+        if version.spack_develop:
             develop = "--develop"
 
         return {
@@ -198,6 +204,7 @@ class Config:
             "uarch": env["uarch"],
             "recipe_path": env["recipe"],
             "spack_develop": develop,
+            "mount": version.mount,
             "system": env["system"],
             "partition": c["partition"][part_idx],
             "baremetal_runner": c["runner"]["baremetal-tag"],

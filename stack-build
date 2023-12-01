@@ -165,13 +165,12 @@ rego=jfrog.svc.cscs.ch/uenv
 repo=build/${CLUSTER_NAME}/${build_id}/${name}:latest
 
 log "pushing store.squashfs to ${rego}/${repo}"
-back_off "oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --artifact-type application/vnd.cscs.uenv.config store.squashfs" 5
+oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --artifact-type application/x-squashfs store.squashfs
 [[ $? -eq 0  ]] || err "failed to push image"
 
 # push the metadata to jfrog
 log "pushing meta data to ${rego}/${repo}"
-back_off "oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./store/meta" 5
-oras attach --artifact-type uenv/meta jfrog.svc.cscs.ch/uenv/build/${CLUSTER_NAME}/${build_id}/${name}:latest ./store/meta
+oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/meta ${rego}/${repo} ./store/meta
 
 log "clean up build path '${build_path}'"
 (rm -rf ${build_path})

@@ -80,7 +80,8 @@
                                         }
                                     }
                                 },
-                                "develop": {"type": "boolean", "default": false}
+                                "develop": {"type": "boolean", "default": false},
+                                "mount":   {"type": "string", "default": "/user-environment"}
                             }
                         }
                     }

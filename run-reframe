@@ -114,6 +114,17 @@ log "REFRAME_COMMAND ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
 exitcode=$?
 
+
+if [ "$success" -eq 0 ];
+then
+    report_path=$(find -type f -name report.xml)
+    log "report generated in $report_path"
+    cat $report_path
+    oras attach --registry-config ${jfrog_creds_path} --artifact-type uenv/reframe "${rego}/${repo}" "${report_path}"
+else
+    log "Reframe test run failed - exiting without pushing a report artifact"
+fi
+
 deactivate
 
 exit ${exitcode}

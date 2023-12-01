@@ -8,7 +8,7 @@ stages:
   variables:
     SLURM_TIMELIMIT: 180
   script:
-  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP
+  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT
   after_script:
   - rm -Rf /dev/shm/jenkssl
 
@@ -19,12 +19,6 @@ stages:
     GIT_STRATEGY: fetch
   script:
   - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM
-  artifacts:
-    when: always
-    paths:
-    - report.xml
-    reports:
-      junit: report.xml
 
 
 {% for job in jobs %}
@@ -33,6 +27,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-build
   tags: ["{{job.slurm_runner}}"]
   variables:
+    STACK_MOUNT:      "{{job.mount}}"
     SPACK_DEVELOP:    "{{job.develop}}"
     STACK_NAME:       "{{job.uenv}}"
     STACK_SYSTEM:     "{{job.system}}"
@@ -46,6 +41,7 @@ test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   variables:
     STACK_NAME:       "{{job.uenv}}"
     STACK_SYSTEM:     "{{job.system}}"
+    STACK_MOUNT:      "{{job.mount}}"
     SLURM_PARTITION:  "{{job.partition}}"
 
 {% endfor %}
