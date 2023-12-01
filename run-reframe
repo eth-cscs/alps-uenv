@@ -86,6 +86,9 @@ then
     exit 0
 fi
 
+# copy the meta data to the location where reframe expects to find it.
+cp $rfm_meta_path "${artifact_path}/store.yaml"
+
 #
 # download the squashfs image from jfrog
 #
@@ -95,6 +98,7 @@ oras pull --registry-config ${jfrog_creds_path} --output "${artifact_path}" "${r
 [[ $? -eq 0  ]] || err "failed to download squashfs"
 squashfs_path="${artifact_path}/store.squashfs"
 
+log "set up a python venv and pip install reframe"
 [[ -z "${SLURM_PARTITION}" ]] && RFM_SYSTEM="${system}" || RFM_SYSTEM="${system}:${SLURM_PARTITION}"
 
 rm -rf rfm_venv
@@ -102,6 +106,7 @@ python3 -m venv rfm_venv
 source rfm_venv/bin/activate
 pip install --upgrade reframe-hpc
 
+log "clone cscs-reframe-tests"
 rm -rf cscs-reframe-tests
 git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
@@ -110,11 +115,11 @@ export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
 REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
-log "REFRAME_COMMAND ${REFRAME_COMMAND}"
+log "running reframe: ${REFRAME_COMMAND}"
 ${REFRAME_COMMAND}
 exitcode=$?
 
-if [ "$success" -eq 0 ];
+if [ "$exitcode" -eq 0 ];
 then
     report_path=$(find -type f -name report.xml)
     log "report generated in $report_path"
