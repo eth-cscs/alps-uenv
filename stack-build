@@ -39,6 +39,7 @@ usage () {
     echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
     echo "  recipe-path: the location of the recipe"
     echo '  build-root:  the root path in which to perform the build, e.g. /dev/shm/$USER'
+    echo "  uarch:       the target micro-architecture"
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -49,6 +50,7 @@ name="-"
 recipe_path="-"
 build_root="-"
 spack_develop=""
+uarch="-"
 
 while getopts n:s:r:b:d flag
 do
@@ -58,13 +60,15 @@ do
         r) recipe_path=$(realpath "${OPTARG}");;
         b) build_root=$(realpath "${OPTARG}");;
         d) spack_develop="--develop";;
+        u) uarch=${OPTARG};;
     esac
 done
 
 [[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${name}"        ]] && usage "missing name argument"
 [[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
-[[ "-" == "${build_root}" ]]  && usage "missing build-root argument"
+[[ "-" == "${build_root}"  ]] && usage "missing build-root argument"
+[[ "-" == "${uarch}"       ]] && usage "missing uarch argument"
 
 build_id=$(get_build_id)
 build_path="${build_root}/${name}/${build_id}"
@@ -162,7 +166,10 @@ fi
 ##
 
 rego=jfrog.svc.cscs.ch/uenv
-repo=build/${CLUSTER_NAME}/${build_id}/${name}:latest
+#repo_base=build/${system}/${uarch}/${name}/${build_id}
+#repo=${repo_base}:latest
+repo_base=build/${system}/${uarch}/${name}
+repo=${repo_base}:${build_id}
 
 log "pushing store.squashfs to ${rego}/${repo}"
 oras push --registry-config ${jfrog_creds_path} ${rego}/${repo} --artifact-type application/x-squashfs store.squashfs

@@ -29,18 +29,20 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   variables:
     STACK_MOUNT:      "{{job.mount}}"
     SPACK_DEVELOP:    "{{job.develop}}"
-    STACK_NAME:       "{{job.uenv}}"
+    STACK_NAME:       "{{job.uenv}}/{{job.version}}"
     STACK_SYSTEM:     "{{job.system}}"
     SLURM_PARTITION:  "{{job.partition}}"
     STACK_RECIPE:     "{{job.recipe_path}}"
+    STACK_UARCH:      "{{job.uarch}}"
 
 test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-test
   tags: ["{{job.baremetal_runner}}"]
   needs: ["build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}"]
   variables:
-    STACK_NAME:       "{{job.uenv}}"
+    STACK_NAME:       "{{job.uenv}}/{{job.version}}"
     STACK_SYSTEM:     "{{job.system}}"
+    STACK_UARCH:      "{{job.uarch}}"
     STACK_MOUNT:      "{{job.mount}}"
     SLURM_PARTITION:  "{{job.partition}}"
 
