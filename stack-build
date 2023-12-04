@@ -46,13 +46,13 @@ usage () {
     err "$1"
 }
 
-system="-"
 name="-"
+system="-"
 recipe_path="-"
 build_root="-"
-spack_develop=""
 uarch="-"
 mount="-"
+spack_develop=""
 
 log "$0 $@"
 
@@ -63,14 +63,14 @@ do
         s) system=${OPTARG};;
         r) recipe_path=$(realpath "${OPTARG}");;
         b) build_root=$(realpath "${OPTARG}");;
-        d) spack_develop="--develop";;
-        m) mount=${OPTARG};;
         u) uarch=${OPTARG};;
+        m) mount=${OPTARG};;
+        d) spack_develop="--develop";;
     esac
 done
 
-[[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${name}"        ]] && usage "missing name argument"
+[[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
 [[ "-" == "${build_root}"  ]] && usage "missing build-root argument"
 [[ "-" == "${uarch}"       ]] && usage "missing uarch argument"
