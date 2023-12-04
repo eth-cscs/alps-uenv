@@ -32,7 +32,7 @@ get_build_id () {
 }
 
 usage () {
-    echo "usage: stack-build -n name -r recipe-path -s system -b build-root [-d]"
+    echo "usage: stack-build -n name -r recipe-path -s system -b build-root -u uarch [-d]"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"

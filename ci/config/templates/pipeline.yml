@@ -8,7 +8,7 @@ stages:
   variables:
     SLURM_TIMELIMIT: 180
   script:
-  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT
+  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT -u $STACK_UARCH
   after_script:
   - rm -Rf /dev/shm/jenkssl
 
@@ -18,7 +18,7 @@ stages:
     SLURM_TIMELIMIT: 30
     GIT_STRATEGY: fetch
   script:
-  - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM
+  - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM -u $STACK_UARCH
 
 
 {% for job in jobs %}
