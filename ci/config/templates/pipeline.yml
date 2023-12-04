@@ -18,7 +18,7 @@ stages:
     SLURM_TIMELIMIT: 30
     GIT_STRATEGY: fetch
   script:
-  - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM -u $STACK_UARCH
+  - ./run-reframe -n $STACK_NAME -s $STACK_SYSTEM -m $STACK_MOUNT -u $STACK_UARCH
 
 
 {% for job in jobs %}
