@@ -32,7 +32,7 @@ get_build_id () {
 }
 
 usage () {
-    echo "usage: stack-build -n name -r recipe-path -s system -b build-root -u uarch [-d]"
+    echo "usage: stack-build -n name -r recipe-path -s system -b build-root -u uarch -m mount [-d]"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
@@ -40,6 +40,7 @@ usage () {
     echo "  recipe-path: the location of the recipe"
     echo '  build-root:  the root path in which to perform the build, e.g. /dev/shm/$USER'
     echo "  uarch:       the target micro-architecture"
+    echo "  mount:       the mount point of the image"
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -51,6 +52,7 @@ recipe_path="-"
 build_root="-"
 spack_develop=""
 uarch="-"
+mount="-"
 
 while getopts n:s:r:b:d flag
 do
@@ -60,6 +62,7 @@ do
         r) recipe_path=$(realpath "${OPTARG}");;
         b) build_root=$(realpath "${OPTARG}");;
         d) spack_develop="--develop";;
+        m) mount=${OPTARG};;
         u) uarch=${OPTARG};;
     esac
 done
@@ -69,6 +72,7 @@ done
 [[ "-" == "${recipe_path}" ]] && usage "missing recipe-path argument"
 [[ "-" == "${build_root}"  ]] && usage "missing build-root argument"
 [[ "-" == "${uarch}"       ]] && usage "missing uarch argument"
+[[ "-" == "${mount}"       ]] && usage "missing mount argument"
 
 build_id=$(get_build_id)
 build_path="${build_root}/${name}/${build_id}"
@@ -83,6 +87,7 @@ log "build-id    ${build_id}"
 log "build-root  ${build_root}"
 log "build-path  ${build_path}"
 log "ci-path     ${ci_path}"
+log "mount       ${mount}"
 [[ ! -z ${spack_develop} ]] && log "develop"
 
 # Check if the recipe path exists
@@ -133,8 +138,8 @@ source ${ci_path}/scripts/setup-stackinator
 # call stackinator
 log "configuring stack"
 
-echo "stack-config -r ${recipe_path} -b ${build_path} -s $cluster_path/${system} $cache_flags ${spack_develop}"
-stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}" $cache_flags ${spack_develop}
+echo "stack-config -r ${recipe_path} -b ${build_path} -s $cluster_path/${system} -m ${mount} $cache_flags ${spack_develop}"
+stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}"  -m "${mount}" $cache_flags ${spack_develop}
 
 if [ ! $? -eq 0 ]; then
     # delete stackinator tool once it is no longer needed
