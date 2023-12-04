@@ -121,7 +121,7 @@ log "clone cscs-reframe-tests"
 rm -rf cscs-reframe-tests
 git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
-export UENV="${squashfs_path}:/user-environment"
+export UENV="${squashfs_path}:${mount}"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
 
 REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
