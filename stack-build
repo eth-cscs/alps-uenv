@@ -54,9 +54,7 @@ uarch="-"
 mount="-"
 spack_develop=""
 
-log "$0 $@"
-
-while getopts n:s:r:b:d flag
+while getopts n:s:r:b:u:m:d: flag
 do
     case "${flag}" in
         n) name=${OPTARG};;

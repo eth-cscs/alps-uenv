@@ -13,12 +13,13 @@ err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
 exit_without_error () {log "$1"; exit 0;}
 
 usage () {
-    echo "usage: reframe-run -n name -s system"
+    echo "usage: reframe-run -n name -s system -m mount"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
     echo "  uarch:       microarchitecture \(one of a100, zen2, zen3, mi200\)"
     echo "  system:      the cluster name \(e.g. of balfrin, clariden, eiger\)"
+    echo "  mount:       the mount point of the image"
     echo ""
     [[ "" == "$1" ]] && exit 0
     err "$1"
@@ -27,21 +28,25 @@ usage () {
 system="-"
 name="-"
 uarch="-"
+mount="-"
+
 ci_path="$CI_PROJECT_DIR"
 test_path="$ci_path/$CI_JOB_ID"
 
-while getopts n:s: flag
+while getopts n:s:u:m: flag
 do
     case "${flag}" in
         n) name=${OPTARG};;
         s) system=${OPTARG};;
         u) uarch=${OPTARG};;
+        m) mount=${OPTARG};;
     esac
 done
 
 [[ "-" == "${system}"      ]] && usage "missing system argument"
 [[ "-" == "${name}"        ]] && usage "missing name argument"
 [[ "-" == "${uarch}"       ]] && usage "missing uarch argument"
+[[ "-" == "${mount}"       ]] && usage "missing mount argument"
 
 build_id=${CI_PIPELINE_ID}
 
@@ -50,6 +55,7 @@ log "USER        ${USER}"
 log "name        ${name}"
 log "system      ${system}"
 log "uarch       ${uarch}"
+log "mount       ${mount}"
 log "build_id    ${build_id}"
 log "ci_path     ${ci_path}"
 log "test_path   ${test_path}"

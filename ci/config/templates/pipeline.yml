@@ -8,7 +8,6 @@ stages:
   variables:
     SLURM_TIMELIMIT: 180
   script:
-  - echo "./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT -u $STACK_UARCH"
   - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT -u $STACK_UARCH
   after_script:
   - rm -Rf /dev/shm/jenkssl
