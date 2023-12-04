@@ -6,7 +6,6 @@ pipeline-configure:
   stage: configure
   tags: [clariden-login-baremetal]
   script:
-    - printenv | grep CI_MERGE
     - ./ci/configure-pipeline
   artifacts:
     paths:
