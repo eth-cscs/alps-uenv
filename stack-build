@@ -54,6 +54,8 @@ spack_develop=""
 uarch="-"
 mount="-"
 
+log "$0 $@"
+
 while getopts n:s:r:b:d flag
 do
     case "${flag}" in
