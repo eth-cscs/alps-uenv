@@ -74,7 +74,7 @@ source rfm_venv/bin/activate
 pip install --upgrade reframe-hpc
 
 rm -rf cscs-reframe-tests
-git clone -b apps/sirius https://github.com/eth-cscs/cscs-reframe-tests.git
+git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
 export UENV="${squashfs_path}:/user-environment"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"

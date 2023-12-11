@@ -17,7 +17,7 @@ stages:
 
 .run-reframe:
   stage: test
-  tags: ['hohgant-login-baremetal']
+  tags: ['clariden-login-baremetal']
   variables:
     SLURM_TIMELIMIT: 30
   variables:
