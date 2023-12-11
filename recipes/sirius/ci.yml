@@ -1,13 +1,13 @@
 include: '/ci/common.yml'
 
 build-a100:
-  extends: .stack-build-hohgant-a100
+  extends: .stack-build
   variables:
     STACK_NAME: sirius-cuda
     STACK_RECIPE: recipes/sirius
     SPACK_DEVELOP: '--develop'
 
 test-a100:
-  extends: .run-reframe-hohgant-a100
+  extends: .run-reframe
   variables:
     STACK_NAME: sirius-cuda

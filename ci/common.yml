@@ -31,37 +31,3 @@ stages:
     reports:
       junit: report.xml
 
-.stack-build-hohgant:
-  extends: .stack-build
-  tags: [hohgant-spack-stack-builder]
-  variables:
-    STACK_SYSTEM: hohgant
-.stack-build-hohgant-cpu:
-  extends: .stack-build-hohgant
-  variables:
-    SLURM_PARTITION: cpu
-.stack-build-hohgant-a100:
-  extends: .stack-build-hohgant
-  variables:
-    SLURM_PARTITION: nvgpu
-.stack-build-hohgant-mi200:
-  extends: .stack-build-hohgant
-  variables:
-    SLURM_PARTITION: amdgpu
-
-.run-reframe-hohgant:
-  extends: .run-reframe
-  variables:
-    STACK_SYSTEM: hohgant
-.run-reframe-hohgant-cpu:
-  extends: .run-reframe-hohgant
-  variables:
-    SLURM_PARTITION: cpu
-.run-reframe-hohgant-a100:
-  extends: .run-reframe-hohgant
-  variables:
-    SLURM_PARTITION: nvgpu
-.run-reframe-hohgant-mi200:
-  extends: .run-reframe-hohgant
-  variables:
-    SLURM_PARTITION: amdgpu
