@@ -86,7 +86,7 @@ if __name__ == "__main__":
     if os.getenv("UENVCITEST", default=None) is not None:
         os.environ["system"] = "clariden"
         os.environ["uarch"] = "a100"
-        os.environ["uenv"] = "gromacs:2023"
+        os.environ["uenv"] = "sirius:v7.5"
 
     # read and validate the configuration
     print(recipe_path)

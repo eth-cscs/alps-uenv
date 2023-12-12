@@ -28,7 +28,7 @@ uenvs:
         a100: v7.5/a100
       deploy:
         clariden: [a100]
-      develop: False
+      develop: True
   prgenv-gnu:
     "23.11":
       recipes:
