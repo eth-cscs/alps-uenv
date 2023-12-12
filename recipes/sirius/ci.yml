@@ -1,7 +1,0 @@
-include: '/ci/common.yml'
-
-build-a100:
-  extends: .stack-build-hohgant-a100
-  variables:
-    STACK_NAME: sirius-cuda
-    STACK_RECIPE: recipes/sirius
