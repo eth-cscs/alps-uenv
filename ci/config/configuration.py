@@ -188,7 +188,7 @@ class Config:
             uarch: a100
             uenv: gromacs
             version: 2023
-            recipe: /home/bcumming/software/github/alps-spack-stacks/recipes/gromacs/2023/a100
+            recipe: /home/bcumming/software/github/alps-uenv/recipes/gromacs/2023/a100
         """
         c = self.clusters[env["system"]]
         part_idx = c["uarch"].index(env["uarch"])

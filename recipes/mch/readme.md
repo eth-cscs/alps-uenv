@@ -40,9 +40,9 @@ export PATH=$work/stackinator/bin:$PATH
 echo
 echo === getting recipe
 echo
-git clone --quiet git@github.com:eth-cscs/alps-spack-stacks.git
-(cd alps-spack-stacks && git checkout $TAG)
-recipes=$work/alps-spack-stacks/recipes
+git clone --quiet git@github.com:eth-cscs/alps-uenv.git
+(cd alps-uenv && git checkout $TAG)
+recipes=$work/alps-uenv/recipes
 
 echo
 echo === getting cluster configuration
