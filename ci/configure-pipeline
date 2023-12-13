@@ -25,9 +25,6 @@ log "root_path  =$root_path"
 log "script_path=$script_path"
 log "config_path=$config_path"
 
-log "here are all the env vars"
-printenv | grep CI_
-
 #
 # create temporary working path for python
 #

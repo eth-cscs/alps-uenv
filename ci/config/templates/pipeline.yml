@@ -28,7 +28,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   tags: ["{{job.slurm_runner}}"]
   variables:
     STACK_MOUNT:      "{{job.mount}}"
-    SPACK_DEVELOP:    "{{job.develop}}"
+    SPACK_DEVELOP:    "{{job.spack_develop}}"
     STACK_NAME:       "{{job.uenv}}/{{job.version}}"
     STACK_SYSTEM:     "{{job.system}}"
     SLURM_PARTITION:  "{{job.partition}}"
