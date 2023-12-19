@@ -64,10 +64,10 @@ def readenv(config):
     except:
         raise EnvError(f"invalid format of uenv={target}, expected 'name:version'")
 
-    # TODO: check that the recipe-version also supports uarch
     recipe = config.recipe(uenv, version, uarch)
+
     if recipe is None:
-        raise EnvError(f"the recipe 'name:version' is not available")
+        raise EnvError(f"the recipe {uenv}/{version} is not available for the {uarch} target")
 
     return {
         "system": system,
@@ -84,9 +84,12 @@ if __name__ == "__main__":
     #   - path of the configuration file (required)
     #   - JOB_ID (if needed?)
     if os.getenv("UENVCITEST", default=None) is not None:
+        #os.environ["system"] = "eiger"
+        #os.environ["uarch"] = "zen2"
+        #os.environ["uenv"] = "gromacs:2023"
         os.environ["system"] = "clariden"
         os.environ["uarch"] = "a100"
-        os.environ["uenv"] = "sirius:v7.5"
+        os.environ["uenv"] = "gromacs:2023"
 
     # read and validate the configuration
     print(recipe_path)

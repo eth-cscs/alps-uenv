@@ -126,16 +126,7 @@ class Config:
         # Verify clusters
         print(util.colorize("Validating cluster configurations", "blue"))
         for name, cluster in self._clusters.items():
-            cstr = f"{name}"
-            # check that there is one partition for every uarch
-            if len(cluster["partition"]) != len(cluster["uarch"]):
-                print(f"{cstr:25s} {util.colorize('FAIL', 'red')} there must be exactly one partition for each uarch")
-                valid = False
-            # check that the FirecREST runner hasn't been selected (not supported yet)
-            elif cluster["runner"] == "f7t":
-                print(f"{cstr:25s} {util.colorize('WARN', 'cyan')} the FirecREST 'f7t' runner is not supported yet")
-            else:
-                print(f"{cstr:25s} {util.colorize('PASS', 'green')}")
+            print(f"{name:25s} {util.colorize('PASS', 'green')}")
         print()
 
         if not valid:
@@ -144,9 +135,10 @@ class Config:
     def is_valid_target(self, cluster, uarch):
         if cluster not in self._clusters.keys():
             return False, f"cluster {cluster} is not defined"
-        if uarch not in self._clusters[cluster]["uarch"]:
-            return False, f"cluster {cluster} does not support {uarch}"
-        return True, ""
+        for t in self._clusters[cluster]["targets"]:
+            if t["uarch"] == uarch:
+                return True, ""
+        return False, f"cluster {cluster} does not support {uarch}"
 
     def uenv(self, name):
         """
@@ -164,6 +156,7 @@ class Config:
         returns None if no recipe fits the description.
         """
         u = self.uenv(name)
+        print(f"testing: {name} {version} {uarch}")
         if u is not None:
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
@@ -190,8 +183,9 @@ class Config:
             version: 2023
             recipe: /home/bcumming/software/github/alps-uenv/recipes/gromacs/2023/a100
         """
-        c = self.clusters[env["system"]]
-        part_idx = c["uarch"].index(env["uarch"])
+        cluster = self.clusters[env["system"]]
+        target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
+        runner = cluster["runner"]
 
         develop = ""
         version = self.uenv(env["uenv"]).version(env["version"])
@@ -206,9 +200,9 @@ class Config:
             "spack_develop": develop,
             "mount": version.mount,
             "system": env["system"],
-            "partition": c["partition"][part_idx],
-            "baremetal_runner": c["runner"]["baremetal-tag"],
-            "slurm_runner": c["runner"]["slurm-tag"],
+            "partition": target["partition"],
+            "baremetal_runner": runner["baremetal-tag"],
+            "slurm_runner": runner["slurm-tag"],
         }
 
 # load the uenv and cluster configurations
