@@ -191,20 +191,21 @@ class Config:
         if version.spack_develop:
             develop = "--develop"
 
+
+        runner["variables"]        = target["variables"]
         use_f7t = (cluster["runner"] == "f7t")
         runner = {"f7t": use_f7t}
-        runner["variables"]        = target["variables"]
-        if not use_f7t:
-            runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
-            runner["slurm_runner"]     = cluster["runner"]["slurm-tag"]
-
-        # set additional environment variables required for FirecREST.
-        print("runner variables: ", runner["variables"])
+        # configure for firecrest, if it is used on the target cluster
         if use_f7t:
+            # set additional environment variables required for FirecREST.
             runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
             runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
             runner["variables"]["MODE"] = "baremetal"
             runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
+        # else configure baremetal runners deployed via Ansible/Nomad
+        else:
+            runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
+            runner["slurm_runner"]     = cluster["runner"]["slurm-tag"]
 
         return {
             "uenv": env["uenv"],
