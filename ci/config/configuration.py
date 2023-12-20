@@ -192,9 +192,10 @@ class Config:
             develop = "--develop"
 
 
-        runner["variables"]        = target["variables"]
         use_f7t = (cluster["runner"] == "f7t")
         runner = {"f7t": use_f7t}
+        runner["variables"]        = target["variables"]
+
         # configure for firecrest, if it is used on the target cluster
         if use_f7t:
             # set additional environment variables required for FirecREST.
