@@ -14,10 +14,10 @@ pipeline-configure:
 generated-pipeline:
   stage: run
   needs: [pipeline-configure]
-  variables:
-    CSCS_CI_MW_URL: $CSCS_CI_MW_URL
   trigger:
     include:
       - artifact: pipeline.yml
         job: pipeline-configure
+    forward:
+      pipeline_variables: true
     strategy: depend
