@@ -186,6 +186,7 @@ class Config:
         cluster = self.clusters[env["system"]]
         target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
         runner = cluster["runner"]
+        print(runner)
 
         develop = ""
         version = self.uenv(env["uenv"]).version(env["version"])

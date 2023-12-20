@@ -2,22 +2,22 @@ clusters:
   eiger:
     targets:
       -
-          uarch: 'zen2'
-          partition: 'normal'
-          variables:
-            SLURM_CONSTRAINT: 'mc'
+        uarch: 'zen2'
+        partition: 'normal'
+        variables:
+          SLURM_CONSTRAINT: 'mc'
     runner: f7t
   clariden:
     targets:
       -
-          uarch: 'a100'
-          partition: 'nvgpu'
+        uarch: 'a100'
+        partition: 'nvgpu'
       -
-          uarch: 'mi200'
-          partition: 'amdgpu'
+        uarch: 'mi200'
+        partition: 'amdgpu'
       -
-          uarch: 'zen3'
-          partition: 'nvgpu'
+        uarch: 'zen3'
+        partition: 'nvgpu'
     runner:
       slurm-tag: clariden-spack-stack-builder
       baremetal-tag: clariden-login-baremetal
