@@ -185,13 +185,26 @@ class Config:
         """
         cluster = self.clusters[env["system"]]
         target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
-        runner = cluster["runner"]
-        print(runner)
 
         develop = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
+
+        use_f7t = (cluster["runner"] == "f7t")
+        runner = {"f7t": use_f7t}
+        runner["variables"]        = target["variables"]
+        if not use_f7t:
+            runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
+            runner["slurm_runner"]     = cluster["runner"]["slurm-tag"]
+
+        # set additional environment variables required for FirecREST.
+        print("runner variables: ", runner["variables"])
+        if use_f7t:
+            runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+            runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
+            runner["variables"]["MODE"] = "baremetal"
+            runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
 
         return {
             "uenv": env["uenv"],
@@ -202,8 +215,7 @@ class Config:
             "mount": version.mount,
             "system": env["system"],
             "partition": target["partition"],
-            "baremetal_runner": runner["baremetal-tag"],
-            "slurm_runner": runner["slurm-tag"],
+            "runner": runner,
         }
 
 # load the uenv and cluster configurations
