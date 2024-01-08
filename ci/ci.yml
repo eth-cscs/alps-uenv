@@ -5,6 +5,8 @@ stages:
 pipeline-configure:
   stage: configure
   tags: [clariden-login-baremetal]
+  variables:
+    CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
   script:
     - ./ci/configure-pipeline
   artifacts:
@@ -14,6 +16,8 @@ pipeline-configure:
 generated-pipeline:
   stage: run
   needs: [pipeline-configure]
+  variables:
+    CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
   trigger:
     include:
       - artifact: pipeline.yml
