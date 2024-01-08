@@ -52,8 +52,11 @@ class Version:
         # list of the uarch that this version can be deployed on
         return [n for n in self._recipes.keys()]
 
-    def recipe(self, uarch):
+    def recipe_path(self, uarch):
         return self._recipe_path / self._recipes[uarch]
+
+    def recipe(self, uarch):
+        return self._recipes[uarch]
 
     @property
     def deployments(self):
@@ -115,7 +118,7 @@ class Config:
 
                 for uarch in version.uarch:
                     cstr = f"{uenv.name+'/'+version.name:25s} recipe {uarch:18s}"
-                    path = version.recipe(uarch)
+                    path = version.recipe_path(uarch)
                     if not path.exists():
                         print(f"{cstr} {util.colorize('FAIL', 'red')} recipe path {path.as_posix()} does not exist")
                         valid = False
@@ -152,7 +155,7 @@ class Config:
 
     def recipe(self, name, version, uarch):
         """
-        return the recipe information for uenv name:version on target uarch.
+        return the relative path of the recipe for uenv name:version on target uarch.
         returns None if no recipe fits the description.
         """
         u = self.uenv(name)
@@ -160,7 +163,7 @@ class Config:
         if u is not None:
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
-                    return v.recipe(uarch)
+                    return "recipes/" + name + "/" + v.recipe(uarch)
 
         return None
 
