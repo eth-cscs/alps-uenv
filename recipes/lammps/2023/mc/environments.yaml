@@ -1,0 +1,27 @@
+ lammps:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+      spec: cray-mpich
+      gpu: false
+  unify: true
+  specs:
+  - cmake
+  - hwloc
+  - python@3.10
+  - kokkos
+  - blas
+  - lapack
+  - fftw-api
+  - lammps~plumed
+  variants:
+  - +mpi
+  views:
+    default:
+      exclude: []
+      link: run
+    develop:
+      exclude: ['lammps']
+  packages:
+  - perl

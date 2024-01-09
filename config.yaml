@@ -34,6 +34,14 @@ uenvs:
         eiger: [zen2]
         clariden: [a100]
       develop: False
+  lammps:
+    "2023":
+      recipes:
+        zen2: "2023/mc"
+        zen3: "2023/mc"
+      deploy:
+        eiger: [zen2]
+      develop: False
   mch:
     "v5":
       recipes:
