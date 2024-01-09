@@ -52,8 +52,11 @@ class Version:
         # list of the uarch that this version can be deployed on
         return [n for n in self._recipes.keys()]
 
-    def recipe(self, uarch):
+    def recipe_path(self, uarch):
         return self._recipe_path / self._recipes[uarch]
+
+    def recipe(self, uarch):
+        return self._recipes[uarch]
 
     @property
     def deployments(self):
@@ -115,7 +118,7 @@ class Config:
 
                 for uarch in version.uarch:
                     cstr = f"{uenv.name+'/'+version.name:25s} recipe {uarch:18s}"
-                    path = version.recipe(uarch)
+                    path = version.recipe_path(uarch)
                     if not path.exists():
                         print(f"{cstr} {util.colorize('FAIL', 'red')} recipe path {path.as_posix()} does not exist")
                         valid = False
@@ -126,16 +129,7 @@ class Config:
         # Verify clusters
         print(util.colorize("Validating cluster configurations", "blue"))
         for name, cluster in self._clusters.items():
-            cstr = f"{name}"
-            # check that there is one partition for every uarch
-            if len(cluster["partition"]) != len(cluster["uarch"]):
-                print(f"{cstr:25s} {util.colorize('FAIL', 'red')} there must be exactly one partition for each uarch")
-                valid = False
-            # check that the FirecREST runner hasn't been selected (not supported yet)
-            elif cluster["runner"] == "f7t":
-                print(f"{cstr:25s} {util.colorize('WARN', 'cyan')} the FirecREST 'f7t' runner is not supported yet")
-            else:
-                print(f"{cstr:25s} {util.colorize('PASS', 'green')}")
+            print(f"{name:25s} {util.colorize('PASS', 'green')}")
         print()
 
         if not valid:
@@ -144,9 +138,10 @@ class Config:
     def is_valid_target(self, cluster, uarch):
         if cluster not in self._clusters.keys():
             return False, f"cluster {cluster} is not defined"
-        if uarch not in self._clusters[cluster]["uarch"]:
-            return False, f"cluster {cluster} does not support {uarch}"
-        return True, ""
+        for t in self._clusters[cluster]["targets"]:
+            if t["uarch"] == uarch:
+                return True, ""
+        return False, f"cluster {cluster} does not support {uarch}"
 
     def uenv(self, name):
         """
@@ -160,14 +155,15 @@ class Config:
 
     def recipe(self, name, version, uarch):
         """
-        return the recipe information for uenv name:version on target uarch.
+        return the relative path of the recipe for uenv name:version on target uarch.
         returns None if no recipe fits the description.
         """
         u = self.uenv(name)
+        print(f"testing: {name} {version} {uarch}")
         if u is not None:
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
-                    return v.recipe(uarch)
+                    return "recipes/" + name + "/" + v.recipe(uarch)
 
         return None
 
@@ -190,13 +186,30 @@ class Config:
             version: 2023
             recipe: /home/bcumming/software/github/alps-uenv/recipes/gromacs/2023/a100
         """
-        c = self.clusters[env["system"]]
-        part_idx = c["uarch"].index(env["uarch"])
+        cluster = self.clusters[env["system"]]
+        target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
 
         develop = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
+
+
+        use_f7t = (cluster["runner"] == "f7t")
+        runner = {"f7t": use_f7t}
+        runner["variables"]        = target["variables"]
+
+        # configure for firecrest, if it is used on the target cluster
+        if use_f7t:
+            # set additional environment variables required for FirecREST.
+            runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+            runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
+            runner["variables"]["MODE"] = "baremetal"
+            runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
+        # else configure baremetal runners deployed via Ansible/Nomad
+        else:
+            runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
+            runner["slurm_runner"]     = cluster["runner"]["slurm-tag"]
 
         return {
             "uenv": env["uenv"],
@@ -206,9 +219,8 @@ class Config:
             "spack_develop": develop,
             "mount": version.mount,
             "system": env["system"],
-            "partition": c["partition"][part_idx],
-            "baremetal_runner": c["runner"]["baremetal-tag"],
-            "slurm_runner": c["runner"]["slurm-tag"],
+            "partition": target["partition"],
+            "runner": runner,
         }
 
 # load the uenv and cluster configurations

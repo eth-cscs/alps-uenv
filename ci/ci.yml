@@ -15,9 +15,11 @@ generated-pipeline:
   stage: run
   needs: [pipeline-configure]
   variables:
-    CSCS_CI_MW_URL: $CSCS_CI_MW_URL
+    CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
   trigger:
     include:
       - artifact: pipeline.yml
         job: pipeline-configure
+    forward:
+      pipeline_variables: true
     strategy: depend

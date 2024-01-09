@@ -11,19 +11,32 @@
             "patternProperties": {
                 "^[a-z0-9]+$": {
                     "type": "object",
-                    "required": ["uarch", "partition", "runner"],
+                    "required": ["targets", "runner"],
                     "additionalProperties": false,
                     "properties": {
-                        "uarch": {
+                        "targets": {
                             "type": "array",
                             "items": {
-                                "type": "string",
-                                "enum": ["zen2", "zen3", "a100", "mi200"]
+                                "type": "object",
+                                "required": ["uarch", "partition"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "uarch": {
+                                        "type": "string",
+                                        "enum": ["zen2", "zen3", "a100", "mi200"]
+                                    },
+                                    "partition": {"type": "string"},
+                                    "variables": {
+                                        "type": "object",
+                                        "patternProperties": {
+                                            "^[\\w.-]+$": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "default": {}
+                                    }
+                                }
                             }
-                        },
-                        "partition": {
-                            "type": "array",
-                            "items": { "type": "string" }
                         },
                         "runner": {
                             "oneOf": [
@@ -37,7 +50,7 @@
                                 },
                                 {"enum": ["f7t"]}
                             ],
-                            "default": "fjs"
+                            "default": "fjt"
                         }
                     }
                 }
