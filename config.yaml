@@ -43,9 +43,11 @@ uenvs:
         eiger: [zen2]
       develop: False
   mch:
-    "v5":
+    # v5 was deprecated from the build config due to an out of date
+    # version of spack (v0.19)
+    "v6":
       recipes:
-        a100: v5
+        a100: v6
       deploy:
         clariden: [a100]
       develop: False
