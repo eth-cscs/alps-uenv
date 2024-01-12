@@ -1,0 +1,9 @@
+openfoam-org-env:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11
+  mpi:
+    spec: cray-mpich
+  unify: true
+  specs:
+  - openfoam-org@8

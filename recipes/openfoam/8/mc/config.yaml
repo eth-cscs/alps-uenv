@@ -1,0 +1,7 @@
+name: openfoam
+description: OpenFOAM Foundation v8
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.21
+modules: true
