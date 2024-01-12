@@ -72,6 +72,12 @@ uenvs:
       deploy:
         eiger: [zen2]
       develop: False
+  openfoam:
+    "8":
+      recipes:
+        zen2: 8/mc
+      deploy:
+        eiger: [zen2]
   prgenv-gnu:
     "23.11":
       recipes:
