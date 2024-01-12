@@ -1,0 +1,56 @@
+From 3ecd491f859e04ffe9aad2466de507ba76bd99fc Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Fri, 13 Oct 2023 10:47:39 +0200
+Subject: [PATCH 1/2] fix type mismatch between 2 args
+
+The error was:
+```
+Error: Type mismatch between actual argument at (1) and actual argument at (2) (REAL(8)/REAL(4)).
+```
+
+in `IF(TMP_FPEQ(zstd/x, zero))`.
+---
+ ppl/tmapadds/compute_mnstd.F | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/ppl/tmapadds/compute_mnstd.F b/ppl/tmapadds/compute_mnstd.F
+index 0696173b5..a1b08e682 100644
+--- a/ppl/tmapadds/compute_mnstd.F
++++ b/ppl/tmapadds/compute_mnstd.F
+@@ -72,8 +72,8 @@ C**
+ 	REAL*8 sum, dev, sumsq_dev, variance, tol_lo, tol_hi, zmean2
+ 
+ 	LOGICAL TM_FPEQ_SNGL, TM_FPEQ, zmax_test, zmin_test, ok
+-	REAL  zero, rbad
+-	REAL*8 x, xmean, sum2, sumc, variance_c, xdelta, 
++	REAL rbad
++	REAL*8 x, zero, xmean, sum2, sumc, variance_c, xdelta,
+      .         z_max_tol, z_min_tol, zlo, zhi
+ 	INTEGER i, n, n2, nok
+ 
+@@ -108,11 +108,11 @@ c If so take those into account
+ 	zmax_test = .FALSE.
+ 	zmin_test = .FALSE.
+ 
+-	IF (.NOT. TM_FPEQ_SNGL(lev_max, rbad)) THEN
++	IF (.NOT. TM_FPEQ_SNGL(lev_max, Real(rbad, KIND=8))) THEN
+ 	   zmax_test = .TRUE.
+ 	   z_max_tol = DBLE(lev_max)
+ 	ENDIF
+-	IF (.NOT. TM_FPEQ_SNGL(lev_min, rbad)) THEN
++	IF (.NOT. TM_FPEQ_SNGL(lev_min, Real(rbad, KIND=8))) THEN
+ 	   zmin_test = .TRUE.
+ 	   z_min_tol = DBLE(lev_min)
+ 	ENDIF
+@@ -291,7 +291,7 @@ c Once more.
+ 	zero = 0.
+ 
+ 	IF (need_std) THEN
+-	   IF ( .NOT. TM_FPEQ(zmean, zero) )  THEN
++	   IF ( .NOT. TM_FPEQ(Real(zmean, KIND=8), zero) )  THEN
+ 	      IF (TM_FPEQ_SNGL(zstd/zmean, zero))  GOTO 5010
+ 	   ELSE 
+ 	      x = MAX(ABS(zmin), ABS(zmax))
+-- 
+2.42.0
+

@@ -1,0 +1,75 @@
+modules:
+  # Paths to check when creating modules for all module sets
+  prefix_inspections:
+    bin:
+      - PATH
+    lib:
+      - LD_LIBRARY_PATH
+    lib64:
+      - LD_LIBRARY_PATH
+    lib/pkgconfig:
+      - PKG_CONFIG_PATH
+    lib64/pkgconfig:
+      - PKG_CONFIG_PATH
+
+  default:
+    arch_folder: false
+    # Where to install modules
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      eccodes:
+        environment:
+          set:
+            ECCODES_DIR: '{prefix}'
+            ECCODES_INCLUDE: '{prefix}/include'
+            ECCODES_VERSION: '{version}'
+      netlib-scalapack:
+        environment:
+          set:
+            NETLIB_SCALAPACK_ROOT: '{prefix}'
+      openblas:
+        environment:
+          set:
+            OPENBLAS_ROOT: '{prefix}'
+      netcdf-c:
+        environment:
+          set:
+            NETCDF_C_ROOT: '{prefix}'
+      hash_length: 0
+      exclude_implicits: true
+      include:
+        - cuda
+        - hdf5
+        - zlib+shared
+      exclude:
+        - '%gcc@7.5.0'
+        - 'gcc %gcc@7.5.0'
+        - 'autoconf'
+        - 'automake'
+        - 'c-blosc'
+        - 'ca-certificates-mozilla'
+        - 'diffutils'
+        - 'gnuconfig'
+        - 'jasper'
+        - 'libaec'
+        - 'libiconv'
+        - 'libtool'
+        - 'libxcrypt'
+        - 'patchelf'
+        - 'pkgconf'
+        - 'm4'
+        - 'ncurses'
+        - 'openssl'
+        - 'xz'
+      projections:
+        all: '{name}/{version}-{compiler.name}'
+        nvhpc: '{name}/{version}'
+        gcc: '{name}/{version}'
+        cray-mpich: 'cray-mpich-binary/{version}'
+        python: '{name}/{version}'
+        hdf5%gcc~mpi: '{name}/{version}-serial-{compiler.name}'
+        netcdf-c~mpi: '{name}/{version}-serial-{compiler.name}'
+        netcdf-fortran^netcdf-c~mpi: '{name}/{version}-serial-{compiler.name}'

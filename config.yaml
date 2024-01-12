@@ -33,14 +33,45 @@ uenvs:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
-      #develop: False
-  sirius:
-    "v7.5":
+      develop: False
+  cp2k:
+    "2023":
       recipes:
-        a100: v7.5/a100
+        # zen2 and zen3 targets use the same recipe
+        zen2: 2023/mc
+        zen3: 2023/mc
+        a100: 2023/a100
+      deploy:
+        # deploy to both the production and test clusters
+        eiger: [zen2]
+        clariden: [a100]
+      develop: False
+  lammps:
+    "2023":
+      recipes:
+        zen2: "2023/mc"
+        zen3: "2023/mc"
+      deploy:
+        eiger: [zen2]
+      develop: False
+  mch:
+    # v5 was deprecated from the build config due to an out of date
+    # version of spack (v0.19)
+    "v6":
+      recipes:
+        a100: v6
       deploy:
         clariden: [a100]
-      develop: True
+      develop: False
+  netcdf-tools:
+    "2024":
+      recipes:
+        zen2: '2024'
+        zen3: '2024'
+        a100: '2024'
+      deploy:
+        eiger: [zen2]
+      develop: False
   prgenv-gnu:
     "23.11":
       recipes:
@@ -52,5 +83,20 @@ uenvs:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
-      #develop: False
+  quantumespresso:
+    "v7.1":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        zen2: v7.1/mc
+        zen3: v7.1/mc
+        a100: v7.1/a100
+      deploy:
+        eiger: [zen2]
+  sirius:
+    "v7.5":
+      recipes:
+        a100: v7.5/a100
+      deploy:
+        clariden: [a100]
+      develop: True
 

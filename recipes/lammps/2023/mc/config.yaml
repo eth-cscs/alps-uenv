@@ -1,0 +1,7 @@
+name: lammps
+store: /user-environment
+description: LAMMPS (without Plumed), and the toolchain to build your own LAMMPS.
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.21
+modules: True
