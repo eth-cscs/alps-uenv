@@ -4,17 +4,19 @@ tool_base_path="$(pwd)"
 # check out a unique copy of stackinator for each ci task, so that
 # builds in the same pipeline do not conflict
 tool_path=`mktemp -d`
-tool_repo=https://github.com/eth-cscs/stackinator.git
-tool_version=ad2281b2c094b043b2dd256ea224613943f47c14
+#tool_repo=https://github.com/eth-cscs/stackinator.git
+#tool_version=ad2281b2c094b043b2dd256ea224613943f47c14
+tool_repo=https://github.com/simonpintarelli/stackinator.git
+tool_version=feat/split-cray-mpich
 
 log "installing stackinator from git in '${tool_path}'"
 
 log "cloning stackinator from ${tool_repo}"
-git clone --quiet "${tool_repo}" "${tool_path}" || err "unable to clone stackinator git repository"
+git clone "${tool_repo}" "${tool_path}" || err "unable to clone stackinator git repository"
 
 log "checkout stackinator ${tool_version}"
 cd "${tool_path}"
-git checkout --quiet "${tool_version}" || err "unable to checkout out requested version"
+git checkout "${tool_version}" || err "unable to checkout out requested version"
 
 log "bootstrap stackinator"
 cd "${tool_path}"
