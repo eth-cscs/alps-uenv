@@ -7,3 +7,7 @@ openfoam-org-env:
   unify: true
   specs:
   - openfoam-org@8
+  views:
+    openfoam:
+    develop:
+      exclude: ['openfoam-org']
