@@ -1,0 +1,8 @@
+name: paraview-jb-dev
+store: /mnt/user-environment
+description: ParaView visualization tool
+
+spack:
+  repo: https://github.com/biddisco/spack.git
+  commit: paraview-EGL
+
