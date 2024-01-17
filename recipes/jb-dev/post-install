@@ -1,0 +1,34 @@
+#!/bin/bash
+
+echo "====================================="
+echo "=====     post install hook     ====="
+
+mount_path={{ env.mount }}
+echo RUNNING IN $mount_path
+config_path={{ env.config }}
+echo config is in $config_path
+
+echo
+echo "=====   environment variabls    ====="
+printenv
+
+echo
+echo "=====   create post file {{ env.mount }}/post  ====="
+echo "$(date)" > "$mount_path/post"
+
+echo
+echo "===== list all spack packages ====="
+spack -C $config_path find
+
+echo "======  load packages prior to plugin build  ======"
+
+# =====================================
+# we need to source the spack environment before using 'spack load' etc
+#. ./spack/share/spack/setup-env.sh
+
+echo "chmod $mount_path/repo"
+chmod -R a+rx $mount_path/repo
+echo "chmod $config_path/"
+chmod -R a+rx $config_path/*
+
+echo "========  Done  ========"

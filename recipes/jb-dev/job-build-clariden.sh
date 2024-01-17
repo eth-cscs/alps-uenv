@@ -10,7 +10,8 @@
 
 export PYTHONUNBUFFERED=1
 
-SRC=/users/biddisco/src
+SRC=$HOME/src
+IMAGES=$HOME/images
 CLUSTER=clariden
 STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/jb-dev
@@ -32,7 +33,7 @@ env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make store.squashfs 
 
 echo "Copy generated squashfs file"
 DATE=$(date +%F)
-cp /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-jb-dev-$DATE.squashfs
+cp /dev/shm/biddisco/store.squashfs $IMAGES/$CLUSTER-jb-dev-$DATE.squashfs
 
 # -----------------------------------------
 # debug : create a shell using the spack setup used to create the squashfs

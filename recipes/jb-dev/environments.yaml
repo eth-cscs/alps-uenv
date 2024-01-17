@@ -19,6 +19,8 @@ gcc-cuda:
   - intel-mkl
   - blaspp@2022.07.00 +cuda
   - lapackpp@2022.07.00 +cuda
+  - fftw
+  - hdf5 +mpi ~cxx
   - silo +mpi +hdf5 ~fortran ~fpzip ~hzip
   - gperftools
   - otf2
@@ -27,9 +29,6 @@ gcc-cuda:
   - protobuf
   - cmake
   - ninja
-  - python
-  - py-pip
-  - py-pytest
   packages:
   - git
   - perl
