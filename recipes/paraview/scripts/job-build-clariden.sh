@@ -10,7 +10,7 @@
 
 export PYTHONUNBUFFERED=1
 
-SRC=/users/biddisco/src
+SRC=$HOME/src
 CLUSTER=clariden
 STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/a100
