@@ -1,0 +1,82 @@
+gcc-cuda:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  unify: true
+  specs:
+  - hdf5 +mpi ~cxx
+  - fftw +mpi
+  - cuda@11.8
+  - boost +atomic+chrono+container+context+coroutine+date_time+filesystem+program_options+regex+serialization+system+test+thread cxxstd=17
+  - stdexec
+  - fmt
+  - whip
+  - mimalloc
+  - umpire +cuda ~shared
+  - intel-mkl
+  - blaspp@2022.07.00 +cuda
+  - lapackpp@2022.07.00 +cuda
+  - silo +mpi +hdf5 ~fortran ~fpzip ~hzip
+  - gperftools
+  - otf2
+  - apex@develop +cuda ~openmp ~activeharmony
+  - googletest
+  - protobuf
+  - cmake
+  - ninja
+  - python
+  - py-pip
+  - py-pytest
+  packages:
+  - git
+  - perl
+  variants:
+  - +cuda
+  - cuda_arch=80
+  - ~fortran
+  - build_type=Release
+  - cxxstd=17
+  - ~examples
+
+gcc-nocuda:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11
+  mpi:
+    spec: cray-mpich
+    gpu: null
+  unify: true
+  specs:
+  - hdf5 +mpi ~cxx
+  - fftw +mpi
+  - boost@1.78 +atomic+chrono+container+context+coroutine+date_time+filesystem+program_options+regex+serialization+system+test+thread cxxstd=17
+  - stdexec
+  - fmt
+  - whip
+  - mimalloc
+  - umpire ~cuda ~shared
+  - intel-mkl
+  - blaspp@2022.07.00 ~cuda
+  - lapackpp@2022.07.00 ~cuda
+  - fftw
+  - hdf5 +mpi ~cxx
+  - silo +mpi +hdf5 ~fortran ~fpzip ~hzip
+  - gperftools
+  - otf2
+  - apex@develop ~cuda ~openmp ~activeharmony
+  - googletest
+  - protobuf
+  - cmake
+  - ninja
+  packages:
+  - git
+  - perl
+  variants: 
+  - ~fortran 
+  - build_type=Release
+  - cxxstd=17
+  - ~examples
+

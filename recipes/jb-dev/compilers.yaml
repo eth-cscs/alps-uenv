@@ -1,0 +1,10 @@
+bootstrap:
+  spec: gcc@11
+gcc:
+  specs:
+  - gcc@11
+#llvm:
+#  requires: gcc@11
+#  specs:
+#  - nvhpc@21.7
+#  - llvm@14
