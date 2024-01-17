@@ -3,6 +3,6 @@ store: /user-environment
 description: ParaView visualization tool
 
 spack:
-  repo: https://github.com/biddisco/spack.git
-  commit: paraview-EGL
+  repo: /iopsstor/scratch/cscs/biddisco/spack-clariden
+  commit: develop
 

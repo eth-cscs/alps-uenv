@@ -12,11 +12,12 @@ gcc-nvgpu:
   - python
   - py-pandas
   - py-matplotlib
-  - llvm
+  - llvm@15.0.7 ~cuda ~flang ~gold ~ipo +link_llvm_dylib +lld ~lldb +llvm_dylib ~mlir ~libomptarget ~libomptarget_debug ~polly libunwind=none libcxx=none compiler-rt=none
+  - mesa@22.1.6 +osmesa~glx+llvm
   - tbb
     #  - ospray
     #  We turn off hdf5 because vtk::hdf5 needs the internal hdf5 not the external one
-  - paraview@5.11.2 +egl +cuda +mpi ~hdf5 +opengl2 +tbb ~raytracing +python use_vtkm=on build_edition=rendering
+  - paraview@5.12.0-RC1 +egl +cuda +mpi ~hdf5 +opengl2 +tbb +raytracing +python use_vtkm=on build_edition=rendering
   packages:
   - git
   - perl
