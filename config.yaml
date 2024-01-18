@@ -21,6 +21,15 @@ clusters:
     runner:
       slurm-tag: clariden-spack-stack-builder
       baremetal-tag: clariden-login-baremetal
+  santis:
+    targets:
+      -
+        uarch: 'zen2'
+        partition: 'normal'
+    runner:
+      slurm-tag: santis-spack-stack-builder
+      # there is no baremetal tag as of now.
+      baremetal-tag: null
 uenvs:
   gromacs:
     "2023":

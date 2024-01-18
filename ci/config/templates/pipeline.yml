@@ -40,7 +40,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
     {{ name }}: "{{ value }}"
     {% endfor %}
 
-{% if not job.runner.f7t %}
+{% if (not job.runner.f7t) and (job.runner.baremetal_runner) %}
 
 test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-test

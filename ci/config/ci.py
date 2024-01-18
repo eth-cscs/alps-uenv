@@ -84,7 +84,7 @@ if __name__ == "__main__":
     #   - path of the configuration file (required)
     #   - JOB_ID (if needed?)
     if os.getenv("UENVCITEST", default=None) is not None:
-        os.environ["system"] = "eiger"
+        os.environ["system"] = "santis"
         os.environ["uarch"] = "zen2"
         os.environ["uenv"] = "gromacs:2023"
         #os.environ["system"] = "clariden"
