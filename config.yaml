@@ -29,7 +29,8 @@ clusters:
     runner:
       slurm-tag: santis-spack-stack-builder
       # there is no baremetal tag as of now.
-      baremetal-tag: null
+      #baremetal-tag: null
+      baremetal-tag: santis-login-baremetal
 uenvs:
   gromacs:
     "2023":
