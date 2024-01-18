@@ -1,8 +1,9 @@
 bootstrap:
-  spec: gcc@11
+  spec: gcc@12
 gcc:
   specs:
-  - gcc@11
+  - gcc@12
+
 #llvm:
 #  requires: gcc@11
 #  specs:

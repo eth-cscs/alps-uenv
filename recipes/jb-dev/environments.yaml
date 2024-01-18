@@ -1,9 +1,9 @@
 gcc-nocuda:
   compiler:
       - toolchain: gcc
-        spec: gcc@11
+        spec: gcc@12
   mpi:
-    spec: cray-mpich
+    spec: cray-mpich@8.1.28
     gpu: null
   unify: true
   specs:
