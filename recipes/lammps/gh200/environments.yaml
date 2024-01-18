@@ -8,11 +8,13 @@ lammps:
   unify: true
   specs:
   - cuda@12
+  - kokkos +wrapper
   - lammps
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
+  - +kokkos
   views:
     default:
         link: run
