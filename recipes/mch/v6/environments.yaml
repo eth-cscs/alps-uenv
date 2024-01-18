@@ -28,7 +28,7 @@ prgenv-nvidia:
       spec: nvhpc
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.28
+    spec: cray-mpich@8.1.25
     gpu: cuda
   packages:
   - perl
@@ -78,7 +78,7 @@ prgenv-gcc:
       spec: gcc@11.3
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.28
+    spec: cray-mpich@8.1.25
     gpu: cuda
   packages:
   - perl
