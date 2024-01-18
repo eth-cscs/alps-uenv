@@ -121,8 +121,10 @@ git clone https://github.com/reframe-hpc/reframe.git
 export PATH="$(pwd)/reframe/bin:$PATH"
 
 log "clone cscs-reframe-tests"
+log "WARNING: currently not using the alps branch - revert before merging"
 rm -rf cscs-reframe-tests
-git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
+git clone -b alps_santis https://github.com/eth-cscs/cscs-reframe-tests.git
+#git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
 
 export UENV="${squashfs_path}:${mount}"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
