@@ -1,0 +1,7 @@
+name: sirius-a100
+store: /user-environment
+description: The latest version of Sirius (v7.5.0) and the tools for building it, configured for A100 GPUs.
+spack:
+  repo: https://github.com/spack/spack.git
+  # commit on develop that updated the sirius package.py for v7.5.0 of sirius
+  commit: 13b711f

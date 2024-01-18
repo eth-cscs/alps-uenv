@@ -1,0 +1,25 @@
+stages:
+  - configure
+  - run
+
+pipeline-configure:
+  stage: configure
+  tags: [clariden-login-baremetal]
+  script:
+    - ./ci/configure-pipeline
+  artifacts:
+    paths:
+      - pipeline.yml
+
+generated-pipeline:
+  stage: run
+  needs: [pipeline-configure]
+  variables:
+    CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
+  trigger:
+    include:
+      - artifact: pipeline.yml
+        job: pipeline-configure
+    forward:
+      pipeline_variables: true
+    strategy: depend

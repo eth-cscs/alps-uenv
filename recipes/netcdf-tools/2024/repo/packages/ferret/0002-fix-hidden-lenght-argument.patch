@@ -1,0 +1,30 @@
+From fe80bcc44be89fe31c484a6bf74a1dd1710c72f9 Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Fri, 13 Oct 2023 10:49:26 +0200
+Subject: [PATCH 2/2] fix hidden lenght argument
+
+passing a hidden length argument (for char string) explicitly does not compile
+with recent gfortran
+---
+ ppl/tmapadds/open_gks_ws.F | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ppl/tmapadds/open_gks_ws.F b/ppl/tmapadds/open_gks_ws.F
+index 352011665..8b062722e 100644
+--- a/ppl/tmapadds/open_gks_ws.F
++++ b/ppl/tmapadds/open_gks_ws.F
+@@ -210,9 +210,9 @@ C
+ 	   CALL GOPWK(WSID,CONID,WSTYPE)       
+ #else
+ 	if (ppl_in_ferret) then
+-	   call gesspn ('FERRET_1',8)
++	   call gesspn ('FERRET_1')
+ 	else
+-	   call gesspn ('PPLP',4)
++	   call gesspn ('PPLP')
+ 	endif
+ 	   CALL GOPWK(WSID,6,4)       
+ #endif
+-- 
+2.42.0
+

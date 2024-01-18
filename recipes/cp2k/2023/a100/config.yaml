@@ -1,0 +1,8 @@
+name: cp2k
+description: CP2K 2023.2 and all the tools and libraries required to built CP2K on NVIDIA a100 GPUs.
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.21
+  #commit: 599b612edfeb636c8441744df564c1e0535cdcc2
+modules: True
