@@ -3,7 +3,7 @@ gcc-env:
       - toolchain: gcc
         spec: gcc@11
   mpi:
-      spec: cray-mpich
+      spec: cray-mpich@8.1.26
       gpu: cuda
   unify: true
   specs:
