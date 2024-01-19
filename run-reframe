@@ -128,6 +128,7 @@ git clone -b alps_santis https://github.com/jgphpc/cscs-reframe-tests.git
 
 export UENV="${squashfs_path}:${mount}"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
+export RFM_USE_LOGIN_SHELL=1
 
 REFRAME_COMMAND="reframe -C cscs-reframe-tests/config/cscs.py --report-junit=report.xml -c cscs-reframe-tests/checks/ -r --system=${RFM_SYSTEM}"
 
