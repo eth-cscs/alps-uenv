@@ -1,0 +1,13 @@
+include: '/ci/common.yml'
+
+build-a100:
+  extends: .stack-build-hohgant-a100
+  variables:
+    STACK_NAME: lammps-a100
+    STACK_RECIPE: recipes/lammps/a100
+
+#test-mc:
+#  extends: .run-reframe-hohgant-a100
+#  variables:
+#    STACK_NAME: lammps-a100
+

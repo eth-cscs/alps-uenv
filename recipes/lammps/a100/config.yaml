@@ -1,0 +1,6 @@
+name: lammps-a100
+store: /user-environment
+description: GPU-optimised LAMMPS with and without Plumed, and the toolchain to build your own LAMMPS.
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.20.0
