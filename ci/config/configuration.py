@@ -205,6 +205,7 @@ class Config:
             runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
             runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
             runner["variables"]["MODE"] = "baremetal"
+            runner["variables"]["SLURM_ACCOUNT"] = "csstaff"
             runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
         # else configure baremetal runners deployed via Ansible/Nomad
         else:
