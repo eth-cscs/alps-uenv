@@ -6,7 +6,7 @@ openfoam-env:
     spec: cray-mpich
   unify: true
   specs:
-  - openfoam@2212
+  - openfoam@2212 +int64
   views:
     openfoam:
     develop:
