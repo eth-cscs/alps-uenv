@@ -1,4 +1,4 @@
-openfoam-org-env:
+openfoam-env:
   compiler:
   - toolchain: gcc
     spec: gcc@11
