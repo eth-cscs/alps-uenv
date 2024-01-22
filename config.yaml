@@ -72,11 +72,11 @@ uenvs:
       deploy:
         eiger: [zen2]
       develop: False
-  openfoam:
-    # OpenFOAM Foundation (aka openfoam-org)
+  # OpenFOAM Foundation
+  openfoam-org:
     "8":
       recipes:
-        zen2: org/8/mc
+        zen2: 8/mc
       deploy:
         eiger: [zen2]
   prgenv-gnu:
