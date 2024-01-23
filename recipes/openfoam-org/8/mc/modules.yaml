@@ -10,4 +10,4 @@ modules:
       projections:
         openfoam-org: "openfoam/{version}"
       include: [openfoam-org]
-      exclude: ["%gcc@11", "%gcc@7"]
+      exclude: ["%gcc@12", "%gcc@7"]
