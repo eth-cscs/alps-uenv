@@ -9,7 +9,7 @@ nvidia:
       spec: cray-mpich
       gpu: cuda
   specs:
-  - boost@1.65%gcc ~mpi
+  - boost%gcc ~mpi
   - python@3.10%gcc
   #- eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - cmake%gcc
