@@ -1,0 +1,13 @@
+modules:
+  default:
+    arch_folder: false
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      hash_length: 0
+      projections:
+        openfoam-org: "openfoam/{version}"
+      include: [openfoam-org]
+      exclude: ["%gcc@12", "%gcc@7"]
