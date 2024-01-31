@@ -1,0 +1,6 @@
+name: icon-dsl
+store: /user-environment
+spack:
+  commit: releases/v0.21
+  repo: https://github.com/spack/spack.git
+description: The tools required to build ICON blue line
