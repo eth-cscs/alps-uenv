@@ -1,0 +1,7 @@
+name: cp2k-mi200
+description: CP2K 2024.1 for MI200 AMD GPUs
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: 39a7780754a1728b17ab4c11593df3e25bd7370d 
+modules: True

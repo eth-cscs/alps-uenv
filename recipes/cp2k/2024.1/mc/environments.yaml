@@ -1,0 +1,27 @@
+cp2k-mc:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11
+  unify: true
+  specs:
+  - intel-oneapi-mkl +cluster ^cray-mpich
+  - dla-future@0.4.0 +scalapack ^intel-oneapi-mkl ^cray-mpich
+  - dbcsr@2.6.0 +shared +openmp ^intel-oneapi-mkl ^cray-mpich
+  - cosma@2.6.6 +scalapack +shared ^intel-oneapi-mkl ^cray-mpich
+  - sirius@7.5.2 +fortran +scalapack +elpa ^intel-oneapi-mkl ^cray-mpich
+  - cp2k@2024.1 +libxc +libint +spglib +cosma +sirius +elpa +dlaf build_system=cmake ^intel-oneapi-mkl ^cray-mpich
+  variants:
+    - +mpi
+    - ~cuda
+    - ~rocm
+    - build_type=Release
+  views:
+    cp2k-dev:
+      exclude: ["cp2k"]
+    cp2k-elpa-dev:
+      exclude: ["cp2k", "dla-future"]
+    cp2k-dlaf-dev:
+      exclude: ["cp2k", "elpa", "sirius"]
+  mpi:
+    spec: cray-mpich
+    gpu: null

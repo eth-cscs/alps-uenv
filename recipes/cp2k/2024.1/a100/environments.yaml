@@ -1,0 +1,29 @@
+cp2k-nvgpu:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11
+  unify: true
+  specs:
+  - cuda@11.6
+  - intel-oneapi-mkl +cluster ^cray-mpich
+  - dla-future@0.4.0 +scalapack ^intel-oneapi-mkl ^cray-mpich
+  - libxc ~cuda
+  - sirius@7.5.0 +fortran +scalapack +elpa ^intel-oneapi-mkl ^cray-mpich
+  - dbcsr@2.6.0 +cuda +shared +openmp ^intel-oneapi-mkl ^cray-mpich
+  - cosma@2.6.6 +gpu_direct +scalapack +shared ^intel-oneapi-mkl ^cray-mpich
+  - cp2k@2024.1 +libxc +libint +spglib +cosma +sirius +elpa +dlaf build_system=cmake ^intel-oneapi-mkl ^cray-mpich
+  variants:
+    - +mpi
+    - +cuda
+    - cuda_arch=80
+    - build_type=Release
+  views:
+    cp2k-dev:
+      exclude: ["cp2k"]
+    cp2k-elpa-dev:
+      exclude: ["cp2k", "dla-future"]
+    cp2k-dlaf-dev:
+      exclude: ["cp2k", "elpa", "sirius"]
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
