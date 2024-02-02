@@ -24,12 +24,10 @@ clusters:
   santis:
     targets:
       -
-        uarch: 'zen2'
+        uarch: 'gh200'
         partition: 'normal'
     runner:
       slurm-tag: santis-spack-stack-builder
-      # there is no baremetal tag as of now.
-      #baremetal-tag: null
       baremetal-tag: santis-login-baremetal
 uenvs:
   gromacs:
@@ -55,6 +53,14 @@ uenvs:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
+      develop: False
+  wcp:
+    "v1":
+      recipes:
+        a100:  icon-dsl/v1/a100
+        gh200: icon-dsl/v1/gh200
+      deploy:
+        santis: [gh200]
       develop: False
   lammps:
     "2023":
@@ -100,6 +106,11 @@ uenvs:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
+    "24.2":
+      recipes:
+        gh200: 24.2/gh200
+      deploy:
+        santis: [gh200]
   quantumespresso:
     "v7.1":
       recipes:

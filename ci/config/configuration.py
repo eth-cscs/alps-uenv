@@ -14,7 +14,7 @@ sys.path = [prefix.as_posix()] + sys.path
 
 import schema
 
-valid_uarch = ["zen2", "zen3", "a100", "mi200"]
+valid_uarch = ["zen2", "zen3", "a100", "mi200", "gh200"]
 
 class ConfigError(Exception):
     """ConfigError when an invalid configuration is entered.
