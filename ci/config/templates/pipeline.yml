@@ -4,6 +4,7 @@ stages:
 
 .base-build:
   stage: build
+  timeout: 8h
   variables:
     SLURM_TIMELIMIT: 180
   script:
@@ -13,6 +14,7 @@ stages:
 
 .base-test:
   stage: test
+  timeout: 8h
   variables:
     SLURM_TIMELIMIT: 30
     GIT_STRATEGY: fetch
@@ -40,7 +42,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
     {{ name }}: "{{ value }}"
     {% endfor %}
 
-{% if not job.runner.f7t %}
+{% if (not job.runner.f7t) and (job.runner.baremetal_runner) %}
 
 test-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   extends: .base-test

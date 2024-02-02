@@ -21,6 +21,16 @@ clusters:
     runner:
       slurm-tag: clariden-spack-stack-builder
       baremetal-tag: clariden-login-baremetal
+  santis:
+    targets:
+      -
+        uarch: 'zen2'
+        partition: 'normal'
+    runner:
+      slurm-tag: santis-spack-stack-builder
+      # there is no baremetal tag as of now.
+      #baremetal-tag: null
+      baremetal-tag: santis-login-baremetal
 uenvs:
   gromacs:
     "2023":
@@ -73,6 +83,13 @@ uenvs:
       deploy:
         eiger: [zen2]
       develop: False
+  # OpenFOAM Foundation
+  openfoam-org:
+    "8":
+      recipes:
+        zen2: 8/mc
+      deploy:
+        eiger: [zen2]
   prgenv-gnu:
     "23.11":
       recipes:

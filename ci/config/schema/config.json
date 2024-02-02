@@ -45,7 +45,12 @@
                                     "additionalProperties": false,
                                     "properties": {
                                         "slurm-tag": {"type": "string"},
-                                        "baremetal-tag":  {"type": "string"}
+                                        "baremetal-tag":  {
+                                            "oneOf": [
+                                                {"type" : "string"},
+                                                {"type" : "null"}
+                                            ]
+                                        }
                                     }
                                 },
                                 {"enum": ["f7t"]}
