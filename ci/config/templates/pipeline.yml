@@ -4,6 +4,7 @@ stages:
 
 .base-build:
   stage: build
+  timeout: 8h
   variables:
     SLURM_TIMELIMIT: 180
   script:
@@ -13,6 +14,7 @@ stages:
 
 .base-test:
   stage: test
+  timeout: 8h
   variables:
     SLURM_TIMELIMIT: 30
     GIT_STRATEGY: fetch
