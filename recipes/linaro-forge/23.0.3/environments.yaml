@@ -1,0 +1,9 @@
+linaro:
+  views:
+    default:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  unify: true
+  specs:
+  - linaro-forge +accept-eula
