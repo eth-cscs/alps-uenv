@@ -17,6 +17,7 @@ nvidia:
   - hdf5%nvhpc +fortran
   - hwloc%gcc
   - netcdf-c%gcc
+  - netcdf-cxx4%gcc
   - netcdf-fortran%nvhpc
   - numactl%gcc
   - osu-micro-benchmarks@5.9%nvhpc
