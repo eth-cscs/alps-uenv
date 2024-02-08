@@ -27,7 +27,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
     runner:
-      slurm-tag: santis-spack-stack-builder
+      slurm-tag:  santis-slurm-baremetal
       baremetal-tag: santis-login-baremetal
 uenvs:
   gromacs:
