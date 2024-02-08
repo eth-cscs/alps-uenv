@@ -158,7 +158,7 @@ cd "${build_path}"
 
 log "building image in ${build_path}"
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
-env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64
+env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" make store.squashfs -j64
 
 if [ ! $? -eq 0 ]; then
     log "TODO: save WIP of build an store it for later inspection"
