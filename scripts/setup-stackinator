@@ -6,7 +6,8 @@ tool_base_path="$(pwd)"
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
 # TODO: revert
-tool_version=master
+# use the aarch64 branch of stackinator that has santis-specific fixes
+tool_version=aarch64
 
 log "installing stackinator from git in '${tool_path}'"
 
