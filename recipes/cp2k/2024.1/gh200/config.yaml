@@ -1,0 +1,7 @@
+name: cp2k
+description: CP2K 2024.1 and all the tools and libraries required to built CP2K on GH200.
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: 13050a9fb3116aab5e5cea0f8882fe09a2f65cb0 
+modules: True

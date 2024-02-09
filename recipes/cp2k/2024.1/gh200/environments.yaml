@@ -1,0 +1,21 @@
+cp2k-nvgpu:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12
+  unify: true
+  specs:
+  - cuda@12.2 # Can't be newer than driver version for DBCSR
+  - dla-future@git.rmeli_cmake_targets=master +cuda +scalapack ^cray-mpich
+  - pika@0.22.1 +cuda ^cray-mpich
+  - libxc ~cuda
+  - dbcsr@2.6.0 +cuda +shared +openmp ^cray-mpich
+  - cosma@2.6.6 +gpu_direct +scalapack +shared ^cray-mpich
+  - cp2k@2024.1 +libxc +libint +spglib +cosma +elpa +dlaf build_system=cmake ^cray-mpich
+  variants:
+    - +mpi
+    - +cuda
+    - cuda_arch=80
+    - build_type=Release
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
