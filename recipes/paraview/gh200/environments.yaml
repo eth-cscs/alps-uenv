@@ -1,0 +1,43 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.28
+      gpu: cuda
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - direnv
+  - fftw
+  - fmt
+  - stdexec  
+  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
+  - hdf5 +mpi
+  - h5hut
+  - ninja
+  - openblas threads=openmp
+  - blaspp
+  - lapackpp
+  - python@3.11
+  - osu-micro-benchmarks@5.9
+  - cuda@12.3
+  - py-pandas
+  - py-matplotlib
+  - tbb
+  - libtheora@master
+    #  - ospray
+    #  We turn off hdf5 because vtk::hdf5 needs the internal hdf5 not the external one
+  - paraview@5.12.0-RC2 +cuda +mpi ~hdf5 +opengl2 +tbb +raytracing +python use_vtkm=on +development_files build_edition=rendering 
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  - ~fortran
+  - build_type=Release
+  - cxxstd=20
+  - ~examples
+  views:
+    default:
+      link: roots
