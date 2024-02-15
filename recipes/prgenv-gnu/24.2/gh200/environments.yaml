@@ -16,6 +16,8 @@ gcc-env:
   - python@3.11
   - osu-micro-benchmarks@5.9
   - cuda@12.3
+  - nccl
+  - aws-ofi-nccl@master
   variants:
   - +mpi
   - +cuda
