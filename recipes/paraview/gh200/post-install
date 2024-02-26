@@ -1,0 +1,161 @@
+#!/bin/bash
+
+echo "====================================="
+echo "=====     post install hook          "
+echo "====================================="
+mount_path={{ env.mount }}
+echo RUNNING IN $mount_path
+config_path={{ env.config }}
+echo config is in $config_path
+
+echo
+echo "====================================="
+echo "=====   environment variables        "
+echo "====================================="
+printenv
+
+echo
+echo "====================================="
+echo "=====   create post file {{ env.mount }}/post "
+echo "====================================="
+echo "$(date)" > "$mount_path/post"
+
+echo
+echo "====================================="
+echo "=====   set vars we need frequently  "
+echo "====================================="
+HOME=$(pwd)
+SPACK_CMD="spack -C $config_path"
+
+echo
+echo "====================================="
+echo "===== list all spack packages        "
+echo "====================================="
+$SPACK_CMD find -flv
+
+echo
+echo "====================================="
+echo "===== source spack environment setup "
+echo "====================================="
+SPACK_ROOT=$( $SPACK_CMD location -r )
+source $SPACK_ROOT/share/spack/setup-env.sh
+
+echo
+echo "====================================="
+echo "===== convert stackinator environment into a package "
+echo "====================================="
+python3 $HOME/store/meta/recipe/env-to-package.py $HOME/store/meta/recipe/environments.yaml 
+
+echo
+echo "====================================="
+echo "===== create build-env "
+echo "====================================="
+BUILD_ENV=$mount_path/paraview-buildenv.rc
+SPEC="temppackage %gcc@12.3"
+$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ env activate --sh
+$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ add $SPEC
+$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ concretize
+$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ build-env --dump $BUILD_ENV "$SPEC"
+
+echo
+echo "====================================="
+echo "===== checkout paraview/vtk/vtkm branches "
+echo "====================================="
+mkdir -p $mount_path/src
+cd $mount_path/src
+
+# get default paraview master branch
+git clone https://gitlab.kitware.com/paraview/paraview.git
+cd $mount_path/src/paraview
+git submodule update --init --recursive
+git checkout v5.12.0-RC3
+
+echo "====================================="
+echo "===== change to master branch of VTK "
+echo "====================================="
+cd $mount_path/src/paraview/VTK
+git submodule update 
+
+echo "====================================="
+echo "===== change to 2.1.0 branch of vtk-m "
+echo "====================================="
+cd $mount_path/src/paraview/VTK/ThirdParty/vtkm/vtkvtkm/vtk-m
+git checkout v2.1.0
+
+echo
+echo "====================================="
+echo "===== source build-env "
+echo "====================================="
+source $BUILD_ENV
+
+echo
+echo "====================================="
+echo "===== run cmake on paraview "
+echo "====================================="
+mkdir -p $mount_path/build/pv && cd $mount_path/build/pv
+cmake -G Ninja \
+    -DCMAKE_INSTALL_PREFIX=$mount_path/paraview \
+    -DPARAVIEW_USE_QT=OFF \
+    -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON \
+    -DPARAVIEW_USE_MPI=ON \
+    -DVTK_USE_X=OFF \
+    -DVTK_OPENGL_HAS_EGL=ON \
+    -DPARAVIEW_USE_PYTHON=ON \
+    -DPARAVIEW_ENABLE_CATALYST=YES \
+    -DPARAVIEW_USE_CUDA=ON \
+    -DCMAKE_CUDA_ARCHITECTURES=90 \
+    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_fast_float=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_verdict=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_libharu=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_cli11=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_ioss=OFF \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_cgns=OFF \
+    $mount_path/src/paraview/
+
+    # -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion=OFF \
+    # -DVTK_MODULE_ENABLE_VTK_cgns=NO \
+    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOCGNSWriter=NO \
+    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOParallelCGNSWriter=NO \
+    # -DVTK_MODULE_ENABLE_VTK_IOCGNSReader=NO \
+    # -DVTK_MODULE_ENABLE_VTK_ioss=NO \
+
+echo
+echo "====================================="
+echo "===== build and install paraview "
+echo "====================================="
+ninja 
+ninja install
+
+PARAVIEW_DIR=$mount_path/paraview
+PARAVIEW_VERSION=5.12
+
+echo
+echo "====================================="
+echo "===== build plugin  "
+echo "====================================="
+cd $mount_path/src
+git clone https://github.com/jfavre/ParaViewGadgetPlugin
+mkdir $mount_path/build/ParaViewGadgetPlugin && cd $mount_path/build/ParaViewGadgetPlugin
+
+cmake -G Ninja \
+    -DParaView_DIR=$PARAVIEW_DIR/lib64/cmake/paraview-$PARAVIEW_VERSION \
+    -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins \
+    $mount_path/src/ParaViewGadgetPlugin       
+
+ninja install
+
+echo
+echo "====================================="
+echo "===== set permissions  "
+echo "====================================="
+chmod -R a+r $BUILD_ENV
+chmod -R a+r $mount_path/src
+chmod -R a+r $mount_path/build
+chmod -R a+r $mount_path/paraview
+
+echo "====================================="
+echo "========  Done  ========"
+echo "====================================="

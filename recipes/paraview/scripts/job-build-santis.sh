@@ -19,16 +19,13 @@ BUILD_DIR=/dev/shm/biddisco
 
 echo "# -----------------------------------------"
 echo "Setup/clean build dir"
-#rm -rf   ${BUILD_DIR}/*
+rm   -rf ${BUILD_DIR}/*
 mkdir -p ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/tmp
 
 echo "# -----------------------------------------"
 echo "Execute stackinator"
 $STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop
-
-# if using develop branch of spack, add --develop
-#$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop 
 
 # build the squashfs image - bubblewrap is used inside the makefile
 echo "# -----------------------------------------"
@@ -37,12 +34,23 @@ cd /dev/shm/biddisco
 env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" make store.squashfs -j32
 
 echo "# -----------------------------------------"
+echo "Force push anything that was built successfully"
+env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make cache-force
+
+echo "# -----------------------------------------"
 echo "Copy generated squashfs file"
 DATE=$(date +%F)
-cp /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-paraview-$DATE.squashfs
+unalias cp
+cp -f /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-paraview-$DATE.squashfs
 
 # -----------------------------------------
 # debug : create a shell using the spack setup used to create the squashfs
 # -----------------------------------------
-# $BUILD_DIR/bwrap-mutable-root.sh --tmpfs ~ --bind $BUILD_DIR/tmp /tmp --bind $BUILD_DIR/store /user-environment env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin SPACK_SYSTEM_CONFIG_PATH=/user-environment/config /bin/bash --norc --noprofile
+# $BUILD_DIR/bwrap-mutable-root.sh --tmpfs ~ --bind $BUILD_DIR/tmp /tmp --bind $BUILD_DIR/store /user-environment env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" SPACK_SYSTEM_CONFIG_PATH=/user-environment/config /bin/bash --norc --noprofile
+
+echo "# -----------------------------------------"
+echo "# REMOVE THE CLEANUP WHEN DEBUGGING"
+echo "# -----------------------------------------"
+echo "Clean up the /dev/shm directories"
+#rm -rf   ${BUILD_DIR}/*
 

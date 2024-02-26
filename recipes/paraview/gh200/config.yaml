@@ -1,6 +1,6 @@
 name: prgenv-gnu
 spack:
-  commit: h5hut
+  commit: jb-develop
   repo: /bret/scratch/cscs/biddisco/spack-santis
 store: /user-environment
 description: ParaView + assorted other tools
