@@ -1,0 +1,31 @@
+gcc-nocuda:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+    spec: cray-mpich@8.1.28
+    gpu: null
+  unify: true
+  specs:
+  - hdf5 +mpi ~cxx
+  - fftw +mpi
+  - boost +atomic+chrono+container+context+coroutine+date_time+filesystem+program_options+regex+serialization+system+test+thread cxxstd=17
+  - stdexec
+  - fmt
+  - whip
+  - mimalloc
+  - umpire ~cuda ~shared
+  - gperftools
+  - googletest
+  - protobuf
+  - cmake
+  - ninja
+  packages:
+  - git
+  - perl
+  variants: 
+  - ~fortran 
+  - build_type=Release
+  - cxxstd=17
+  - ~examples
+

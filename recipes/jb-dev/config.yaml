@@ -1,0 +1,8 @@
+name: jb-dev
+store: /user-environment
+description: JB development tools
+
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: develop
+

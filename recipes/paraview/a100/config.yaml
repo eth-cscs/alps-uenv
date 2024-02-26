@@ -1,0 +1,8 @@
+name: paraview-jb-dev
+store: /user-environment
+description: ParaView visualization tool
+
+spack:
+  repo: /iopsstor/scratch/cscs/biddisco/spack-clariden
+  commit: develop
+

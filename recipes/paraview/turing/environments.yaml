@@ -1,0 +1,30 @@
+gcc-nvgpu:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11
+  mpi:
+    spec: openmpi
+    gpu: null
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - python
+  - paraview@5.11 +egl +cuda +mpi +opengl2 +tbb +python use_vtkm=on build_edition=rendering ^llvm~gold
+  packages:
+  - git
+  - perl
+  - diffutils
+  - gettext
+  - openssh
+  - openssl
+  - ncurses
+  - cpio
+  variants:
+  - +cuda
+  - cuda_arch=75
+  - ~fortran
+  - build_type=Release
+  - cxxstd=17
+  - ~examples
+
