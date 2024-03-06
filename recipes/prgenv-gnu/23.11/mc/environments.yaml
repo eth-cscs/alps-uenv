@@ -14,9 +14,9 @@ gcc-env:
   - ninja@1.11
   - openblas
   - python@3.11
-  - py-pybind11
   - osu-micro-benchmarks@5.9
   variants:
   - +mpi
   views:
     default:
+      link: roots
