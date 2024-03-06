@@ -128,6 +128,7 @@ echo "===== build and install paraview "
 echo "====================================="
 ninja 
 ninja install
+ninja clean
 
 PARAVIEW_DIR=$mount_path/paraview
 PARAVIEW_VERSION=5.12
@@ -144,8 +145,9 @@ cmake -G Ninja \
     -DParaView_DIR=$PARAVIEW_DIR/lib64/cmake/paraview-$PARAVIEW_VERSION \
     -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins \
     $mount_path/src/ParaViewGadgetPlugin       
-
+ninja
 ninja install
+ninja clean
 
 echo
 echo "====================================="
@@ -155,6 +157,7 @@ chmod -R a+r $BUILD_ENV
 chmod -R a+r $mount_path/src
 chmod -R a+r $mount_path/build
 chmod -R a+r $mount_path/paraview
+chmod -R a+r $mount_path/paraview-plugins
 
 echo "====================================="
 echo "========  Done  ========"
