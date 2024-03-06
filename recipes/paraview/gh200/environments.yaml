@@ -13,6 +13,7 @@ pv-egl-cuda:
   - ninja
   - direnv
   - ninja
+  - libtree
   - llvm@14 ~gold ~cuda
   # maths
   - blaspp
@@ -76,6 +77,7 @@ pv-egl-cuda:
   - build_type=Release
   - +mpi
   - +cuda
+  - gl=egl
   - cuda_arch=90
   - ~fortran
   - ~x11
