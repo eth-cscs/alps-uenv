@@ -54,7 +54,7 @@ uenvs:
         eiger: [zen2]
         clariden: [a100]
       develop: False
-  wcp:
+  icon-dsl:
     "v1":
       recipes:
         a100:  icon-dsl/v1/a100
