@@ -22,6 +22,10 @@ nvidia:
   - numactl%gcc
   - osu-micro-benchmarks@5.9%nvhpc
   - perl%gcc
+  # everything needed for nccl on SS11
+  - aws-ofi-nccl@master%gcc
+  - nccl%gcc
+  - nccl-tests%gcc
   # The following are required to stop spack from using nvhpc to build
   # basic dependencies, some of which don't compile with nvc etc.
   # Explicitly excluded as modules.
