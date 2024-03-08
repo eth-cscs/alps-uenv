@@ -53,16 +53,14 @@ class Version:
         # list of the uarch that this version can be deployed on
         return [n for n in self._recipes.keys()]
 
-    def recipe_path(self, uarch):
+    def recipe_path(self, uarch, relative=False):
         # search for self._recipe_path / name / arch-specific-recipe
-        path = self._recipe_path / self._uenv_name / self._recipes[uarch]
-        if path.is_dir():
-            return path
-
-        # else search for self._recipe_path / arch-specific-recipe
-        path = self._recipe_path / self._recipes[uarch]
-        if path.is_dir():
-            return path
+        # then   for self._recipe_path / arch-specific-recipe
+        relpaths = [self._uenv_name + "/" + self._recipes[uarch], self._recipes[uarch]]
+        for relpath in relpaths:
+            fullpath = self._recipe_path / relpath
+            if fullpath.is_dir():
+                return pathlib.Path(relpath) if relative else fullpath
 
         raise FileNotFoundError(f"the path for {self._name}@{uarch} ({self._recipes[uarch]}) does not exist")
 
@@ -174,7 +172,7 @@ class Config:
         if u is not None:
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
-                    return "recipes/" + name + "/" + v.recipe(uarch)
+                    return v.recipe_path(uarch, relative=True)
 
         return None
 
