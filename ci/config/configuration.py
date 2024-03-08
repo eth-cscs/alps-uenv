@@ -60,7 +60,7 @@ class Version:
         for relpath in relpaths:
             fullpath = self._recipe_path / relpath
             if fullpath.is_dir():
-                return pathlib.Path(relpath) if relative else fullpath
+                return pathlib.Path("recipes")/relpath if relative else fullpath
 
         raise FileNotFoundError(f"the path for {self._name}@{uarch} ({self._recipes[uarch]}) does not exist")
 
