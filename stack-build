@@ -54,6 +54,8 @@ uarch="-"
 mount="-"
 spack_develop=""
 
+echo "====== parsing arguments $@"
+
 while getopts n:s:r:b:u:m:d: flag
 do
     case "${flag}" in
