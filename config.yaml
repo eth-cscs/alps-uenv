@@ -57,8 +57,8 @@ uenvs:
   icon-wcp:
     "v1":
       recipes:
-        a100:  icon-dsl/v1/a100
-        gh200: icon-dsl/v1/gh200
+        a100:  wcp/icon/v1/a100
+        gh200: wcp/icon/v1/gh200
       deploy:
         santis: [gh200]
       develop: False

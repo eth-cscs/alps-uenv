@@ -25,8 +25,9 @@ class ConfigError(Exception):
         super().__init__(self.message)
 
 class Version:
-    def __init__(self, name, desc, recipe_path):
+    def __init__(self, name, uenv_name, desc, recipe_path):
         self._name = name
+        self._uenv_name = uenv_name
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
         self._use_spack_develop = desc["develop"]
@@ -53,7 +54,17 @@ class Version:
         return [n for n in self._recipes.keys()]
 
     def recipe_path(self, uarch):
-        return self._recipe_path / self._recipes[uarch]
+        # search for self._recipe_path / name / arch-specific-recipe
+        path = self._recipe_path / self._uenv_name / self._recipes[uarch]
+        if path.is_dir():
+            return path
+
+        # else search for self._recipe_path / arch-specific-recipe
+        path = self._recipe_path / self._recipes[uarch]
+        if path.is_dir():
+            return path
+
+        raise FileNotFoundError(f"the path for {self._name}@{uarch} ({self._recipes[uarch]}) does not exist")
 
     def recipe(self, uarch):
         return self._recipes[uarch]
@@ -65,7 +76,7 @@ class Version:
 class Uenv:
     def __init__(self, name, desc, recipe_path):
         self._name = name
-        self._versions = [Version(v, desc[v], recipe_path / name)  for v in desc.keys()]
+        self._versions = [Version(v, name, desc[v], recipe_path)  for v in desc.keys()]
 
     @property
     def name(self):
