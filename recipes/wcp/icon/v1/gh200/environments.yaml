@@ -16,7 +16,7 @@ nvidia:
   - cuda@12.3%gcc
   - hdf5%nvhpc +fortran
   - hwloc%gcc
-  - netcdf-c%gcc
+  - netcdf-c%gcc +logging
   - netcdf-cxx4%gcc
   - netcdf-fortran%nvhpc
   - numactl%gcc
