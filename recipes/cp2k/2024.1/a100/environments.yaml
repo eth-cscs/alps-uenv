@@ -8,10 +8,9 @@ cp2k-nvgpu:
   - intel-oneapi-mkl +cluster ^cray-mpich
   - dla-future@0.4.0 +scalapack ^intel-oneapi-mkl ^cray-mpich
   - libxc ~cuda
-  - sirius@7.5.0 +fortran +scalapack +elpa ^intel-oneapi-mkl ^cray-mpich
   - dbcsr@2.6.0 +cuda +shared +openmp ^intel-oneapi-mkl ^cray-mpich
   - cosma@2.6.6 +gpu_direct +scalapack +shared ^intel-oneapi-mkl ^cray-mpich
-  - cp2k@2024.1 +libxc +libint +spglib +cosma +sirius +elpa +dlaf build_system=cmake ^intel-oneapi-mkl ^cray-mpich
+  - cp2k@2024.1 +libxc +libint +spglib +cosma +elpa +dlaf build_system=cmake ^intel-oneapi-mkl ^cray-mpich
   variants:
     - +mpi
     - +cuda
