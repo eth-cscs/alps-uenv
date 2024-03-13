@@ -1,0 +1,25 @@
+cp2k-amdgpu:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@11
+  unify: true
+  specs:
+  - cmake@3.24.4
+  - mesa~llvm
+  - hip@5.2.3
+  - intel-oneapi-mkl +cluster ^cray-mpich
+  - dla-future@0.4.0 +scalapack ^intel-oneapi-mkl ^cray-mpich
+  - sirius@7.5.0 +fortran +scalapack ^intel-oneapi-mkl ^cray-mpich
+  - cosma@2.6.6 +gpu_direct +scalapack +shared ^intel-oneapi-mkl ^cray-mpich
+  - cp2k@2024.1 +libxc +libint +spglib +cosma +sirius +dlaf build_system=cmake ^intel-oneapi-mkl ^cray-mpich
+  variants:
+    - +mpi
+    - +rocm
+    - amdgpu_target=gfx90a
+    - build_type=Release
+  views:
+    cp2k-dev:
+      exclude: ["cp2k"]
+  mpi:
+    spec: cray-mpich
+    gpu: rocm

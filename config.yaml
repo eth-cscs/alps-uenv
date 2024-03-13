@@ -45,17 +45,18 @@ uenvs:
         clariden: [a100]
       develop: False
   cp2k:
-    "2023":
+    "2024.1":
       recipes:
         # zen2 and zen3 targets use the same recipe
-        zen2: 2023/mc
-        zen3: 2023/mc
-        a100: 2023/a100
+        zen2: 2024.1/mc
+        zen3: 2024.1/mc
+        a100: 2024.1/a100
+        mi200: 2024.1/mi200
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
-      develop: False
+        clariden: [a100, mi200]
+      develop: True
   lammps:
     "2023":
       recipes:
