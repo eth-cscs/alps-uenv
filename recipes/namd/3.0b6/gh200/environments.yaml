@@ -31,6 +31,24 @@ namd:
       exclude: ["namd"]
     namd:
       exclude: [""]
+namd-ofi:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12
+  - fftw@3.3.10 +openmp ~mpi
+  - charmpp@7 backend=ofi pmi=cray-pmi +smp +production ^cray-mpich
+  - namd@3.0b6 +cuda cuda_arch=90
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  views:
+    namd-ofi-dev:
+      exclude: ["namd"]
+    namd-ofi:
+      exclude: [""]
 tools:
   compiler:
   - toolchain: gcc

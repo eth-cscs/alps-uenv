@@ -21,5 +21,7 @@ modules:
         all: '{name}/{version}'
         charmpp backend=multicore: '{name}/mc/{version}'
         charmpp backend=mpi: '{name}/mpi/{version}'
+        charmpp backend=ofi: '{name}/ofi/{version}'
         namd ^charmpp backend=multicore: '{name}/mc/{version}'
         namd ^charmpp backend=mpi: '{name}/mpi/{version}'
+        namd ^charmpp backend=ofi: '{name}/ofi/{version}'
