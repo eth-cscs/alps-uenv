@@ -1,0 +1,22 @@
+namd-multicore:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12
+  - fftw@3.3.10 +openmp ~mpi
+  - charmpp@7 backend=multicore +production +tracing
+  - namd@3.0b6 +cuda cuda_arch=90 +single_node_gpu
+  views:
+    dev:
+      exclude: ["namd"]
+    namd:
+      exclude: [""]
+tools:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake@3.25.2
