@@ -5,9 +5,9 @@ tool_base_path="$(pwd)"
 # builds in the same pipeline do not conflict
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
-# TODO: revert
-# use the aarch64 branch of stackinator that has santis-specific fixes
-tool_version=aarch64
+# TODO: revert to a specific commit/tag once the arm64 turbulence is over
+tool_version='cuda-12.4'
+#tool_version=master
 
 log "installing stackinator from git in '${tool_path}'"
 

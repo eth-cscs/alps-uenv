@@ -3,13 +3,13 @@ gcc-env:
       - toolchain: gcc
         spec: gcc
   mpi:
-      spec: cray-mpich@8.1.28
+      spec: cray-mpich@8.1.29
       gpu: cuda
   unify: true
   specs:
   - aws-ofi-nccl@master
   - cmake
-  - cuda@12.3
+  - cuda@12.4
   - fftw
   - fmt
   - hdf5
