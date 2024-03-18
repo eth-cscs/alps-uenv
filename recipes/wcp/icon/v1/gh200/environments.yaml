@@ -6,7 +6,7 @@ nvidia:
         spec: nvhpc
   unify: when_possible
   mpi:
-      spec: cray-mpich@8.1.29
+      spec: cray-mpich@8.1.29%nvhpc
       gpu: cuda
   specs:
   - boost%gcc ~mpi
