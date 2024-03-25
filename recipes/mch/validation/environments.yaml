@@ -8,6 +8,13 @@ prgenv-gcc:
   packages:
   - perl
   - curl
+  - ncurses
+  - autoconf
+  - m4
+  - automake
+  - texinfo
+  - libtool
+  - gawk
   specs:
   - osu-micro-benchmarks@5.9
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
@@ -18,5 +25,5 @@ prgenv-gcc:
   - geos
   - r-rgeos
   views:
-    icon:
+    ffv2:
       link: roots
