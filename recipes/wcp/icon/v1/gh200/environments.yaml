@@ -1,0 +1,59 @@
+nvidia:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+      - toolchain: llvm
+        spec: nvhpc
+  unify: when_possible
+  mpi:
+      spec: cray-mpich@8.1.29%nvhpc
+      gpu: cuda
+  specs:
+  - boost%gcc ~mpi
+  - python@3.10%gcc
+  #- eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
+  - cmake%gcc
+  - cuda@12.3%gcc
+  - hdf5%gcc
+  - hwloc%gcc
+  - netcdf-c%gcc
+  - netcdf-cxx4%gcc
+  - netcdf-fortran%nvhpc
+  - numactl%gcc
+  - osu-micro-benchmarks@5.9%nvhpc
+  - perl%gcc
+  # everything needed for nccl on SS11
+  - aws-ofi-nccl@master%gcc
+  - nccl%gcc
+  - nccl-tests%gcc
+  # The following are required to stop spack from using nvhpc to build
+  # basic dependencies, some of which don't compile with nvc etc.
+  # Explicitly excluded as modules.
+  - autoconf%gcc
+  - automake%gcc
+  - ca-certificates-mozilla%gcc
+  - diffutils%gcc
+  - gnuconfig%gcc
+  - libiconv%gcc
+  - libxcrypt%gcc
+  - libxml2%gcc
+  - m4%gcc
+  - ncurses%gcc
+  - openssl%gcc
+  - xz%gcc
+  - zlib%gcc
+  - zstd%gcc
+  - c-blosc%gcc
+  - libaec%gcc
+  - jasper%gcc
+  - patchelf%gcc
+  - gmake%gcc
+  variants:
+  - cuda_arch=90
+  - +mpi
+  - +cuda
+  packages:
+  - curl
+  - gmake
+  views:
+    default:
