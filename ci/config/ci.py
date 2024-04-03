@@ -86,7 +86,7 @@ if __name__ == "__main__":
     if os.getenv("UENVCITEST", default=None) is not None:
         os.environ["system"] = "santis"
         os.environ["uarch"] = "gh200"
-        os.environ["uenv"] = "icon-wcp:v1"
+        os.environ["uenv"] = "netcdf-tools:2024"
 
     # read and validate the configuration
     print(recipe_path)

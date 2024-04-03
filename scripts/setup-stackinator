@@ -6,9 +6,7 @@ tool_base_path="$(pwd)"
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
 # TODO: revert to a specific commit/tag once the arm64 turbulence is over
-tool_version='repos'
-#tool_version='cuda-12.4'
-#tool_version=master
+tool_version=master
 
 log "installing stackinator from git in '${tool_path}'"
 
