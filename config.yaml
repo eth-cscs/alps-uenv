@@ -96,6 +96,7 @@ uenvs:
         zen2: '2024'
         zen3: '2024'
         a100: '2024'
+        gh200: '2024'
       deploy:
         eiger: [zen2]
       develop: False
