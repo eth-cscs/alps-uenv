@@ -44,7 +44,7 @@ echo
 echo "====================================="
 echo "===== convert stackinator environment into a package "
 echo "====================================="
-python3 $HOME/store/meta/recipe/env-to-package.py $HOME/store/meta/recipe/environments.yaml 
+python3 $HOME/store/meta/recipe/scripts/env-to-package.py $HOME/store/meta/recipe/environments.yaml 
 
 echo
 echo "====================================="
