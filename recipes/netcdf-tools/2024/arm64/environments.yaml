@@ -1,0 +1,24 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@12
+  mpi:
+      spec: cray-mpich
+      gpu: false
+  unify: true
+  specs:
+  - hdf5
+  - netcdf-c
+  - netcdf-cxx4
+  - netcdf-fortran
+  - ncview
+  - cdo
+  - nco
+  #- ferret
+  views:
+    default:
+      link: roots
+  packages:
+  - git
+  - perl
+

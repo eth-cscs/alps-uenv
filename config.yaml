@@ -93,10 +93,10 @@ uenvs:
   netcdf-tools:
     "2024":
       recipes:
-        zen2: '2024'
-        zen3: '2024'
-        a100: '2024'
-        gh200: '2024'
+        zen2: '2024/x86'
+        zen3: '2024/x86'
+        a100: '2024/x86'
+        gh200: '2024/arm64'
       deploy:
         eiger: [zen2]
       develop: False
