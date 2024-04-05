@@ -1,0 +1,28 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.29
+      gpu: cuda
+  unify: true
+  specs:
+  - aws-ofi-nccl@master
+  - cmake
+  - cuda@12.4
+  - fftw
+  - fmt
+  - hdf5
+  - nccl
+  - nccl-tests
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - python@3.11
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
