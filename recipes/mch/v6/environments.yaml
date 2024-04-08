@@ -24,7 +24,7 @@ prgenv-nvidia:
       spec: nvhpc
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.18.4%nvhpc
+    spec: cray-mpich@8.1.28%nvhpc
     gpu: cuda
   packages:
   - perl
@@ -34,7 +34,7 @@ prgenv-nvidia:
   - automake
   specs:
   - osu-micro-benchmarks@5.9%nvhpc
-  - cuda@12.3
+  - cuda@11.8
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - eccodes@2.19.1%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - netcdf-c@4.8.1%nvhpc
@@ -75,14 +75,14 @@ prgenv-gcc:
       spec: gcc
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.18.4
+    spec: cray-mpich@8.1.28
     gpu: cuda
   packages:
   - perl
   - curl
   - libx11
   specs:
-  - cuda@12.3
+  - cuda@11.8
   - osu-micro-benchmarks@5.9
   - openblas@0.3.21
   - libfyaml@0.7.12
