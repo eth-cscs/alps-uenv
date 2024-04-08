@@ -4,10 +4,8 @@ tool_base_path="$(pwd)"
 # check out a unique copy of stackinator for each ci task, so that
 # builds in the same pipeline do not conflict
 tool_path=`mktemp -d`
-#tool_repo=https://github.com/eth-cscs/stackinator.git
-#tool_version=ad2281b2c094b043b2dd256ea224613943f47c14
-tool_repo=https://github.com/simonpintarelli/stackinator.git
-tool_version=feat/split-cray-mpich
+tool_repo=https://github.com/eth-cscs/stackinator.git
+tool_version=v4.0
 
 log "installing stackinator from git in '${tool_path}'"
 

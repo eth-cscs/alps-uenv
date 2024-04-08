@@ -14,7 +14,7 @@ sys.path = [prefix.as_posix()] + sys.path
 
 import schema
 
-valid_uarch = ["zen2", "zen3", "a100", "mi200"]
+valid_uarch = ["zen2", "zen3", "a100", "mi200", "gh200"]
 
 class ConfigError(Exception):
     """ConfigError when an invalid configuration is entered.
@@ -25,8 +25,9 @@ class ConfigError(Exception):
         super().__init__(self.message)
 
 class Version:
-    def __init__(self, name, desc, recipe_path):
+    def __init__(self, name, uenv_name, desc, recipe_path):
         self._name = name
+        self._uenv_name = uenv_name
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
         self._use_spack_develop = desc["develop"]
@@ -52,8 +53,16 @@ class Version:
         # list of the uarch that this version can be deployed on
         return [n for n in self._recipes.keys()]
 
-    def recipe_path(self, uarch):
-        return self._recipe_path / self._recipes[uarch]
+    def recipe_path(self, uarch, relative=False):
+        # search for self._recipe_path / name / arch-specific-recipe
+        # then   for self._recipe_path / arch-specific-recipe
+        relpaths = [self._uenv_name + "/" + self._recipes[uarch], self._recipes[uarch]]
+        for relpath in relpaths:
+            fullpath = self._recipe_path / relpath
+            if fullpath.is_dir():
+                return pathlib.Path("recipes")/relpath if relative else fullpath
+
+        raise FileNotFoundError(f"the path for {self._name}@{uarch} ({self._recipes[uarch]}) does not exist")
 
     def recipe(self, uarch):
         return self._recipes[uarch]
@@ -65,7 +74,7 @@ class Version:
 class Uenv:
     def __init__(self, name, desc, recipe_path):
         self._name = name
-        self._versions = [Version(v, desc[v], recipe_path / name)  for v in desc.keys()]
+        self._versions = [Version(v, name, desc[v], recipe_path)  for v in desc.keys()]
 
     @property
     def name(self):
@@ -163,7 +172,7 @@ class Config:
         if u is not None:
             for v in u.versions:
                 if v.name==version and uarch in v.uarch:
-                    return "recipes/" + name + "/" + v.recipe(uarch)
+                    return v.recipe_path(uarch, relative=True)
 
         return None
 
@@ -205,6 +214,7 @@ class Config:
             runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
             runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
             runner["variables"]["MODE"] = "baremetal"
+            runner["variables"]["SLURM_ACCOUNT"] = "csstaff"
             runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
         # else configure baremetal runners deployed via Ansible/Nomad
         else:
