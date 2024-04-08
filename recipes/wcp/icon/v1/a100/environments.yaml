@@ -6,21 +6,25 @@ nvidia:
         spec: nvhpc
   unify: when_possible
   mpi:
-      spec: cray-mpich
+      spec: cray-mpich@8.1.28%nvhpc
       gpu: cuda
   specs:
   - boost%gcc ~mpi
   - python@3.10%gcc
-  #- eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
+  - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - cmake%gcc
   - cuda@11.8%gcc
-  - hdf5%nvhpc +fortran
+  - hdf5%gcc
   - hwloc%gcc
   - netcdf-c%gcc
+  - netcdf-cxx4%gcc
   - netcdf-fortran%nvhpc
   - numactl%gcc
   - osu-micro-benchmarks@5.9%nvhpc
-  - perl%gcc
+  # everything needed for nccl on SS11
+  - aws-ofi-nccl@master%gcc
+  - nccl%gcc
+  - nccl-tests%gcc
   # The following are required to stop spack from using nvhpc to build
   # basic dependencies, some of which don't compile with nvc etc.
   # Explicitly excluded as modules.
@@ -48,7 +52,9 @@ nvidia:
   - +mpi
   - +cuda
   packages:
+  - perl
   - curl
   - gmake
   views:
-    default:
+    icon:
+      link: roots

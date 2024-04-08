@@ -21,7 +21,6 @@ nvidia:
   - netcdf-fortran%nvhpc
   - numactl%gcc
   - osu-micro-benchmarks@5.9%nvhpc
-  - perl%gcc
   # everything needed for nccl on SS11
   - aws-ofi-nccl@master%gcc
   - nccl%gcc
@@ -40,6 +39,7 @@ nvidia:
   - m4%gcc
   - ncurses%gcc
   - openssl%gcc
+  - perl%gcc
   - xz%gcc
   - zlib%gcc
   - zstd%gcc
@@ -57,3 +57,4 @@ nvidia:
   - gmake
   views:
     default:
+      link: roots
