@@ -1,5 +1,5 @@
 name: mch
-store: /user-environment
+store: /mch-environment/v6
 spack:
   commit: releases/v0.20
   repo: https://github.com/spack/spack.git
