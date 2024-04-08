@@ -1,10 +1,12 @@
 site_name: alps-uenv
 nav:
   - Home: index.md
-  - 'Environments':
+  - 'uenv':
     - 'gromacs': uenv-gromacs.md
     - 'quantum-espresso': uenv-qe.md
     - 'cp2k': uenv-cp2k.md
+  - 'packaging':
+    - 'tutorial': pkg-tutorial.md
 theme:
   name: material
   features:
