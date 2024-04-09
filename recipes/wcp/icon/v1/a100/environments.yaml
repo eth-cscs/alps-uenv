@@ -13,7 +13,7 @@ nvidia:
   - python@3.10%gcc
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - cmake%gcc
-  - cuda@11.8%gcc
+  - cuda@12.3%gcc
   - hdf5%gcc
   - hwloc%gcc
   - netcdf-c%gcc
