@@ -1,0 +1,2 @@
+root: $SCRATCH/spackstacks/cache
+key:  $SCRATCH/.keys/spack-push-key.gpg

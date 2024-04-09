@@ -1,0 +1,24 @@
+gromacs:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: when_possible
+  specs:
+  - cmake
+  - cuda@12
+  - gromacs@2023.3 +cuda +hwloc 
+  - blas
+  - lapack
+  - hwloc
+  - fftw
+  - python@3.10
+  - openmpi +cuda fabrics=knem
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    gromacs:
+  packages:
+  - perl
+
