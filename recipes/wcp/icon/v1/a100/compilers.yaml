@@ -2,7 +2,7 @@ bootstrap:
   spec: gcc@11.3
 gcc:
   specs:
-  - gcc@13.3
+  - gcc@12.3
 llvm:
   requires: gcc@12.3
   specs:
