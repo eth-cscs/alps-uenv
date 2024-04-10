@@ -71,15 +71,6 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
-    "23.0.3":
-      recipes:
-        zen2: "23.0.3"
-        zen3: "23.0.3"
-        a100: "23.0.3"
-      deploy:
-        eiger: [zen2]
-      develop: False
-      mount: "/user-tools"
     "23.1.2":
       recipes:
         zen2: "23.1.2"
