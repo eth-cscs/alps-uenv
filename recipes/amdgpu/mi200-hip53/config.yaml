@@ -1,6 +1,0 @@
-name: gcc-amdgpu
-store: /user-environment
-spack:
-    repo: https://github.com/spack/spack.git
-    commit: releases/v0.20
-modules: True

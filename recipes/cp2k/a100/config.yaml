@@ -1,6 +1,0 @@
-name: cp2k-nvgpu
-store: /user-environment
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: 599b612edfeb636c8441744df564c1e0535cdcc2
-modules: True

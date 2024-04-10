@@ -1,0 +1,6 @@
+name: gromacs-multicore
+store: /user-environment
+description: Gromacs with and without Plumed, and the toolchain to build your own Gromacs for multicore
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.20.0

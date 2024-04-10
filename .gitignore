@@ -2,6 +2,7 @@ log*
 stackinator
 recipes/*/*core/mirrors.yaml
 cache.yaml
+/pipeline.yml
 
 # vim temp files
 .*.sw[pnoq]
@@ -9,3 +10,9 @@ cache.yaml
 # documentation working files
 site
 env
+
+# oras binary, downloaded during build
+oras
+
+ci/.pyenv
+__pycache__

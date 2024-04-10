@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+datetime () { date +"%Y-%m-%d %H:%M:%S"; }
+
+[[ -t 1 ]] && interm=yes
+
+red ()    { echo "\e[1;31m$1\e[m"; }
+yellow () { echo "\e[1;33m$1\e[m"; }
+log () { printf "$(yellow "[log $(datetime)]") $1\n"; }
+err () { printf "$(red "[error $(datetime)]") $1\n"; exit 1; }
+
+script_path=$(dirname $(realpath $0))
+root_path=$(realpath "$script_path/..")
+config_path="$script_path/config"
+
+#
+# print status
+#
+
+log "configuring cicd pipeline for alps uenv"
+log "      system= $system"
+log "      uarch = $uarch"
+log "      uenv  = $uenv"
+log "root_path  =$root_path"
+log "script_path=$script_path"
+log "config_path=$config_path"
+
+#
+# create temporary working path for python
+#
+tmp_path=/tmp/uenv$CI_JOB_ID
+rm -rf $tmp_path
+mkdir -p $tmp_path
+
+log "temporary path $tmp_path"
+
+#
+# set up python environment
+#
+pyenv_path=$tmp_path/.pyenv
+
+python3 -m venv $pyenv_path
+source $pyenv_path/bin/activate
+log "created and loaded python venv in $pyenv_path"
+log "$(python --version)"
+
+pip install --upgrade --quiet pip
+pip install --quiet -r $config_path/requirements.txt
+log "installed python dependencies"
+
+$config_path/ci.py
+[[ $? -eq 0  ]] || err "unable to configure"
+
+log "configuration complete"
+
+log "the following pipeline was generated"
+cat pipeline.yml
