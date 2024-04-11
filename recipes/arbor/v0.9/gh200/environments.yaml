@@ -11,9 +11,10 @@ arbor:
   - arbor@0.9 +python
   # build tools
   - cuda@12.4
-  - python@3.11
   - cmake
+  - googletest
   - ninja
+  - python@3.11
   # C++ dependencies
   - fmt
   - pugixml

@@ -9,9 +9,10 @@ arbor:
   # arbor
   - arbor@0.9 +python
   # build tools
-  - python@3.11
   - cmake
+  - googletest
   - ninja
+  - python@3.11
   # C++ dependencies
   - fmt
   - pugixml
