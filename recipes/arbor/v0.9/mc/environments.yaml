@@ -3,27 +3,27 @@ arbor:
       - toolchain: gcc
         spec: gcc
   mpi:
-      spec: cray-mpich@8.1.28
+      spec: cray-mpich@8.1.29
   unify: true
   specs:
+  # arbor
+  - arbor@0.9 +python
   # build tools
   - python@3.11
-  # build tools
   - cmake
   - ninja
+  # C++ dependencies
   - fmt
   - pugixml
   - nlohmann-json
-  - osu-micro-benchmarks
   - random123
   # python packages
   - py-mpi4py
   - py-numpy
-  - py-pandas
   - py-pip
   - py-pybind11
-  - py-sphinx
-  - py-svgwrite
+  # etc
+  - osu-micro-benchmarks
   variants:
   - +mpi
   packages:
@@ -32,3 +32,9 @@ arbor:
   - gmake
   - libxml2
   - perl
+  views:
+    arbor:
+      link: roots
+    develop:
+      link: roots
+      exclude: [arbor]
