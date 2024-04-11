@@ -30,6 +30,14 @@ clusters:
       slurm-tag:  santis-spack-stack-builder
       baremetal-tag: santis-login-baremetal
 uenvs:
+  arbor:
+    "v0.9":
+      recipes:
+        zen2: v0.9/mc
+        gh200: v0.9/gh200
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
   gromacs:
     "2023":
       recipes:
