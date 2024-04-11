@@ -5,6 +5,7 @@ nav:
     - 'gromacs': uenv-gromacs.md
     - 'quantum-espresso': uenv-qe.md
     - 'cp2k': uenv-cp2k.md
+    - 'linaro-forge': uenv-linaro-forge.md
   - 'packaging':
     - 'tutorial': pkg-tutorial.md
 theme:
@@ -23,6 +24,8 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - tables
   - toc:
       permalink: true
