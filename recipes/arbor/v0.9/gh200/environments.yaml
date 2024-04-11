@@ -1,0 +1,38 @@
+arbor:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.29
+      gpu: cuda
+  unify: true
+  specs:
+  # build tools
+  - cuda@12.4
+  - python@3.11
+  # build tools
+  - cmake
+  - ninja
+  - fmt
+  - pugixml
+  - nlohmann-json
+  - osu-micro-benchmarks
+  - random123
+  # python packages
+  - py-mpi4py
+  - py-numpy
+  - py-pandas
+  - py-pip
+  - py-pybind11
+  - py-sphinx
+  - py-svgwrite
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  packages:
+  - diffutils
+  - gettext
+  - gmake
+  - libxml2
+  - perl
