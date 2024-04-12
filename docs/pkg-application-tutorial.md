@@ -1,28 +1,22 @@
-# Packaging Tutorial
+# Application Packaging Tutorial
 
-This tutorial provides an end to end description of configuring and maintaining a uenv recipe and deployment for a representative HPC application.
-
-1. Gathering requirements
-2. Writing the recipe
-3. Testing
-4. Configuring the deployment
-5. CI/CD
-
-## Use Case
-
-For this tutorial we will [Arbor](https://arbor-sim.org/) is scientific software for neuroscience simulation, that supports
+[Arbor](https://arbor-sim.org/) is scientific software for neuroscience simulation, with features including:
 
 * A C++ library with a Python interface
+* Distributed exexcution through MPI
 * Multicore simulation
 * Support for both NVIDIA and AMD GPUs
-* Distributed exexcution through MPI
 
+Users of Arbor fall into two camps: those who want to use a version installed on the system, and those who need to build their own copy.
+
+This tutorial walks through configuring and maintaining a uenv recipe and deployment for a Arbor that supports the different users, which should cover most of the aspects of deploying your own uenv.
 
 ## Requirements
 
 Before starting, we gather requirements for the use cases of the uenv on the system, in order to understand:
-* which packages the uenv will provide
-* which interfaces the uenv will provide to those packages
+
+* which packages the uenv will provide;
+* which interfaces the uenv will provide to those packages.
 
 ### Supported workflows
 
@@ -38,9 +32,8 @@ Looking at the above, the *BYO* and *Developer* requirements are the same: provi
 
 Arbor is well-optimised for both CPU and GPU executation and users of systems with and without accelerators, so we will provide it for the following platforms:
 
-* `a100`
+* multicore: `zen2`/`zen3`
 * `gh200`
-* multicore: `zen2` and `zen3`
 
 ### Compilers
 
@@ -48,18 +41,18 @@ Arbor is a C++17 libarary that officially supports GCC and Clang, with a Python 
 
 For this we choose the following compiler versions:
 
-| target    | compiler   | cuda        | python  |
-| --------- | ---------- | ----------- | ------- |
-| zen2/zen3 | `gcc@13.2` | -           | `python@3.11` |
-| gh200     | `gcc@13.2` | `cuda@12.4` | `python@3.11` |
+| target        | compiler   | cuda        | python  |
+| ------------- | ---------- | ----------- | ------- |
+| `zen2`/`zen3` | `gcc@13.2` | -           | `python@3.11` |
+| `gh200`       | `gcc@13.2` | `cuda@12.4` | `python@3.11` |
 
 
 ### Packages
 
 The first step when building an application, use-case or workflow uenv is to determine which specs to add to the list.
-At a minimum these will be 
 
-If our aim was to provide arbor with cuda and Python support enabled, the following might be sufficient:
+If the aim was to provide arbor with cuda and Python support enabled, an `environments.yaml` file that provides a single spec `arbor@0.9 +python` could be sufficient, e.g.:
+
 
 ```yaml title="simple environments.yaml"
 arbor:
@@ -80,21 +73,22 @@ arbor:
       links: root
 ```
 
-This environment definition will build arbor, with all of its dependencies concretised and built by Spack.
-Such a simple recipe is sometimes sufficient, however we will often want to add to add a more detailed set of specs.
+This environment definition will build arbor, with all of its dependencies implicitly concretised by Spack.
+Such a simple recipe is sometimes sufficient, however one will often need to provide a more detailed set of specs.
 Reasons for more detailed specs include:
 
 * to pin the version of a specific dependency, e.g.:
-    - if you want to ensure that the version of a package is not dependent on which version of Spack is used;
-    - to a version that we know is well supported and tested on the target system;
+    - to ensure that the version of a package is not dependent on which version of Spack is used;
+    - to a version that is well supported and tested on the target system;
     - to a version that patches a bug on the target system.
 * to specialise the spec of a specific depency, e.g.:
     - with non-default variants that support all features on the target system;
-    - with non-default variants that give the best performance on the target system.
-* to explicitly list all of the dependencies that you want to provide to users in an environment view
+    - with non-default variants that give the best performance on the target system;
+    - to use a specific compiler when more than one compiler toolchain is used to build packages in an environment.
+* to explicitly list all of the dependencies to provide to users in an environment view
 
-The objective for this uenv is to provide both Arbor and all of the tools and libraries to "build your own" Arbor.
-For that, we need to provide all of the libraries and tools required to download the Arbor source code, run CMake, and build.
+The objective for the Arbor uenv is to provide both Arbor and all of the tools and libraries to "build your own" Arbor.
+This requires providing all of the libraries and tools required to download the Arbor source code, run CMake, and build in a file system view.
 
 As a starting point, we use the [spack package](https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/arbor/package.py) for Arbor.
 From this we derive a list of dependencies:
@@ -104,7 +98,7 @@ From this we derive a list of dependencies:
 
 ## The Recipe
 
-womboat
+With requirements in hand, it is now time to write the recipe.
 
 ### config
 
@@ -127,8 +121,8 @@ There are a few simple choices to make when writing the `config.yaml` file:
 
 `spack`
 
-:   By default use the most recent supported version of Spack.
-    If the most recent version of Spack is `v0.21`, we recommend using the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
+:   By default use the most recent version of Spack supported by Stackinator.
+    At the time of writing, the most recent version of Spack is `v0.21`, for which it is recommend to use the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
 
     !!! warning
 
@@ -158,7 +152,7 @@ There are a few simple choices to make when writing the `config.yaml` file:
 
 ### compilers
 
-Based on our requirements, we are using full uenv stacks:
+Based on our requirements above, defining compilers is straightforward.
 
 === "`mc`"
 
@@ -173,6 +167,8 @@ Based on our requirements, we are using full uenv stacks:
     ```
 
 ### environments
+
+The environment definitions include the specs that we want to provide to end users, and the selected `cuda` and `python` versions where application.
 
 === "`mc`"
 
@@ -193,14 +189,13 @@ Based on our requirements, we are using full uenv stacks:
         * `+cuda` sets that variant for all that support it, required for NVIDIA GPU builds.
         * `cuda_arch=90` is required for `gh200` (use `cuda_arch=80` for the `a100` nodes)
 
-!!! warning "views and roots"
+!!! tip "views and roots"
 
     Always use `view:link:roots` if possible to filter which packages are added to views.
     The [default](https://spack.readthedocs.io/en/latest/environments.html#configuration-in-spack-yaml) `all` setting and also the `run` setting can add a lot of packages that were not explicitly in the list of your uenv's specs.
 
-    Including unneccesary packages in the view can lead to conflicts, and should be avoided.
+    Packages in the view can lead to conflicts, which can be avoided by only including packages that are strictly required.
     For example, if a view has a common dependency like `libssl` in its `/lib` path, and `LD_LIBRARY_PATH` is set, system CLI tools like `git` can crash because the link against the `libssl` in the uenv at runtime.
-
 
 ### modules
 
