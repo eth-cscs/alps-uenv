@@ -100,7 +100,7 @@ From this we derive a list of dependencies:
 
 With requirements in hand, it is now time to write the recipe.
 
-### config
+### Config
 
 There are a few simple choices to make when writing the `config.yaml` file:
 
@@ -150,7 +150,7 @@ There are a few simple choices to make when writing the `config.yaml` file:
     --8<-- "./recipes/arbor/v0.9/gh200/config.yaml"
     ```
 
-### compilers
+### Compilers
 
 Based on our requirements above, defining compilers is straightforward.
 
@@ -166,7 +166,7 @@ Based on our requirements above, defining compilers is straightforward.
     --8<-- "./recipes/arbor/v0.9/gh200/compilers.yaml"
     ```
 
-### environments
+### Environments
 
 The environment definitions include the specs that we want to provide to end users, and the selected `cuda` and `python` versions where application.
 
@@ -197,9 +197,26 @@ The environment definitions include the specs that we want to provide to end use
     Packages in the view can lead to conflicts, which can be avoided by only including packages that are strictly required.
     For example, if a view has a common dependency like `libssl` in its `/lib` path, and `LD_LIBRARY_PATH` is set, system CLI tools like `git` can crash because the link against the `libssl` in the uenv at runtime.
 
-### modules
+### Modules
 
-We add a module file.
+We add a module file, which controls which modules are [provided by the uenv](https://eth-cscs.github.io/stackinator/recipes/#modules).
+This is because some users might want modules, and it doesn't hurt to provide them (this is a weak reason, and we accept that we will be on the hook for supporting them for users who incorporate them into their workflows).
+
+!!! info
+
+    If you don't need to provide modules, set `modules: False` in `config.yaml`.
+
+=== "mc"
+
+    ```yaml title="modules.yaml"
+    --8<-- "./recipes/arbor/v0.9/mc/modules.yaml"
+    ```
+
+=== "gh200"
+
+    ```yaml title="modules.yaml"
+    --8<-- "./recipes/arbor/v0.9/gh200/modules.yaml"
+    ```
 
 ## Testing
 
@@ -209,12 +226,11 @@ We add a module file.
 
 ## Deployment
 
-
 ### Configuring the pipeline
 
-The target systems for our recipe are Eiger (`zen2`) and Santis (`gh200`).
+The target systems for deploying the Arbor uenv to users are Eiger (`zen2`) and Santis (`gh200`).
 
-To enable the CI/CD pipeline to build and deploy the Arbor uenv on these systems, update the [`config.yaml` file in the alps-uenv repository](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml):
+To enable the CI/CD pipeline to build and deploy the uenv on these systems, update the [`config.yaml` file in the alps-uenv repository](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml):
 
 ```yaml
 uenvs:
@@ -252,3 +268,34 @@ Once the PR is created, the pipeline has to be triggered for each individual com
 cscs-ci run alps;system=eiger;uarch=zen2;uenv=arbor:v0.9
 cscs-ci run alps;system=santis;uarch=gh200;uenv=arbor:v0.9
 ```
+
+### Checking the build
+
+Log onto the target system, e.g. `santis`, and use the `uenv image find --build` command to search for the build.
+
+```
+> uenv image find --build arbor
+uenv/version:tag                        uarch date       id               size
+arbor/v0.9:1250847801                   gh200 2024-04-12 89c9a36f21b496a2 3.6GB
+arbor/v0.9:1249535229                   gh200 2024-04-11 0a2d82448ecaafd7 3.6GB
+```
+
+!!! info
+
+    The `--build` flag is required with the `find` and `pull` commands to interact with images that have been built by the pipeline, but not yet deployed.
+
+Pick the version that you want to build (if it isn't clear which version to pull, you can find it in the logs of the CI/CD job that built the image).
+
+```bash
+# pull the image using its id
+uenv image pull --build 89c9a36f21b496a2
+
+# then start the image to test it
+uenv image start 89c9a36f21b496a2
+```
+
+## Docs
+
+!!! failure
+
+    Write about how to document.
