@@ -71,14 +71,15 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
-    "23.0.3":
+    "23.1.2":
       recipes:
-        zen2: "23.0.3"
-        zen3: "23.0.3"
-        a100: "23.0.3"
+        zen2: "23.1.2"
+        zen3: "23.1.2"
+        a100: "23.1.2"
+        gh200: "23.1.2"
       deploy:
         eiger: [zen2]
-        clariden: [a100]
+        santis: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
