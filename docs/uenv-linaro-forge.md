@@ -30,7 +30,7 @@ The linaro tools are configured to be mounted in the `/user-tools` path so that 
     uenv status
 
     uenv view prgenv-gnu:default
-    source /user-tools/acvitave
+    source /user-tools/activate
 
     # check that ddt is in the path
     ddt --version
@@ -45,7 +45,7 @@ The linaro tools are configured to be mounted in the `/user-tools` path so that 
     ```bash
     uenv start linaro-forge/32.1.2:/user-tools
 
-    source /user-tools/acvitave
+    source /user-tools/activate
 
     # check that ddt is in the path
     ddt --version
