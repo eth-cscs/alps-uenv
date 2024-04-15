@@ -23,7 +23,7 @@ The linaro tools are configured to be mounted in the `/user-tools` path so that 
     When using alongside another uenv, start a uenv session with both uenv with `linaro-forge` after the main uenv, to mount the images at the respective `/user-environment` and `/user-tools` locations:
 
     ```bash
-    uenv start prgenv-gnu/24.2:v3 linaro-forge/32.1.2
+    uenv start prgenv-gnu/24.2:v3 linaro-forge/23.1.2
 
     # test that everything has been mounted correctly
     # (will give warnings if there are problems)
@@ -43,7 +43,7 @@ The linaro tools are configured to be mounted in the `/user-tools` path so that 
     When using the uenv with no other environment mounted, you will need to explicitly set the `/user-tools` mount point:
 
     ```bash
-    uenv start linaro-forge/32.1.2:/user-tools
+    uenv start linaro-forge/23.1.2:/user-tools
 
     source /user-tools/activate
 
