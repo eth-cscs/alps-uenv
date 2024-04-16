@@ -7,9 +7,9 @@
 * Multicore simulation
 * Support for both NVIDIA and AMD GPUs
 
-Users of Arbor fall into two camps: those who want to use a version installed on the system, and those who need to build their own copy.
+Users of Arbor fall into two camps: those who require a version installed, ready to use, on the system; and those who need to build their own copy.
 
-This tutorial walks through configuring and maintaining a uenv recipe and deployment for a Arbor that supports the different users, which should cover most of the aspects of deploying your own uenv.
+This tutorial walks through configuring and maintaining a uenv recipe and deployment for Arbor that supports the different users, which should cover most of the aspects of deploying your own uenv.
 
 ## Requirements
 
@@ -23,8 +23,8 @@ Before starting, we gather requirements for the use cases of the uenv on the sys
 For Arbor we wish to support two workflows:
 
 * *Application*: provide optimised builds of Arbor for users to use directly
-* *BYO*: Arbor is under active development, and some users require the ability to build the latest bleeding edge version themselves.
-* *Developer*: Arbor developers use Alps for development. For this we want to provide
+* *BYO*: Arbor is under active development, and some users require the ability to build the latest bleeding edge version, or build with a customised configuration.
+* *Developer*: Arbor developers who need to implement new features, fix bugs and test on Alps.
 
 Looking at the above, the *BYO* and *Developer* requirements are the same: provide the dependencies required to build Arbor.
 
@@ -34,6 +34,21 @@ Arbor is well-optimised for both CPU and GPU executation and users of systems wi
 
 * multicore: `zen2`/`zen3`
 * `gh200`
+
+!!! info "supported platforms"
+
+    Supported targets on Alps are currently:
+
+    | target   |
+    | -------- |
+    | `zen2`   |
+    | `zen3`   |
+    | `a100`   |
+    | `mi200`  |
+    | `gh200`  |
+
+    For more information, see the [internal CSCS confluence](https://confluence.cscs.ch/display/VCUE/UENV).
+    Also, information about which targets are available on which vClusters, see the [`config.yaml`]().
 
 ### Compilers
 
