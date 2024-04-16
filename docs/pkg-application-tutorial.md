@@ -37,18 +37,10 @@ Arbor is well-optimised for both CPU and GPU executation and users of systems wi
 
 !!! info "supported platforms"
 
-    Supported targets on Alps are currently:
-
-    | target   |
-    | -------- |
-    | `zen2`   |
-    | `zen3`   |
-    | `a100`   |
-    | `mi200`  |
-    | `gh200`  |
+    Supported targets on Alps are currently `zen2`, `zen3`, `a100`, `mi200`, and `gh200`.
 
     For more information, see the [internal CSCS confluence](https://confluence.cscs.ch/display/VCUE/UENV).
-    Also, information about which targets are available on which vClusters, see the [`config.yaml`]().
+    Also, information about which targets are available on which vClusters, see the [`config.yaml`](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml).
 
 ### Compilers
 
@@ -299,7 +291,7 @@ arbor/v0.9:1249535229                   gh200 2024-04-11 0a2d82448ecaafd7 3.6GB
 
     The `--build` flag is required with the `find` and `pull` commands to interact with images that have been built by the pipeline, but not yet deployed.
 
-Pick the version that you want to build (if it isn't clear which version to pull, you can find it in the logs of the CI/CD job that built the image).
+Pick the version to pull (if it isn't clear which version to pull, inspect the logs of the CI/CD job that built the image).
 
 ```bash
 # pull the image using its id
