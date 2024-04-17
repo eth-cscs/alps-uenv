@@ -1,15 +1,18 @@
 # Application Packaging Tutorial
 
+!!! info "target audience"
+
+    The target audience for this tutorial is CSCS staff who want to provide an application or programming enivoronment uenv for users on Alps.
+    We assume that you are familiar with Spack and how to build uenv using Stackinator - the focus here will be on best practices.
+
+This tutorial walks through configuring and maintaining a uenv recipe and deployment a representatative HPC application. The uenv has to support some commone use cases, and should cover most of the aspects of deploying your own uenv.
+
 [Arbor](https://arbor-sim.org/) is scientific software for neuroscience simulation, with features including:
 
 * A C++ library with a Python interface
-* Distributed exexcution through MPI
+* Distributed execution through MPI
 * Multicore simulation
 * Support for both NVIDIA and AMD GPUs
-
-Users of Arbor fall into two camps: those who require a version installed, ready to use, on the system; and those who need to build their own copy.
-
-This tutorial walks through configuring and maintaining a uenv recipe and deployment for Arbor that supports the different users, which should cover most of the aspects of deploying your own uenv.
 
 ## Requirements
 
@@ -23,10 +26,7 @@ Before starting, we gather requirements for the use cases of the uenv on the sys
 For Arbor we wish to support two workflows:
 
 * *Application*: provide optimised builds of Arbor for users to use directly
-* *BYO*: Arbor is under active development, and some users require the ability to build the latest bleeding edge version, or build with a customised configuration.
-* *Developer*: Arbor developers who need to implement new features, fix bugs and test on Alps.
-
-Looking at the above, the *BYO* and *Developer* requirements are the same: provide the dependencies required to build Arbor.
+* *BYO/Developer*: Arbor is under active development, and some users require the ability to build the latest bleeding edge version, or build with a customised configuration. This workflow also supports Arbor developers, who need to implement new features, fix bugs and test on Alps.
 
 ### Supported systems
 
@@ -189,7 +189,7 @@ The environment definitions include the specs that we want to provide to end use
     --8<-- "./recipes/arbor/v0.9/gh200/environments.yaml"
     ```
 
-    ???+ note "variants"
+    !!! note "variants"
 
         Environments on GH200 will typically have the following variants set:
 
