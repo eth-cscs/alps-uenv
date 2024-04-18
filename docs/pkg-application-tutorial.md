@@ -237,7 +237,7 @@ This is because some users might want modules, and it doesn't hurt to provide th
 
 The target systems for deploying the Arbor uenv to users are Eiger (`zen2`) and Santis (`gh200`).
 
-To enable the CI/CD pipeline to build and deploy the uenv on these systems, update the [`config.yaml` file in the alps-uenv repository](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml):
+To enable the CI/CD pipeline to build and deploy the uenv on these systems, update the [`config.yaml`](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml) file in the alps-uenv repository:
 
 ```yaml
 uenvs:
