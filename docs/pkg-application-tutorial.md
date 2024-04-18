@@ -1,11 +1,11 @@
 # Application Packaging Tutorial
 
-!!! info "target audience"
+!!! info "Target audience"
 
-    The target audience for this tutorial is CSCS staff who want to provide an application or programming enivoronment uenv for users on Alps.
+    The target audience for this tutorial is CSCS staff who want to provide an application or programming environment uenv for users on Alps.
     We assume that you are familiar with Spack and how to build uenv using Stackinator - the focus here will be on best practices.
 
-This tutorial walks through configuring and maintaining a uenv recipe and deployment a representatative HPC application. The uenv has to support some commone use cases, and should cover most of the aspects of deploying your own uenv.
+This tutorial walks through configuring and maintaining a uenv recipe and deployment a representative HPC application. The uenv has to support some common use cases, and should cover most of the aspects of deploying your own uenv.
 
 [Arbor](https://arbor-sim.org/) is scientific software for neuroscience simulation, with features including:
 
@@ -30,7 +30,7 @@ For Arbor we wish to support two workflows:
 
 ### Supported systems
 
-Arbor is well-optimised for both CPU and GPU executation and users of systems with and without accelerators, so we will provide it for the following platforms:
+Arbor is well-optimised for both CPU and GPU execution and users of systems with and without accelerators, so we will provide it for the following platforms:
 
 * multicore: `zen2`/`zen3`
 * `gh200`
@@ -88,7 +88,7 @@ Reasons for more detailed specs include:
     - to ensure that the version of a package is not dependent on which version of Spack is used;
     - to a version that is well supported and tested on the target system;
     - to a version that patches a bug on the target system.
-* to specialise the spec of a specific depency, e.g.:
+* to specialise the spec of a specific dependency, e.g.:
     - with non-default variants that support all features on the target system;
     - with non-default variants that give the best performance on the target system;
     - to use a specific compiler when more than one compiler toolchain is used to build packages in an environment.
@@ -133,7 +133,7 @@ There are a few simple choices to make when writing the `config.yaml` file:
 
     !!! warning
 
-        The `develop` branch should be avoided for uenv deployed on CSCS clusters unless it is absolutely neccesary.
+        The `develop` branch should be avoided for uenv deployed on CSCS clusters unless it is absolutely necessary.
 
 `mount`
 
