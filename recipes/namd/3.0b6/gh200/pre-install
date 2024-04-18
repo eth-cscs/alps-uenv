@@ -1,4 +1,13 @@
 #!/bin/bash
 
-wget https://jfrog.svc.cscs.ch/artifactory/alps-uenv/software/namd/NAMD_3.0b6_Source.tar.gz -P {{ env.build }}/environments/
+namd_version=3.0b6
+
+namd=NAMD_${namd_version}_Source.tar.gz 
+
+creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+
+username="$(echo ${creds_json} | jq -r '.container_registry.username')"
+password="$(echo ${creds_json} | jq -r '.container_registry.password')"
+
+curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
