@@ -44,7 +44,7 @@ Arbor is well-optimised for both CPU and GPU execution and users of systems with
 
 ### Compilers
 
-Arbor is a C++17 libarary that officially supports GCC and Clang, with a Python front end.
+Arbor is a C++17 library that officially supports GCC and Clang, with a Python front end.
 
 For this we choose the following compiler versions:
 
