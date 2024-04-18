@@ -11,7 +11,6 @@ vasp:
   specs:
       - vasp@6.4.2%nvhpc cuda_arch=80 +cuda +openmp +inplace +collective +scalapack +avoidalloc +bse +tbdyn +fock_dblbuf +ncclp2p ~profiling ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib +hdf5 +wannier90 ~libxc
       - wannier90%nvhpc
-      - libxc~cuda~fhc%nvhpc
       - cuda@12.2
       - fftw%nvhpc +openmp
       - openblas%nvhpc threads=openmp
