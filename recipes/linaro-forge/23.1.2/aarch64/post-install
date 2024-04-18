@@ -1,0 +1,9 @@
+#!/bin/bash
+
+forge_bin={{ env.mount }}/env/forge/bin
+echo "export PATH=$forge_bin:$PATH" >> {{ env.mount }}/activate
+echo "export UENV_DDT_VERSION=23.1.2" >> {{ env.mount }}/activate
+# CSCS specific
+echo 'http_proxy="proxy.cscs.ch:8080"' >> {{ env.mount }}/activate
+echo 'https_proxy="proxy.cscs.ch:8080"' >> {{ env.mount }}/activate
+echo 'no_proxy=".local, .cscs.ch, localhost, 148.187.0.0/16, 10.0.0.0/8, 172.16.0.0/12"' >> {{ env.mount }}/activate
