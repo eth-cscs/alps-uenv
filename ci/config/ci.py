@@ -85,11 +85,8 @@ if __name__ == "__main__":
     #   - JOB_ID (if needed?)
     if os.getenv("UENVCITEST", default=None) is not None:
         os.environ["system"] = "santis"
-        os.environ["uarch"] = "zen2"
-        os.environ["uenv"] = "gromacs:2023"
-        #os.environ["system"] = "clariden"
-        #os.environ["uarch"] = "a100"
-        #os.environ["uenv"] = "gromacs:2023"
+        os.environ["uarch"] = "gh200"
+        os.environ["uenv"] = "netcdf-tools:2024"
 
     # read and validate the configuration
     print(recipe_path)
