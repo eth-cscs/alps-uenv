@@ -1,4 +1,4 @@
-name: vasp-gh200
+name: vasp-a100
 store: /user-environment
 description: VASP
 spack:
