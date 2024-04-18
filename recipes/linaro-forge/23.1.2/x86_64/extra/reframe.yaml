@@ -1,7 +1,0 @@
-default:
-  features:
-    - ddt
-  cc: gcc
-  cxx: g++
-  ftn: gfortran
-  activation: /user-tools/env/forge/activate.sh    
