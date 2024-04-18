@@ -140,4 +140,11 @@ uenvs:
       deploy:
         clariden: [a100]
       develop: True
+  vasp:
+    "v6.4.2":
+      recipes:
+        a100: v6.4.2/a100
+      deploy:
+        clariden: [a100]
+      develop: False
 
