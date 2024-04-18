@@ -175,7 +175,7 @@ Based on our requirements above, defining compilers is straightforward.
 
 ### Environments
 
-The environment definitions include the specs that we want to provide to end users, and the selected `cuda` and `python` versions where application.
+The environment definitions include the specs that we want to provide to end users, and the relevant `cuda` and `python` versions depending on each application.
 
 === "`mc`"
 
