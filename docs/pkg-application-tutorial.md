@@ -129,7 +129,7 @@ There are a few simple choices to make when writing the `config.yaml` file:
 `spack`
 
 :   By default use the most recent version of Spack supported by Stackinator.
-    At the time of writing, the most recent version of Spack is `v0.21`, for which it is recommend to use the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
+    At the time of writing, the most recent version of Spack is `v0.21`, for which it is recommended to use the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
 
     !!! warning
 
