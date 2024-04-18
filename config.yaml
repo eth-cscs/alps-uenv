@@ -84,6 +84,13 @@ uenvs:
       deploy:
         clariden: [a100]
       develop: False
+  namd:
+    "3.0b6":
+      recipes:
+        gh200: 3.0b6/gh200
+      deploy:
+        santis: [gh200]
+      develop: False
   netcdf-tools:
     "2024":
       recipes:
