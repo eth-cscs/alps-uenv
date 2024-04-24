@@ -73,7 +73,7 @@
                     "patternProperties": {
                         "^[\\w.-]+$": {
                             "type": "object",
-                            "required": ["recipes", "deploy"],
+                            "required": ["recipes"],
                             "additionalProperties": false,
                             "properties": {
                                 "recipes":{
@@ -88,6 +88,7 @@
                                     "$comment": "a dictionary with clusters as keys, and lists of arch types values",
                                     "type" : "object",
                                     "additionalProperties": false,
+                                    "default": {},
                                     "patternProperties": {
                                         "^[\\w.-]+$": {
                                             "type": "array",

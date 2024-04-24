@@ -1,12 +1,4 @@
 clusters:
-  eiger:
-    targets:
-      -
-        uarch: 'zen2'
-        partition: 'normal'
-        variables:
-          SLURM_CONSTRAINT: 'mc'
-    runner: f7t
   balfrin:
     targets:
       -
@@ -15,21 +7,17 @@ clusters:
       -
         uarch: 'a100'
         partition: 'normal'
-    runner: f7t
-  clariden:
+    runner:
+      slurm-tag: balfrin-spack-stack-builder
+      baremetal-tag: balfrin-login-baremetal
+  eiger:
     targets:
       -
-        uarch: 'a100'
-        partition: 'nvgpu'
-      -
-        uarch: 'mi200'
-        partition: 'amdgpu'
-      -
-        uarch: 'zen3'
-        partition: 'nvgpu'
-    runner:
-      slurm-tag: clariden-spack-stack-builder
-      baremetal-tag: clariden-login-baremetal
+        uarch: 'zen2'
+        partition: 'normal'
+        variables:
+          SLURM_CONSTRAINT: 'mc'
+    runner: f7t
   santis:
     targets:
       -
@@ -57,7 +45,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
       develop: False
   cp2k:
     "2023":
@@ -69,7 +56,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
       develop: False
   icon-wcp:
     "v1":
@@ -100,13 +86,11 @@ uenvs:
       develop: False
       mount: "/user-tools"
   mch:
-    # v5 was deprecated from the build config due to an out of date
-    # version of spack (v0.19)
     "v6":
       recipes:
         a100: v6
       deploy:
-        clariden: [a100]
+        balfrin: [a100]
       develop: False
   netcdf-tools:
     "2024":
@@ -136,7 +120,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
     "24.2":
       recipes:
         gh200: 24.2/gh200
@@ -155,7 +138,5 @@ uenvs:
     "v7.5":
       recipes:
         a100: v7.5/a100
-      deploy:
-        clariden: [a100]
       develop: True
 
