@@ -5,7 +5,7 @@
     The target audience for this tutorial is CSCS staff who want to provide an application or programming environment uenv for users on Alps.
     We assume that you are familiar with Spack and how to build uenv using Stackinator - the focus here will be on best practices.
 
-This tutorial walks through configuring and maintaining a uenv recipe and deployment a representatative HPC application. The uenv has to support some common use cases, and should cover most of the aspects of deploying your own uenv.
+This tutorial walks through configuring and maintaining a uenv recipe and deployment a representative HPC application. The uenv has to support some common use cases, and should cover most of the aspects of deploying your own uenv.
 
 [Arbor](https://arbor-sim.org/) is a scientific software for neuroscience simulation, with features including:
 
