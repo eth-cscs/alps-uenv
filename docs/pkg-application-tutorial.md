@@ -1,8 +1,8 @@
 # Application Packaging Tutorial
 
-!!! info "target audience"
+!!! info "Target audience"
 
-    The target audience for this tutorial is CSCS staff who want to provide an application or programming enivoronment uenv for users on Alps.
+    The target audience for this tutorial is CSCS staff who want to provide an application or programming environment uenv for users on Alps.
     We assume that you are familiar with Spack and how to build uenv using Stackinator - the focus here will be on best practices.
 
 This tutorial walks through configuring and maintaining a uenv recipe and deployment a representatative HPC application. The uenv has to support some common use cases, and should cover most of the aspects of deploying your own uenv.
@@ -44,7 +44,7 @@ Arbor is well-optimised for both CPU and GPU execution and users of systems with
 
 ### Compilers
 
-Arbor is a C++17 libarary that officially supports GCC and Clang, with a Python front end.
+Arbor is a C++17 library that officially supports GCC and Clang, with a Python front end.
 
 For this we choose the following compiler versions:
 
@@ -88,7 +88,7 @@ Reasons for more detailed specs include:
     - to ensure that the version of a package is not dependent on which version of Spack is used;
     - to a version that is well supported and tested on the target system;
     - to a version that patches a bug on the target system.
-* to specialise the spec of a specific depency, e.g.:
+* to specialise the spec of a specific dependency, e.g.:
     - with non-default variants that support all features on the target system;
     - with non-default variants that give the best performance on the target system;
     - to use a specific compiler when more than one compiler toolchain is used to build packages in an environment.
@@ -129,11 +129,11 @@ There are a few simple choices to make when writing the `config.yaml` file:
 `spack`
 
 :   By default use the most recent version of Spack supported by Stackinator.
-    At the time of writing, the most recent version of Spack is `v0.21`, for which it is recommend to use the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
+    At the time of writing, the most recent version of Spack is `v0.21`, for which it is recommended to use the `releases/v0.21` branch, which receives backports of bug fixes while not changing the API or recipe definitions.
 
     !!! warning
 
-        The `develop` branch should be avoided for uenv deployed on CSCS clusters unless it is absolutely neccesary.
+        The `develop` branch should be avoided for uenv deployed on CSCS clusters unless it is absolutely necessary.
 
 `mount`
 
@@ -175,7 +175,7 @@ Based on our requirements above, defining compilers is straightforward.
 
 ### Environments
 
-The environment definitions include the specs that we want to provide to end users, and the selected `cuda` and `python` versions for the application.
+The environment definitions include the specs that we want to provide to end users, and the relevant `cuda` and `python` versions depending on each application.
 
 === "`mc`"
 
@@ -237,7 +237,7 @@ This is because some users might want modules, and it doesn't hurt to provide th
 
 The target systems for deploying the Arbor uenv to users are Eiger (`zen2`) and Santis (`gh200`).
 
-To enable the CI/CD pipeline to build and deploy the uenv on these systems, update the [`config.yaml` file in the alps-uenv repository](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml):
+To enable the CI/CD pipeline to build and deploy the uenv on these systems, update the [`config.yaml`](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml) file in the alps-uenv repository:
 
 ```yaml
 uenvs:
