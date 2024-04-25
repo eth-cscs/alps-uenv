@@ -4,6 +4,9 @@ clusters:
       -
         uarch: 'zen3'
         partition: 'postproc'
+        variables:
+          SLURM_CPU_BIND: sockets
+          SLURM_CPUS_PER_TASK: 64
       -
         uarch: 'a100'
         partition: 'normal'
