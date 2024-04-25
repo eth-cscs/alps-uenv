@@ -1,7 +1,4 @@
-```bash
-version="v6-rc2"
-mount="/scratch/mch/bcumming/mch-environment/$version"
-sw="$SCRATCH/software"
+This software stack uses spack v0.19, which requires a specially patched version of stackinator.
 
-stack-config -c ./cache.yaml -m $mount -r $sw/alps-uenv/recipes/mch/v6 -s $sw/alps-cluster-config/tasna -b /dev/shm/$USER/$version
-```
+* use the `mch-v6-v0.19` branch of stackinator.
+* use a separate build cache, because v0.19 caches are not compatible with v0.20 or later
