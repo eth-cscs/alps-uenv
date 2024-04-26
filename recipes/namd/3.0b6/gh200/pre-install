@@ -11,3 +11,4 @@ password="$(echo ${creds_json} | jq -r '.container_registry.password')"
 
 curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
+sha256sum {{ env.build }}/environments/${namd}
