@@ -63,7 +63,7 @@ do
         n) name=${OPTARG};;
         s) system=${OPTARG};;
         r) recipe_path=$(realpath "${OPTARG}");;
-        b) build_root=$(realpath "${OPTARG}");;
+        b) build_root="${OPTARG}";;
         u) uarch=${OPTARG};;
         m) mount=${OPTARG};;
         d) spack_develop="--develop";;

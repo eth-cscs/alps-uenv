@@ -43,7 +43,6 @@ class Version:
     @property
     def spack_develop(self):
         return self._use_spack_develop
-    
     @property
     def mount(self):
         return self._mount
@@ -143,7 +142,6 @@ class Config:
 
         if not valid:
             raise ConfigError("configuration error - see log")
-        
     def is_valid_target(self, cluster, uarch):
         if cluster not in self._clusters.keys():
             return False, f"cluster {cluster} is not defined"
@@ -183,7 +181,6 @@ class Config:
     @property
     def clusters(self):
         return self._clusters
-    
     def job_template(self, env):
         """
         returns a dict that contains the information required to configure
