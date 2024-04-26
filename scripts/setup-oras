@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
+get_arch() {
+  case "$(uname -m)" in
+    aarch64)
+      echo "arm64"
+      ;;
+    *)
+      echo "amd64"
+      ;;
+  esac
+}
+
+oras_arch=$(get_arch)
 oras_version=1.1.0
-oras_file=oras_${oras_version}_linux_amd64.tar.gz
+oras_file=oras_${oras_version}_linux_${oras_arch}.tar.gz
 oras_url=https://github.com/oras-project/oras/releases/download/v${oras_version}/${oras_file}
 
 log "download and install oras $oras_url"
@@ -14,7 +26,7 @@ export PATH="$oras_path:$PATH"
 log "oras v${oras_version} installed in ${oras_path}"
 
 # Obtain credentials for JFrog - required to push the image and meta-data
-creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
+creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&job_id=$CI_JOB_ID&creds=container_registry")
 oras_creds="$(echo ${creds_json} | jq --join-output '"--username " + .container_registry.username + " --password " +.container_registry.password')"
 
 jfrog_u="$(echo ${creds_json} | jq -r '.container_registry.username')"

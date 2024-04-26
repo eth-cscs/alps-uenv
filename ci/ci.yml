@@ -4,7 +4,8 @@ stages:
 
 pipeline-configure:
   stage: configure
-  tags: [clariden-login-baremetal]
+  # temporary workaround: we need somewhere to run the initial configuration stage
+  tags: [santis-login-baremetal]
   script:
     - ./ci/configure-pipeline
   artifacts:

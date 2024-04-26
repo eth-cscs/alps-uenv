@@ -68,7 +68,7 @@ modules:
         all: '{name}/{version}-{compiler.name}'
         nvhpc: '{name}/{version}'
         gcc: '{name}/{version}'
-        cray-mpich: 'cray-mpich-binary/{version}'
+        cray-mpich: 'cray-mpich-{compiler.name}/{version}'
         python: '{name}/{version}'
         hdf5%gcc~mpi: '{name}/{version}-serial-{compiler.name}'
         netcdf-c~mpi: '{name}/{version}-serial-{compiler.name}'

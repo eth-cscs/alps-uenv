@@ -23,7 +23,7 @@
                                 "properties": {
                                     "uarch": {
                                         "type": "string",
-                                        "enum": ["zen2", "zen3", "a100", "mi200"]
+                                        "enum": ["zen2", "zen3", "a100", "mi200", "gh200"]
                                     },
                                     "partition": {"type": "string"},
                                     "variables": {
@@ -81,7 +81,7 @@
                                     "type":"object",
                                     "additionalProperties": false,
                                     "patternProperties": {
-                                        "^(zen2|zen3|a100|mi200)$": {"type": "string"}
+                                        "^(zen2|zen3|a100|mi200|gh200)$": {"type": "string"}
                                     }
                                 },
                                 "deploy": {
@@ -93,7 +93,7 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "string",
-                                                "enum": ["zen2", "zen3", "a100", "mi200"]
+                                                "enum": ["zen2", "zen3", "a100", "mi200", "gh200"]
                                             }
                                         }
                                     }
