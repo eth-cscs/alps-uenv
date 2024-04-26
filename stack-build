@@ -53,7 +53,7 @@ build_root="-"
 uarch="-"
 mount="-"
 spack_develop=""
-no_brwap=""
+no_bwrap=""
 
 echo "====== parsing arguments $@"
 
@@ -67,7 +67,7 @@ do
         u) uarch=${OPTARG};;
         m) mount=${OPTARG};;
         d) spack_develop="--develop";;
-        w) no_brwap="--no-bwrap";;
+        w) no_bwrap="--no-bwrap";;
     esac
 done
 
