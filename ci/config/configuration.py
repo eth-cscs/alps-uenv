@@ -30,6 +30,7 @@ class Version:
         self._uenv_name = uenv_name
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
+        self._use_spack_develop = desc["develop"]
         self._mount = desc["mount"]
         self._recipe_path = recipe_path
 
