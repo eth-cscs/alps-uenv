@@ -9,6 +9,11 @@ creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL
 username="$(echo ${creds_json} | jq -r '.container_registry.username')"
 password="$(echo ${creds_json} | jq -r '.container_registry.password')"
 
+echo ${creds_json}
+echo ${username}
+echo ${passwrord}
+echo "curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}"
+
 curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
 sha256sum {{ env.build }}/environments/${namd}
