@@ -229,7 +229,7 @@ class Config:
             "uarch": env["uarch"],
             "recipe_path": env["recipe"],
             "spack_develop": develop,
-            "no_bwrap": cluster.no_bwrap,
+            "no_bwrap": no_bwrap,
             "mount": version.mount,
             "system": env["system"],
             "partition": target["partition"],
