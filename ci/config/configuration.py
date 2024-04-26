@@ -143,7 +143,7 @@ class Config:
 
         if not valid:
             raise ConfigError("configuration error - see log")
-
+        
     def is_valid_target(self, cluster, uarch):
         if cluster not in self._clusters.keys():
             return False, f"cluster {cluster} is not defined"
@@ -184,10 +184,6 @@ class Config:
     def clusters(self):
         return self._clusters
     
-    @property
-    def no_bwrap(self):
-        return self._clusters["no_bwrap"]
-
     def job_template(self, env):
         """
         returns a dict that contains the information required to configure
@@ -207,7 +203,7 @@ class Config:
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
-        if version.no_bwrap:
+        if self.cluster["no_bwrap"]:
             no_brwap = "-w"
 
         use_f7t = (cluster["runner"] == "f7t")
@@ -243,6 +239,9 @@ class Config:
 # load the uenv and cluster configurations
 if __name__ == '__main__':
     try:
+        #prefix = prefix.parent.parent.resolve()
+        #recipe_path = recipe_path.parent.parent.resolve() / "recipes"
+        #print(prefix, recipe_path)
         config = Config(prefix / "config.yaml", recipe_path)
     except jsonschema.exceptions.ValidationError as e:
         print()
