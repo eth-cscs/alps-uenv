@@ -32,7 +32,7 @@ get_build_id () {
 }
 
 usage () {
-    echo "usage: stack-build -n name -r recipe-path -s system -b build-root -u uarch -m mount [-d]"
+    echo "usage: stack-build -n name -r recipe-path -s system -b build-root -u uarch -m mount [-d] [-w]"
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
@@ -53,10 +53,11 @@ build_root="-"
 uarch="-"
 mount="-"
 spack_develop=""
+no_brwap=""
 
 echo "====== parsing arguments $@"
 
-while getopts n:s:r:b:u:m:d: flag
+while getopts n:s:r:b:u:m:d:w: flag
 do
     case "${flag}" in
         n) name=${OPTARG};;
@@ -66,6 +67,7 @@ do
         u) uarch=${OPTARG};;
         m) mount=${OPTARG};;
         d) spack_develop="--develop";;
+        w) no_brwap="--no-bwrap";;
     esac
 done
 
@@ -91,6 +93,7 @@ log "build-path  ${build_path}"
 log "ci-path     ${ci_path}"
 log "mount       ${mount}"
 [[ ! -z ${spack_develop} ]] && log "develop"
+[[ ! -z ${no_bwrap} ]] && log "no bwrap"
 
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
@@ -140,8 +143,8 @@ source ${ci_path}/scripts/setup-stackinator
 # call stackinator
 log "configuring stack"
 
-echo "stack-config -r ${recipe_path} -b ${build_path} -s $cluster_path/${system} -m ${mount} $cache_flags ${spack_develop}"
-stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}"  -m "${mount}" $cache_flags ${spack_develop}
+echo "stack-config -r ${recipe_path} -b ${build_path} -s $cluster_path/${system} -m ${mount} $cache_flags ${spack_develop} ${no_bwrap}"
+stack-config -r "${recipe_path}" -b "${build_path}" -s "$cluster_path/${system}"  -m "${mount}" $cache_flags ${spack_develop} ${no_bwrap}
 
 if [ ! $? -eq 0 ]; then
     # delete stackinator tool once it is no longer needed

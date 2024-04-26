@@ -30,7 +30,6 @@ class Version:
         self._uenv_name = uenv_name
         self._recipes = desc["recipes"]
         self._deploy = desc["deploy"]
-        self._use_spack_develop = desc["develop"]
         self._mount = desc["mount"]
         self._recipe_path = recipe_path
 
@@ -43,7 +42,7 @@ class Version:
     @property
     def spack_develop(self):
         return self._use_spack_develop
-
+    
     @property
     def mount(self):
         return self._mount
@@ -183,6 +182,10 @@ class Config:
     @property
     def clusters(self):
         return self._clusters
+    
+    @property
+    def no_bwrap(self):
+        return self._clusters["no_bwrap"]
 
     def job_template(self, env):
         """
@@ -199,10 +202,12 @@ class Config:
         target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
 
         develop = ""
+        no_brwap = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
-
+        if version.no_bwrap:
+            no_brwap = "-w"
 
         use_f7t = (cluster["runner"] == "f7t")
         runner = {"f7t": use_f7t}
@@ -227,6 +232,7 @@ class Config:
             "uarch": env["uarch"],
             "recipe_path": env["recipe"],
             "spack_develop": develop,
+            "no_bwrap": cluster.no_bwrap,
             "mount": version.mount,
             "system": env["system"],
             "partition": target["partition"],
