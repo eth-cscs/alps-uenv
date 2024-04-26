@@ -199,10 +199,12 @@ class Config:
         target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
 
         develop = ""
-        no_bwrap = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
+
+        no_bwrap = ""
+        print(cluster, cluster["no_bwrap"])
         if cluster["no_bwrap"]:
             no_brwap = "-w"
 
@@ -229,7 +231,7 @@ class Config:
             "uarch": env["uarch"],
             "recipe_path": env["recipe"],
             "spack_develop": develop,
-            "no_bwrap": no_bwrap,
+            "no_bwrap": "-w",
             "mount": version.mount,
             "system": env["system"],
             "partition": target["partition"],
