@@ -199,7 +199,7 @@ class Config:
         target = next(tgt for tgt in cluster["targets"] if tgt["uarch"]==env["uarch"])
 
         develop = ""
-        no_brwap = ""
+        no_bwrap = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
             develop = "--develop"
