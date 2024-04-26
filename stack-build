@@ -57,7 +57,7 @@ no_bwrap=""
 
 echo "====== parsing arguments $@"
 
-while getopts n:s:r:b:u:m:d:w: flag
+while getopts n:s:r:b:u:m:dw flag
 do
     case "${flag}" in
         n) name=${OPTARG};;

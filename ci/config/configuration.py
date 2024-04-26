@@ -201,12 +201,13 @@ class Config:
         develop = ""
         version = self.uenv(env["uenv"]).version(env["version"])
         if version.spack_develop:
-            develop = "--develop"
+            develop = "-d"
 
         no_bwrap = ""
-        print(cluster, cluster["no_bwrap"])
+        print(cluster, cluster["no_bwrap"], no_bwrap)
         if cluster["no_bwrap"]:
             no_brwap = "-w"
+        print(cluster, cluster["no_bwrap"], no_bwrap)
 
         use_f7t = (cluster["runner"] == "f7t")
         runner = {"f7t": use_f7t}
