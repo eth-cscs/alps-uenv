@@ -7,6 +7,7 @@ clusters:
         variables:
           SLURM_CONSTRAINT: 'mc'
     runner: f7t
+    no_bwrap: True
   clariden:
     targets:
       -
