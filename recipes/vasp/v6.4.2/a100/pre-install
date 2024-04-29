@@ -1,8 +1,0 @@
-vasp_version=6.4.2
-
-creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-
-jfrog_u="$(echo ${creds_json} | jq -r '.container_registry.username')"
-jfrog_p="$(echo ${creds_json} | jq -r '.container_registry.password')"
-
-curl --retry 5 -u "${jfrog_u}:${jfrog_p}" -X GET https://jfrog.svc.cscs.ch/artifactory/uenv-sources/vasp/vasp-${vasp_version}.tar.bz2 -o {{ env.build }}/environments/vasp-${vasp_version}.tar.bz2

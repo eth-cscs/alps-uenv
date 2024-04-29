@@ -1,7 +1,0 @@
-name: vasp-a100
-store: /user-environment
-description: VASP
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: v0.21.0
-modules: true
