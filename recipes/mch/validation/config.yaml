@@ -1,0 +1,6 @@
+name: mch
+store: /user-environment
+spack:
+  commit: releases/v0.20
+  repo: https://github.com/spack/spack.git
+description: Tools for MCH validation.

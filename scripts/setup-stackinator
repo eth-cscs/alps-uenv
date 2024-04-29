@@ -10,11 +10,11 @@ tool_version=master
 log "installing stackinator from git in '${tool_path}'"
 
 log "cloning stackinator from ${tool_repo}"
-git clone --quiet "${tool_repo}" "${tool_path}" || err "unable to clone stackinator git repository"
+git clone "${tool_repo}" "${tool_path}" || err "unable to clone stackinator git repository"
 
 log "checkout stackinator ${tool_version}"
 cd "${tool_path}"
-git checkout --quiet "${tool_version}" || err "unable to checkout out requested version"
+git checkout "${tool_version}" || err "unable to checkout out requested version"
 
 log "bootstrap stackinator"
 cd "${tool_path}"

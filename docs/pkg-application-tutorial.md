@@ -7,7 +7,7 @@
 
 This tutorial walks through configuring and maintaining a uenv recipe and deployment a representative HPC application. The uenv has to support some common use cases, and should cover most of the aspects of deploying your own uenv.
 
-[Arbor](https://arbor-sim.org/) is scientific software for neuroscience simulation, with features including:
+[Arbor](https://arbor-sim.org/) is a scientific software for neuroscience simulation, with features including:
 
 * A C++ library with a Python interface
 * Distributed execution through MPI
@@ -40,7 +40,7 @@ Arbor is well-optimised for both CPU and GPU execution and users of systems with
     Supported targets on Alps are currently `zen2`, `zen3`, `a100`, `mi200`, and `gh200`.
 
     For more information, see the [internal CSCS confluence](https://confluence.cscs.ch/display/VCUE/UENV).
-    Also, information about which targets are available on which vClusters, see the [`config.yaml`](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml).
+    Also, for information about which targets are available on which vClusters, see the [`config.yaml`](https://github.com/eth-cscs/alps-uenv/blob/main/config.yaml).
 
 ### Compilers
 
@@ -137,7 +137,7 @@ There are a few simple choices to make when writing the `config.yaml` file:
 
 `mount`
 
-:   Normally application and development uenv go in `/user-environment` and tools that you might want to use alongside a development or application uenv go in `/user-tools` (e.g. a debugger).
+:   Normally application and development uenvs go in `/user-environment` and tools that you might want to use alongside a development or application uenv go in `/user-tools` (e.g. a debugger).
     For Arbor, we choose the default `/user-environment` path.
 
 `description`
@@ -269,7 +269,7 @@ To run the pipeline that will automatically build and test your uenv, first crea
 1. Push your changes to a branch (preferably in a fork of the main [alps-uenv](https://github.com/eth-cscs/alps-uenv) repository).
 2. Open a PR with your changes.
 
-Once the PR is created, the pipeline has to be triggered for each individual combination of uenv/version/uarch/vCluster by using a specially formatted 
+Once the PR is created, the pipeline has to be triggered for each individual combination of uenv/version/uarch/vCluster by using a specially formatted
 
 ```
 cscs-ci run alps;system=eiger;uarch=zen2;uenv=arbor:v0.9
