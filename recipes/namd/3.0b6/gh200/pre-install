@@ -5,6 +5,9 @@ set -ux
 namd_version=3.0b6
 namd=NAMD_${namd_version}_Source.tar.gz 
 
-curl -u ${CSCS_REGISTRY_USERNAME}:${CSCS_REGISTRY_PASSWORD} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
+username=$CSCS_REGISTRY_USERNAME
+password=$CSCS_REGISTRY_PASSWORD
+
+curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
 sha256sum {{ env.build }}/environments/${namd}
