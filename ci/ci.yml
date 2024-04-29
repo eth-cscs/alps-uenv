@@ -4,8 +4,8 @@ stages:
 
 pipeline-configure:
   stage: configure
-  # temporary workaround: we need somewhere to run the initial configuration stage
-  tags: [santis-login-baremetal]
+  tags: [rosa-k8s-lightweight]
+  image: docker.io/python:latest
   script:
     - ./ci/configure-pipeline
   artifacts:
