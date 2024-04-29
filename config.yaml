@@ -152,10 +152,8 @@ uenvs:
   vasp:
     "v6.4.2":
       recipes:
-        a100: v6.4.2/a100
         gh200: v6.4.2/gh200
       deploy:
-        clariden: [a100]
         santis: [gh200]
       develop: False
 
