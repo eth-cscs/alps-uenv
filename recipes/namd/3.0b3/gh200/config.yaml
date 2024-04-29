@@ -1,6 +1,0 @@
-name: namd
-store: /user-environment
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: v0.21.2
-modules: True
