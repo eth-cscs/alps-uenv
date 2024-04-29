@@ -1,0 +1,29 @@
+prgenv-gcc:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@12
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.28
+  packages:
+  - perl
+  - curl
+  - ncurses
+  - autoconf
+  - m4
+  - automake
+  - texinfo
+  - libtool
+  - gawk
+  specs:
+  - osu-micro-benchmarks@5.9
+  - hdf5@1.12.2 +fortran +threadsafe ~mpi
+  - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
+  - python@3.11
+  - r@4.2.2
+  - udunits
+  - geos
+  - r-rgeos
+  views:
+    ffv2:
+      link: roots

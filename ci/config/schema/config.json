@@ -56,7 +56,8 @@
                                 {"enum": ["f7t"]}
                             ],
                             "default": "fjt"
-                        }
+                        },
+                        "no_bwrap": {"type": "boolean", "default": false}
                     }
                 }
             }
