@@ -1,0 +1,27 @@
+modules:
+  prefix_inspections:
+    bin:
+      - PATH
+    lib:
+      - LD_LIBRARY_PATH
+    lib64:
+      - LD_LIBRARY_PATH
+
+  default:
+    arch_folder: false
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      hash_length: 0
+      exclude_implicits: true
+      exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
+      projections:
+        all: '{name}/{version}'
+        charmpp backend=multicore: '{name}/mc/{version}'
+        charmpp backend=mpi: '{name}/mpi/{version}'
+        charmpp backend=ofi: '{name}/ofi/{version}'
+        namd ^charmpp backend=multicore: '{name}/mc/{version}'
+        namd ^charmpp backend=mpi: '{name}/mpi/{version}'
+        namd ^charmpp backend=ofi: '{name}/ofi/{version}'

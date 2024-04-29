@@ -1,0 +1,4 @@
+#!/bin/bash
+
+wget https://jfrog.svc.cscs.ch/artifactory/alps-uenv/software/namd/NAMD_3.0b3_Source.tar.gz -P {{ env.build }}/environments/
+

@@ -1,0 +1,40 @@
+namd-mc:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12
+  - fftw@3.3.10 +openmp ~mpi
+  - charmpp@7 backend=multicore +production +tracing
+  - namd@3.0b3 +cuda cuda_arch=90 +single_node_gpu
+  views:
+    namd-mc-dev:
+      exclude: ["namd"]
+    namd-mc:
+      exclude: [""]
+namd-ofi:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12
+  - fftw@3.3.10 +openmp ~mpi
+  - charmpp@7 backend=ofi pmi=cray-pmi +smp +production ^cray-mpich
+  - namd@3.0b3 +cuda cuda_arch=90
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  views:
+    namd-ofi-dev:
+      exclude: ["namd"]
+    namd-ofi:
+      exclude: [""]
+tools:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake@3.25.2

@@ -1,21 +1,10 @@
 #!/bin/bash
 
-set -x
+set -ux
 
 namd_version=3.0b6
-
 namd=NAMD_${namd_version}_Source.tar.gz 
 
-creds_json=$(curl --retry 5 --retry-connrefused --fail --silent "$CSCS_CI_MW_URL/credentials?token=$CI_JOB_TOKEN&creds=container_registry")
-
-username="$(echo ${creds_json} | jq -r '.container_registry.username')"
-password="$(echo ${creds_json} | jq -r '.container_registry.password')"
-
-echo ${creds_json}
-echo ${username}
-echo ${passwrord}
-echo "curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}"
-
-curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
+curl -u ${CSCS_REGISTRY_USERNAME}:${CSCS_REGISTRY_PASSWORD} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
 sha256sum {{ env.build }}/environments/${namd}
