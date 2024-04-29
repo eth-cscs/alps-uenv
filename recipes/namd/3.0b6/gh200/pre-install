@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ux
+set -u
 
 namd_version=3.0b6
 namd=NAMD_${namd_version}_Source.tar.gz 
