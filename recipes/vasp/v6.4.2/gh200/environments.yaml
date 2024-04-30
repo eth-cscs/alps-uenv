@@ -51,7 +51,7 @@ vasp:
       - re2c%gcc
       - python%gcc ~bz2 ~dbm ~lzma ~nis ~pyexpat ~sqlite3 ~ssl ~uuid ~zlib
   views:
-    default:
+    vasp:
     develop:
       exclude: ['vasp']
   packages:
