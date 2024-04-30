@@ -3,5 +3,5 @@ store: /user-environment
 description: VASP
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v0.21.0
+  commit: releases/v0.21
 modules: true
