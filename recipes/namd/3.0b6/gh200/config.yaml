@@ -1,4 +1,5 @@
 name: namd
+description: "NAMD: Scalable Molecular Dynamics" 
 store: /user-environment
 spack:
   repo: https://github.com/spack/spack.git

@@ -1,4 +1,4 @@
-namd:
+namd-single-node:
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
@@ -6,6 +6,7 @@ namd:
   specs:
   - cuda@12
   - fftw@3.3.10 +openmp ~mpi
+  - tcl@8.6.12
   - charmpp@7 backend=multicore +production +tracing
   - namd@3.0b6 +cuda cuda_arch=90 +single_node_gpu
   views:
