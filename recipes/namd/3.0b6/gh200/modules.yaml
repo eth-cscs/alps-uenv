@@ -19,5 +19,3 @@ modules:
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
         all: '{name}/{version}'
-        #charmpp backend=multicore: '{name}/multicore/{version}'
-        #namd ^charmpp backend=multicore: '{name}/multicore/{version}'
