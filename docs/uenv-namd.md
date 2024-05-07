@@ -38,6 +38,11 @@ cd ..
     --with-fftw --with-fftw3 --fftw-prefix /user-environment/env/develop \
     --cuda-gencode arch=compute_90,code=sm_90 --with-single-node-cuda --with-cuda --cuda-prefix /user-environment/env/develop
 cd Linux-ARM64-g++.cuda && make -j 32
+
+export LD_LIBRARY_PATH=/user-environment/env/develop/lib/
+
+# Run NAMD
+./namd3 <NAMD_OPTIONS>
 ```
 
 ## Useful Links
