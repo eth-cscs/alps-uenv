@@ -117,12 +117,19 @@ class Vasp(CMakePackage, CudaPackage):
             self.define_from_variant("VASP_CUDA", "cuda"),
             self.define_from_variant("VASP_BSE", "bse"),
             self.define_from_variant("VASP_NCCLP2P", "ncclp2p"),
-            self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
-            self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
-            self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
+            self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")),
+            self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")),
             "-DVASP_LIBBEEF=OFF",
             "-DVASP_DFTD4=OFF",
         ]
+
+        if not spec.satisfies("^[virtuals=fftw-api] fftw"):
+            args += [
+                self.define("FFTW_SERIAL_LIBRARIES", spec["fftw-api"].libs.joined(";")),
+                self.define("FFTW_SERIAL_INCLUDE_DIRS", spec["fftw-api"].prefix.include),
+                self.define("FFTW_OMP_LIBRARIES", spec["fftw-api"].libs.joined(";")),
+                self.define("FFTW_OMP_INCLUDE_DIRS", spec["fftw-api"].prefix.include),
+            ]
 
         if spec.satisfies("%nvhpc +openmp"):
             args += [
@@ -143,10 +150,5 @@ class Vasp(CMakePackage, CudaPackage):
             nvhpc_root = os.path.dirname(os.path.dirname(self.compiler.fc))
             args += [self.define("QD_ROOT", join_path(nvhpc_root, "extras"))]
             args += [self.define("VASP_CUDA_VERSION",spec["cuda"].version.up_to(2))]
-
-        if "^armpl-gcc threads=openmp" in spec:
-            args += ["-DBLA_VENDOR=Arm_mp"]
-        elif "^armpl-gcc threads=none" in spec:
-            args += ["-DBLA_VENDOR=Arm"]
 
         return args

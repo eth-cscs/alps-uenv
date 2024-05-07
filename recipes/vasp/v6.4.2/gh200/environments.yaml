@@ -1,7 +1,7 @@
 vasp:
   compiler:
   - toolchain: llvm
-    spec: nvhpc@23.7
+    spec: nvhpc@23.9
   - toolchain: gcc
     spec: gcc@12.2
   unify: True
@@ -11,9 +11,11 @@ vasp:
   specs:
       - vasp@6.4.2%nvhpc cuda_arch=90 +cuda +openmp +inplace +collective +scalapack +avoidalloc +bse +tbdyn +fock_dblbuf +ncclp2p ~profiling ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib +hdf5 +wannier90 ~libxc
       - wannier90%nvhpc
+      - libxc~cuda~fhc%nvhpc
       - cuda@12.2
       - fftw%nvhpc +openmp
-      - openblas%nvhpc threads=openmp
+      - nvpl-blas%nvhpc threads=openmp
+      - nvpl-lapack%nvhpc threads=openmp
       - netlib-scalapack%nvhpc ~shared
       - libpciaccess%gcc
       - util-macros%gcc

@@ -6,4 +6,4 @@ gcc:
 llvm:
   requires: gcc@12.2
   specs:
-  - nvhpc@23.7
+  - nvhpc@23.9

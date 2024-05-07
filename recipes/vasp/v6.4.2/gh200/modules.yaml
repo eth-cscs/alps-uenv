@@ -18,7 +18,7 @@ modules:
         autoload: none
       hash_length: 0
       exclude_implicits: true
-      include: ['gcc@12.2%gcc@12.2', 'nvpc@23.7%gcc@12.2', 'vasp', 'hdf5']
+      include: ['gcc@12.2%gcc@12.2', 'nvpc@23.9%gcc@12.2', 'vasp', 'hdf5']
       exclude: ['%gcc']
       projections:
         all: '{name}/{version}'
