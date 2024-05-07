@@ -1,22 +1,22 @@
 lammps:
   compiler:
   - toolchain: gcc
-    spec: gcc@12
+    spec: gcc@12.3
   mpi:
-    spec: mpich
+    spec: cray-mpich@8.1.28
     gpu: cuda
   unify: true
   specs:
   - cuda@12
-  - kokkos +wrapper
-  - lammps
+  - kokkos@develop +wrapper
+  - lammps@develop
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
-  - +kokkos
+  - +kokkos@develop
   views:
     default:
-        link: run
+      link: run
   packages:
-   - perl
+  - perl

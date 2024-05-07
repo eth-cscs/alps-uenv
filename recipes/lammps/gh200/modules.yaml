@@ -13,7 +13,6 @@ modules:
     # Where to install modules
     roots:
       tcl: /user-environment/modules
-      lmod: /user-environment/modules
     tcl:
       all:
         autoload: none
@@ -22,12 +21,3 @@ modules:
       exclude: ['%gcc@11', 'gcc %gcc@11']
       projections:
         all: '{name}/{version}'
-    lmod:
-      all:
-        autoload: none
-      hash_length: 0
-      exclude_implicits: true
-      exclude: ['%gcc@11', 'gcc %gcc@11']
-      projections:
-        all: '{name}/{version}'
-
