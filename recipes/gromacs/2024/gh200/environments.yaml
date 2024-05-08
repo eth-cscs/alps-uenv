@@ -12,9 +12,7 @@ gromacs:
   - hwloc
   - fftw
   - python@3.10
-  - openmpi +cuda fabrics=knem
   variants:
-  - +mpi
   - +cuda
   - cuda_arch=90
   views:

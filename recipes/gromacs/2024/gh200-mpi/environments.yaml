@@ -12,7 +12,9 @@ gromacs:
   - hwloc
   - fftw
   - python@3.10
-  - openmpi +cuda fabrics=knem
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
   variants:
   - +mpi
   - +cuda
