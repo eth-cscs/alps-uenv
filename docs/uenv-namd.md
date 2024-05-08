@@ -64,4 +64,4 @@ export LD_LIBRARY_PATH=/user-environment/env/develop/lib/
 [Running Charm++ Programs]: https://charm.readthedocs.io/en/latest/charm++/manual.html#running-charm-programs
 [What you should know about NAMD and Charm++ but were hoping to ignore]: https://dl.acm.org/doi/pdf/10.1145/3219104.3219134
 [NAMD 3.0 new features]: https://www.ks.uiuc.edu/Research/namd/3.0/features.html
-[NAMD 3.0b6 GPU-Resident benchmarking results]: https://www.ks.uiuc.edu/Research/namd/benchmarks/#:~:text=In%20addition%20to%20performing%20force,step%20host%2Ddevice%20communication%20latencies.
+[NAMD 3.0b6 GPU-Resident benchmarking results]: https://www.ks.uiuc.edu/Research/namd/benchmarks/
