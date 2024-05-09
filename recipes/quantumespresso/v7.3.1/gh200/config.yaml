@@ -1,0 +1,6 @@
+name: qe73 nvhpc
+store: /user-environment
+description: QuantumESPRESSO 7.3.1 +cuda
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.21.2

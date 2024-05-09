@@ -1,0 +1,27 @@
+nvhpc-env:
+  compiler:
+    - toolchain: llvm
+      spec: nvhpc
+    - toolchain: gcc
+      spec: gcc@12
+  mpi:
+    spec: cray-mpich@8.1.29
+    gpu: cuda
+  unify: true
+  specs:
+  - cmake%gcc
+  - fftw%nvhpc
+  - nvpl-blas threads=openmp
+  - nvpl-lapack threads=openmp
+  - libxc%nvhpc~cuda
+  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda ~scalapack
+  - patchelf%gcc
+  - git%gcc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+    develop:
+      exclude: ['quantum-espresso']
