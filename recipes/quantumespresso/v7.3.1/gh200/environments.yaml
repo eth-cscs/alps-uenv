@@ -14,7 +14,7 @@ nvhpc-env:
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
-  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda ~scalapack
+  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx ~scalapack
   - patchelf%gcc
   - git%gcc
   variants:
