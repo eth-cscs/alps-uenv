@@ -48,7 +48,7 @@ nvidia:
   - jasper%gcc
   - patchelf%gcc
   - gmake%gcc
-  - paraview@5.12%gcc +mpi +tbb +egl ~qt +fortran +python +hdf5 +nvindex
+  - paraview@5.12%gcc +mpi +tbb +egl ~qt +fortran +python +hdf5 +nvindex +cdi
   variants:
   - cuda_arch=90
   - +mpi
