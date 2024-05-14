@@ -6,7 +6,7 @@ gromacs:
   specs:
   - cmake
   - cuda@12
-  - gromacs@2024.1 +cuda +mpi +hwloc
+  - gromacs@2023.3 +cuda +mpi +hwloc
   - blas
   - lapack
   - hwloc
