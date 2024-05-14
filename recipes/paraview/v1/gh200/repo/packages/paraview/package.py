@@ -602,7 +602,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 "75": "turing",
                 "80": "ampere",
                 "86": "ampere",
-                "90": "native",
+                "90": "native", # FIXME workaround
             }
 
             cuda_arch_value = "native"
