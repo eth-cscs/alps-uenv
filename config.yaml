@@ -37,11 +37,18 @@ uenvs:
         zen2: 2023/mc
         zen3: 2023/mc
         a100: 2023/a100
+        gh200: 2023/gh200-mpi
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
         clariden: [a100]
       develop: False
+    "2024":
+      recipes:
+        gh200: 2024/gh200-mpi
+      deploy:
+        # deploy to both the production and test clusters
+        santis: [gh200]
   cp2k:
     "2023":
       recipes:
