@@ -1,4 +1,4 @@
-name: qe73 nvhpc
+name: quantumespresso
 store: /user-environment
 description: QuantumESPRESSO 7.3.1 +cuda
 spack:
