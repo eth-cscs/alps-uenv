@@ -1,39 +1,51 @@
 # CP2K
 
-[CP2K](https://www.cp2k.org/) version `2023.2`.
+[CP2K] is a quantum chemistry and solid state physics software package that can perform atomistic simulations of solid state, liquid, molecular, periodic, material, crystal, and biological systems.
 
-An environment that provides the latest version of [CP2K](https://www.cp2k.org/), along with the libraries and tools required to build a different or custom version of [CP2K](https://www.cp2k.org/).
+CP2K provides a general framework for different modeling methods such as DFT using the mixed Gaussian and plane waves approaches GPW and GAPW. Supported theory levels include DFTB, LDA, GGA, MP2, RPA, semi-empirical methods (AM1, PM3, PM6, RM1, MNDO, …), and classical force fields (AMBER, CHARMM, …). CP2K can do simulations of molecular dynamics, metadynamics, Monte Carlo, Ehrenfest dynamics, vibrational analysis, core level spectroscopy, energy minimization, and transition state optimization using NEB or dimer method. See [CP2K Features] for a detailed overview.
 
-The following environment views are provided:
-
-* `cp2k-scalapack`: CP2K, dependencies, and [ScaLAPACK](https://www.netlib.org/scalapack/) as diagonalization library
-* `cp2k-scalapack-dev`: dependencies and [ScaLAPACK](https://www.netlib.org/scalapack/)
-* `cp2k-elpa`: CP2K, dependencies, and [ELPA](https://elpa.mpcdf.mpg.de/) as diagonalization library
-* `cp2k-elpa-dev`: dependencies and [ELPA](https://elpa.mpcdf.mpg.de/)
-
-## Building a custom version of CP2K
-
-### Using modules
-
-To build your version of CP2K do the following steps:
+## Running
 
 ```bash
-# Load the required modules
-module load [...]
-cd cp2k
+uenv start <CP2K_UENV>
+uenv modules use
+module load cp2k
+```
+
+!!! warning
+    [COSMA] is built with GPU-aware MPI. Make sure to set `MPICH_GPU_SUPPORT_ENABLED=1` when running [CP2K].
+
+## Building from source
+
+The [CP2K] `uenv` provides all the dependencies required to build [CP2K] from source, with several optional features enabled. You can follow these steps to build [CP2K] from source:
+
+```bash
+# Start uenv and load develop view
+uenv start <CP2K_UENV>
+uenv view develop
+
+# cd to CP2K source directory
+cd <PATH_TO_CP2K_SOURCE>
+
+# CMake
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCP2K_SCALAPACK_VENDOR=MKL -DCP2K_USE_ACCEL=cuda -DCP2K_WITH_GPU=A100
-make -j20
+CC=mpicc CXX=mpicxx cmake -GNinja \
+    -DCMAKE_PREFIX_PATH=/user-environment/env/develop/ \
+    -DCP2K_ENABLE_REGTESTS=ON \
+    -D
+    ..
+
+ninja -j 32
 ```
 
-See CP2K's [README_cmake.md](https://github.com/cp2k/cp2k/blob/master/README_cmake.md) for details.
+!!! note
 
-### Using Spack
+    `cp2k@2024.1` does not support compiling for `cuda_arch=90`. Use `-DCP2K_WITH_GPU=A100` instead.
 
-```bash
-uenv start cp2k-a100.squashfs
-export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config/
-spack install cp2k [...]
-```
+See [CP2K `README_cmake.md`](https://github.com/cp2k/cp2k/blob/master/README_cmake.md) for more details.
 
-See Spack's [CP2K package](https://packages.spack.io/package.html?name=cp2k) for details.
+[CP2K]: https://www.cp2k.org/
+[CP2K Features]: https://www.cp2k.org/features
+[CP2K `README_cmake.md`]: https://github.com/cp2k/cp2k/blob/master/README_cmake.md
+[COSMA]: https://github.com/eth-cscs/COSMA
+
