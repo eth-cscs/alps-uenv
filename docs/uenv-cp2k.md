@@ -29,10 +29,16 @@ cd <PATH_TO_CP2K_SOURCE>
 
 # CMake
 mkdir build && cd build
-CC=mpicc CXX=mpicxx cmake -GNinja \
-    -DCMAKE_PREFIX_PATH=/user-environment/env/develop/ \
+CC=mpicc CXX=mpic++ FC=mpifort cmake \
+    -GNinja \
     -DCP2K_ENABLE_REGTESTS=ON \
-    -D
+    -DCP2K_USE_LIBXC=ON \
+    -DCP2K_USE_LIBINT2=ON 
+    -DCP2K_USE_SPGLIB=ON \
+    -DCP2K_USE_ELPA=ON \
+    -DCP2K_USE_SPLA=ON \
+    -DCP2K_USE_SIRIUS=ON \
+    -DCP2K_USE_ACCEL=CUDA -DCP2K_WITH_GPU=A100 \
     ..
 
 ninja -j 32
