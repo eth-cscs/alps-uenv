@@ -13,12 +13,14 @@ cp2k:
   - libxc@6.2.2 ~cuda
   - libint@2.6.0 +fortran tune=cp2k-lmax-5
   - spglib@2.3.1
-  - cosma@2.6.6 +gpu_direct +scalapack +shared ^cray-mpich
   - spla@1.5.5 +fortran ^cray-mpich
   - elpa@2023.11.001-patched ^cray-mpich
+  # COSMA dependencies (need to be in the develop view)
+  - tiled-mm@2.3
+  - costa@2.2.2 +scalapack +shared
+  - cosma@2.6.6 +gpu_direct +scalapack +shared ^cray-mpich
   # SIRIUS dependencies (need to be in the develop view)
   - hdf5@1.14.3 +hl
-  - costa@2.2.2 +scalapack +shared
   - spfft@1.1.0
   - sirius@7.5.2 +fortran +scalapack +elpa ~memory_pool ~apps ^cray-mpich
   # cuda_arch=90 not yet supported by DBCSR and CP2K
