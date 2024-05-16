@@ -60,4 +60,4 @@ nvidia:
   - gmake
   views:
     default:
-      link: roots
+      link: run
