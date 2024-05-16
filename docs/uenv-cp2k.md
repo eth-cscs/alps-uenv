@@ -38,6 +38,7 @@ CC=mpicc CXX=mpic++ FC=mpifort cmake \
     -DCP2K_USE_ELPA=ON \
     -DCP2K_USE_SPLA=ON \
     -DCP2K_USE_SIRIUS=ON \
+    -DCP2K_USE_COSTA=ON \
     -DCP2K_USE_ACCEL=CUDA -DCP2K_WITH_GPU=A100 \
     ..
 
