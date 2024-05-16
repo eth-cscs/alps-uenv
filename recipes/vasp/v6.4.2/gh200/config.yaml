@@ -2,6 +2,8 @@ name: vasp
 store: /user-environment
 description: VASP
 spack:
-  repo: https://github.com/spack/spack.git
-  commit: releases/v0.21
+  # VASP on Grace has numerical issues with the "-tp neoverse-v2" flag used by spack.
+  # This modified spack v0.21.0 uses "-tp host" instead.
+  repo: https://github.com/AdhocMan/spack.git
+  commit: e2727a73233d46e40d0657020a067947afcca640
 modules: true
