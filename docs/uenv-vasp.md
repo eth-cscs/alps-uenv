@@ -8,7 +8,9 @@ VASP (Vienna Ab initio Simulation Package) is a software package for performing 
 
 ## Accessing VASP images
 
-TODO: Describe access to images. Not yet finalized.
+!!! failure
+
+    Describe access to images. Not yet finalized.
 
 ## Usage
 The default build of vasp includes MPI, HDF5, Wannier90 and OpenACC (on GH200 and A100 architectures).
