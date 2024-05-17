@@ -13,6 +13,8 @@ gcc-env:
   - fftw
   - fmt
   - hdf5
+  - libtree
+  - meson
   - nccl
   - nccl-tests
   - ninja
