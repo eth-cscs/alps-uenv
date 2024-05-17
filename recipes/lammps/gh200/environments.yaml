@@ -7,14 +7,16 @@ lammps:
     gpu: cuda
   unify: true
   specs:
+  - cmake
   - cuda@12
-  - kokkos@develop +wrapper
-  - lammps@develop
+  - kokkos +wrapper
+  - lammps
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
-  - +kokkos@develop
+  - +kokkos
+  - +amoeba
   views:
     default:
       link: run
