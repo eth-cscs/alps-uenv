@@ -1,4 +1,4 @@
-name: sirius-a100
+name: sirius-gh200
 store: /user-environment
 description: The latest version of Sirius (v7.5.0) and the tools for building it, configured for A100 GPUs.
 spack:
