@@ -16,12 +16,16 @@ nvhpc-env:
   - libxc%nvhpc~cuda
   - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack
   - patchelf%gcc
-  - git%gcc
+  - scalapack
+  packages:
+  - git
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
   views:
     default:
+      link: roots
     develop:
-      exclude: ['quantum-espresso']
+      exclude: ['quantum-espresso', 'patchelf', 'git']
+      link: roots
