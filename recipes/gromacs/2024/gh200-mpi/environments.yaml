@@ -5,7 +5,7 @@ gromacs:
   unify: when_possible
   specs:
   - cmake
-  - cuda@12
+  - cuda@12.4
   - gromacs@2024.1 +cuda +mpi +hwloc
   - blas
   - lapack

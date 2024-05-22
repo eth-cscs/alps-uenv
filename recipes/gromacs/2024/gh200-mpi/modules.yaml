@@ -18,6 +18,6 @@ modules:
         autoload: none
       hash_length: 0
       exclude_implicits: true
-      exclude: ['%gcc@11', 'gcc %gcc@11']
+      exclude: ['%gcc@7.5', 'gcc %gcc@7.5']
       projections:
         all: '{name}/{version}'
