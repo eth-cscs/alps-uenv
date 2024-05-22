@@ -30,7 +30,15 @@ The following modules are provided:
 ```bash
 uenv start quantumespresso/v7.3.1
 uenv modules use
-module load cmake fftw git nvhpc nvpl-lapack cray-mpich libxc nvpl-blas
+module load cmake \
+    fftw \
+    git \
+    nvhpc \
+    nvpl-lapack \
+    nvpl-blas
+    cray-mpich \
+    scalapack \
+    libxc
 
 mkdir build && cd build
 cmake .. \
@@ -68,13 +76,20 @@ Create an anonymous environment for QE
 ```bash
 spack env create -d $SCRATCH/qe-env
 spack -e $SCRATCH/qe-env add quantum-espresso%nvhpc +cuda
+spack -e $SCRATCH/qe-env config add packages:all:variants:cuda_arch=90
 spack -e $SCRATCH/qe-env develop -p /path/to/your/QE-src quantum-espresso@=develop
 spack -e $SCRATCH/qe-env concretize -f
-spack -e $SCRATCH/qe-env view enable view
+```
+
+Check the output of `spack concretize -f`. All dependencies should have been picked up from spack upstream, marked eiter by a green `[^]` or `[e]`.
+
+
+```bash
+spack -e $SCRATCH/qe-env env view enable view
 spack -e $SCRATCH/qe-env install
 ```
 
-To recompile QE after editing the source code, only re-run `spack -e $SCRATCH/qe-env install`.
+To recompile QE after editing the source code re-run `spack -e $SCRATCH/qe-env install`.
 
 Running `pw.x`:
 ```bash
