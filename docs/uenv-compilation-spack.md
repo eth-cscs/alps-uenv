@@ -1,6 +1,6 @@
 # Using uenvs as upstream Spack instances
 
-User-environments (uenvs) are built with [Spack] using the [Stackinator] tool. Therefore, an `uenv` is tightly copuled with [Spack] and can be used as an upstream [Spack] instance (see [Chaining Spack Installations] for more details).
+User-environments (uenvs) are built with [Spack] using the [Stackinator] tool. Therefore, a `uenv` is tightly coupled with [Spack] and can be used as an upstream [Spack] instance (see [Chaining Spack Installations] for more details).
 
 !!! note
     While this guide tries to explain everything step-by-step, it might be difficult to follow without any knowledge of [Spack]. Please have a look at [Spack Basic Usage] for a short introduction to [Spack].
@@ -13,7 +13,7 @@ This guide explains a _developer workflow_ allowing to either build your own pac
     This guide assumes that you have a local installation of [Spack]. If you don't have [Spack] installed, follow [Spack Getting Started].
 
 !!! warning
-    Avoid installing [Spack] on `HOME`. Packages are installaed within the `spack/` folder, and you might quickly run out of space.
+    Avoid installing [Spack] on `HOME`. Packages are installed within the `spack/` folder, and you might quickly run out of space.
 
 ## Example: CP2K
 
@@ -51,7 +51,7 @@ Let's assume we want to have a version of [CP2K] what uses the COSMA library for
 cp2k@2024.1 +cuda cuda_arch=80 +cosma ^cosma +gpu_direct
 ```
 
-COSMA is not availabe in the uenv described above since it is not a dependency needed by `cp2k@2024.1 +cuda cuda_arch=80`. 
+COSMA is not available in the uenv described above since it is not a dependency needed by `cp2k@2024.1 +cuda cuda_arch=80`. 
 
 ### Spack Environment
 
@@ -86,7 +86,7 @@ After defining the environment above, we can concretize it:
 spack -e SPACK_ENV_FOLDER concretize -f
 ```
 
-The result of the concretization will be printed on screen. Packages starting with `[+]` are packages that will be freshly installed in your local [Spack] instance. Packages marked ad `[e]` (external) are packages taken directly from the uenv (which we are using as upstream [Spack] instance). You should see many packages marked as `[e]`, which are being re-used from the uenv. This will greatly speed up compilation, since [Spack] will have to build only a small subset of packages.
+The result of the concretization will be printed on screen. Packages starting with `[+]` are packages that will be freshly installed in your local [Spack] instance. Packages marked as `[e]` (external) are packages taken directly from the uenv (which we are using as upstream [Spack] instance). You should see many packages marked as `[e]`, which are being re-used from the uenv. This will greatly speed up compilation, since [Spack] will have to build only a small subset of packages.
 
 You can finally build everything in the concretized environment:
 
@@ -106,7 +106,7 @@ We assume again that COSMA is not present in the provided uenv.
 
 ### Spack Environment and Building Dependencies
 
-As described above, you can define a [Spack environment] describing the version of the package you want to build and the contraint on the dependencies. After concretizing the environment with
+As described above, you can define a [Spack environment] describing the version of the package you want to build and the constraint on the dependencies. After concretizing the environment with
 
 ```bash
 spack -e SPACK_ENV_FOLDER concretize -f
