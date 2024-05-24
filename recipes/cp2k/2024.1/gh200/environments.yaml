@@ -4,27 +4,27 @@ cp2k:
     spec: gcc@12.3
   unify: true
   specs:
-  - cmake@3.27.9
-  - ninja@1.11.1
+  - cmake
+  - ninja
   - cuda@12.2 # Can't be newer than driver version, for DBCSR
-  - openblas@0.3.26 threads=openmp
-  - netlib-scalapack@2.2.0
-  - fftw@3.3.10
-  - libxc@6.2.2 ~cuda
-  - libint@2.6.0 +fortran tune=cp2k-lmax-5
-  - spglib@2.3.1
-  - spla@1.5.5 +fortran ^cray-mpich
-  - elpa@2023.11.001-patched ^cray-mpich
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc ~cuda
+  - libint
+  - spglib
+  - spla
+  - elpa
   # COSMA dependencies (need to be in the develop view)
-  - tiled-mm@2.3
-  - costa@2.2.2 +scalapack +shared
-  - cosma@2.6.6 +gpu_direct +scalapack +shared ^cray-mpich
+  - tiled-mm
+  - costa
+  - cosma +gpu_direct
   # SIRIUS dependencies (need to be in the develop view)
-  - hdf5@1.14.3 +hl
-  - spfft@1.1.0
-  - sirius@7.5.2 +fortran +scalapack +elpa ~memory_pool ~apps ^cray-mpich
+  - hdf5
+  - spfft
+  - sirius ~memory_pool
   # cuda_arch=90 not yet supported by DBCSR and CP2K
-  - dbcsr@2.6.0 smm=blas +shared +cuda cuda_arch=80 ^cray-mpich
+  - dbcsr +cuda cuda_arch=80
   - cp2k@2024.1 +libxc +libint +spglib +cosma +spla +elpa +sirius lmax=5 +cuda cuda_arch=80 build_system=cmake ^cray-mpich
   variants:
     - +mpi
