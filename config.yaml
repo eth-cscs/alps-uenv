@@ -77,6 +77,7 @@ uenvs:
         gh200: 2024.1/gh200
       deploy:
         santis: [gh200]
+        todi: [gh200]
       develop: False
   icon-wcp:
     "v1":
