@@ -30,6 +30,14 @@ clusters:
     runner:
       slurm-tag:  santis-spack-stack-builder
       baremetal-tag: santis-login-baremetal
+  todi:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+    runner:
+      slurm-tag:  todi-spack-stack-builder
+      baremetal-tag: todi-login-baremetal
 uenvs:
   arbor:
     "v0.9":
@@ -39,6 +47,7 @@ uenvs:
       deploy:
         eiger: [zen2]
         santis: [gh200]
+        todi: [gh200]
   gromacs:
     "2023":
       recipes:
@@ -89,6 +98,7 @@ uenvs:
       deploy:
         eiger: [zen2]
         santis: [gh200]
+        todi: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
@@ -100,6 +110,13 @@ uenvs:
       deploy:
         clariden: [a100]
       develop: False
+  namd:
+    "3.0b6":
+      recipes:
+        gh200: 3.0b6/gh200
+      deploy:
+        santis: [gh200]
+      develop: False
   netcdf-tools:
     "2024":
       recipes:
@@ -109,6 +126,7 @@ uenvs:
         gh200: '2024/arm64'
       deploy:
         eiger: [zen2]
+        todi: [gh200]
       develop: False
   # OpenFOAM Foundation
   openfoam-org:
@@ -133,6 +151,7 @@ uenvs:
         gh200: 24.2/gh200
       deploy:
         santis: [gh200]
+        todi: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
