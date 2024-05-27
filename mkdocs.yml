@@ -2,11 +2,12 @@ site_name: alps-uenv
 nav:
   - Home: index.md
   - 'uenv':
-    - 'CP2K `cp2k`': uenv-cp2k.md
-    - 'GROMACS `gromacs`': uenv-gromacs.md
-    - 'Linaro Forge `linaro-forge`': uenv-linaro-forge.md
-    - 'NAMD `namd`': uenv-namd.md
-    - 'Qantum ESPRESSO `quantumespresso`': uenv-qe.md
+    - 'Overview': uenv-overview.md
+    - 'cp2k': uenv-cp2k.md
+    - 'gromacs': uenv-gromacs.md
+    - 'linaro-forge': uenv-linaro-forge.md
+    - 'namd': uenv-namd.md
+    - 'quantumespresso': uenv-qe.md
   - 'Packaging':
     - 'tutorial: application': pkg-application-tutorial.md
 theme:
