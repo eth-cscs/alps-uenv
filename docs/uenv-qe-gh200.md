@@ -35,7 +35,7 @@ module load cmake \
     git \
     nvhpc \
     nvpl-lapack \
-    nvpl-blas
+    nvpl-blas \
     cray-mpich \
     scalapack \
     libxc
