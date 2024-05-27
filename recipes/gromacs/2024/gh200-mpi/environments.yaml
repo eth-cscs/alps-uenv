@@ -6,12 +6,13 @@ gromacs:
   specs:
   - cmake
   - cuda@12.4
-  - gromacs@2024.1 +cuda +mpi +hwloc
   - blas
   - lapack
   - hwloc
   - fftw
   - python@3.10
+  - gromacs@2024.1 +cuda +mpi +hwloc
+  - gromacs@2022.5 +plumed +cuda +hwloc
   mpi:
     spec: cray-mpich
     gpu: cuda
@@ -20,7 +21,14 @@ gromacs:
   - +cuda
   - cuda_arch=90
   views:
+    develop:
+      exclude: ['gromacs']
     gromacs:
+      exclude: ['gromacs+plumed']
+      link: run
+    plumed:
+      exclude: ['gromacs@2024.1']
+      link: run
   packages:
   - perl
 
