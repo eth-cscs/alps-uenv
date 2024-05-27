@@ -7,6 +7,7 @@ clusters:
         variables:
           SLURM_CONSTRAINT: 'mc'
     runner: f7t
+    no_bwrap: True
   clariden:
     targets:
       -
@@ -29,7 +30,24 @@ clusters:
     runner:
       slurm-tag:  santis-spack-stack-builder
       baremetal-tag: santis-login-baremetal
+  todi:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+    runner:
+      slurm-tag:  todi-spack-stack-builder
+      baremetal-tag: todi-login-baremetal
 uenvs:
+  arbor:
+    "v0.9":
+      recipes:
+        zen2: v0.9/mc
+        gh200: v0.9/gh200
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        todi: [gh200]
   gromacs:
     "2023":
       recipes:
@@ -78,14 +96,16 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
-    "23.0.3":
+    "23.1.2":
       recipes:
-        zen2: "23.0.3"
-        zen3: "23.0.3"
-        a100: "23.0.3"
+        zen2: "23.1.2"
+        zen3: "23.1.2"
+        a100: "23.1.2"
+        gh200: "23.1.2"
       deploy:
         eiger: [zen2]
-        clariden: [a100]
+        santis: [gh200]
+        todi: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
@@ -97,6 +117,13 @@ uenvs:
       deploy:
         clariden: [a100]
       develop: False
+  namd:
+    "3.0b6":
+      recipes:
+        gh200: 3.0b6/gh200
+      deploy:
+        santis: [gh200]
+      develop: False
   netcdf-tools:
     "2024":
       recipes:
@@ -106,6 +133,7 @@ uenvs:
         gh200: '2024/arm64'
       deploy:
         eiger: [zen2]
+        todi: [gh200]
       develop: False
   # OpenFOAM Foundation
   openfoam-org:
@@ -130,6 +158,7 @@ uenvs:
         gh200: 24.2/gh200
       deploy:
         santis: [gh200]
+        todi: [gh200]
   quantumespresso:
     "v7.1":
       recipes:

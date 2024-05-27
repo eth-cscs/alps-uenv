@@ -9,7 +9,7 @@ stages:
     SLURM_TIMELIMIT: 180
   script:
   - echo "==== RECIPE $STACK_RECIPE"
-  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT -u $STACK_UARCH
+  - ./stack-build -n $STACK_NAME -s $STACK_SYSTEM -r $STACK_RECIPE -b /dev/shm/jenkssl $SPACK_DEVELOP -m $STACK_MOUNT -u $STACK_UARCH $NO_BWRAP
   after_script:
   - rm -Rf /dev/shm/jenkssl
 
@@ -34,6 +34,7 @@ build-{{job.uenv}}/{{job.version}}-{{job.system}}/{{job.uarch}}:
   variables:
     STACK_MOUNT:      "{{job.mount}}"
     SPACK_DEVELOP:    "{{job.spack_develop}}"
+    NO_BWRAP:         "{{job.no_bwrap}}"
     STACK_NAME:       "{{job.uenv}}/{{job.version}}"
     STACK_SYSTEM:     "{{job.system}}"
     STACK_RECIPE:     "{{job.recipe_path}}"
