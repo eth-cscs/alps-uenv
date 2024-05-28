@@ -32,12 +32,11 @@ uenv start quantumespresso/v7.3.1
 uenv modules use
 module load cmake \
     fftw \
-    git \
     nvhpc \
     nvpl-lapack \
     nvpl-blas \
     cray-mpich \
-    scalapack \
+    netlib-scalapack \
     libxc
 
 mkdir build && cd build
