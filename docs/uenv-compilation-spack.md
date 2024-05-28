@@ -1,6 +1,6 @@
 # Using uenvs as upstream Spack instances
 
-User-environments (uenvs) are built with [Spack] using the [Stackinator] tool. Therefore, a `uenv` is tightly coupled with [Spack] and can be used as an upstream [Spack] instance (see [Chaining Spack Installations] for more details).
+User-environments (uenvs) are built with [Spack] using the [Stackinator] tool. Therefore, a uenv is tightly coupled with [Spack] and can be used as an upstream [Spack] instance (see [Chaining Spack Installations] for more details).
 
 !!! note
     While this guide tries to explain everything step-by-step, it might be difficult to follow without any knowledge of [Spack]. Please have a look at [Spack Basic Usage] for a short introduction to [Spack].
@@ -11,6 +11,14 @@ This guide explains a _developer workflow_ allowing to either build your own pac
 
 !!! note
     This guide assumes that you have a local installation of [Spack]. If you don't have [Spack] installed, follow [Spack Getting Started].
+
+!!! tip
+    To avoid compatibility issues, try to match the version of your local [Spack] instance with the version of [Spack] of the uenv. You can use the following command to clone the same [Spack] version used by the uenv:
+    ```bash
+    git clone \
+        -b $(jq -r .spack.commit /user-environment/meta/configure.json) \
+        $(jq -r .spack.repo /user-environment/meta/configure.json) $SCRATCH/spack
+    ```
 
 !!! warning
     Avoid installing [Spack] on `HOME`. Packages are installed within the `spack/` folder, and you might quickly run out of space. Use `SCRATCH` instead.
