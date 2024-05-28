@@ -55,7 +55,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
       develop: False
   cp2k:
     "2023":
@@ -67,7 +66,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
       develop: False
   icon-wcp:
     "v1":
@@ -104,7 +102,6 @@ uenvs:
       recipes:
         a100: v6
       deploy:
-        clariden: [a100]
       develop: False
     "v7":
       recipes:
@@ -147,7 +144,6 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         eiger: [zen2]
-        clariden: [a100]
     "24.2":
       recipes:
         gh200: 24.2/gh200
@@ -168,6 +164,5 @@ uenvs:
       recipes:
         a100: v7.5/a100
       deploy:
-        clariden: [a100]
       develop: True
 
