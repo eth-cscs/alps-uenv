@@ -99,13 +99,18 @@ uenvs:
       develop: False
       mount: "/user-tools"
   mch:
-    # v5 was deprecated from the build config due to an out of date
     # version of spack (v0.19)
     "v6":
       recipes:
         a100: v6
       deploy:
         clariden: [a100]
+      develop: False
+    "v7":
+      recipes:
+        a100: v7
+      deploy:
+        balfrin: [a100]
       develop: False
   namd:
     "3.0b6":
