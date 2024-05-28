@@ -8,20 +8,17 @@ clusters:
           SLURM_CONSTRAINT: 'mc'
     runner: f7t
     no_bwrap: True
-  clariden:
+  balfrin:
     targets:
       -
         uarch: 'a100'
-        partition: 'nvgpu'
-      -
-        uarch: 'mi200'
-        partition: 'amdgpu'
+        partition: 'normal'
       -
         uarch: 'zen3'
-        partition: 'nvgpu'
+        partition: 'postproc'
     runner:
-      slurm-tag: clariden-spack-stack-builder
-      baremetal-tag: clariden-login-baremetal
+      slurm-tag: balfrin-spack-stack-builder
+      baremetal-tag: balfrin-login-baremetal
   santis:
     targets:
       -
