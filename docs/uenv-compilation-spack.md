@@ -13,7 +13,10 @@ This guide explains a _developer workflow_ allowing to either build your own pac
     This guide assumes that you have a local installation of [Spack]. If you don't have [Spack] installed, follow [Spack Getting Started].
 
 !!! warning
-    Avoid installing [Spack] on `HOME`. Packages are installed within the `spack/` folder, and you might quickly run out of space.
+    Avoid installing [Spack] on `HOME`. Packages are installed within the `spack/` folder, and you might quickly run out of space. Use `SCRATCH` instead.
+
+!!! danger
+    The recommendation to use `SCRATCH` to install your local [Spack] instance(s) might change in the future. Make sure you are aware of our `SCRATCH` cleaning policy. 
 
 ## Example: CP2K
 
@@ -86,7 +89,9 @@ After defining the environment above, we can concretize it:
 spack -e SPACK_ENV_FOLDER concretize -f
 ```
 
-The result of the concretization will be printed on screen. Packages starting with `[+]` are packages that will be freshly installed in your local [Spack] instance. Packages marked as `[e]` (external) are packages taken directly from the uenv (which we are using as upstream [Spack] instance). You should see many packages marked as `[e]`, which are being re-used from the uenv. This will greatly speed up compilation, since [Spack] will have to build only a small subset of packages.
+The result of the concretization will be printed on screen. Packages marked with ` - ` are packages that will be freshly installed in your local [Spack] instance. Packages marked as `[^]` (upstream) are packages taken directly from the uenv (which we are using as upstream [Spack] instance). You should see many packages marked as `[^]`, which are being re-used from the uenv. `[e]` (external) are external packages that are already installed in the system (and are defined in the system configuration of the system for which the uenv is built). Finally, packages marked as `[+]` are packages that are already installed in your local [Spack] instances.
+
+Using the uenv as an upstream [Spack] instance will greatly speed up compilation, since [Spack] will have to build only a small subset of packages.
 
 You can finally build everything in the concretized environment:
 
@@ -148,7 +153,7 @@ ninja -j 32
 ## Known Limitations
 
 !!! warning
-    Swapping the upstream [Spack] instance by loading different uenvs might lead to surprising inconsistencies in the [Spack] database. If this happens, you can uninstall everything from your local [Spack] instance with `spack uninstall --all` and clean up with `spack clean --all`.
+    Swapping the upstream [Spack] instance by loading different uenvs might lead to surprising inconsistencies in the [Spack] database. If this happens, you can uninstall everything from your local [Spack] instance with `spack uninstall --all` and clean up with `spack clean --all`. To avoid this problem, you can also work with multiple local [Spack] instances (one for each uenv).
 
 [Chaining Spack Installations]: https://spack.readthedocs.io/en/latest/chain.html
 [CP2K]: https://eth-cscs.github.io/alps-uenv/uenv-cp2k/
