@@ -40,7 +40,7 @@ module load cmake \
     libxc
 
 mkdir build && cd build
-cmake .. \
+FC=mpif90 CXX=mpic++ CC=mpicc cmake .. \
     -DQE_ENABLE_MPI=ON \
     -DQE_ENABLE_OPENMP=ON \
     -DQE_ENABLE_SCALAPACK:BOOL=OFF \
