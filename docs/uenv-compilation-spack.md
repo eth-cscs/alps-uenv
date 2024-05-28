@@ -148,7 +148,7 @@ ninja -j 32
 ## Known Limitations
 
 !!! warning
-    Swapping the upstream [Spack] instance by loading different uenvs might lead to a corruption of the [Spack] database. If this happens, you can uninstall everything from your local [Spack] instance with `spack uninstall --all` and clean up with `spack clean --all`.
+    Swapping the upstream [Spack] instance by loading different uenvs might lead to surprising inconsistencies in the [Spack] database. If this happens, you can uninstall everything from your local [Spack] instance with `spack uninstall --all` and clean up with `spack clean --all`.
 
 [Chaining Spack Installations]: https://spack.readthedocs.io/en/latest/chain.html
 [CP2K]: https://eth-cscs.github.io/alps-uenv/uenv-cp2k/
