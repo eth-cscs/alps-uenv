@@ -26,26 +26,26 @@ This guide explains a _developer workflow_ allowing to either build your own pac
 !!! danger
     The recommendation to use `SCRATCH` to install your local [Spack] instance(s) might change in the future. Make sure you are aware of our `SCRATCH` cleaning policy. 
 
-## Example: CP2K
+## Example: Quantum ESPRESSO
 
-As an example, we will consider [CP2K] as the application we want to develop. While the uenv for [CP2K] we provide is rather complete, let's assume for simplicity that the provided configuration is very bare bone:
+As an example, we will consider [Quantum ESPRESSO] as the application you want to develop. Let's assume that the provided configuration in the official uenv is the following:
 
 ```
-cp2k@2024.1 +cuda cuda_arch=80
+quantum-espresso@7.3.1 %nvhpc +libxc +cuda cuda_arch=90
 ```
 
-This [spec] defines a build of [CP2K] version `2024.1` with CUDA acceleration. All other dependencies and features are defined by the default values in the [CP2K Spack package].
+This [spec] defines a build of [Quantum ESPRESSO] version `7.3.1` using the `nvhpc` compiler. All other dependencies and features are defined by the default values in the [Quantum ESPRESSO Spack package].
 
 ## Set uenv as upstream Spack instance
 
-Activate the uenv. Here we assume the uenv described above is called `cp2k/2024.1` and it is already deployed:
+Activate the uenv. Here we assume the uenv described above is called `quantumespresso/v7.3.1` and it is already deployed:
 
 ```bash
-uenv image pull cp2k/2024.1
-uenv start cp2k/2024.1
+uenv image pull quantumespresso/v7.3.1
+uenv start quantumespresso/v7.3.1
 ```
 
-With the uenv active, we can now tell our local [Spack] instance to use the uenv as an upstream [Spack] instance (see [Chaining Spack Installations] for more details):
+With the uenv active, you can now tell our local [Spack] instance to use the uenv as an upstream [Spack] instance (see [Chaining Spack Installations] for more details):
 
 ```bash
 export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config/
@@ -56,48 +56,56 @@ export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config/
 
 ## Building your own version 
 
-Let's assume we want to have a version of [CP2K] what uses the COSMA library for communication-optimal matrix multiplication with GPU-aware MPI:
+Let's assume you want to have a version of [Quantum ESPRESSO] with GPU-aware MPI:
 
 ```
-cp2k@2024.1 +cuda cuda_arch=80 +cosma ^cosma +gpu_direct
+quantum-espresso@7.3.1 %nvhpc +libxc +cuda cuda_arch=90 +mpigpu
 ```
 
-COSMA is not available in the uenv described above since it is not a dependency needed by `cp2k@2024.1 +cuda cuda_arch=80`. 
+This variant of [Quantum ESPRESSO] is not available in the uenv.
 
 ### Spack Environment
 
-To make things clean and reproducible, we use [Spack Environments] do describe what we want to build. To define a [Spack environment] we create the following file in a folder (hereafter referred to as `SPACK_ENV_FOLDER`):
+To make things clean and reproducible, you can use [Spack Environments] to describe what you want to build. To define a [Spack environment] you have to create the following file, named `spack.yaml`, in a folder (hereafter referred to as `SPACK_ENV_FOLDER`):
 
 ```yaml
 spack:
   specs:
-  - cp2k@2024.1 +cosma
+  -  quantum-espresso@7.3.1 %nvhpc +libxc +mpigpu
   packages:
     all:
       prefer:
-        - +cuda cuda_arch=80
-    cosma:
-      require:
-        - +gpu_direct
+        - +cuda cuda_arch=90
   view: false
   concretizer:
     unify: true
 ```
 
-`packages:all:prefer` indicates that we want the `+cuda` variant active for all packages that have it. The `require` clause is stronger, and we use it for a specific package, COSMA, to make sure the `+gpu_direct` variant (GPU-aware MPI) is enabled (this is a constraint we want to enforce on the COSMA dependency). 
+`packages:all:prefer` indicates that you want the `+cuda` variant active for all packages that have it.
 
 !!! note
-    It is good practice to have a single root [spec] in an environment, and to define constraint on all packages or specific dependencies in the `packages:` field.
+    It is good practice to have a single root [spec] in an environment, and to define constraint on packages or specific dependencies in the `packages:` field.
+
+!!! tip
+    To create an environment you can also use `spack env create SPACK_ENV_FOLDER` and edit the `spack.yaml` file with `spack -e SPACK_ENV_FOLDER config edit`. Alternatively, you can use `spack -e SPACK_ENV_FOLDER add <spec>` to add root specs to the environment and `spack -e config add <config>` to add configutations to the environment. 
+
+!!! example
+    An example of creating an environment for building Quantum ESPRESSO:
+    ```bash
+    spack env create qe-env
+    spack -e qe-env  add quantum-espresso%nvhpc +cuda               # Add spec for Quantum ESPRESSO
+    spack -e qe-env config add packages:all:prefer:cuda_arch=90     # Add configuration for all packages 
+    ```
 
 ### Building
 
-After defining the environment above, we can concretize it:
+After defining the environment above, you can concretize it:
 
 ```bash
 spack -e SPACK_ENV_FOLDER concretize -f
 ```
 
-The result of the concretization will be printed on screen. Packages marked with ` - ` are packages that will be freshly installed in your local [Spack] instance. Packages marked as `[^]` (upstream) are packages taken directly from the uenv (which we are using as upstream [Spack] instance). You should see many packages marked as `[^]`, which are being re-used from the uenv. `[e]` (external) are external packages that are already installed in the system (and are defined in the system configuration of the system for which the uenv is built). Finally, packages marked as `[+]` are packages that are already installed in your local [Spack] instances.
+The result of the concretization will be printed on screen. Packages marked with ` - ` are packages that will be freshly installed in your local [Spack] instance. Packages marked as `[^]` (upstream) are packages taken directly from the uenv (which is being used as upstream [Spack] instance). You should see many packages marked as `[^]`, which are being re-used from the uenv. `[e]` (external) are external packages that are already installed in the system (and are defined in the system configuration of the system for which the uenv is built). Finally, packages marked as `[+]` are packages that are already installed in your local [Spack] instances.
 
 Using the uenv as an upstream [Spack] instance will greatly speed up compilation, since [Spack] will have to build only a small subset of packages.
 
@@ -107,25 +115,23 @@ You can finally build everything in the concretized environment:
 spack -e SPACK_ENV_FOLDER install
 ```
 
-## Developing with Spack
+## Developing with Spack (build manually)
 
-In addition to wanting to build a different configuration of a package as described above, you might want to build your own software from source. Let's assume we want to develop [CP2K] with the COSMA library as a dependency:
+In addition to wanting to build a different configuration of a package as described above, you might want to build your own development version of the software from source. Let's assume you want to develop [Quantum ESPRESSO], with GPU-aware MPI:
 
 ```
-cp2k@2024.1 +cuda cuda_arch=80 +cosma ^cosma +gpu_direct
+quantum-espresso@7.3.1 %nvhpc +libxc +cuda cuda_arch=90 +gpumpi
 ```
-
-We assume again that COSMA is not present in the provided uenv.
 
 ### Spack Environment and Building Dependencies
 
-As described above, you can define a [Spack environment] describing the version of the package you want to build and the constraint on the dependencies. After concretizing the environment with
+As described above, you can define a [Spack environment] describing the version of the package you want to build and the constraints on the dependencies. After concretizing the environment with
 
 ```bash
 spack -e SPACK_ENV_FOLDER concretize -f
 ```
 
-we can tell [Spack] to only install the dependencies, since we want to build the root [spec] manually:
+you can tell [Spack] to only install the dependencies, since you want to build the root [spec] manually:
 
 ```bash
 spack -e SPACK_ENV_FOLDER install --only=dependencies
@@ -133,29 +139,62 @@ spack -e SPACK_ENV_FOLDER install --only=dependencies
 
 ### Building the root spec manually
 
-Finally, we are ready to build the root [spec] manually. With [Spack] you can get a shell within the build environment as follows:
+Finally, you are ready to build the root [spec] manually. With [Spack] you can get a shell within the build environment as follows:
 
 ```bash
-spack -e SPACK_ENV_FOLDER build-env cp2k -- bash
+spack -e SPACK_ENV_FOLDER build-env quantum-espresso -- bash
 ```
 
-where `cp2k` denotes the root [spec]. Since there is only one such [spec], there is no need to explicitly write out the version nor the variants.
+where `quantum-espresso` denotes the root [spec]. Since there is only one such [spec], there is no need to explicitly write out the version nor the variants.
 
-Within the build environment, the software can be built using the provided build system. CP2K uses CMake, therefore we can simply do the following:
+Within the build environment, the software can be built using the provided build system. [Quantum ESPRESSO] uses CMake, therefore you can simply do the following:
 
 ```bash
-# In CP2K repository root folder
-
 mkdir build && cd build
 
 cmake \
     -GNinja
-    -DCP2K_USE_COSMA=ON \
-    -DCP2K_USE_ACCEL=CUDA \
-    -DCP2K_WITH_GPU=A100 \
+    -DQE_ENABLE_CUDA=ON \
+    -DQE_ENABLE_MPI_GPU_AWARE=ON \
+    -DQE_ENABLE_LIBXC=ON \
     ..
 
 ninja -j 32
+```
+
+## Developing with Spack (build with Spack)
+
+[Spack] already knows how to build [Quantum ESPRESSO] with CMake, therefore you could use [Spack] to build your development version for you.
+
+!!! warning
+    Changes to CMake might require changes to the [Quantum ESPRESSO Spack package].
+
+### Spack Environment
+
+You can create a [Spack environment] as suggested above:
+
+```bash
+spack env create qe-dev-env
+spack -e qe-dev-env add quantum-espresso%nvhpc +libxc +gpumpi
+spack -e $SCRATCH/qe-env config add packages:all:prefer:cuda_arch=90
+```
+
+In addition to adding [Quantum ESPRESSO] as a root [spec], you have to tell [Spack] where to find the source code (and which version/branch it corresponds to). You can use the following command:
+
+```bash
+spack -e qe-dev-env develop -p PATH_TO_QE_SOURCE_CODE quantum-espresso@=develop
+```
+
+After concretizing the environment with
+
+```bash
+spack -e SPACK_ENV_FOLDER concretize -f
+```
+
+you can tell [Spack] to install everything, including Quantum ESPRESSO using the source code in `PATH_TO_QE_SOURCE_CODE`:
+
+```bash
+spack -e SPACK_ENV_FOLDER install
 ```
 
 ## Known Limitations
@@ -164,8 +203,8 @@ ninja -j 32
     Swapping the upstream [Spack] instance by loading different uenvs might lead to surprising inconsistencies in the [Spack] database. If this happens, you can uninstall everything from your local [Spack] instance with `spack uninstall --all` and clean up with `spack clean --all`. To avoid this problem, you can also work with multiple local [Spack] instances (one for each uenv).
 
 [Chaining Spack Installations]: https://spack.readthedocs.io/en/latest/chain.html
-[CP2K]: https://eth-cscs.github.io/alps-uenv/uenv-cp2k/
-[CP2K Spack package]: https://packages.spack.io/package.html?name=cp2k
+[Quantum ESPRESSO]: https://www.quantum-espresso.org
+[Quantum ESPRESSO Spack package]: https://packages.spack.io/package.html?name=quantum-espresso
 [Spack]: https://spack.readthedocs.io/en/latest/
 [Spack Basic Usage]: https://spack.readthedocs.io/en/latest/basic_usage.html
 [Spack Environments]: https://spack.readthedocs.io/en/latest/environments.html
