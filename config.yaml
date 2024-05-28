@@ -97,12 +97,6 @@ uenvs:
       develop: False
       mount: "/user-tools"
   mch:
-    # version of spack (v0.19)
-    "v6":
-      recipes:
-        a100: v6
-      deploy:
-      develop: False
     "v7":
       recipes:
         a100: v7
@@ -163,6 +157,4 @@ uenvs:
     "v7.5":
       recipes:
         a100: v7.5/a100
-      deploy:
       develop: True
-
