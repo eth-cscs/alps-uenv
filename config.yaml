@@ -89,12 +89,10 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
-    "23.1.2":
+    "24.0":
       recipes:
-        zen2: "23.1.2"
-        zen3: "23.1.2"
-        a100: "23.1.2"
-        gh200: "23.1.2"
+        zen2: "24.0/x86_64"
+        gh200: "24.0/aarch64"
       deploy:
         eiger: [zen2]
         santis: [gh200]
