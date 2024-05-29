@@ -28,8 +28,8 @@ def readenv(config):
     """
     returns a dictionary with the following fields:
     {
-        'system': 'clariden',
-        'uarch': 'a100',
+        'system': 'todi',
+        'uarch': 'gh200',
         'uenv': 'gromacs',
         'version': '2023',
         'recipe': configuration.Version
