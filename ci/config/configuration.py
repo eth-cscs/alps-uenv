@@ -189,8 +189,8 @@ class Config:
         returns a dict that contains the information required to configure
         a gitlab runner job to build a recipe.
         The input is a dictionary with the following fields (with example values):
-            system: clariden
-            uarch: a100
+            system: todi
+            uarch: gh200
             uenv: gromacs
             version: 2023
             recipe: /home/bcumming/software/github/alps-uenv/recipes/gromacs/2023/a100
