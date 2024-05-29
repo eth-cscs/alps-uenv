@@ -117,7 +117,7 @@ python3 -m venv rfm_venv
 source rfm_venv/bin/activate
 #pip install --upgrade reframe-hpc
 git clone https://github.com/reframe-hpc/reframe.git
-(cd reframe; git checkout v4.5.0; ./bootstrap.sh)
+(cd reframe; git checkout v4.6.1; ./bootstrap.sh)
 export PATH="$(pwd)/reframe/bin:$PATH"
 
 log "clone cscs-reframe-tests"

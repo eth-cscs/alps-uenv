@@ -3,4 +3,4 @@ store: /user-tools
 spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v0.21
-description: https://www.linaroforge.com/downloadForge/
+modules: True

@@ -4,4 +4,4 @@ default:
    cc: gcc
    cxx: g++
    ftn: gfortran
-   activation: /user-tools/env/default/activate.sh
+   activation: /user-tools/activate

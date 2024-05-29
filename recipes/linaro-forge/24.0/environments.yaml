@@ -6,5 +6,5 @@ gcc-env:
   specs:
   - linaro-forge@24.0 +accept-eula
   views:
-    default:
+    forge:
       link: roots
