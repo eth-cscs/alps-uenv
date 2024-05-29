@@ -38,14 +38,14 @@ This [spec] defines a build of [Quantum ESPRESSO] version `7.3.1` using the `nvh
 
 ## Set uenv as upstream Spack instance
 
-Activate the uenv. Here we assume the uenv described above is called `quantumespresso/v7.3.1` and it is already deployed:
+Here we assume the uenv described above is called `quantumespresso/v7.3.1` and it is already deployed. You can therefore pull the `quantumespresso/v7.3.1` image and start the uenv as follows:
 
 ```bash
 uenv image pull quantumespresso/v7.3.1
 uenv start quantumespresso/v7.3.1
 ```
 
-With the uenv active, you can now tell our local [Spack] instance to use the uenv as an upstream [Spack] instance (see [Chaining Spack Installations] for more details):
+With the uenv active, you can now tell your local [Spack] instance to use the uenv as an upstream [Spack] instance (see [Chaining Spack Installations] for more details):
 
 ```bash
 export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config/
