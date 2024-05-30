@@ -3,20 +3,21 @@ lammps:
   - toolchain: gcc
     spec: gcc@12.3
   mpi:
-    spec: cray-mpich@8.1.28
+    spec: cray-mpich
     gpu: cuda
   unify: true
   specs:
+  - python@3.11
   - cmake
   - cuda@12
-  - kokkos +wrapper
-  - lammps
+  - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
+  - mpi
+  - cray-mpich
+  - lammps@20240207.1 +cuda cuda_arch=90 +python +kokkos
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
-  - +kokkos
-  - +amoeba
   views:
     default:
       link: run
