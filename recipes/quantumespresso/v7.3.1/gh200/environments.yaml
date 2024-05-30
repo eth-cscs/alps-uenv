@@ -17,7 +17,7 @@ nvhpc-env:
   - libxc%nvhpc~cuda
   - libxml2%gcc
   - patchelf%gcc
-  - scalapack
+  - netlib-scalapack
   packages:
   - git
   variants:
