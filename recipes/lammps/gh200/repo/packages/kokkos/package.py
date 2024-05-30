@@ -369,7 +369,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         #):
         
         #for CSCS/GH200 the above doesn't trigger, so we force it.
-        options.append(self.define("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", False))
+        if (self.spec.satisfies("@4.2.00:")):
+            options.append(self.define("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", False))
 
         # Remove duplicate options
         return lang.dedupe(options)
