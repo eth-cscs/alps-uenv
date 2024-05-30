@@ -17,8 +17,8 @@ usage () {
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
-    echo "  uarch:       microarchitecture \(one of a100, zen2, zen3, mi200\)"
-    echo "  system:      the cluster name \(e.g. of balfrin, clariden, eiger\)"
+    echo "  uarch:       microarchitecture \(one of a100, zen2, zen3, mi200, gh200\)"
+    echo "  system:      the cluster name \(e.g. of balfrin, todi, eiger\)"
     echo "  mount:       the mount point of the image"
     echo ""
     [[ "" == "$1" ]] && exit 0

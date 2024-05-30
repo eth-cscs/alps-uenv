@@ -56,7 +56,8 @@
                                 {"enum": ["f7t"]}
                             ],
                             "default": "fjt"
-                        }
+                        },
+                        "no_bwrap": {"type": "boolean", "default": false}
                     }
                 }
             }
@@ -73,7 +74,7 @@
                     "patternProperties": {
                         "^[\\w.-]+$": {
                             "type": "object",
-                            "required": ["recipes", "deploy"],
+                            "required": ["recipes"],
                             "additionalProperties": false,
                             "properties": {
                                 "recipes":{
@@ -96,7 +97,8 @@
                                                 "enum": ["zen2", "zen3", "a100", "mi200", "gh200"]
                                             }
                                         }
-                                    }
+                                    },
+                                    "default": {}
                                 },
                                 "develop": {"type": "boolean", "default": false},
                                 "mount":   {"type": "string", "default": "/user-environment"}
