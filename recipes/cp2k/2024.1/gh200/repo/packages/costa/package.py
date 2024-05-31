@@ -42,6 +42,8 @@ class Costa(CMakePackage):
     depends_on("cxxopts", when="+tests")
     depends_on("semiprof", when="+profiling")
 
+    patch("mpi-view.patch")
+
     def url_for_version(self, version):
         if version == Version("2.0"):
             return "https://github.com/eth-cscs/COSTA/releases/download/v{0}/COSTA-v{1}.tar.gz".format(
