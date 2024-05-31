@@ -123,6 +123,7 @@ export PATH="$(pwd)/reframe/bin:$PATH"
 log "clone cscs-reframe-tests"
 rm -rf cscs-reframe-tests
 git clone -b alps https://github.com/eth-cscs/cscs-reframe-tests.git
+pip install python-hostlist
 
 export UENV="${squashfs_path}:${mount}"
 export RFM_AUTODETECT_METHODS="cat /etc/xthostname,hostname"
