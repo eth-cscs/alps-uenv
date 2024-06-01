@@ -3,7 +3,7 @@
 GROMACS (GROningen Machine for Chemical Simulations) is a versatile and widely-used open source package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.
 It is primarily designed for biochemical molecules like proteins, lipids and nucleic acids that have a lot of complicated bonded interactions, but since GROMACS is extremely fast at calculating the nonbonded interactions (that usually dominate simulations) many groups are also using it for research on non-biological systems, e.g. polymers.
 
-!!! danger "Licensing Terms and Conditions"
+!!! info "Licensing Terms and Conditions"
     
     GROMACS is a joint effort, with contributions from developers around the world: users agree to acknowledge use of GROMACS in any reports or publications of results obtained with the Software (see [GROMACS Homepage] for details).
 
@@ -14,8 +14,11 @@ It is primarily designed for biochemical molecules like proteins, lipids and nuc
 On ALPS, we provide pre-built user environments containing GROMACS alongside all the required dependencies for the GH200 hardware setup. To access the `gmx_mpi` executable, we do the following:
 
 ```bash
-uenv image pull       # exact command TBD
-uenv start ...        # exact command TBD
+# list the gromacs images and versions available on the system
+uenv image find gromacs
+
+uenv image pull gromacs/2024:v1
+uenv start gromacs/2024:v1
 
 uenv view gromacs     # load the gromacs view
 gmx_mpi --version     # check GROMACS version
