@@ -19,7 +19,8 @@ lammps:
   - +cuda
   - cuda_arch=90
   views:
-    default:
-      link: run
-  packages:
-  - perl
+    develop:
+      link: roots
+      exclude: ["lammps"]
+    lammps:
+      link: roots
