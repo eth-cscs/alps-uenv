@@ -6,7 +6,7 @@
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view default
+uenv view lammps
 ```
 
 !!! warning
