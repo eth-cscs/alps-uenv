@@ -36,7 +36,7 @@ usage () {
     echo ""
     echo "where:"
     echo "  name:        the name of the stack"
-    echo "  system:      the cluster name \(one of balfrin, hohgant, clariden\)"
+    echo "  system:      the cluster name \(e.g. one of balfrin, todi, eiger \)"
     echo "  recipe-path: the location of the recipe"
     echo '  build-root:  the root path in which to perform the build, e.g. /dev/shm/$USER'
     echo "  uarch:       the target micro-architecture"

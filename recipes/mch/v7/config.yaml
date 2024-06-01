@@ -1,0 +1,6 @@
+name: mch
+store: /mch-environment/v7
+spack:
+  commit: releases/v0.21
+  repo: https://github.com/spack/spack.git
+description: The compiler toolchains, libraries and tools required for the MCH production software stack.
