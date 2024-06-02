@@ -28,7 +28,6 @@ cd <PATH_TO_LAMMPS_SOURCE>
 mkdir build && cd build
 cmake -C ../cmake/presets/kokkos-cuda.cmake ../cmake/  -DKokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC=OFF -DKokkos_ARCH_NATIVE=yes -DKokkos_ARCH_HOPPER90=yes
 
-
 cmake --build . --parallel 32
 ```
 
