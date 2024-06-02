@@ -21,7 +21,7 @@ The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] fro
 uenv start <LAMMPS_UENV>
 uenv view develop
 
-# cd to CP2K source directory
+# cd to LAMMPS source directory
 cd <PATH_TO_LAMMPS_SOURCE>
 
 # CMake
