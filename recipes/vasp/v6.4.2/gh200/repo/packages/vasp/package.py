@@ -34,7 +34,7 @@ class Vasp(CMakePackage, CudaPackage):
     resource(
         name="cmake_repo",
         git="https://github.com/AdhocMan/vasp_cmake.git",
-        commit="8d163f1eaa30dba0afeb829e872af297f5d5d89e",
+        commit="58d0dc31bbe920e84b7650e687491faff73c86a7",
     )
 
     variant("profiling", default=False, description="Enable profiling")
