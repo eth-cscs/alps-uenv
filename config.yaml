@@ -107,6 +107,13 @@ uenvs:
       deploy:
         eiger: [zen2]
       develop: False
+    "2024":
+      recipes:
+        gh200: "2024/gh200"
+      deploy:
+        todi: [gh200]
+        santis: [gh200]
+      develop: False
   linaro-forge:
     "23.1.2":
       recipes:
