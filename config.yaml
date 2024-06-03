@@ -19,6 +19,16 @@ clusters:
     runner:
       slurm-tag: balfrin-spack-stack-builder
       baremetal-tag: balfrin-login-baremetal
+  pilatus:
+    targets:
+      -
+        uarch: 'zen2'
+        partition: 'normal'
+        variables:
+          SLURM_CONSTRAINT: 'mc'
+          F7T_URL: 'https://firecrest-dev.cscs.ch'
+    runner: f7t
+    #no_bwrap: True
   santis:
     targets:
       -
@@ -134,6 +144,7 @@ uenvs:
         gh200: '2024/arm64'
       deploy:
         eiger: [zen2]
+        pilatus: [zen2]
         balfrin: [zen3]
         todi: [gh200]
       develop: False
