@@ -34,8 +34,6 @@ class Version:
         self._mount = desc["mount"]
         self._recipe_path = recipe_path
 
-        arch = self.uarch
-
     @property
     def name(self):
         return self._name
@@ -213,22 +211,18 @@ class Config:
 
         # configure for firecrest, if it is used on the target cluster
         if use_f7t:
+            # default values for environment variables required by firecrest
             f7t_defaults = {
                     "F7T_TOKEN_URL": "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token",
                     "F7T_URL": "https://firecrest.cscs.ch",
                     "MODE": "baremetal",
                     "SLURM_ACCOUNT": "csstaff",
                     "FIRECREST_SYSTEM": env["system"]}
+            # set the defaults for values that have not already been set in the
+            # cluster config.
             for key, value in f7t_defaults.items():
                 if key not in runner["variables"].keys():
                     runner["variables"][key] = value
-
-                # set additional environment variables required for FirecREST.
-                #runner["variables"]["F7T_TOKEN_URL"] = "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
-                #runner["variables"]["F7T_URL"] = "https://firecrest.cscs.ch"
-                #runner["variables"]["MODE"] = "baremetal"
-                #runner["variables"]["SLURM_ACCOUNT"] = "csstaff"
-                #runner["variables"]["FIRECREST_SYSTEM"] = env["system"]
         # else configure baremetal runners deployed via Ansible/Nomad
         else:
             runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
