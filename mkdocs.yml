@@ -8,6 +8,7 @@ nav:
     - 'linaro-forge': uenv-linaro-forge.md
     - 'namd': uenv-namd.md
     - 'quantumespresso': uenv-qe.md
+    - 'vasp': uenv-vasp.md
   - 'Developers':
     - 'tutorial: application': pkg-application-tutorial.md
   - 'Compilation':

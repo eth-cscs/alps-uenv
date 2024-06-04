@@ -1,0 +1,61 @@
+vasp:
+  compiler:
+  - toolchain: llvm
+    spec: nvhpc@23.9
+  - toolchain: gcc
+    spec: gcc@12.2
+  unify: True
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  specs:
+      - vasp@6.4.2%nvhpc cuda_arch=90 +cuda +openmp +inplace +collective +scalapack +avoidalloc +bse +tbdyn +fock_dblbuf +ncclp2p ~profiling ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib +hdf5 +wannier90 ~libxc
+      - wannier90%nvhpc
+      - libxc~cuda~fhc%nvhpc
+      - cuda@12.2
+      - fftw%nvhpc +openmp
+      - nvpl-blas%nvhpc threads=openmp
+      - nvpl-lapack%nvhpc threads=openmp
+      - netlib-scalapack%nvhpc ~shared
+      - libpciaccess%gcc
+      - util-macros%gcc
+      - libxml2%gcc
+      - libiconv%gcc
+      - xz%gcc
+      - ncurses%gcc
+      - numactl%gcc
+      - autoconf%gcc
+      - automake%gcc
+      - libtool%gcc
+      - m4%gcc
+      - diffutils%gcc
+      - libsigsegv%gcc
+      - openssh%gcc
+      - krb5%gcc
+      - bison%gcc
+      - findutils%gcc
+      - gettext%gcc
+      - tar%gcc
+      - pigz%gcc
+      - libedit%gcc
+      - libxcrypt%gcc
+      - openssl%gcc
+      - perl%gcc
+      - bzip2%gcc
+      - gdbm%gcc
+      - readline%gcc
+      - pkgconf%gcc
+      - pmix%gcc
+      - libevent%gcc
+      - zlib-ng%gcc
+      - cmake%gcc
+      - ninja%gcc
+      - re2c%gcc
+      - python%gcc ~bz2 ~dbm ~lzma ~nis ~pyexpat ~sqlite3 ~ssl ~uuid ~zlib
+  views:
+    vasp:
+    develop:
+      exclude: ['vasp']
+  packages:
+  - perl
+
