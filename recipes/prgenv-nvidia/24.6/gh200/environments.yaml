@@ -12,7 +12,7 @@ nvidia-env:
   - aws-ofi-nccl@master
   - cmake
   - cuda@12.4
-  - fftw
+  - fftw%nvhpc
   - fmt
   - hdf5%nvhpc +fortran
   - libtree
@@ -20,7 +20,7 @@ nvidia-env:
   - nccl
   - nccl-tests
   - ninja
-  - openblas threads=openmp
+  - openblas%nvhpc threads=openmp
   - osu-micro-benchmarks@5.9%nvhpc
   - python@3.11
   variants:
