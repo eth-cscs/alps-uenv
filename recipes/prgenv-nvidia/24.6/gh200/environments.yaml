@@ -12,7 +12,7 @@ nvidia-env:
   - aws-ofi-nccl@master
   - cmake
   - cuda@12.4
-  - fftw%nvhpc
+  - fftw%nvhpc +openmp
   - fmt
   - hdf5%nvhpc +fortran
   - libtree
