@@ -9,9 +9,10 @@ nvhpc-env:
     gpu: cuda
   unify: true
   specs:
-  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx
+  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack
   - cmake%gcc
   - fftw%gcc
+  - netlib-scalapack%gcc
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
