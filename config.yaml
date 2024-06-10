@@ -187,6 +187,11 @@ uenvs:
         a100: v7.1/a100
       deploy:
         eiger: [zen2]
+    "v7.3.1":
+      recipes:
+        gh200: v7.3.1/gh200
+      deploy:
+        santis: [gh200]
   sirius:
     "v7.5":
       recipes:
