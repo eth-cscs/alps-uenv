@@ -135,7 +135,7 @@ Open the *Remote Launch* menu and click on *configure* then *Add*. Examples of t
 
 Some notes on the examples above:
 
-* SSH Forwarding via `ela.scscs.ch` is used to access the cluster.
+* SSH Forwarding via `ela.cscs.ch` is used to access the cluster.
 * the replace the username `bsmith` with your CSCS user name that you would normally use to open an SSH connection to CSCS.
 * the Remote Installation Path is a little bit more complicated than
 * the private keys should be the ones generated for CSCS MFA, and this field does not need to be set if you have added the key to your SSH agent.
