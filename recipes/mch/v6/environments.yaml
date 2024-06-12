@@ -61,6 +61,7 @@ prgenv-nvidia:
   - zlib%gcc
   - nco@5.0.1%gcc
   - cdo@2.0.5%gcc
+  - xpmem%gcc
   variants:
   - cuda_arch=80
   - +mpi
