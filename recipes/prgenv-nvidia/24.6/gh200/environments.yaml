@@ -1,0 +1,32 @@
+nvidia-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+      - toolchain: llvm
+        spec: nvhpc
+  mpi:
+      spec: cray-mpich@8.1.29%nvhpc
+      gpu: cuda
+  unify: true
+  specs:
+  - aws-ofi-nccl@master
+  - cmake
+  - cuda@12.4
+  - fftw%nvhpc +openmp
+  - fmt
+  - hdf5%nvhpc +fortran
+  - libtree
+  - meson
+  - nccl
+  - nccl-tests
+  - ninja
+  - openblas%nvhpc threads=openmp
+  - osu-micro-benchmarks@5.9%nvhpc
+  - python@3.11
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    nvidia:
+      link: roots

@@ -178,6 +178,14 @@ uenvs:
       deploy:
         santis: [gh200]
         todi: [gh200]
+  prgenv-nvidia:
+    "24.6":
+      recipes:
+        gh200: 24.6/gh200
+      deploy:
+        # deploy to both the production and test clusters
+        todi: [gh200]
+        santis: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
