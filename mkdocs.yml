@@ -11,6 +11,7 @@ nav:
     - 'vasp': uenv-vasp.md
   - 'Developers':
     - 'tutorial: application': pkg-application-tutorial.md
+    - 'tutorial: reframe': pkg-reframe.md
   - 'Compilation':
     - 'uenv and Spack': uenv-compilation-spack.md
 theme:
