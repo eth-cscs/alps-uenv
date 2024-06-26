@@ -6,6 +6,8 @@ tool_base_path="$(pwd)"
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
 tool_version=master
+# support latest view interface
+tool_version=8b958629fe04215e69221793a1b0664c39cda89b
 
 log "installing stackinator from git in '${tool_path}'"
 

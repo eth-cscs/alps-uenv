@@ -178,6 +178,13 @@ uenvs:
       deploy:
         santis: [gh200]
         todi: [gh200]
+    "24.7":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        zen2: 24.7/mc
+        zen3: 24.7/mc
+      deploy:
+        eiger: [zen2]
   quantumespresso:
     "v7.1":
       recipes:

@@ -1,0 +1,22 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - cmake
+  - fftw
+  - fmt
+  - hdf5
+  - ninja@1.11
+  - openblas +threads=openmp
+  - python@3.12
+  - py-pybind11
+  - osu-micro-benchmarks@5.9
+  variants:
+  - +mpi
+  views:
+    default:
