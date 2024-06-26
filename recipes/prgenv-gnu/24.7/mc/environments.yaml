@@ -12,7 +12,7 @@ gcc-env:
   - fmt
   - hdf5
   - ninja@1.11
-  - openblas +threads=openmp
+  - openblas threads=openmp
   - python@3.12
   - py-pybind11
   - osu-micro-benchmarks@5.9
