@@ -21,5 +21,7 @@ gcc-env:
   views:
     develop:
       link: roots
-      prefix_paths:
-        - LD_LIBRARY_PATH: [lib, lib64]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          - LD_LIBRARY_PATH: [lib, lib64]
