@@ -24,4 +24,4 @@ gcc-env:
       uenv:
         add_compilers: true
         prefix_paths:
-          - LD_LIBRARY_PATH: [lib, lib64]
+          LD_LIBRARY_PATH: [lib, lib64]
