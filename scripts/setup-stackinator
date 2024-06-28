@@ -5,7 +5,7 @@ tool_base_path="$(pwd)"
 # builds in the same pipeline do not conflict
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
-tool_version=master
+tool_version=v5.0-rc1
 
 log "installing stackinator from git in '${tool_path}'"
 
