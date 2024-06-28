@@ -7,7 +7,7 @@ clusters:
         variables:
           SLURM_CONSTRAINT: 'mc'
     runner: f7t
-    no_bwrap: True
+    no_bwrap: False
   balfrin:
     targets:
       -
