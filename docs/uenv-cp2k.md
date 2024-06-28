@@ -49,6 +49,10 @@ ninja -j 32
 
     `cp2k@2024.1` does not support compiling for `cuda_arch=90`. Use `-DCP2K_WITH_GPU=A100` instead.
 
+!!! note
+
+    On `x86` we deploy with `intel-oneapi-mkl`. Add `-DCP2K_SCALAPACK_VENDOR=MKL` to the CMake invocation.
+
 See [CP2K `README_cmake.md`](https://github.com/cp2k/cp2k/blob/master/README_cmake.md) for more details.
 
 [CP2K]: https://www.cp2k.org/
