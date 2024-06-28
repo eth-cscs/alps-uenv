@@ -15,6 +15,7 @@ nvidia:
   - cuda@12.3
   - hdf5
   - hwloc
+  - libfyaml
   - netcdf-c
   - netcdf-cxx4
   - netcdf-fortran%nvhpc
