@@ -1,23 +1,20 @@
 nvhpc-env:
   compiler:
-    - toolchain: llvm
-      spec: nvhpc
     - toolchain: gcc
       spec: gcc@12
+    - toolchain: llvm
+      spec: nvhpc
   mpi:
-    spec: cray-mpich@8.1.29
+    spec: cray-mpich@8.1.29%nvhpc
     gpu: cuda
   unify: true
   specs:
   - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack
-  - cmake%gcc
-  - fftw%gcc
-  - netlib-scalapack%gcc
+  - netlib-scalapack
+  - fftw
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
-  - libxml2%gcc
-  - patchelf%gcc
   packages:
   - git
   variants:
