@@ -1,7 +1,7 @@
 name: prgenv-gnu
 spack:
   commit: jb-develop
-  repo: /bret/scratch/cscs/biddisco/spack-santis
+  repo: /capstor/scratch/cscs/biddisco/spack-todi
 store: /user-environment
 description: ParaView + assorted other tools
 
