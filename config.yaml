@@ -174,8 +174,10 @@ uenvs:
         # zen2 and zen3 targets use the same recipe
         zen2: 24.7/mc
         zen3: 24.7/mc
+        gh200: 24.7/gh200
       deploy:
         eiger: [zen2]
+        todi: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
