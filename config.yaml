@@ -76,9 +76,11 @@ uenvs:
     "2024.1":
       recipes:
         gh200: 2024.1/gh200
+        zen2: 2024.1/mc
       deploy:
         santis: [gh200]
         todi: [gh200]
+        eiger: [zen2]
       develop: False
   icon-wcp:
     "v1":
