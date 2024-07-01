@@ -33,7 +33,7 @@ CC=mpicc CXX=mpic++ FC=mpifort cmake \
     -GNinja \
     -DCP2K_ENABLE_REGTESTS=ON \
     -DCP2K_USE_LIBXC=ON \
-    -DCP2K_USE_LIBINT2=ON 
+    -DCP2K_USE_LIBINT2=ON \
     -DCP2K_USE_SPGLIB=ON \
     -DCP2K_USE_ELPA=ON \
     -DCP2K_USE_SPLA=ON \
