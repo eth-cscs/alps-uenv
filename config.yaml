@@ -192,6 +192,7 @@ uenvs:
         gh200: v7.3.1/gh200
       deploy:
         santis: [gh200]
+        todi: [gh200]
   sirius:
     "v7.5":
       recipes:
