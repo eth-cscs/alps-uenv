@@ -54,6 +54,14 @@ uenvs:
         eiger: [zen2]
         santis: [gh200]
         todi: [gh200]
+  climana:
+    "24.7":
+      recipes:
+        zen2: mch/climana/24.7
+        zen3: mch/climana/24.7
+      deploy:
+        balfrin: [zen3]
+      develop: False
   gromacs:
     "2023":
       recipes:
