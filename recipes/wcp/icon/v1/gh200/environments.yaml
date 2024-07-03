@@ -4,23 +4,24 @@ nvidia:
         spec: gcc
       - toolchain: llvm
         spec: nvhpc
-  unify: when_possible
+  unify: true
   mpi:
       spec: cray-mpich@8.1.29%nvhpc
       gpu: cuda
   specs:
   - boost ~mpi
-  - python@3.10
   - cmake
   - cuda@12.3
   - hdf5
   - hwloc
+  - libxml2
   - libfyaml
   - netcdf-c
   - netcdf-cxx4
   - netcdf-fortran%nvhpc
   - numactl
   - osu-micro-benchmarks@5.9%nvhpc
+  - python@3.10
   # everything needed for nccl on SS11
   - aws-ofi-nccl@master
   - nccl
