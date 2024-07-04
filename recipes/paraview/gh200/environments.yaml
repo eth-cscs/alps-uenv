@@ -24,7 +24,7 @@ pv-egl-cuda:
   - proj
   # c++ helperrs
   - fmt
-  - stdexec@main
+  - stdexec@git.b39a506096900de4074ee556867a3805bd8351bd=main
   - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
   # IO and parallelism
   - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
