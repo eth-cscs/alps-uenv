@@ -20,7 +20,7 @@ The [NAMD] `uenv` provides all the dependencies required to build [NAMD] from so
 
 ```bash
 # Start uenv and load develop view
-uenv start namd.squashfs
+uenv start <NAMD_UENV>
 uenv view develop
 
 # cd to NAMD source directory

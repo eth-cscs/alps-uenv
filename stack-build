@@ -162,6 +162,7 @@ rm -rf "$tool_path" "$cluster_path"
 cd "${build_path}"
 
 log "building image in ${build_path}"
+
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
 # Propagate username and password defined in scripts/setup-oras (to be used in pre-install script)
 env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" CSCS_REGISTRY_USERNAME=$jfrog_u CSCS_REGISTRY_PASSWORD=$jfrog_p make store.squashfs -j64

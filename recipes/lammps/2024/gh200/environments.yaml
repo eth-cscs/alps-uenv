@@ -1,0 +1,26 @@
+lammps:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  unify: true
+  specs:
+  - python@3.11
+  - cmake
+  - cuda@12
+  - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
+  - mpi
+  - cray-mpich
+  - lammps@20240207.1 +cuda cuda_arch=90 +python +kokkos
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop:
+      link: roots
+      exclude: ["lammps"]
+    lammps:
+      link: roots

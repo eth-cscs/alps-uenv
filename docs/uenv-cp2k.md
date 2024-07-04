@@ -33,12 +33,12 @@ CC=mpicc CXX=mpic++ FC=mpifort cmake \
     -GNinja \
     -DCP2K_ENABLE_REGTESTS=ON \
     -DCP2K_USE_LIBXC=ON \
-    -DCP2K_USE_LIBINT2=ON 
+    -DCP2K_USE_LIBINT2=ON \
     -DCP2K_USE_SPGLIB=ON \
     -DCP2K_USE_ELPA=ON \
     -DCP2K_USE_SPLA=ON \
     -DCP2K_USE_SIRIUS=ON \
-    -DCP2K_USE_COSTA=ON \
+    -DCP2K_USE_COSMA=ON \
     -DCP2K_USE_ACCEL=CUDA -DCP2K_WITH_GPU=A100 \
     ..
 
@@ -48,6 +48,10 @@ ninja -j 32
 !!! note
 
     `cp2k@2024.1` does not support compiling for `cuda_arch=90`. Use `-DCP2K_WITH_GPU=A100` instead.
+
+!!! note
+
+    On `x86` we deploy with `intel-oneapi-mkl`. Add `-DCP2K_SCALAPACK_VENDOR=MKL` to the CMake invocation.
 
 See [CP2K `README_cmake.md`](https://github.com/cp2k/cp2k/blob/master/README_cmake.md) for more details.
 
