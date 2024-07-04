@@ -1,22 +1,25 @@
 # Linaro Forge (DDT) debugger
 
-[Linaro Forge](https://www.linaroforge.com/downloadForge) (formerly known as DDT) allows source-level debugging of Fortran,
-C, C++ and Python codes. It can be used for debugging serial, multi-threaded
-(OpenMP), multi-process (MPI) and accelerated (Cuda, OpenACC) programs running
-on research and production systems, including CSCS Alps system. It can be
-executed either as a graphical user interface or from the command-line.
+[Linaro Forge](https://www.linaroforge.com/downloadForge) (formerly known as
+DDT) allows source-level debugging of Fortran, C, C++ and Python codes. It can
+be used for debugging serial, multi-threaded (OpenMP), multi-process (MPI) and
+accelerated (Cuda, OpenACC) programs running on research and production
+systems, including CSCS Alps system. It can be executed either as a graphical
+user interface or from the command-line.
 
 ## Usage notes
 
-The uenv is named `linaro-forge`, and the available versions on a cluster can be determined using the `uenv image find` command, for example:
+The name of the uenv image is `linaro-forge`, and the available versions on a
+cluster can be determined using the `uenv image find` command, for example:
 ```
 > uenv image find linaro-forge
 uenv/version:tag                        uarch date       id               size
 linaro-forge/23.1.2:latest              gh200 2024-04-10 ea67dbb33801c7c3 342MB
 ```
 
-
-The linaro tools are configured to be mounted in the `/user-tools` path so that they can be used alongside application and development uenv mounted at `user-environment`.
+The linaro tools are configured to be mounted in the `/user-tools` path so that
+they can be used alongside application and development uenv mounted at
+`user-environment`.
 
 === "sidecar"
 
@@ -64,8 +67,9 @@ In order to debug your code on Alps, you need to:
 
 ### Pull the Linaro Forge uenv on the Alps cluster
 
-The first step is to download the latest version of linaro-forge that is available on the cluster.
-First, SSH into the target system, then use the `uenv image find` command to list the available versions on the system:
+The first step is to download the latest version of linaro-forge that is
+available on the cluster. First, SSH into the target system, then use the
+`uenv image find` command to list the available versions on the system:
 
 ```
 > uenv image find linaro-forge
@@ -73,12 +77,15 @@ uenv/version:tag                        uarch date       id               size
 linaro-forge/23.1.2:latest              gh200 2024-04-10 ea67dbb33801c7c3 342MB
 ```
 
-In this example, there is a single version available. Next we pull the image so that it is available locally.
+In this example, there is a single version available. Next we pull the image so
+that it is available locally.
+
 ```
 > uenv image pull linaro-forge/23.1.2:latest
 ```
 
-It will take a few seconds to download the image. Once complete, check that it was downloaded using the `uenv image ls` command:
+It will take a few seconds to download the image. Once complete, check that it
+was downloaded using the `uenv image ls` command:
 
 ```
 > uenv image ls linaro-forge
@@ -88,12 +95,16 @@ linaro-forge/23.1.2:latest              gh200 2024-04-05 ea67dbb33801c7c3 342MB
 
 ### Install the client on your laptop
 
-We recommend installing the [desktop client](https://www.linaroforge.com/downloadForge) on your local workstation/laptop.
-It can be configured to connect with the debug jobs running on Alps, offering a better user experience compared running remotely with X11 forwarding.
-The client can be downloaded for a selection of operating systems, via the link above.
+We recommend installing the [desktop client](https://www.linaroforge.com/downloadForge) 
+on your local workstation/laptop.
 
-Once installed, the client needs to be configured to connect to the vCluster on which you are working.
-First, start the client on your laptop.
+It can be configured to connect with the debug jobs running on Alps, offering a
+better user experience compared running remotely with X11 forwarding. The
+client can be downloaded for a selection of operating systems, via the link
+above.
+
+Once installed, the client needs to be configured to connect to the vCluster on
+which you are working. First, start the client on your laptop.
 
 === "Linux"
 
@@ -112,7 +123,8 @@ First, start the client on your laptop.
     ```
 
 Next, configure a connection to the target system.
-Open the *Remote Launch* menu and click on *configure* then *Add*. Examples of the settings are below.
+Open the *Remote Launch* menu and click on *configure* then *Add*. Examples of
+the settings are below.
 
 === "Eiger"
 
@@ -136,13 +148,13 @@ Open the *Remote Launch* menu and click on *configure* then *Add*. Examples of t
 Some notes on the examples above:
 
 * SSH Forwarding via `ela.cscs.ch` is used to access the cluster.
-* the replace the username `bsmith` with your CSCS user name that you would normally use to open an SSH connection to CSCS.
-* the Remote Installation Path is a little bit more complicated than
-* the private keys should be the ones generated for CSCS MFA, and this field does not need to be set if you have added the key to your SSH agent.
+* replace the username `bsmith` with your CSCS user name that you would normally use to open an SSH connection to CSCS.
+* `Remote Installation Path` is pointing to the install directotory of ddt inside the image
+* private keys should be the ones generated for CSCS MFA, and this field does not need to be set if you have added the key to your SSH agent.
 
 Once configured, test and save the configuration:
 
-1. check whether the concfiguration is correct, click `Test Remote Launch`.
+1. check whether the configuration is correct, click `Test Remote Launch`.
 2. Click on `ok` and `close` to save the configuration.
 3. You can now connect by going to `Remote Launch` and choose the `Alps` entry. If the client fails to connect, look at the message, check your ssh configuration and make sure you can ssh without the client.
 
@@ -150,7 +162,9 @@ Once configured, test and save the configuration:
 
 ### Build with debug flags
 
-Once the uenv is loaded and activated, the program to debug must be compiled with the `-g` (for cpu) and `-G` (for gpu) debugging flags. For example, let's build a cuda code with  a user environment:
+Once the uenv is loaded and activated, the program to debug must be compiled
+with the `-g` (for cpu) and `-G` (for gpu) debugging flags. For example, we can
+build a cuda code with a user environment:
 
 ```bash
 uenv start prgenv-gnu:24.2:v2
@@ -158,8 +172,6 @@ uenv view default
 
 # download the source code
 git clone https://github.com/sekelle/octree-miniapp.git
-cd o
-
 
 # build the application
 make -C octree-miniapp.git/
@@ -167,7 +179,8 @@ make -C octree-miniapp.git/
 
 ### Launch the code with the debugger
 
-To use the DDT client with uenv, it must be launched in `Manual Launch` mode (assuming that it is connected to Alps via `Remote Launch`):
+To use the DDT client with uenv, it must be launched in `Manual Launch` mode
+(assuming that it is connected to Alps via `Remote Launch`):
 
 ??? note
 
@@ -196,7 +209,7 @@ Notes on using specific systems:
 
     !!! warning
 
-        Because Santis is not connected to the internet, some environment variables need to be set so that it can connect to the license server.
+        Some clusters are not connected directly to the internet, hence some environment variables need to be set so that the tool can connect to the license server.
 
         ```bash
         export https_proxy=proxy.cscs.ch:8080
