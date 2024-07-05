@@ -3,7 +3,7 @@ pv-egl-cuda:
       - toolchain: gcc
         spec: gcc
   mpi:
-      spec: cray-mpich@8.1.28
+      spec: cray-mpich@8.1.30
       gpu: cuda
   unify: true
   specs:
@@ -91,7 +91,7 @@ pv-egl-cuda:
 #       - toolchain: gcc
 #         spec: gcc
 #   mpi:
-#       spec: cray-mpich@8.1.28
+#       spec: cray-mpich@8.1.30
 #       gpu: cuda
 #   unify: true
 #   specs:
