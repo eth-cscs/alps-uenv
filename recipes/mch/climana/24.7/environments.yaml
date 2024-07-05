@@ -7,7 +7,6 @@ prgenv-gcc:
     spec: cray-mpich@8.1.28
   packages:
   - perl
-  - curl
   - autoconf
   - m4
   - automake
@@ -16,6 +15,7 @@ prgenv-gcc:
   - gawk
   specs:
   - cdo
+  - curl
   - gdal
   - geos
   - gsl
