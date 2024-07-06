@@ -7,14 +7,14 @@ accelerated (Cuda, OpenACC) programs running on research and production
 systems, including CSCS Alps system. It can be executed either as a graphical
 user interface or from the command-line.
 
-## Usage notes
+## Quickstart guide
 
 The name of the uenv image is `linaro-forge`, and the available versions on a
 cluster can be determined using the `uenv image find` command, for example:
 ```
 > uenv image find linaro-forge
-uenv/version:tag                        uarch date       id               size
-linaro-forge/23.1.2:latest              gh200 2024-04-10 ea67dbb33801c7c3 342MB
+uenv/version:tag            uarch     date       id               size
+linaro-forge/23.1.2:latest  gh200     2024-04-10 ea67dbb33801c7c3 342MB
 ```
 
 The linaro tools are configured to be mounted in the `/user-tools` path so that
@@ -56,14 +56,15 @@ they can be used alongside application and development uenv mounted at
 
     The `/user-tools/activate` script will make the forge executables available in your environment.
 
-## Getting Started
+## User guide
 
 In order to debug your code on Alps, you need to:
 
 1. pull the linaro-forge uenv on the target Alps vCluster
 - install the Forge/DDT client on your laptop
 - build an executable with debug flags
-- launch a job with the debugger on Alps.
+- launch a job with the debugger on Alps
+- start debugging.
 
 ### Pull the Linaro Forge uenv on the Alps cluster
 
@@ -93,18 +94,17 @@ uenv/version:tag                        uarch date       id               size
 linaro-forge/23.1.2:latest              gh200 2024-04-05 ea67dbb33801c7c3 342MB
 ```
 
-### Install the client on your laptop
+### Install and configure the client on your laptop
 
 We recommend installing the [desktop client](https://www.linaroforge.com/downloadForge) 
-on your local workstation/laptop.
+on your local workstation/laptop. 
+It can be downloaded for a selection of operating systems.
 
-It can be configured to connect with the debug jobs running on Alps, offering a
-better user experience compared running remotely with X11 forwarding. The
-client can be downloaded for a selection of operating systems, via the link
-above.
+The client can be configured to connect with the debug jobs running on Alps, offering a
+better user experience compared to running with X11 forwarding. 
 
 Once installed, the client needs to be configured to connect to the vCluster on
-which you are working. First, start the client on your laptop.
+which you are working. First, start the client on your laptop:
 
 === "Linux"
 
@@ -123,8 +123,8 @@ which you are working. First, start the client on your laptop.
     ```
 
 Next, configure a connection to the target system.
-Open the *Remote Launch* menu and click on *configure* then *Add*. Examples of
-the settings are below.
+Open the *Remote Launch* menu and click on *configure* then *Add*. 
+Examples of the settings are below.
 
 === "Eiger"
 
@@ -134,6 +134,14 @@ the settings are below.
     | Host Name   | `bsmith@ela.cscs.ch bsmith@eiger.cscs.ch`  |
     | Remote Installation Directory | `uenv run linaro-forge/23.1.2:/user-tools -- /user-tools/env/forge/` |
     | Private Key | `$HOME/.ssh/cscs-key` |
+
+=== "Todi"
+
+    | Field       | Value                                   |
+    | ----------- | --------------------------------------- |
+    | Connection  | `todi`                                  |
+    | Host Name   | `bsmith@ela.cscs.ch bsmith@todi.cscs.ch`  |
+    | Remote Installation Directory | `uenv run linaro-forge/23.1.2:/user-tools -- /user-tools/env/forge/` |    
 
 === "Santis"
 
@@ -158,23 +166,18 @@ Once configured, test and save the configuration:
 2. Click on `ok` and `close` to save the configuration.
 3. You can now connect by going to `Remote Launch` and choose the `Alps` entry. If the client fails to connect, look at the message, check your ssh configuration and make sure you can ssh without the client.
 
-### Setup the environment
-
-### Build with debug flags
+### Setup the user environment and build the executable
 
 Once the uenv is loaded and activated, the program to debug must be compiled
 with the `-g` (for cpu) and `-G` (for gpu) debugging flags. For example, we can
-build a cuda code with a user environment:
+build a cuda test with a user environment:
 
 ```bash
 uenv start prgenv-gnu:24.2:v2
 uenv view default
 
-# download the source code
-git clone https://github.com/sekelle/octree-miniapp.git
-
-# build the application
-make -C octree-miniapp.git/
+nvcc -c -arch=sm_90 -g -G test_gpu.cu
+mpicxx -g test_cpu.cpp test_gpu.o -o myexe
 ```
 
 ### Launch the code with the debugger
@@ -182,15 +185,14 @@ make -C octree-miniapp.git/
 To use the DDT client with uenv, it must be launched in `Manual Launch` mode
 (assuming that it is connected to Alps via `Remote Launch`):
 
-??? note
-
-    the steps below do not manually launch - instead they directly launch using `ddt --connect srun ...` on the target cluster.
-
 === "on laptop"
 
     Start DDT, and connect to the target cluster using the drop down menu for Remote Launch.
 
-    Then wait for the job to start (see the "on Alps" tab).
+    Click on Manual launch, set the number of processes to listen to, 
+    then wait for the slurm job to start (see the "on Alps" tab).
+        
+    <img src="https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/0.png" width="600" />
 
 === "on Alps"
 
@@ -200,12 +202,42 @@ To use the DDT client with uenv, it must be launched in `Manual Launch` mode
     # start a session with both the PE used to build your application
     # and the linaro-forge uenv mounted
     uenv start prgenv-gnu/24.2 linaro-forge/23.1.2
-    ddt --connect srun -n2 -N2 ./a.out
+    uenv view prgenv-gnu:default
+    source /user-tools/activate
+
+    srun -N1 -n4 -t15 -pdebug \
+        ./cuda_visible_devices.sh   ddt-client   ./myexe
     ```
+
+### Start debugging
+
+By default, DDT will pause execution on the call to MPI_Init:
+<img src="https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/1.png" width="600" />
+
+There are more than 1 mechanism for controlling program execution:
+
+=== "Breakpoint"
+
+    Breakpoint(s) can be set by clicking in the margin to the left of the line number:
+
+    <img src="https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/3.png" width="600" />
+
+=== "Stop at"
+
+    Execution can be paused in every CUDA kernel launch by activating the default:
+
+    <img src="https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/4.png" width="400" />
+
+
+This screenshot shows a debugging session on 128 gpus: ![DDTgpus](https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/5.png)
+
+More informations will be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
+
+## Troubleshooting¶
 
 Notes on using specific systems:
 
-=== "santis"
+=== "santis,todi"
 
     !!! warning
 
@@ -221,6 +253,4 @@ Notes on using specific systems:
 
             By default the `https_proxy` and `http_proxy` variables are set to `http://proxy.cscs.ch:8080`, as the transport is required for some other services to work. You will have to set them for a debugging session.
 
-This screenshot shows a debugging session on 12 gpus:
 
-![DDT](https://raw.githubusercontent.com/jgphpc/octree-miniapp/ddt/img/ddt.png)
