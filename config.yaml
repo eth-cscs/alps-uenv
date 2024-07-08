@@ -133,6 +133,12 @@ uenvs:
         santis: [gh200]
         todi: [gh200]
       develop: False
+    "3.0":
+      recipes:
+        gh200: 3.0/gh200
+      deploy:
+        todi: [gh200]
+      develop: False
   netcdf-tools:
     "2024":
       recipes:
