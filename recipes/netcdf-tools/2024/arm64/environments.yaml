@@ -1,9 +1,9 @@
 gcc-env:
   compiler:
       - toolchain: gcc
-        spec: gcc@12
+        spec: gcc
   mpi:
-      spec: cray-mpich
+      spec: cray-mpich@8.1.30
       gpu: false
   unify: true
   specs:
@@ -14,10 +14,15 @@ gcc-env:
   - ncview
   - cdo
   - nco
+  - python@3.12
   #- ferret
   views:
     default:
       link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
   packages:
   - git
   - perl
