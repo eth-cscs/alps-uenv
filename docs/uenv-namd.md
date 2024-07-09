@@ -29,20 +29,19 @@ export DEV_VIEW_NAME="develop-single-node"
 uenv start <NAMD_UENV>
 uenv view ${DEV_VIEW_NAME}
 
-cd <PATH_TO_NAMD_SOURCE>
-
 # Set variable VIEW_PATH to the view
 export DEV_VIEW_PATH=/user-environment/env/${DEV_VIEW_NAME}
 
+cd <PATH_TO_NAMD_SOURCE>
+
+# ~~~~~
+# Modify the "<PATH_TO_NAMD_SOURCE>/arch/Linux-ARM64.tcl" file now!
+# Change "-ltcl8.5" with "-ltcl8.6" in the definition of the "TCLLIB" variable
+# ~~~~~
 
 # Build bundled Charm++
 tar -xvf charm-8.0.0.tar && cd charm-8.0.0
 ./build charm++ multicore-linux-arm8 gcc --with-production --enable-tracing -j 32
-
-# ~~~~~
-# Modify the "arch/Linux-ARM64.tcl" file now!
-# Change "-ltcl8.5" with "-ltcl8.6" in the definition of the "TCLLIB" variable
-# ~~~~~
 
 # Configure NAMD build for GPU
 cd .. 
@@ -104,19 +103,19 @@ export DEV_VIEW_NAME="develop"
 uenv start <NAMD_UENV>
 uenv view ${DEV_VIEW_NAME}
 
-cd <PATH_TO_NAMD_SOURCE>
-
 # Set variable VIEW_PATH to the view
 export DEV_VIEW_PATH=/user-environment/env/${DEV_VIEW_NAME}
 
-# Build bundled Charm++
-tar -xvf charm-8.0.0.tar && cd charm-8.0.0
-env MPICXX=mpicxx ./build charm++ mpi-linux-arm8 smp --with-production -j 32
+cd <PATH_TO_NAMD_SOURCE>
 
 # ~~~~~
 # Modify the "arch/Linux-ARM64.tcl" file now!
 # Change "-ltcl8.5" with "-ltcl8.6" in the definition of the "TCLLIB" variable
 # ~~~~~
+
+# Build bundled Charm++
+tar -xvf charm-8.0.0.tar && cd charm-8.0.0
+env MPICXX=mpicxx ./build charm++ mpi-linux-arm8 smp --with-production -j 32
 
 # Configure NAMD build for GPU
 cd .. 
