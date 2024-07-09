@@ -1,0 +1,17 @@
+namd-single-node:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3.0
+  unify: true
+  specs:
+  - cuda@12.4.0
+  - fftw@3.3.10 +openmp ~mpi
+  - tcl@8.5
+  - charmpp@=8.0.0 backend=multicore +production +tracing
+  - namd@=3.0 +cuda cuda_arch=90 +single_node_gpu
+  views:
+    develop-single-node:
+      link: roots
+      exclude: ["namd"]
+    namd-single-node:
+      link: roots

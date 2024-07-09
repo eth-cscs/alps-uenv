@@ -12,38 +12,63 @@
 
 ## Single-node build
 
-The single-node build works on a single node and benefits from the new GPU-resident mode (see [NAMD 3.0b6 GPU-Resident benchmarking results] for more details).
+The single-node build works on a single node and benefits from the new GPU-resident mode (see [NAMD 3.0b6 GPU-Resident benchmarking results] for more details). The single-node build provides the following views:
+
+* `namd-single-node` (standard view, with NAMD)
+* `develop-single-node` (development view, without NAMD)
 
 ### Building from source
 
 The [NAMD] `uenv` provides all the dependencies required to build [NAMD] from source. You can follow these steps to build [NAMD] from source:
 
 ```bash
+export DEV_VIEW_NAME="develop-single-node"
+
 # Start uenv and load develop view
 uenv start <NAMD_UENV>
-uenv view develop
+uenv view ${DEV_VIEW_NAME}
 
-# cd to NAMD source directory
 cd <PATH_TO_NAMD_SOURCE>
 
+# Set variable VIEW_PATH to the view
+export DEV_VIEW_PATH=/user-environment/env/${DEV_VIEW_NAME}
+
 # Build bundled Charm++
-tar -xvf charm-7.0.0.tar && cd charm-v7.0.0
+tar -xvf charm-8.0.0.tar && cd charm-8.0.0
 ./build charm++ multicore-linux-arm8 gcc --with-production --enable-tracing -j 32
 
-# Build NAMD
-cd ..
+# Configure NAMD build for GPU
+cd .. 
 ./config Linux-ARM64-g++.cuda \
-    --charm-arch multicore-linux-arm8-gcc --charm-base $PWD/charm-v7.0.0 \
-    --with-tcl --tcl-prefix /user-environment/env/develop \
-    --with-fftw --with-fftw3 --fftw-prefix /user-environment/env/develop \
-    --cuda-gencode arch=compute_90,code=sm_90 --with-single-node-cuda --with-cuda --cuda-prefix /user-environment/env/develop
+    --charm-arch multicore-linux-arm8-gcc --charm-base $PWD/charm-8.0.0 \
+    --with-tcl --tcl-prefix ${DEV_VIEW_PATH} \
+    --with-fftw --with-fftw3 --fftw-prefix ${DEV_VIEW_PATH} \
+    --cuda-gencode arch=compute_90,code=sm_90 --with-single-node-cuda --with-cuda --cuda-prefix ${DEV_VIEW_PATH}
 cd Linux-ARM64-g++.cuda && make -j 32
 
-export LD_LIBRARY_PATH=/user-environment/env/develop/lib/
+# !!! BEGIN OPTIONAL !!!
+# Configure NAMD build for CPU
+cd ..
+./config Linux-ARM64-g++ \
+    --charm-arch multicore-linux-arm8-gcc --charm-base $PWD/charm-8.0.0 \
+    --with-tcl --tcl-prefix ${DEV_VIEW_PATH} \
+    --with-fftw --with-fftw3 --fftw-prefix ${DEV_VIEW_PATH}
+cd Linux-ARM64-g++ && make -j 32
+# !!! END OPTIONAL !!!
 
-# Run NAMD
-./namd3 <NAMD_OPTIONS>
+cd ..
+export LD_LIBRARY_PATH=${DEV_VIEW_PATH}/lib/
+
+# Run NAMD (GPU version)
+Linux-ARM64-g++.cuda/namd3 <NAMD_OPTIONS>
+
+# !!! BEGIN OPTIONAL !!!
+# Run NAMD (CPU version)
+Linux-ARM64-g++/namd3 <NAMD_OPTIONS>
+# !!! END OPTIONAL !!!
 ```
+
+The optional section provides instructions on how to build a CPU-only build, should you need it (for constant pH MD simulations, for example).
 
 ## Useful Links
 
@@ -65,3 +90,4 @@ export LD_LIBRARY_PATH=/user-environment/env/develop/lib/
 [What you should know about NAMD and Charm++ but were hoping to ignore]: https://dl.acm.org/doi/pdf/10.1145/3219104.3219134
 [NAMD 3.0 new features]: https://www.ks.uiuc.edu/Research/namd/3.0/features.html
 [NAMD 3.0b6 GPU-Resident benchmarking results]: https://www.ks.uiuc.edu/Research/namd/benchmarks/
+
