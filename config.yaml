@@ -190,6 +190,7 @@ uenvs:
         gh200: '24.7/gh200'
       deploy:
         todi: [gh200]
+      develop: True
   quantumespresso:
     "v7.1":
       recipes:
