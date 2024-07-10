@@ -13,8 +13,14 @@ namd-single-node:
     develop-single-node:
       link: roots
       exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
     namd-single-node:
       link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
 namd:
   compiler:
   - toolchain: gcc
@@ -33,5 +39,11 @@ namd:
     develop:
       link: roots
       exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
     namd:
       link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
