@@ -5,9 +5,7 @@ tool_base_path="$(pwd)"
 # builds in the same pipeline do not conflict
 tool_path=`mktemp -d`
 tool_repo=https://github.com/eth-cscs/stackinator.git
-#tool_version=master
-# add support for multi-compiler
-tool_version=1ea1890b3ada1034fc463f8483a9a2795f7cd870
+tool_version=master
 
 log "installing stackinator from git in '${tool_path}'"
 

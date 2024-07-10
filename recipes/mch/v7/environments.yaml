@@ -15,7 +15,7 @@ prgenv-nvidia:
   - autoconf
   - automake
   specs:
-  - osu-micro-benchmarks@5.9%nvhpc
+  #- osu-micro-benchmarks@5.9%nvhpc
   - cuda@11.8
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
   - eccodes@2.19.1%nvhpc +tools +fortran +aec +openmp jp2k=jasper
