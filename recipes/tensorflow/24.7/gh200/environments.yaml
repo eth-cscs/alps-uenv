@@ -1,0 +1,30 @@
+pytorch:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  unify: true
+  specs:
+  - aws-ofi-nccl@master
+  - cmake
+  - cuda@12
+  - cray-mpich
+  - nccl
+  - ninja
+  - protobuf@3.25.3
+  - python@3.11
+  - py-numpy
+  - py-tensorflow +nccl
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    pytorch:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
