@@ -10,16 +10,15 @@ pytorch:
   - aws-ofi-nccl@master
   - cmake
   - cuda
-  - cray-mpich
   - nccl
   - ninja
-  #- protobuf@3.25.3
   - protobuf@3.25.3
   - python
   - py-numpy
   - py-tensorflow +nccl
-  #- py-libclang@16
+  - llvm ~cuda
   - py-libclang
+  - deepmd +pytorch
   variants:
   - +mpi
   - +cuda
