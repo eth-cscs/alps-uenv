@@ -169,6 +169,7 @@ env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_p
 
 if [ ! $? -eq 0 ]; then
     log "TODO: save WIP of build an store it for later inspection"
+    env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" CSCS_REGISTRY_USERNAME=$jfrog_u CSCS_REGISTRY_PASSWORD=$jfrog_p make cache-force -j64
     cp -r "${build_path}/tmp/jenkssl/spack-stage/" $CI_PROJECT_DIR
     err "error building image"
 fi
