@@ -16,7 +16,8 @@ pytorch:
   - protobuf@3.25.3
   - python@3.11
   - py-numpy
-  - py-tensorflow +nccl
+  - py-tensorflow@2.16.2 +nccl
+  - py-libclang@16
   variants:
   - +mpi
   - +cuda
