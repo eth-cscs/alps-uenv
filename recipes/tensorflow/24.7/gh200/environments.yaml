@@ -18,7 +18,7 @@ pytorch:
   - py-tensorflow +nccl
   - llvm ~cuda
   - py-libclang
-  - deepmd +tensorflow
+  - deepmd@2.2.11 +tensorflow
   variants:
   - +mpi
   - +cuda
