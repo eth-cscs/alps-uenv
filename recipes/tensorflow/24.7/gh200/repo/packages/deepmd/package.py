@@ -95,6 +95,9 @@ class Deepmd(PythonExtension, CudaPackage, ROCmPackage, CMakePackage):
     depends_on("py-scikit-build")
     depends_on("py-hatch-fancy-pypi-readme")
     depends_on("py-pip", type="build")
+    depends_on("python@3.7:")
+    depends_on("py-h5py")
+
     # build lammps with plugin support
     conflicts("py-torch", when="@:3")
 
