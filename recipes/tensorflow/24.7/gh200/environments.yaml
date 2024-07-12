@@ -7,18 +7,17 @@ tensorflow:
     gpu: cuda
   unify: true
   specs:
-  - aws-ofi-nccl@master
+  #- aws-ofi-nccl@master
   #- cmake
-  - cuda
-  - nccl
+  #- cuda
+  #- nccl
   #- ninja
   #- protobuf@3.25.3
-  - python
+  #- python
   #- py-numpy
-  - py-tensorflow +nccl
+  #- py-tensorflow +nccl
   - llvm ~cuda
   - deepmd@2.2.11 +tensorflow
-  - lammps +cuda+mpi ^mpich
   - lammps@20240207.1 +user-deepmd +cuda cuda_arch=90 +python +kokkos
   variants:
   - +mpi
