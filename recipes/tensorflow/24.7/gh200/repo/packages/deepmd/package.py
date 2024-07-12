@@ -139,4 +139,3 @@ class Deepmd(PythonExtension, CudaPackage, ROCmPackage, CMakePackage):
             self.define_from_variant("USE_TF_PYTHON_LIBS", "tensorflow"),
         ]
         return args
-
