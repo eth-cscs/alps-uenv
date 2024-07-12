@@ -6,9 +6,10 @@ editors:
   mpi: null
   specs:
   # the editors
-  - neovim
   - emacs +treesitter
   - nano
+  # the following are not building
+  #- neovim
   #- vim +python +lua
   # additional tools that integrate well with tools
   - fd
