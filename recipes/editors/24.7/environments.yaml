@@ -1,0 +1,30 @@
+editors:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  unify: true
+  mpi: null
+  specs:
+  # the editors
+  - neovim
+  - emacs +treesitter
+  - nano
+  - vim +python +lua
+  # additional tools that integrate well with tools
+  - lua
+  - node-js
+  - python@3.12
+  - rust
+  - ripgrep
+  - treesitter
+  packages:
+  - curl
+  - gmake
+  - lua
+  - perl
+  views:
+    ed:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
