@@ -19,6 +19,7 @@ tensorflow:
   - llvm ~cuda
   - deepmd@2.2.11 +tensorflow
   #- lammps@20240207.1 +user-deepmd +cuda cuda_arch=90 +python +kokkos
+  - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
   - lammps +user-deepmd +cuda cuda_arch=90 +python +kokkos
   variants:
   - +mpi
