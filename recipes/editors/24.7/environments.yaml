@@ -11,17 +11,20 @@ editors:
   - nano
   - vim +python +lua
   # additional tools that integrate well with tools
+  - fd
+  - go
+  - lazygit
   - lua
   - node-js
   - python@3.12
   - rust
   - ripgrep
-  - treesitter
+  - tree-sitter
   packages:
   - curl
   - gmake
-  - lua
   - perl
+  - git
   views:
     ed:
       link: roots
