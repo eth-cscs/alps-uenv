@@ -1,4 +1,4 @@
-pytorch:
+tensorflow:
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
@@ -11,21 +11,27 @@ pytorch:
   - cmake
   - cuda
   - nccl
-  - ninja
-  - protobuf@3.25.3
+  #- ninja
+  #- protobuf@3.25.3
   - python
   - py-numpy
   - py-tensorflow +nccl
   - llvm ~cuda
-  - py-libclang
-  - deepmd@2.2.11 +tensorflow
+  - deepmd@2.2.11 +tensorflow +horovod
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
   views:
-    pytorch:
+    deempmd:
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    tf:
       link: roots
+      exclude: ['deepmd']
       uenv:
         add_compilers: true
         prefix_paths:
