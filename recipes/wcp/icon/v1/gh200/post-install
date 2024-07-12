@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+
+import glob
+import hashlib
+import os
+import yaml
+
+
+# Add cuda_arch to packages.yaml
+with open("{{ env.mount }}/config/packages.yaml", mode='r') as file:
+    packages = yaml.safe_load(file)
+
+packages['packages']['all'] = {'variants': 'cuda_arch=90'}
+
+with open("{{ env.mount }}/config/packages.yaml", mode='w') as file:
+    yaml.dump(packages, file)
+
+
+# Generate a hash to make the uenv uniquely identifiable
+with open("{{ env.mount }}/.spack-db/index.json", mode='rb') as f:
+    sha = hashlib.sha256(f.read()).hexdigest()
+
+with open("{{ env.mount }}/meta/hash", mode='w') as f:
+    f.write(sha)
+
+# delete .la files that force linking against uneccesary libraries
+for path in ["{{ mount }}/env/icon/lib", "{{ mount }}/env/icon/lib64"]:
+    for file in glob.glob(os.path.join(path, '*.la')):
+        os.remove(file)

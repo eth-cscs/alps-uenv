@@ -6,13 +6,14 @@ nvidia:
         spec: nvhpc
   unify: true
   mpi:
-      spec: cray-mpich@8.1.29%nvhpc
+      spec: cray-mpich@8.1.30%nvhpc
       gpu: cuda
   specs:
   - boost ~mpi
   - cmake
   - cuda@12.3
-  - hdf5
+  - eccodes%nvhpc +tools +fortran +aec +openmp jp2k=jasper
+  - hdf5%nvhpc +hl
   - hwloc
   - libxml2
   - libfyaml
