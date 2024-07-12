@@ -17,7 +17,7 @@ tensorflow:
   - py-numpy
   - py-tensorflow +nccl
   - llvm ~cuda
-  - deepmd@2.2.11 +tensorflow +horovod
+  - deepmd@2.2.11 +tensorflow
   variants:
   - +mpi
   - +cuda
