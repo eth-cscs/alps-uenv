@@ -9,7 +9,7 @@ editors:
   - neovim
   - emacs +treesitter
   - nano
-  - vim +python +lua
+  #- vim +python +lua
   # additional tools that integrate well with tools
   - fd
   - go
@@ -20,6 +20,8 @@ editors:
   - rust
   - ripgrep
   - tree-sitter
+  # required to fix a broken link for the latest 0.3.3
+  - libvterm@0.3.1
   packages:
   - curl
   - gmake
