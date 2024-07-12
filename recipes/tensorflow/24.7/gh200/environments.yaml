@@ -18,7 +18,8 @@ tensorflow:
   #- py-tensorflow +nccl
   - llvm ~cuda
   - deepmd@2.2.11 +tensorflow
-  - lammps@20240207.1 +user-deepmd +cuda cuda_arch=90 +python +kokkos
+  #- lammps@20240207.1 +user-deepmd +cuda cuda_arch=90 +python +kokkos
+  - lammps +user-deepmd +cuda cuda_arch=90 +python +kokkos
   variants:
   - +mpi
   - +cuda
