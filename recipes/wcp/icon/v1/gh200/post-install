@@ -24,6 +24,6 @@ with open("{{ env.mount }}/meta/hash", mode='w') as f:
     f.write(sha)
 
 # delete .la files that force linking against uneccesary libraries
-for path in ["{{ mount }}/env/icon/lib", "{{ mount }}/env/icon/lib64"]:
+for path in ["{{ env.mount }}/env/icon/lib", "{{ env.mount }}/env/icon/lib64"]:
     for file in glob.glob(os.path.join(path, '*.la')):
         os.remove(file)
