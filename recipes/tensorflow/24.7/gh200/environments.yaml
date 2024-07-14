@@ -16,6 +16,24 @@ tensorflow:
   #- python
   #- py-numpy
   #- py-tensorflow +nccl
+  - py-tensorflow +nccl
+  #- py-mpi4py
+  - py-ase
+  - py-scipy
+  - py-numpy
+  - py-pyyaml
+  - py-args
+  - py-pyproject-metadata
+  - py-python-hostlist
+  - py-sphinx-argparse
+  - py-pygments
+  - py-sphinxcontrib-bibtex
+  - py-scikit-build-core
+  - py-setuptools-scm
+  - py-scikit-build
+  - py-hatch-fancy-pypi-readme
+  - py-pip
+  - py-h5py
   - llvm ~cuda
   - deepmd@2.2.11 +tensorflow
   #- lammps@20240207.1 +user-deepmd +cuda cuda_arch=90 +python +kokkos
