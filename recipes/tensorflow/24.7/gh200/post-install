@@ -1,0 +1,19 @@
+# install some missing dependencies of deepmd using pip
+
+config_path=/user-environment/config
+env_path=/user-environment/env/deepmd
+
+venv_loc=$(spack -C $config_path location -i python-venv)
+gcc_loc=$(spack -C $config_path location -i gcc@12%gcc@12)
+
+export CXX="$gcc_loc/bin/g++"
+export CC="$gcc_loc/bin/gcc"
+export PYTHONPATH=$env_path/lib/python3.11/site-packages
+export PATH=$env_path/bin
+export LD_LIBRARY_PATH=$env_path/lib64:$env_path/lib
+
+export http_proxy=http://proxy.cscs.ch:8080
+export https_proxy=http://proxy.cscs.ch:8080
+export no_proxy=".local,.cscs.ch,localhost,148.187.0.0/16,10.0.0.0/8,172.16.0.0/12"
+
+python -m pip -v install wcmatch dargs
