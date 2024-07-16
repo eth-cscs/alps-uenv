@@ -10,14 +10,14 @@ editors:
   - nano
   # the following are not building
   #- neovim
-  #- vim +python +lua
+  - vim +python +lua
   # additional tools that integrate well with tools
   - fd
   - go
   - lazygit
   - lua
   - node-js
-  - python@3.12
+  - python@3.11
   - rust
   - ripgrep
   - tree-sitter
