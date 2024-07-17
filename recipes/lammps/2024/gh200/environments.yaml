@@ -23,10 +23,10 @@ lammps:
     develop:
       link: roots
       exclude: ["lammps"]
-    lammps_gpu:
+    gpu:
       link: roots
       exclude: ['lammps@20240417 +kokkos']
-    lammps_kokkos:
+    kokkos:
       link: roots
       exclude: ['lammps@20240417 ~kokkos']
 
