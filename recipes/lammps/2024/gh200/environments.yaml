@@ -11,9 +11,10 @@ lammps:
   - cmake
   - cuda@12
   - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
-  - mpi
-  - cray-mpich
-  - lammps@20240207.1 +cuda cuda_arch=90 +python +kokkos
+  # lammps + kokkos package
+  - lammps@20240417 +kokkos +cuda cuda_arch=90 +python +extra-dump
+  # lammps + GPU package, MPS enabled
+  - lammps@20240417 ~kokkos +cuda cuda_arch=90 +python +extra-dump +cuda_mps
   variants:
   - +mpi
   - +cuda
@@ -22,5 +23,10 @@ lammps:
     develop:
       link: roots
       exclude: ["lammps"]
-    lammps:
+    lammps_gpu:
       link: roots
+      exclude: ['lammps@20240417 +kokkos']
+    lammps_kokkos:
+      link: roots
+      exclude: ['lammps@20240417 ~kokkos']
+

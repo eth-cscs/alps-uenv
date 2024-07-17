@@ -6,8 +6,18 @@
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view lammps
+uenv view lammps_kokkos
 ```
+
+or
+
+```bash
+uenv start <LAMMPS_UENV>
+uenv view lammps_gpu
+```
+
+In the former, lammps has been compiled with the kokkos package enabled. In the later, lammps has been compiled with the GPU package enabled.
+
 
 !!! warning
     [LAMMPS] is built with GPU-aware MPI. Make sure to set `MPICH_GPU_SUPPORT_ENABLED=1` when running [LAMMPS].
