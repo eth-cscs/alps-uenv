@@ -24,12 +24,12 @@ In the former, lammps has been compiled with the kokkos package enabled. In the 
 
 ## Building from source
 
-The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] from source, including kokkos. You can follow these steps to build [LAMMPS] from source:
+The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] from source. You can follow these steps to build [LAMMPS] from source:
 
 ```bash
 # Start uenv and load develop view
 uenv start <LAMMPS_UENV>
-uenv view develop
+uenv view develop-kokkos # or uenv view develop-gpu, if building using the GPU package
 
 # cd to LAMMPS source directory
 cd <PATH_TO_LAMMPS_SOURCE>
