@@ -6,14 +6,14 @@
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view lammps_kokkos
+uenv view kokkos
 ```
 
 or
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view lammps_gpu
+uenv view gpu
 ```
 
 In the former, lammps has been compiled with the kokkos package enabled. In the later, lammps has been compiled with the GPU package enabled.
