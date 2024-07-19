@@ -10,7 +10,7 @@ editors:
   - nano
   - vim +python +lua
   # currently broken
-  #- neovim
+  - neovim
   # additional tools that integrate well with tools
   - direnv
   - fd
