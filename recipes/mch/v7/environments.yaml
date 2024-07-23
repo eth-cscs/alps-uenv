@@ -18,7 +18,7 @@ prgenv-nvidia:
   - osu-micro-benchmarks@5.9%nvhpc
   - cuda@12.3
   - eccodes@2.25.0%nvhpc +tools +fortran +aec +openmp jp2k=jasper
-  - netcdf-c
+  - netcdf-c build_system=cmake
   - netcdf-fortran%nvhpc
   - hdf5%nvhpc +szip +hl +fortran +mpi
   - openblas@0.3.21%nvhpc
