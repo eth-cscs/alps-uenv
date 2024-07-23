@@ -32,7 +32,10 @@ prgenv-nvidia:
   - cuda_arch=80
   - +mpi
   - +cuda
-  - +debug
+  - build_type=Debug
+  - cflags="-O0 -g"
+  - cxxflags="-O0 -g"
+  - fflags="-O0 -g"
   views:
     prgenv-icon:
       exclude: ['eccodes@2.19.1']
