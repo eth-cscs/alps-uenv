@@ -1,0 +1,38 @@
+editors:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  unify: true
+  mpi: null
+  specs:
+  # the editors
+  - emacs +treesitter
+  - nano
+  - vim +python +lua
+  # currently broken
+  - neovim
+  # additional tools that integrate well with tools
+  - direnv
+  - fd
+  - go
+  - lazygit
+  - lua
+  - node-js
+  # python 3.12 was breaking the build of vim
+  - python@3.11
+  - ripgrep
+  - rust
+  - tree-sitter
+  # required to fix a broken link for the latest 0.3.3
+  #- libvterm@0.3.1
+  packages:
+  - curl
+  - gmake
+  - perl
+  - git
+  views:
+    ed:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
