@@ -3,36 +3,39 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+# ----------------------------------------------------------------------------
+# If you submit this package back to Spack as a pull request,
+# please first remove this boilerplate and all FIXME comments.
+#
+# This is a template package file for Spack.  We've put "FIXME"
+# next to all the things you'll want to change. Once you've handled
+# them, you can save this file and test your package like this:
+#
+#     spack install libvterm
+#
+# You can edit this file again by typing:
+#
+#     spack edit libvterm
+#
+# See the Spack documentation for more information on packaging.
+# ----------------------------------------------------------------------------
 
 from spack.package import *
 
 
-class Libvterm(MakefilePackage):
-    """An abstract library implementation of a terminal emulator"""
+class Libvterm(MesonPackage):
+    """a fork of libvterm that uses meson to improve reliability of package building"""
 
-    homepage = "http://www.leonerd.org.uk/code/libvterm/"
+    homepage = "https://www.example.com"
+    url = "https://github.com/bcumming/libvterm/archive/refs/tags/v0.3.3-rc1.tar.gz"
 
-    license("MIT")
+    maintainers("bcumming")
 
-    version("0.3.3", sha256="09156f43dd2128bd347cbeebe50d9a571d32c64e0cf18d211197946aff7226e0")
-    version("0.3.1", sha256="25a8ad9c15485368dfd0a8a9dca1aec8fea5c27da3fa74ec518d5d3787f0c397")
-    version("0.3", sha256="61eb0d6628c52bdf02900dfd4468aa86a1a7125228bab8a67328981887483358")
-    version("0.2", sha256="4c5150655438cfb8c57e7bd133041140857eb04defd0e544521c0e469258e105")
-    version("0.1.4", sha256="bc70349e95559c667672fc8c55b9527d9db9ada0fb80a3beda533418d782d3dd")
-    version("0.1.3", sha256="e41724466a4658e0f095e8fc5aeae26026c0726dce98ee71d6920d06f7d78e2b")
+    license("MIT", checked_by="bcumming")
 
-    depends_on("libtool", type="build")
+    version("0.3.3-rc1", sha256="772bcee8ecc44f91d51285e40ba073f73289d92e50b0ec51573892513e73d354")
 
-    def url_for_version(self, version):
-        url = "https://launchpad.net/libvterm/trunk/v{0}/+download/libvterm-{1}.tar.gz"
-        return url.format(version.up_to(2), version)
-
-    def setup_build_environment(self, env):
-        env.set("LIBTOOL", self.spec["libtool"].prefix.bin.join("libtool"))
-
-    def build(self, spec, prefix):
-        make("PREFIX=" + prefix)
-
-    def install(self, spec, prefix):
-        make("install", "PREFIX=" + prefix)
+    depends_on("meson", type="build")
+    depends_on("ninja", type="build")
+    depends_on("c", type="build")
 
