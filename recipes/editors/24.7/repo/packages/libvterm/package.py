@@ -37,5 +37,4 @@ class Libvterm(MesonPackage):
 
     depends_on("meson", type="build")
     depends_on("ninja", type="build")
-    depends_on("c", type="build")
 
