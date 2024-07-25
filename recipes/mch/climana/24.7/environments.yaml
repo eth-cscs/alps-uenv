@@ -31,7 +31,7 @@ climana:
   - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
   - proj
   - python@3.11
-  - sqlite3
+  - sqlite
   # disable r for now, because it is very special, and breaks all the things
   #- r@4.3
   - udunits
