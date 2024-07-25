@@ -13,11 +13,12 @@ climana:
   - texinfo
   - libtool
   - gawk
+  - curl
   specs:
   # choose fftw instead of the default intel-oneapi-mkl.
   # this saves ~2GB of space, and reduces image build time.
   - cdo ^[virtuals=fftw-api] fftw
-  - curl
+  #- curl
   - fribidi
   - gdal
   - geos
@@ -32,8 +33,7 @@ climana:
   - proj
   - python@3.11
   - sqlite
-  # disable r for now, because it is very special, and breaks all the things
-  #- r@4.3
+  - r@4.4
   - udunits
   views:
     climana:
