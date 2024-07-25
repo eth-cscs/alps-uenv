@@ -18,16 +18,20 @@ climana:
   # this saves ~2GB of space, and reduces image build time.
   - cdo ^[virtuals=fftw-api] fftw
   - curl
+  - fribidi
   - gdal
   - geos
   - gsl
+  - harfbuzz
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
+  - libpng
   - ncview
   - nco
   - ncl
   - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
   - proj
   - python@3.11
+  - sqlite3
   # disable r for now, because it is very special, and breaks all the things
   #- r@4.3
   - udunits
