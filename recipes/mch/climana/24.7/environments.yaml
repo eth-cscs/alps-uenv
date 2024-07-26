@@ -18,14 +18,10 @@ climana:
   # choose fftw instead of the default intel-oneapi-mkl.
   # this saves ~2GB of space, and reduces image build time.
   - cdo ^[virtuals=fftw-api] fftw
-  #- curl
-  - fribidi
   - gdal
   - geos
   - gsl
-  - harfbuzz
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
-  - libpng
   - ncview
   - nco
   - ncl
@@ -33,8 +29,21 @@ climana:
   - proj
   - python@3.11
   - sqlite
-  - r@4.4
   - udunits
+  # R and its packages
+  # +X is required for png, tiff, jpeg, etc support
+  - r@4.4 +X
+  # install here so that the openssl built by Spack is used.
+  - r-curl
+  # R needs to find all of the following use pkg-config
+  # so we add them to the view, where they will be picked up.
+  - freetype
+  - fribidi
+  - harfbuzz
+  - glib
+  - libpng
+  - libjpeg-turbo
+  - libtiff
   views:
     climana:
       link: roots
