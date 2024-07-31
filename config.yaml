@@ -184,6 +184,12 @@ uenvs:
       deploy:
         eiger: [zen2]
         todi: [gh200]
+  prgenv-nvidia:
+    "24.7":
+      recipes:
+        gh200: 24.7/gh200
+      deploy:
+        todi: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
