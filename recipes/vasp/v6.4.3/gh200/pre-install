@@ -1,0 +1,9 @@
+#!/bin/bash
+
+vasp_version=6.4.3
+
+vasp_file=vasp-${vasp_version}.tar.bz2
+
+set -u
+
+curl --retry 5 -u ${CSCS_REGISTRY_USERNAME}:${CSCS_REGISTRY_PASSWORD} -X GET https://jfrog.svc.cscs.ch/artifactory/uenv-sources/vasp/${vasp_file} -o {{ env.build }}/environments/${vasp_file}

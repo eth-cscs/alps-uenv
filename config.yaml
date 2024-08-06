@@ -211,4 +211,10 @@ uenvs:
       deploy:
         todi: [gh200]
       develop: False
+    "v6.4.3":
+      recipes:
+        gh200: v6.4.3/gh200
+      deploy:
+        todi: [gh200]
+      develop: False
 
