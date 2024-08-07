@@ -59,11 +59,11 @@ ninja -j 32
 
 !!! note
 
-    On `x86` we deploy with `intel-oneapi-mkl`. Add `-DCP2K_SCALAPACK_VENDOR=MKL` to the CMake invocation.
+    On `x86` we deploy with `intel-oneapi-mkl` and `libxsmm`. Add `-DCP2K_SCALAPACK_VENDOR=MKL` to the CMake invocation to find MKL, and optionally `-DCP2K_USE_LIBXSMM=ON` to use `libxsmm`.
 
-See [CP2K `README_cmake.md`](https://github.com/cp2k/cp2k/blob/master/README_cmake.md) for more details.
+See [manual.cp2k.org/CMake] for more details.
 
 [CP2K]: https://www.cp2k.org/
 [CP2K Features]: https://www.cp2k.org/features
-[CP2K `README_cmake.md`]: https://github.com/cp2k/cp2k/blob/master/README_cmake.md
 [COSMA]: https://github.com/eth-cscs/COSMA
+[manual.cp2k.org/CMake]: https://manual.cp2k.org/trunk/getting-started/CMake.html
