@@ -1,0 +1,44 @@
+cp2k:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - cuda@12.2 # Can't be newer than driver version, for DBCSR
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc ~cuda
+  - libint
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  # COSMA
+  - tiled-mm
+  - costa
+  - cosma +gpu_direct
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius ~memory_pool
+  # CP2K
+  - dbcsr@2.7.0
+  - cp2k@2024.2 +libxc +libint +spglib +cosma +spla +elpa +sirius +plumed lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - +cuda
+    - cuda_arch=90
+    - build_type=Release
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots

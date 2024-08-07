@@ -13,6 +13,7 @@ cp2k:
   - spla ^intel-oneapi-mkl
   - elpa ^intel-oneapi-mkl
   - libxsmm
+  - plumed
   # COSMA dependencies (need to be in the develop view)
   - costa ^intel-oneapi-mkl
   - cosma ^intel-oneapi-mkl
@@ -20,15 +21,17 @@ cp2k:
   - hdf5
   - spfft ^intel-oneapi-mkl
   - sirius ~memory_pool ^intel-oneapi-mkl
-  # cuda_arch=90 not yet supported by DBCSR and CP2K
-  - dbcsr ^intel-oneapi-mkl
-  - cp2k@2024.1 +libxc +libint +spglib +cosma +spla +elpa +sirius lmax=5 build_system=cmake ^intel-oneapi-mkl
+  # CP2K
+  - dbcsr@2.7.0 ^intel-oneapi-mkl
+  - cp2k@2024.2 +spglib +cosma +spla +elpa +sirius +plumed ^intel-oneapi-mkl
   variants:
     - +mpi
     - +openmp
     - build_type=Release
+    - ~cuda
+    - ~rocm
   mpi:
-    spec: cray-mpich
+    spec: cray-mpich@8.1.30
   views:
     develop:
       link: roots
