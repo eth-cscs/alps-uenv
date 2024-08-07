@@ -82,6 +82,12 @@ uenvs:
         todi: [gh200]
         eiger: [zen2]
       develop: False
+    "2024.2":
+      recipes:
+        gh200: 2024.2/gh200
+      deploy:
+        todi: [gh200]
+      develop: False
   icon-wcp:
     "v1":
       recipes:
