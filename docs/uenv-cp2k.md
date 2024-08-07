@@ -8,8 +8,15 @@ CP2K provides a general framework for different modeling methods such as DFT usi
 
 ```bash
 uenv start <CP2K_UENV>
-uenv modules use
+uenv view modules
 module load cp2k
+```
+
+or
+
+```bash
+uenv start <CP2K_UENV>
+uenv view cp2k
 ```
 
 !!! warning
@@ -39,7 +46,8 @@ CC=mpicc CXX=mpic++ FC=mpifort cmake \
     -DCP2K_USE_SPLA=ON \
     -DCP2K_USE_SIRIUS=ON \
     -DCP2K_USE_COSMA=ON \
-    -DCP2K_USE_ACCEL=CUDA -DCP2K_WITH_GPU=A100 \
+    -DCP2K_USE_PLUMED=ON \
+    -DCP2K_USE_ACCEL=CUDA -DCP2K_WITH_GPU=H100 \
     ..
 
 ninja -j 32
@@ -59,4 +67,3 @@ See [CP2K `README_cmake.md`](https://github.com/cp2k/cp2k/blob/master/README_cma
 [CP2K Features]: https://www.cp2k.org/features
 [CP2K `README_cmake.md`]: https://github.com/cp2k/cp2k/blob/master/README_cmake.md
 [COSMA]: https://github.com/eth-cscs/COSMA
-
