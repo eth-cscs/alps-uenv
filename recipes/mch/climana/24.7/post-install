@@ -21,7 +21,7 @@ do
     for pkpath in $pkgpaths
     do
         pcfiles=($pkpath/*.pc)
-        for pcpath in $pcfiles
+        for pcpath in ${pcfiles[@]}
         do
             pcfile=$(basename $pcpath)
             from=$pkpath/$pcfile
