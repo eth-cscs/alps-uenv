@@ -43,13 +43,11 @@ prgenv-gcc:
   unify: when_possible
   mpi:
     spec: cray-mpich@8.1.30%gcc
-    gpu: cuda
   packages:
   - perl
   - curl
   - libx11
   specs:
-  - cuda@11.8
   - osu-micro-benchmarks@5.9
   - openblas@0.3.21
   - libfyaml@0.7.12
@@ -63,9 +61,7 @@ prgenv-gcc:
   - netcdf-fortran@4.5.4 ^netcdf-c+mpi
   - netcdf-fortran@4.5.4 ^netcdf-c~mpi
   variants:
-  - cuda_arch=80
   - +mpi
-  - +cuda
   views:
     prgenv-gcc-serial:
       exclude:
