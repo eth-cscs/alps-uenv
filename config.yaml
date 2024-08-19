@@ -134,6 +134,12 @@ uenvs:
       deploy:
         balfrin: [a100]
       develop: False
+    "perf":
+      recipes:
+        a100: perf
+      deploy:
+        balfrin: [a100]
+      develop: False
   namd:
     "3.0b6":
       recipes:
