@@ -59,6 +59,13 @@ $SPACK_CMD -e $HOME/environments/pv-egl-cuda/ build-env --dump $BUILD_ENV "$SPEC
 
 echo
 echo "====================================="
+echo "===== source build-env "
+echo "====================================="
+source $BUILD_ENV
+
+export mount_path=$HOME/temp/pvbuild
+echo
+echo "====================================="
 echo "===== checkout paraview/vtk/vtkm branches "
 echo "====================================="
 mkdir -p $mount_path/src
@@ -68,7 +75,7 @@ cd $mount_path/src
 git clone https://gitlab.kitware.com/paraview/paraview.git
 cd $mount_path/src/paraview
 git submodule update --init --recursive
-git checkout v5.12.0-RC3
+git checkout v5.12.1
 
 echo "====================================="
 echo "===== change to master branch of VTK "
@@ -81,12 +88,6 @@ echo "===== change to 2.1.0 branch of vtk-m "
 echo "====================================="
 cd $mount_path/src/paraview/VTK/ThirdParty/vtkm/vtkvtkm/vtk-m
 git checkout v2.1.0
-
-echo
-echo "====================================="
-echo "===== source build-env "
-echo "====================================="
-source $BUILD_ENV
 
 echo
 echo "====================================="
@@ -142,7 +143,7 @@ git clone https://github.com/jfavre/ParaViewGadgetPlugin
 mkdir $mount_path/build/ParaViewGadgetPlugin && cd $mount_path/build/ParaViewGadgetPlugin
 
 cmake -G Ninja \
-    -DParaView_DIR=$PARAVIEW_DIR/lib64/cmake/paraview-$PARAVIEW_VERSION \
+    -DParaView_DIR=$PARAVIEW_DIR/lib/cmake/paraview-$PARAVIEW_VERSION \
     -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins \
     $mount_path/src/ParaViewGadgetPlugin       
 ninja

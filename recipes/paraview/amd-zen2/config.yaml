@@ -1,0 +1,8 @@
+name: prgenv-gnu
+spack:
+  commit: jb-develop
+  repo: /capstor/scratch/cscs/biddisco/spack-eiger
+store: /user-environment
+description: paraview for eiger using osmesa
+modules: false
+
