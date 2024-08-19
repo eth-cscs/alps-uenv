@@ -7,11 +7,12 @@
 #SBATCH --account=csstaff
 #SBATCH --output=/users/biddisco/stackinator-output.%j.txt
 #SBATCH --error=/users/biddisco/stackinator-error.%j.txt
+#SBATCH --constraint=mc
 
 export PYTHONUNBUFFERED=1
 
-CLUSTER=todi
-ARCH=gh200
+CLUSTER=eiger
+ARCH=amd-zen2
 IMAGE=paraview
 VARIANT=
 SRC=/users/biddisco/src

@@ -1,4 +1,5 @@
 #!/bin/bash  -l 
+# updated Jan-Aug 2024 to support stackinator generation
 # updated Thu Dec  1 02:29:09 PM CET 2022 to add v5.11 for Eiger
 # updated Tue Nov 15 03:46:08 PM CET 2022 to add v5.11 for daint-gpu
 # updated Tue Jun  7 10:26:45 PM CEST 2022 to use generic hostname command
@@ -57,7 +58,7 @@ if [ "$8" = "normal" ];then
   fi
 fi
 
-MACHINE_NAME=clariden
+MACHINE_NAME=@MACHINE_NAME@
 export SPACK_ROOT=$SCRATCH/spack-$MACHINE_NAME
 export SPACK_USER_CONFIG_PATH=~/.spack-$MACHINE_NAME
 export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config

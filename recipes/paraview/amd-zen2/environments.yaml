@@ -1,0 +1,83 @@
+pv-osmesa:
+  compiler:
+    - toolchain: gcc
+      spec: gcc
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: Null  
+  unify: true
+  views:
+    default:
+
+  specs:
+  # Build tools
+  - git-lfs
+  - cmake
+  - ninja
+  - direnv
+  - ninja
+  - libtree
+  - llvm ~gold ~cuda
+  
+  # maths
+  - blaspp
+  - eigen
+  - fftw
+  - lapackpp
+  - openblas
+  - proj
+  
+  # c++ helperrs
+  - fmt
+  - stdexec@main
+  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
+  
+  # IO and parallelism
+  - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
+  - netcdf-c +mpi
+  - h5hut@master
+  - lz4
+    
+  # memory management
+  - jemalloc
+  - mimalloc
+  
+  # system
+  - numactl
+  
+  # profiling/testing
+  - gperftools
+  - googletest
+  
+  # multithreading
+  - tbb
+  
+  # in-situ support
+  - libcatalyst +mpi
+
+  # python
+  - python@3.11
+  - py-pandas
+  - py-matplotlib
+  - py-mpi4py
+
+  # vtk external deps
+  - seacas ~x11 ~applications ~legacy
+
+  # rendering/graphics
+  - mesa         +osmesa 
+  - osmesa ^mesa +osmesa  
+  - glew ^[virtuals=gl] osmesa ^mesa +osmesa  
+  - vtk  ^[virtuals=gl] osmesa ^mesa +osmesa  
+  - paraview@5.12 ~cuda +mpi +opengl2 +tbb +raytracing +python +vtk build_edition=rendering ^[virtuals=gl] osmesa ^mesa +osmesa  
+
+  variants:
+  - ^[virtuals=gl] osmesa
+  - ~fortran
+  - build_type=Release
+  - cxxstd=17
+  - ~examples
+  - +mpi
+  - ~x11
+
+  

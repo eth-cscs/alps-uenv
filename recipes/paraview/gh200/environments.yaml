@@ -14,7 +14,7 @@ pv-egl-cuda:
   - direnv
   - ninja
   - libtree
-  - llvm@14 ~gold ~cuda
+  - llvm@18 ~gold ~cuda
   # maths
   - blaspp
   - eigen
@@ -24,7 +24,7 @@ pv-egl-cuda:
   - proj
   # c++ helperrs
   - fmt
-  - stdexec@git.b39a506096900de4074ee556867a3805bd8351bd=main
+  - stdexec@main
   - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
   # IO and parallelism
   - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
@@ -57,9 +57,10 @@ pv-egl-cuda:
   - nlohmann-json
   - libtheora@master
   - pugixml
+  - pegtl
     # protobuf@3.4 - 3.21 to prevent abseil being pulled in @3.22:
   - protobuf@:3.21 
-  - seacas
+  - seacas ~fortran ~applications ~legacy ~tests ~x11
   - utf8cpp
   # python
   - python@3.11

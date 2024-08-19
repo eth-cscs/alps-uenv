@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# -------------------------------------
+# we output messages to stdout and also stderr to simplify debugging since logs are usually in 
+# separate files and we want to see where errors are happening in the script
+function debug_output() {
+    {
+        echo ""
+        echo "-------------------------------------" 
+        echo "-- $1"
+        echo "-------------------------------------"
+    } | tee >(cat >&2)
+}
+
+# =====================================
+debug_output "post install hook"
+
+MOUNT_PATH={{ env.mount }}
+CONFIG_PATH={{ env.config }}
+HOME=$(pwd)
+echo running in   : $MOUNT_PATH
+echo HOME is      : $HOME
+echo config is in : $CONFIG_PATH
+
+# =====================================
+debug_output "environment variables"
+printenv
+
+# =====================================
+debug_output "create post file {{ env.mount }}/post "
+echo "$(date)" > "$MOUNT_PATH/post"
+
+# =====================================
+debug_output "set vars we need frequently "
+SPACK_CMD="spack -C $CONFIG_PATH"
+
+# =====================================
+debug_output "list all spack packages "
+$SPACK_CMD find -flv
+
+# =====================================
+debug_output "convert stackinator environment into a package"
+ENV_NAME=amd-epyc # ENV_NAME must be the name declared in environments.yaml
+PACKAGE_NAME=userenv
+mkdir $MOUNT_PATH/package_repo
+cd $MOUNT_PATH/package_repo
+python3 $HOME/store/meta/recipe/env-to-package.py -f $HOME/environments/$ENV_NAME/spack.yaml -p $PACKAGE_NAME
+#$SPACK_CMD repo add $MOUNT_PATH/package_repo
+
+# =====================================
+debug_output "final $PACKAGE_NAME contents"
+cat $MOUNT_PATH/package_repo/packages/$PACKAGE_NAME/package.py
+
+# =====================================
+debug_output "Done"
