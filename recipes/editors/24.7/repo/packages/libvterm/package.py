@@ -31,7 +31,7 @@ class Libvterm(MesonPackage):
 
     maintainers("bcumming")
 
-    license("MIT", checked_by="bcumming")
+    license("MIT")
 
     version("0.3.3-rc1", sha256="772bcee8ecc44f91d51285e40ba073f73289d92e50b0ec51573892513e73d354")
 
