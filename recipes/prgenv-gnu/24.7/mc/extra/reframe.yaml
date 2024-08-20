@@ -3,4 +3,4 @@ default:
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
-  activation: /user-environment/env/develop/activate.sh
+  activation: uenv view develop
