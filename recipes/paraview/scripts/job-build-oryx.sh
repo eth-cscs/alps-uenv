@@ -12,7 +12,7 @@ export PYTHONUNBUFFERED=1
 
 CLUSTER=oryx
 STACKI_DIR=$SRC/alps-vcluster/stackinator
-RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/turing
+RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/paraview/turing
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/$CLUSTER
 BUILD_DIR=/dev/shm/biddisco
 

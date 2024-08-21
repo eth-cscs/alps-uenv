@@ -1,120 +1,154 @@
 #!/bin/bash
 
-echo "====================================="
-echo "=====     post install hook          "
-echo "====================================="
+# -------------------------------------
+# we output messages to stdout and also stderr to simplify debugging since logs are usually in
+# separate files and we want to see where errors are happening in the script
+function debug_output() {
+    {
+        echo ""
+        echo "-------------------------------------"
+        echo "-- $1"
+        echo "-------------------------------------"
+    } | tee >(cat >&2)
+}
+
+# =====================================
+debug_output "post install hook"
 mount_path={{ env.mount }}
 echo RUNNING IN $mount_path
 config_path={{ env.config }}
 echo config is in $config_path
 
-echo
-echo "====================================="
-echo "=====   environment variables        "
-echo "====================================="
+# =====================================
+debug_output "environment variables"
 printenv
 
-echo
-echo "====================================="
-echo "=====   create post file {{ env.mount }}/post "
-echo "====================================="
+# =====================================
+debug_output "create post file {{ env.mount }}/post"
 echo "$(date)" > "$mount_path/post"
 
-echo
-echo "====================================="
-echo "=====   set vars we need frequently  "
-echo "====================================="
+# =====================================
+debug_output "set vars we need frequently"
 HOME=$(pwd)
 SPACK_CMD="spack -C $config_path"
 
-echo
-echo "====================================="
-echo "===== list all spack packages        "
-echo "====================================="
+# =====================================
+debug_output "list all spack packages"
 $SPACK_CMD find -flv
 
-echo
-echo "====================================="
-echo "===== source spack environment setup "
-echo "====================================="
+# =====================================
+debug_output "source spack environment setup"
 SPACK_ROOT=$( $SPACK_CMD location -r )
 source $SPACK_ROOT/share/spack/setup-env.sh
 
-echo
-echo "====================================="
-echo "===== convert stackinator environment into a package "
-echo "====================================="
-python3 $HOME/store/meta/recipe/scripts/env-to-package.py $HOME/store/meta/recipe/environments.yaml 
+# =====================================
+debug_output "declare the name we are using for spack environment"
+# this name must match the one we are using from environments.yaml
+SPACK_ENV_NAME="pv-gh200-egl-cuda"
 
-echo
-echo "====================================="
-echo "===== create build-env "
-echo "====================================="
+# =====================================
+debug_output "convert stackinator environment into a package"
+python3 $HOME/store/meta/recipe/env-to-package.py -f $HOME/store/meta/recipe/environments.yaml -p $SPACK_ENV_NAME --add
+
+# =====================================
+debug_output "create build-env"
 BUILD_ENV=$mount_path/paraview-buildenv.rc
-SPEC="temppackage %gcc@12.3"
-$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ env activate --sh
-$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ add $SPEC
-$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ concretize
-$SPACK_CMD -e $HOME/environments/pv-egl-cuda/ build-env --dump $BUILD_ENV "$SPEC"
+SPEC="$SPACK_ENV_NAME %gcc@12 ^[virtuals=gl] egl"
+$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ env activate --sh
+$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
+$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
+$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV "$SPEC"
 
-echo
-echo "====================================="
-echo "===== source build-env "
-echo "====================================="
+# =====================================
+debug_output "source build-env"
 source $BUILD_ENV
 
-export mount_path=$HOME/temp/pvbuild
-echo
-echo "====================================="
-echo "===== checkout paraview/vtk/vtkm branches "
-echo "====================================="
-mkdir -p $mount_path/src
-cd $mount_path/src
+# =====================================
+debug_output "checkout paraview/vtk/vtkm branches"
+SRC_ROOT=$mount_path/temp/src
+BUILD_ROOT=$mount_path/temp/build
 
-# get default paraview master branch
-git clone https://gitlab.kitware.com/paraview/paraview.git
-cd $mount_path/src/paraview
-git submodule update --init --recursive
-git checkout v5.12.1
+# setup paths for src/build/install
+PARAVIEW_VERSION_MAIN=5.13
+PARAVIEW_VERSION_FULL=5.13.0-RC2
+PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
+PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
+PARAVIEW_INSTALL_DIR=$mount_path/$PARAVIEW_VERSION_MAIN
+PARAVIEW_PLUGINS_DIR=$mount_path/ParaView-Plugins
 
-echo "====================================="
-echo "===== change to master branch of VTK "
-echo "====================================="
-cd $mount_path/src/paraview/VTK
-git submodule update 
+mkdir -p $SRC_ROOT
+mkdir -p $BUILD_ROOT
 
-echo "====================================="
-echo "===== change to 2.1.0 branch of vtk-m "
-echo "====================================="
-cd $mount_path/src/paraview/VTK/ThirdParty/vtkm/vtkvtkm/vtk-m
-git checkout v2.1.0
+cd $SRC_ROOT
+if [[ $CLONE_PARAVIEW == "true" ]]; then
+    # clone paraview
+    debug_output "clone paraview"
+    git clone https://gitlab.kitware.com/paraview/paraview.git $PARAVIEW_SRC_DIR
+    cd $PARAVIEW_SRC_DIR
+    git submodule update --init --recursive
+    git checkout v${PARAVIEW_VERSION_FULL}
 
-echo
-echo "====================================="
-echo "===== run cmake on paraview "
-echo "====================================="
-mkdir -p $mount_path/build/pv && cd $mount_path/build/pv
+    # =====================================
+    debug_output "change to master branch of VTK"
+    cd $PARAVIEW_SRC_DIR/VTK
+    git submodule update
+
+    # =====================================
+    debug_output "change to 2.1.0 branch of vtk-m"
+    cd $PARAVIEW_SRC_DIR/VTK/ThirdParty/vtkm/vtkvtkm/vtk-m
+    git checkout v2.1.0
+else
+    # wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
+    cp /capstor/scratch/cscs/biddisco/uenv-data/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz .
+    tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
+fi
+
+# =====================================
+debug_output "download nvidia index libs"
+mkdir -p $SRC_ROOT/nvidia
+# wget https://www.paraview.org/files/dependencies/nvidia-index-libs-5.12.0.20231121-linux.tar.bz2
+cp /capstor/scratch/cscs/biddisco/uenv-data/nvidia-index-libs-5.12.0.20231121-linux.tar.bz2 .
+tar --directory $SRC_ROOT -xf nvidia-index-libs-5.12.0.20231121-linux.tar.bz2
+
+# =====================================
+debug_output "run cmake on paraview"
+mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR
+
 cmake -G Ninja \
-    -DCMAKE_INSTALL_PREFIX=$mount_path/paraview \
-    -DPARAVIEW_USE_QT=OFF \
-    -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON \
-    -DPARAVIEW_USE_MPI=ON \
-    -DVTK_USE_X=OFF \
-    -DVTK_OPENGL_HAS_EGL=ON \
-    -DPARAVIEW_USE_PYTHON=ON \
-    -DPARAVIEW_ENABLE_CATALYST=YES \
-    -DPARAVIEW_USE_CUDA=ON \
-    -DCMAKE_CUDA_ARCHITECTURES=90 \
-    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_fast_float=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_verdict=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_libharu=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_cli11=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_ioss=OFF \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_cgns=OFF \
-    $mount_path/src/paraview/
+    -DCMAKE_INSTALL_PREFIX=$PARAVIEW_INSTALL_DIR            \
+    -DCMAKE_BUILD_TYPE=Release                              \
+    -DPARAVIEW_BUILD_EDITION=CANONICAL                      \
+    -DPARAVIEW_USE_QT=OFF                                   \
+    -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
+    -DPARAVIEW_USE_MPI=ON                                   \
+    -DVTK_USE_X=OFF                                         \
+    -DVTK_OPENGL_HAS_EGL=ON                                 \
+    -DPARAVIEW_USE_PYTHON=ON                                \
+    -DPARAVIEW_ENABLE_CATALYST=ON                           \
+    -DPARAVIEW_USE_CUDA=ON                                  \
+    -DCMAKE_CUDA_ARCHITECTURES=90                           \
+    -DPARAVIEW_USE_VTKM=ON                                  \
+    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
+    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=ON             \
+    -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
+    -DPARAVIEW_BUILD_TESTING=OFF                            \
+    -DPARAVIEW_ENABLE_WEB:BOOL=OFF                          \
+    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
+    \
+    -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_fast_float=OFF            \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_verdict=OFF               \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_libharu=OFF               \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_cli11=OFF                 \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_cgns=OFF                  \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_pegtl=OFF                 \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_ioss=OFF                  \
+    \
+    -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
+    -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
+    $PARAVIEW_SRC_DIR/
 
     # -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion=OFF \
     # -DVTK_MODULE_ENABLE_VTK_cgns=NO \
@@ -122,44 +156,40 @@ cmake -G Ninja \
     # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOParallelCGNSWriter=NO \
     # -DVTK_MODULE_ENABLE_VTK_IOCGNSReader=NO \
     # -DVTK_MODULE_ENABLE_VTK_ioss=NO \
+    # -DVTK_MODULE_ENABLE_VTK_IOIOSS=NO                       \
+    # -DVTK_MODULE_ENABLE_VTK_ioss=NO                         \
 
-echo
-echo "====================================="
-echo "===== build and install paraview "
-echo "====================================="
-ninja 
-ninja install
-ninja clean
-
-PARAVIEW_DIR=$mount_path/paraview
-PARAVIEW_VERSION=5.12
-
-echo
-echo "====================================="
-echo "===== build plugin  "
-echo "====================================="
-cd $mount_path/src
-git clone https://github.com/jfavre/ParaViewGadgetPlugin
-mkdir $mount_path/build/ParaViewGadgetPlugin && cd $mount_path/build/ParaViewGadgetPlugin
-
-cmake -G Ninja \
-    -DParaView_DIR=$PARAVIEW_DIR/lib/cmake/paraview-$PARAVIEW_VERSION \
-    -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins \
-    $mount_path/src/ParaViewGadgetPlugin       
+# =====================================
+debug_output "build and install paraview"
 ninja
 ninja install
 ninja clean
 
-echo
-echo "====================================="
-echo "===== set permissions  "
-echo "====================================="
-chmod -R a+r $BUILD_ENV
-chmod -R a+r $mount_path/src
-chmod -R a+r $mount_path/build
-chmod -R a+r $mount_path/paraview
-chmod -R a+r $mount_path/paraview-plugins
+# =====================================
+debug_output "build gadget plugin"
+git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
+mkdir $BUILD_ROOT/ParaViewGadgetPlugin
+cd    $BUILD_ROOT/ParaViewGadgetPlugin
 
-echo "====================================="
-echo "========  Done  ========"
-echo "====================================="
+cmake -G Ninja \
+    -DCMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR \
+    -DCMAKE_INSTALL_PREFIX=$mount_path/paraview-plugins \
+    $SRC_ROOT/ParaViewGadgetPlugin
+ninja
+ninja install
+ninja clean
+
+# =====================================
+debug_output "set permissions"
+chmod -R a+r $BUILD_ENV
+chmod -R a+r $SRC_ROOT
+chmod -R a+r $BUILD_ROOT
+chmod -R a+r $PARAVIEW_INSTALL_DIR
+chmod -R a+r $PARAVIEW_PLUGINS_DIR
+
+# =====================================
+debug_output "generate user scripts to setup client/server environment"
+cmake -DOUTPUT_DIR=$mount_path/ -P $HOME/store/meta/recipe/scripts/setup-rc-submit-script.cmake
+
+# =====================================
+debug_output "Done"

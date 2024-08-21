@@ -13,7 +13,7 @@ export PYTHONUNBUFFERED=1
 SRC=$HOME/src
 CLUSTER=clariden
 STACKI_DIR=$SRC/alps-vcluster/stackinator
-RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/paraview/a100
+RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/paraview/a100
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/$CLUSTER
 BUILD_DIR=/dev/shm/biddisco
 
