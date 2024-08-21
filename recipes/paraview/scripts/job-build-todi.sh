@@ -16,7 +16,7 @@ IMAGE=paraview
 VARIANT=
 SRC=/users/biddisco/src
 STACKI_DIR=$SRC/alps-vcluster/stackinator
-RECIPE_DIR=$SRC/alps-vcluster/alps-spack-stacks/recipes/${IMAGE}${VARIANT}/${ARCH}
+RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/${IMAGE}${VARIANT}/${ARCH}
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/${CLUSTER}
 BUILD_DIR=/dev/shm/biddisco
 
@@ -44,7 +44,8 @@ env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make cache-force
 
 echo "# -----------------------------------------"
 echo "Copy generated squashfs file"
-DATE=$(date +%F)
+unalias cp
+DATE=$(date '+%Y-%m-%d@%H:%M:%S')
 ls -al /dev/shm/biddisco/store.squashfs
 echo "Generated file should be $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs"
 cp -f /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs
@@ -58,5 +59,9 @@ echo "# -----------------------------------------"
 echo "# REMOVE THE CLEANUP WHEN DEBUGGING"
 echo "# -----------------------------------------"
 echo "Clean up the /dev/shm directories"
-rm -rf   ${BUILD_DIR}/*
+#rm -rf   ${BUILD_DIR}/*
 
+echo "# -----------------------------------------"
+echo "# DEBUGGING"
+echo "unsquashfs -d /dev/shm/biddisco $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs"
+echo "bwrap --dev-bind / / --bind /dev/shm/biddisco /user-environment bash"

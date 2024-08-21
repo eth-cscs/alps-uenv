@@ -1,0 +1,14 @@
+diff --git a/ispcrt/detail/cpu/CMakeLists.txt b/ispcrt/detail/cpu/CMakeLists.txt
+index abde14b80129..6d310ccca8eb 100644
+--- a/ispcrt/detail/cpu/CMakeLists.txt
++++ b/ispcrt/detail/cpu/CMakeLists.txt
+@@ -37,7 +37,7 @@ if (ISPCRT_BUILD_TASKING)
+         if (TBB_ROOT)
+             message(STATUS "TBB root:" ${TBB_ROOT})
+             # Try to find TBB library and header files
+-            find_library(TBB_LIB NAMES libtbb.so.2 tbb PATHS ${TBB_ROOT}/lib NO_DEFAULT_PATH)
++            find_library(TBB_LIB NAMES libtbb.so.2 libtbb.so.12 tbb PATHS ${TBB_ROOT}/lib ${TBB_ROOT}/lib64 NO_DEFAULT_PATH)
+             find_path(TBB_INCLUDE_DIR NAMES ${TBB_HEADER} PATHS ${TBB_ROOT}/include NO_DEFAULT_PATH)
+             # If TBB library and header files are found, use them.
+             if (TBB_LIB AND TBB_INCLUDE_DIR)
+
