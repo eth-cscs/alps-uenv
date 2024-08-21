@@ -113,6 +113,7 @@ class Ispc(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         args = []
+        args.append("-DCMAKE_EXE_LINKER_FLAGS=-ltinfo -lz")
         args.append("-DISPC_NO_DUMPS=ON")  # otherwise, LLVM needs patching
         args.append("-DCURSES_NEED_NCURSES=TRUE")
         args.append("-DISPC_INCLUDE_EXAMPLES=OFF")
