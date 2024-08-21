@@ -6,7 +6,7 @@ vasp:
     spec: nvhpc@24.5
   unify: when_possible
   mpi:
-    spec: cray-mpich@8.1.29%nvhpc
+    spec: cray-mpich@8.1.30%nvhpc
     gpu: cuda
   specs:
       - vasp@6.4.3%nvhpc cuda_arch=90 +cuda +openmp +inplace +collective +scalapack +avoidalloc +bse +tbdyn +fock_dblbuf +ncclp2p ~profiling ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib +hdf5 +wannier90 ~libxc ~cusolvermp
