@@ -1,8 +1,7 @@
 name: prgenv-gnu
 spack:
   commit: jb-develop
-  repo: /capstor/scratch/cscs/biddisco/spack-todi
+  repo: /capstor/scratch/cscs/biddisco/spack-daint
 store: /user-environment
 description: ParaView + assorted other tools
 modules: false
-
