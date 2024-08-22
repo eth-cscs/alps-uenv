@@ -1,4 +1,4 @@
-pv-amd-zen2-osmesa:
+paraview-amd-zen2-osmesa:
   compiler:
   - toolchain: gcc
     spec: gcc
@@ -19,7 +19,7 @@ pv-amd-zen2-osmesa:
   - direnv
   - ninja
   - libtree
-  - llvm ~gold ~cuda
+  # - llvm ~gold ~cuda - removed as it pollutes the environment view
 
   # maths
   - blaspp
@@ -85,11 +85,11 @@ pv-amd-zen2-osmesa:
   - py-cftime
 
   # raytracing in VTK/ParaView
-  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
   - openvkl
   - embree
   - rkcommon
   - openimagedenoise
+  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
 
   # offscreen rendering
   - mesa         +osmesa

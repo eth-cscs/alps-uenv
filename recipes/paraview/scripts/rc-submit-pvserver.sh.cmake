@@ -1,4 +1,4 @@
-#!/bin/bash  -l 
+#!/bin/bash  -l
 # updated Jan-Aug 2024 to support stackinator generation
 # updated Thu Dec  1 02:29:09 PM CET 2022 to add v5.11 for Eiger
 # updated Tue Nov 15 03:46:08 PM CET 2022 to add v5.11 for daint-gpu
@@ -21,28 +21,55 @@ echo "        %9:Memory per Node (standard or high) ($9)"
 echo "        %10:Account (csstaff or other) ($10)"
 echo "        %11:Reservation ("" or other) ($11)"
 
+# ------------------------------------
 # Create a temporary filename to write our launch script into
 TEMP_FILE=`mktemp`
-
-# this enables us to connect to the generic name "daint.cscs.ch" from the client
-HOST_NAME=`hostname`.cscs.ch
-# HOST_NAME=148.187.134.95
-
 echo "Temporary FileName is :" $TEMP_FILE
 
-nservers=$[$3 * $4]
+# ------------------------------------
+# this enables us to connect to the generic name "daint.cscs.ch" from the client
+HOST_NAME=$(hostname).cscs.ch
 
+# ------------------------------------
+# variables set via cmake substitution
+SQUASH_IMG=@UENV@
+PARAVIEW_VERSION=@PARAVIEW_VERSION@
+PV_SERVER=/user-environment/ParaView-$PARAVIEW_VERSION/bin/pvserver
+
+# ------------------------------------
+# compute number of pvservers to run from nodes * tasks per node
+nservers=$[$3 * $4]
+cpus_task=$[128 / $4]
+
+# ------------------------------------
+# Currently we are supporting only one version of paraview in a uenv
+# so this version check is essentially obsolete:
+if [ "$7" = "nvidia" ]; then
+  # paraview nvidia EGL
+  CONSTRAINT="gpu"
+elif [ "$7" = "osmesa" ]; then
+  # paraview osmesa
+  CONSTRAINT="mc"
+fi
+
+# ------------------------------------
 # Create a job script
 echo "#!/bin/bash -l"                              >> $TEMP_FILE
 echo "#SBATCH --job-name=$1"                       >> $TEMP_FILE
+echo "#SBATCH --time=$2"                           >> $TEMP_FILE
 echo "#SBATCH --nodes=$3"                          >> $TEMP_FILE
 echo "#SBATCH --ntasks-per-node=$4"                >> $TEMP_FILE
 echo "#SBATCH --ntasks=$nservers"                  >> $TEMP_FILE
-echo "#SBATCH --time=$2"                           >> $TEMP_FILE
-echo "#SBATCH --account=${10}"                     >> $TEMP_FILE
 echo "#SBATCH --partition=$8"                      >> $TEMP_FILE
-#echo "#SBATCH --cpus-per-task=256"              >> $TEMP_FILE
-#echo "#SBATCH --ntasks-per-core=2"              >> $TEMP_FILE
+echo "#SBATCH --account=${10}"                     >> $TEMP_FILE
+echo "#SBATCH --constraint=${CONSTRAINT}"          >> $TEMP_FILE
+echo "#SBATCH --uenv=${SQUASH_IMG}"                >> $TEMP_FILE
+echo "#SBATCH --cpus-per-task=$cpus_task"          >> $TEMP_FILE
+
+# TODO: check these and replace with somethine generic
+echo "#SBATCH --ntasks-per-core=1"                 >> $TEMP_FILE
+echo "#SBATCH --hint=nomultithread"                >> $TEMP_FILE
+
 #echo "#SBATCH --threads-per-core=2"             >> $TEMP_FILE
 #echo "#SBATCH --hint=multithread"               >> $TEMP_FILE
 #  if [ "$9" = "high" ]; then
@@ -58,42 +85,15 @@ if [ "$8" = "normal" ];then
   fi
 fi
 
-MACHINE_NAME=@MACHINE_NAME@
-export SPACK_ROOT=$SCRATCH/spack-$MACHINE_NAME
-export SPACK_USER_CONFIG_PATH=~/.spack-$MACHINE_NAME
-export SPACK_SYSTEM_CONFIG_PATH=/user-environment/config
-export SPACK_USER_CACHE_PATH=/user-environment/cache
-source $SPACK_ROOT/share/spack/setup-env.sh
+echo ""                                            >> $TEMP_FILE
+echo "srun -n $nservers -N $3 --cpu_bind=sockets $PV_SERVER --reverse-connection --client-host=$HOST_NAME --server-port=$5" >> $TEMP_FILE
 
-# Which rendering backend are we using
-if [ "$7" = "clariden-5.11.2-NVIDIA" ]; then
-  # paraview 5.11.2 nvidia EGL 
-  SQUASH_IMG=/scratch/aistor/biddisco/clariden-paraview-EGL-2023-08-23.squashfs
-  SQUASH_CMD="squashfs-mount $SQUASH_IMG:/user-environment"
-  PV_HASH="/sqd4oxb"
-  PV_SERVER=$($SQUASH_CMD -- spack location -i paraview $PV_HASH)/bin/pvserver
-  echo "Using hash $PV_HASH from squashfs $SQUASH_IMG"
-  echo "pvserver : $PV_SERVER"
-
-elif [ "$7" = "clariden-5.11.2-osmesa" ]; then
-  # paraview 5.11.2 osmesa
-  PV_HASH="/ltilqh4"
-  PV_SERVER=$($SQUASH_CMD spack location -i paraview $PV_HASH)/bin/pvserver
-  OSMESA_PATH=$($SQUASH_CMD spack location -i /qadzwvd)/lib
-  echo "export LD_LIBRARY_PATH=$OSMESA_PATH:\$LD_LIBRARY_PATH" >> $TEMP_FILE
-  echo "echo Library path is \$LD_LIBRARY_PATH" >> $TEMP_FILE
-
-fi
-
-echo "" >> $TEMP_FILE
-echo "srun -n $nservers -N $3 --cpu_bind=sockets --uenv-file=$SQUASH_IMG $PV_SERVER --reverse-connection --client-host=$HOST_NAME --server-port=$5" >> $TEMP_FILE
-
-cat $TEMP_FILE
-
+# ------------------------------------
 # submit the job
-
+# ------------------------------------
+cat $TEMP_FILE
 sbatch $TEMP_FILE
 
+# ------------------------------------
 # wipe the temp file
-#rm $TEMP_FILE
-
+rm $TEMP_FILE

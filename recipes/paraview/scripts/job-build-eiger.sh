@@ -20,6 +20,9 @@ STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/${IMAGE}${VARIANT}/${ARCH}
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/${CLUSTER}
 BUILD_DIR=/dev/shm/biddisco
+SPACK_ENV_NAME="paraview-amd-zen2-osmesa-5.13"
+DATE=$(date '+%Y-%m-%d')
+SQUASHFS_IMAGE_NAME=$SCRATCH/${SPACK_ENV_NAME}-$DATE.squashfs
 
 echo "# -----------------------------------------"
 echo "Setup/clean build dir"
@@ -44,12 +47,13 @@ echo "Force push anything that was built successfully"
 env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make cache-force
 
 echo "# -----------------------------------------"
-echo "Copy generated squashfs file"
 unalias cp
-DATE=$(date '+%Y-%m-%d@%H:%M:%S')
-ls -al /dev/shm/biddisco/store.squashfs
-echo "Generated file should be $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs"
-cp -f /dev/shm/biddisco/store.squashfs $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs
+if [ -f "/dev/shm/biddisco/store.squashfs" ]; then
+    echo "Copy generated file to $SQUASHFS_IMAGE_NAME"
+    cp -f /dev/shm/biddisco/store.squashfs $SQUASHFS_IMAGE_NAME
+else
+    echo "ERROR: /dev/shm/biddisco/store.squashfs does not exist"
+fi
 
 # -----------------------------------------
 # debug : create a shell using the spack setup used to create the squashfs
@@ -64,5 +68,5 @@ echo "Clean up the /dev/shm directories"
 
 echo "# -----------------------------------------"
 echo "# DEBUGGING"
-echo "unsquashfs -d /dev/shm/biddisco $SCRATCH/$CLUSTER-${IMAGE}${VARIANT}-$DATE.squashfs"
+echo "unsquashfs -d /dev/shm/biddisco $SQUASHFS_IMAGE_NAME"
 echo "bwrap --dev-bind / / --bind /dev/shm/biddisco /user-environment bash"
