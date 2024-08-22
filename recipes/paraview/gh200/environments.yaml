@@ -88,11 +88,11 @@ pv-gh200-egl-cuda:
   - py-cftime
 
   # raytracing in VTK/ParaView
-  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
-  - openvkl
-  - embree
-  - rkcommon
-  - openimagedenoise
+  # - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
+  # - openvkl
+  # - embree
+  # - rkcommon
+  # - openimagedenoise
 
   variants:
   - +cuda
