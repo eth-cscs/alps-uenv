@@ -215,7 +215,7 @@ class Config:
             f7t_defaults = {
                     "F7T_TOKEN_URL": "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token",
                     "F7T_URL": "https://firecrest.cscs.ch",
-                    "MODE": "baremetal",
+                    "CSCS_RUNNER_MODE": "baremetal",
                     "SLURM_ACCOUNT": "csstaff",
                     "FIRECREST_SYSTEM": env["system"]}
             # set the defaults for values that have not already been set in the
