@@ -1,12 +1,4 @@
 clusters:
-  eiger:
-    targets:
-      -
-        uarch: 'zen2'
-        partition: 'normal'
-        variables:
-          SLURM_CONSTRAINT: 'mc'
-    runner: f7t
   balfrin:
     targets:
       -
@@ -18,6 +10,30 @@ clusters:
     runner:
       slurm-tag: balfrin-spack-stack-builder
       baremetal-tag: balfrin-login-baremetal
+  daint:
+    #targets:
+      #-
+      #  uarch: 'gh200'
+      #  partition: 'normal'
+      #  variables:
+      #    # new daint has a custom url (temporary?)
+      #    F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
+    #runner: f7t
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+    runner:
+      slurm-tag:  daint-spack-stack-builder
+      baremetal-tag: daint-login-baremetal
+  eiger:
+    targets:
+      -
+        uarch: 'zen2'
+        partition: 'normal'
+        variables:
+          SLURM_CONSTRAINT: 'mc'
+    runner: f7t
   pilatus:
     targets:
       -
@@ -79,6 +95,14 @@ uenvs:
         zen2: 2024.1/mc
       deploy:
         santis: [gh200]
+        todi: [gh200]
+        eiger: [zen2]
+      develop: False
+    "2024.2":
+      recipes:
+        gh200: 2024.2/gh200
+        zen2: 2024.1/mc
+      deploy:
         todi: [gh200]
         eiger: [zen2]
       develop: False
