@@ -240,5 +240,6 @@ uenvs:
         gh200: v6.4.3/gh200
       deploy:
         todi: [gh200]
+        daint: [gh200]
       develop: False
 
