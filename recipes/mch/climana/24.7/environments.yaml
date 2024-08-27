@@ -39,11 +39,13 @@ climana:
   # so we add them to the view, where they will be picked up.
   - freetype
   - fribidi
-  - harfbuzz
   - glib
-  - libpng
+  - harfbuzz
   - libjpeg-turbo
+  - libpng
   - libtiff
+  # required as a runtime dependency of the ssl R package
+  - openssl
   views:
     climana:
       link: roots
