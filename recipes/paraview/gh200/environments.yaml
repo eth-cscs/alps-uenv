@@ -22,7 +22,7 @@ paraview-gh200-egl-cuda:
   - direnv
   - ninja
   - libtree
-  - llvm ~gold ~cuda
+  - llvm@18 ~gold ~cuda
 
   # maths
   - blaspp
@@ -42,6 +42,7 @@ paraview-gh200-egl-cuda:
   - netcdf-c +mpi
   - h5hut@master
   - lz4
+  - adios2 +python +hdf5
 
   # memory management
   - jemalloc
@@ -78,10 +79,12 @@ paraview-gh200-egl-cuda:
   - utf8cpp
 
   # c2sm
-  - libcdi-pio
+  # - libcdi-pio
+  - cdi
 
   # python
   - python@3.11
+  - py-numpy
   - py-pandas
   - py-matplotlib
   - py-mpi4py
@@ -89,6 +92,7 @@ paraview-gh200-egl-cuda:
 
   # raytracing in VTK/ParaView
   - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
+  - ispc@main
   - openvkl
   - embree
   - rkcommon
