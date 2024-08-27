@@ -207,7 +207,7 @@ class Config:
 
         use_f7t = (cluster["runner"] == "f7t")
         runner = {"f7t": use_f7t}
-        runner["variables"]        = target["variables"]
+        runner["variables"] = {}
 
         # configure for firecrest, if it is used on the target cluster
         if use_f7t:
@@ -215,7 +215,7 @@ class Config:
             f7t_defaults = {
                     "F7T_TOKEN_URL": "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token",
                     "F7T_URL": "https://firecrest.cscs.ch",
-                    "MODE": "baremetal",
+                    "CSCS_RUNNER_MODE": "baremetal",
                     "SLURM_ACCOUNT": "csstaff",
                     "FIRECREST_SYSTEM": env["system"]}
             # set the defaults for values that have not already been set in the
@@ -227,6 +227,11 @@ class Config:
         else:
             runner["baremetal_runner"] = cluster["runner"]["baremetal-tag"]
             runner["slurm_runner"]     = cluster["runner"]["slurm-tag"]
+
+        # set variables after the defaults have been set, so that the defaults
+        # can be overriden per cluster/target
+        for key, value in target["variables"].items():
+            runner["variables"][key] = value
 
         return {
             "uenv": env["uenv"],
