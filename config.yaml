@@ -101,7 +101,7 @@ uenvs:
     "2024.2":
       recipes:
         gh200: 2024.2/gh200
-        zen2: 2024.1/mc
+        zen2: 2024.2/mc
       deploy:
         todi: [gh200]
         eiger: [zen2]

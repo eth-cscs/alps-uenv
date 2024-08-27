@@ -138,7 +138,7 @@ To recompile QE after editing the source code re-run `spack -e $SCRATCH/qe-env i
 4. Run `pw.x` using the filesystem view generated in 3.
 ```bash
 uenv start quantumespresso/v7.3.1
-srun [...] $SCRATCH/qe-env/view/bin/pw.x < pw.in
+MPICH_GPU_SUPPORT_ENABLED=1 srun [...] $SCRATCH/qe-env/view/bin/pw.x < pw.in
 ```
 Note: The `pw.x` is linked to the uenv, it won't work without activating the uenv, also it will only work with the exact same version of the uenv. The physical installation path is in `$SCRATCH/spack`, deleting this directory will leave the anonymous spack environment created in 3. with dangling symlinks.
 
