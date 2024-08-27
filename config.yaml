@@ -11,21 +11,21 @@ clusters:
       slurm-tag: balfrin-spack-stack-builder
       baremetal-tag: balfrin-login-baremetal
   daint:
-    #targets:
-      #-
-      #  uarch: 'gh200'
-      #  partition: 'normal'
-      #  variables:
-      #    # new daint has a custom url (temporary?)
-      #    F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
-    #runner: f7t
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  daint-spack-stack-builder
-      baremetal-tag: daint-login-baremetal
+        variables:
+          # new daint has a custom url (temporary?)
+          F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
+    runner: f7t
+    #targets:
+    #  -
+    #    uarch: 'gh200'
+    #    partition: 'normal'
+    #runner:
+    #  slurm-tag:  daint-spack-stack-builder
+    #  baremetal-tag: daint-login-baremetal
   eiger:
     targets:
       -
