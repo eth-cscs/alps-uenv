@@ -11,21 +11,21 @@ clusters:
       slurm-tag: balfrin-spack-stack-builder
       baremetal-tag: balfrin-login-baremetal
   daint:
-    #targets:
-      #-
-      #  uarch: 'gh200'
-      #  partition: 'normal'
-      #  variables:
-      #    # new daint has a custom url (temporary?)
-      #    F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
-    #runner: f7t
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  daint-spack-stack-builder
-      baremetal-tag: daint-login-baremetal
+        variables:
+          # new daint has a custom url (temporary?)
+          F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
+    runner: f7t
+    #targets:
+    #  -
+    #    uarch: 'gh200'
+    #    partition: 'normal'
+    #runner:
+    #  slurm-tag:  daint-spack-stack-builder
+    #  baremetal-tag: daint-login-baremetal
   eiger:
     targets:
       -
@@ -94,7 +94,6 @@ uenvs:
         gh200: 2024.1/gh200
         zen2: 2024.1/mc
       deploy:
-        santis: [gh200]
         todi: [gh200]
         eiger: [zen2]
       develop: False
@@ -103,6 +102,7 @@ uenvs:
         gh200: 2024.2/gh200
         zen2: 2024.2/mc
       deploy:
+        daint: [gh200]
         todi: [gh200]
         eiger: [zen2]
       develop: False
@@ -112,6 +112,7 @@ uenvs:
         a100:  wcp/icon/v1/a100
         gh200: wcp/icon/v1/gh200
       deploy:
+        todi: [gh200]
         santis: [gh200]
       develop: False
   lammps:
@@ -126,6 +127,7 @@ uenvs:
       recipes:
         gh200: "2024/gh200"
       deploy:
+        daint: [gh200]
         todi: [gh200]
         santis: [gh200]
       develop: False
@@ -139,6 +141,7 @@ uenvs:
       deploy:
         eiger: [zen2]
         santis: [gh200]
+        daint: [gh200]
         todi: [gh200]
       develop: False
       mount: "/user-tools"
@@ -150,17 +153,11 @@ uenvs:
         balfrin: [a100]
       develop: False
   namd:
-    "3.0b6":
-      recipes:
-        gh200: 3.0b6/gh200
-      deploy:
-        santis: [gh200]
-        todi: [gh200]
-      develop: False
     "3.0":
       recipes:
         gh200: 3.0/gh200
       deploy:
+        daint: [gh200]
         todi: [gh200]
       develop: False
   netcdf-tools:
@@ -206,6 +203,7 @@ uenvs:
         zen3: 24.7/mc
         gh200: 24.7/gh200
       deploy:
+        daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
   quantumespresso:
