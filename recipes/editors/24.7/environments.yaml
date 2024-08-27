@@ -21,6 +21,7 @@ editors:
   # python 3.12 was breaking the build of vim
   - python@3.11
   - ripgrep
+  - screen
   - rust
   - tree-sitter
   # required to fix a broken link for the latest 0.3.3
