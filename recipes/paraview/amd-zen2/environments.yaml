@@ -19,7 +19,7 @@ paraview-amd-zen2-osmesa:
   - direnv
   - ninja
   - libtree
-  # - llvm ~gold ~cuda - removed as it pollutes the environment view
+  - llvm@18 ~gold ~cuda
 
   # maths
   - blaspp
@@ -39,6 +39,7 @@ paraview-amd-zen2-osmesa:
   - netcdf-c +mpi
   - h5hut@master
   - lz4
+  - adios2 +python +hdf5
 
   # memory management
   - jemalloc
@@ -75,21 +76,24 @@ paraview-amd-zen2-osmesa:
   - utf8cpp
 
   # c2sm
-  - libcdi-pio
+  # - libcdi-pio
+  - cdi
 
   # python
   - python@3.11
+  - py-numpy
   - py-pandas
   - py-matplotlib
   - py-mpi4py
   - py-cftime
 
   # raytracing in VTK/ParaView
+  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
+  - ispc@main
   - openvkl
   - embree
   - rkcommon
   - openimagedenoise
-  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
 
   # offscreen rendering
   - mesa         +osmesa

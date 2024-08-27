@@ -9,50 +9,73 @@
 #SBATCH --error=/users/biddisco/stackinator-error.%j.txt
 #SBATCH --constraint=mc
 
+# -------------------------------------
+function debug_output() {
+    {
+        echo ""
+        echo "-------------------------------------"
+        echo "-- $1"
+        echo "-------------------------------------"
+    }
+}
+
+# -------------------------------------
 export PYTHONUNBUFFERED=1
 
 CLUSTER=eiger
-ARCH=amd-zen2
 IMAGE=paraview
-VARIANT=
+ARCH=amd-zen2
+VARIANT=osmesa
+VERSION=5.13
+SPACK_ENV_NAME="${IMAGE}-${ARCH}-${VARIANT}-${VERSION}"
 SRC=/users/biddisco/src
 STACKI_DIR=$SRC/alps-vcluster/stackinator
-RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/${IMAGE}${VARIANT}/${ARCH}
+RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/${IMAGE}/${ARCH}
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/${CLUSTER}
 BUILD_DIR=/dev/shm/biddisco
-SPACK_ENV_NAME="paraview-amd-zen2-osmesa-5.13"
 DATE=$(date '+%Y-%m-%d')
 SQUASHFS_IMAGE_NAME=$SCRATCH/${SPACK_ENV_NAME}-$DATE.squashfs
 
-echo "# -----------------------------------------"
-echo "Setup/clean build dir"
+# -----------------------------------------"
+debug_output "Setup/clean build dir"
 rm   -rf ${BUILD_DIR}/*
 mkdir -p ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/tmp
 
-echo "# -----------------------------------------"
-echo "Execute stackinator"
+# -----------------------------------------"
+debug_output "Execute stackinator"
 $STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop
 
-# build the squashfs image - bubblewrap is used inside the makefile
-echo "# -----------------------------------------"
-echo "Trigger build"
-cd /dev/shm/biddisco
+# -----------------------------------------"
+debug_output "cd $BUILD_DIR"
+cd $BUILD_DIR
+
+# -----------------------------------------"
+debug_output "make environments"
 export http_proxy=http://proxy.cscs.ch:8080
 export https_proxy=$http_proxy
+# env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make environments -j32
+
+# -----------------------------------------"
+debug_output "make post_install"
+# env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make post-install -j32
+
+# -----------------------------------------"
+debug_output "make squashfs image"
 env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make store.squashfs -j32
 
-echo "# -----------------------------------------"
-echo "Force push anything that was built successfully"
+# -----------------------------------------"
+debug_output "Force push anything that was built successfully"
 env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin make cache-force
 
-echo "# -----------------------------------------"
+# -----------------------------------------"
+debug_output "check generated squashfs file"
 unalias cp
-if [ -f "/dev/shm/biddisco/store.squashfs" ]; then
+if [ -f "$BUILD_DIR/store.squashfs" ]; then
     echo "Copy generated file to $SQUASHFS_IMAGE_NAME"
-    cp -f /dev/shm/biddisco/store.squashfs $SQUASHFS_IMAGE_NAME
+    cp -f $BUILD_DIR/store.squashfs $SQUASHFS_IMAGE_NAME
 else
-    echo "ERROR: /dev/shm/biddisco/store.squashfs does not exist"
+    echo "ERROR: $BUILD_DIR/store.squashfs does not exist"
 fi
 
 # -----------------------------------------
@@ -60,13 +83,11 @@ fi
 # -----------------------------------------
 # $BUILD_DIR/bwrap-mutable-root.sh --tmpfs ~ --bind $BUILD_DIR/tmp /tmp --bind $BUILD_DIR/store /user-environment env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" SPACK_SYSTEM_CONFIG_PATH=/user-environment/config /bin/bash --norc --noprofile
 
-echo "# -----------------------------------------"
-echo "# REMOVE THE CLEANUP WHEN DEBUGGING"
-echo "# -----------------------------------------"
-echo "Clean up the /dev/shm directories"
+# -----------------------------------------"
+debug_output "Cleanup /dev/shm directories"
 #rm -rf   ${BUILD_DIR}/*
 
-echo "# -----------------------------------------"
-echo "# DEBUGGING"
-echo "unsquashfs -d /dev/shm/biddisco $SQUASHFS_IMAGE_NAME"
-echo "bwrap --dev-bind / / --bind /dev/shm/biddisco /user-environment bash"
+# -----------------------------------------"
+debug_output "HOWTO: mount the squashfs image for editing"
+echo "unsquashfs -d $BUILD_DIR $SQUASHFS_IMAGE_NAME"
+echo "bwrap --dev-bind / / --bind $BUILD_DIR /user-environment bash"

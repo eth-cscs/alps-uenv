@@ -32,9 +32,14 @@ HOST_NAME=$(hostname).cscs.ch
 
 # ------------------------------------
 # variables set via cmake substitution
-SQUASH_IMG=@UENV@
+SQUASH_IMG=@UENV_IMAGE@
 PARAVIEW_VERSION=@PARAVIEW_VERSION@
-PV_SERVER=/user-environment/ParaView-$PARAVIEW_VERSION/bin/pvserver
+PARAVIEW_INSTALL_DIR=@PARAVIEW_INSTALL_DIR@
+PARAVIEW_PLUGINS_DIR=@PARAVIEW_PLUGINS_DIR@
+PV_LIBRARY_PATH=@PV_LIBRARY_PATH@
+#
+GPU_WRAPPER=$PARAVIEW_INSTALL_DIR/gpu_wrapper.sh
+PV_SERVER=$PARAVIEW_INSTALL_DIR/bin/pvserver
 
 # ------------------------------------
 # compute number of pvservers to run from nodes * tasks per node
@@ -66,7 +71,7 @@ echo "#SBATCH --constraint=${CONSTRAINT}"          >> $TEMP_FILE
 echo "#SBATCH --uenv=${SQUASH_IMG}"                >> $TEMP_FILE
 echo "#SBATCH --cpus-per-task=$cpus_task"          >> $TEMP_FILE
 
-# TODO: check these and replace with somethine generic
+# TODO: check these and replace with something generic
 echo "#SBATCH --ntasks-per-core=1"                 >> $TEMP_FILE
 echo "#SBATCH --hint=nomultithread"                >> $TEMP_FILE
 
@@ -85,8 +90,17 @@ if [ "$8" = "normal" ];then
   fi
 fi
 
-echo ""                                            >> $TEMP_FILE
-echo "srun -n $nservers -N $3 --cpu_bind=sockets $PV_SERVER --reverse-connection --client-host=$HOST_NAME --server-port=$5" >> $TEMP_FILE
+# ------------------------------------
+# setup environment needed by paraview server
+# ------------------------------------
+echo ""                                                                         >> $TEMP_FILE
+echo "spack load py-numpy"                                                      >> $TEMP_FILE
+echo "export NVINDEX_PVPLUGIN_HOME=${PARAVIEW_PLUGINS_DIR}"                     >> $TEMP_FILE
+echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:$LD_LIBRARY_PATH"                 >> $TEMP_FILE
+echo "export PV_PLUGIN_PATH=$PARAVIEW_PLUGINS_DIR:$PARAVIEW_PLUGINS_DIR/lib64"  >> $TEMP_FILE
+
+echo "" >> $TEMP_FILE
+echo "srun -n $nservers -N $3 --cpu_bind=sockets $GPU_WRAPPER $PV_SERVER --reverse-connection --client-host=$HOST_NAME --server-port=$5" >> $TEMP_FILE
 
 # ------------------------------------
 # submit the job
