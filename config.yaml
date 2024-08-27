@@ -221,6 +221,7 @@ uenvs:
       deploy:
         santis: [gh200]
         todi: [gh200]
+        daint: [gh200]
   sirius:
     "v7.5":
       recipes:
