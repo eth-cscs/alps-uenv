@@ -7,7 +7,7 @@ paraview-gh200-egl-cuda:
     gpu: cuda
   unify: true
   views:
-    paraview-zen2-osmesa:
+    paraview-gh200-egl-cuda:
       link: run
       exclude: []
       uenv:
@@ -123,7 +123,7 @@ paraview-python:
     gpu: Null
   unify: true
   views:
-    paraview-zen2-python:
+    paraview-python:
       link: run
       exclude: []
       uenv:

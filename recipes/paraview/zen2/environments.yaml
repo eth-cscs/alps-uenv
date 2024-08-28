@@ -124,7 +124,7 @@ paraview-python:
     gpu: Null
   unify: true
   views:
-    paraview-zen2-python:
+    paraview-python:
       link: run
       exclude: []
       uenv:
