@@ -1,4 +1,4 @@
-paraview-amd-zen2-osmesa:
+paraview-zen2-osmesa:
   compiler:
   - toolchain: gcc
     spec: gcc
@@ -7,8 +7,12 @@ paraview-amd-zen2-osmesa:
     gpu: Null
   unify: true
   views:
-    default:
-      link: roots
+    paraview-zen2-osmesa:
+      link: run
+      exclude: []
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
 
   specs:
 
@@ -110,3 +114,27 @@ paraview-amd-zen2-osmesa:
   - ~x11
   - ~examples
   - ~tests
+
+paraview-python:
+  compiler:
+  - toolchain: gcc
+    spec: gcc
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: Null
+  unify: true
+  views:
+    paraview-zen2-python:
+      link: run
+      exclude: []
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
+  specs:
+  - python@3.11
+  - py-numpy
+  - py-pandas
+  - py-matplotlib
+  - py-mpi4py
+  - py-cftime
