@@ -212,28 +212,13 @@ cmake \
     -P ${HOME}/store/meta/recipe/scripts/setup-rc-submit-script.cmake
 
 # =====================================
-# debug_output "create python virtual env for numpy"
-# cd $HOME
-# source $($SPACK_CMD location -r)/share/spack/setup-env.sh
-# $SPACK_CMD load python
-# python -m venv numpy_env
-# source numpy_env/bin/activate
-# $SPACK_CMD install py-numpy
-# $SPACK_CMD install py-pandas
-# $SPACK_CMD env create myenv-env
-# $SPACK_CMD env activate myenv-env
-# $SPACK_CMD add py-numpy py-pandas
-# $SPACK_CMD concretize
-# $SPACK_CMD install
-
-# =====================================
 debug_output "convenience script to copy rc-submit-pvserver.sh"
 cat <<EOF > $mount_path/init.sh
 #!/bin/bash
 echo "Copying rc-submit-pvserver.sh to users' home directory"
 cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-submit-pvserver.sh
 EOF
-chmod +x $HOME/init.sh
+chmod +x $mount_path/init.sh
 
 # =====================================
 debug_output "Done"

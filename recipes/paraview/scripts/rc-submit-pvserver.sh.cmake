@@ -94,9 +94,16 @@ fi
 # setup environment needed by paraview server
 # ------------------------------------
 echo ""                                                                         >> $TEMP_FILE
-echo "spack load py-numpy"                                                      >> $TEMP_FILE
+echo "# setting up python environment"                                          >> $TEMP_FILE
+echo "OLD_PATH=\$PATH"                                                          >> $TEMP_FILE
+echo "OLD_LD_LIBRARY_PATH=\$LD_LIBRARY_PATH"                                    >> $TEMP_FILE
+echo "source /user-environment/env/paraview-python/activate.sh"                 >> $TEMP_FILE
+echo "export PATH=\$PATH:\$OLD_PATH"                                            >> $TEMP_FILE
+echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"           >> $TEMP_FILE
+echo ""                                                                         >> $TEMP_FILE
+echo "# adding plugin paths"                                                    >> $TEMP_FILE
 echo "export NVINDEX_PVPLUGIN_HOME=${PARAVIEW_PLUGINS_DIR}"                     >> $TEMP_FILE
-echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:$LD_LIBRARY_PATH"                 >> $TEMP_FILE
+echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:\$LD_LIBRARY_PATH"                >> $TEMP_FILE
 echo "export PV_PLUGIN_PATH=$PARAVIEW_PLUGINS_DIR:$PARAVIEW_PLUGINS_DIR/lib64"  >> $TEMP_FILE
 
 echo "" >> $TEMP_FILE
