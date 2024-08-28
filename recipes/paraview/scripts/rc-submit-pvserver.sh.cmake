@@ -98,8 +98,8 @@ echo "# setting up python environment"                                          
 echo "OLD_PATH=\$PATH"                                                          >> $TEMP_FILE
 echo "OLD_LD_LIBRARY_PATH=\$LD_LIBRARY_PATH"                                    >> $TEMP_FILE
 echo "source /user-environment/env/paraview-python/activate.sh"                 >> $TEMP_FILE
-echo "export PATH=\$PATH:\$OLD_PATH"                                            >> $TEMP_FILE
-echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"           >> $TEMP_FILE
+echo "PATH=\$PATH:\$OLD_PATH"                                                   >> $TEMP_FILE
+echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"                  >> $TEMP_FILE
 echo ""                                                                         >> $TEMP_FILE
 echo "# adding plugin paths"                                                    >> $TEMP_FILE
 echo "export NVINDEX_PVPLUGIN_HOME=${PARAVIEW_PLUGINS_DIR}"                     >> $TEMP_FILE
