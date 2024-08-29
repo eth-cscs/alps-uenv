@@ -7,6 +7,7 @@ message("PARAVIEW_PLUGINS_DIR   = ${PARAVIEW_PLUGINS_DIR}")
 message("PV_LIBRARY_PATH        = ${PV_LIBRARY_PATH}")
 
 # perform string substitution on the rc-submit-pvserver.sh script
+
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/rc-submit-pvserver.sh.cmake
     ${OUTPUT_DIR}/rc-submit-pvserver.sh

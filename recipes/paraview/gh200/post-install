@@ -107,8 +107,8 @@ fi
 debug_output "download + extract nvidia index libs"
 NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux
 NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-# wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-cp $SCRATCH/uenv-data/$NVINDEX_TARBALL $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+# cp $SCRATCH/uenv-data/$NVINDEX_TARBALL $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 
 # =====================================
@@ -135,6 +135,7 @@ cmake -G Ninja \
     -DCMAKE_CUDA_ARCHITECTURES=90                           \
     `# VTM-m`                                               \
     -DPARAVIEW_USE_VTKM=ON                                  \
+    `# NVidia index`                                        \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
     -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=ON             \
     `# Plugin related options`                              \
@@ -158,15 +159,6 @@ cmake -G Ninja \
     -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
     -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
     $PARAVIEW_SRC_DIR/
-
-    # -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion=OFF \
-    # -DVTK_MODULE_ENABLE_VTK_cgns=NO \
-    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOCGNSWriter=NO \
-    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOParallelCGNSWriter=NO \
-    # -DVTK_MODULE_ENABLE_VTK_IOCGNSReader=NO \
-    # -DVTK_MODULE_ENABLE_VTK_ioss=NO \
-    # -DVTK_MODULE_ENABLE_VTK_IOIOSS=NO                       \
-    # -DVTK_MODULE_ENABLE_VTK_ioss=NO                         \
 
 # =====================================
 debug_output "build and install paraview"
@@ -215,8 +207,8 @@ cmake \
 debug_output "convenience script to copy rc-submit-pvserver.sh"
 cat <<EOF > $mount_path/init.sh
 #!/bin/bash
-echo "Copying rc-submit-pvserver.sh to users' home directory"
-cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-submit-pvserver.sh
+echo "Copying Remote-Connection pvserver launch script to users' home directory"
+cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-pvserver-$cluster.sh
 EOF
 chmod +x $mount_path/init.sh
 
