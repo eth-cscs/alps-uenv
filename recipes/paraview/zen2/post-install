@@ -107,8 +107,8 @@ fi
 debug_output "download + extract nvidia index libs"
 NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux
 NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-# wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-cp $SCRATCH/uenv-data/$NVINDEX_TARBALL $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+# cp $SCRATCH/uenv-data/$NVINDEX_TARBALL $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 
 # =====================================
@@ -134,8 +134,9 @@ cmake -G Ninja \
     -DPARAVIEW_USE_CUDA=OFF                                 \
     `# VTM-m`                                               \
     -DPARAVIEW_USE_VTKM=ON                                  \
-    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
-    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=ON             \
+    `# NVidia index`                                        \
+    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=OFF              \
+    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     `# Plugin related options`                              \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
@@ -158,38 +159,6 @@ cmake -G Ninja \
     -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
     $PARAVIEW_SRC_DIR/
 
-    # c2sm
-    # -DPARAVIEW_PLUGIN_AUTOLOAD_CDIReader=ON                 \
-    # -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
-
-    # -Dcatalyst_DIR=$( $SPACK_CMD location -i libcatalyst 2>/dev/null ) \
-    # -DPARAVIEW_BUILD_EDITION=CATALYST_RENDERING     \
-
-    # -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion=OFF \
-    # -DVTK_MODULE_ENABLE_VTK_cgns=NO \
-    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOCGNSWriter=NO \
-    # -DVTK_MODULE_ENABLE_ParaView_VTKExtensionsIOParallelCGNSWriter=NO \
-    # -DVTK_MODULE_ENABLE_VTK_IOCGNSReader=NO \
-    # -DVTK_MODULE_ENABLE_VTK_ioss=NO \
-
-    # -DOpenImageDenoise_DIR=`$SPACK_CMD location -i openimagedenoise`/lib64/cmake/OpenImageDenoise-2.2.2 \
-    # -Dembree_DIR=`$SPACK_CMD location -i embree`/lib64/cmake/embree-4.3.1 \
-    # -Drkcommon_DIR=`$SPACK_CMD location -i rkcommon`/lib64/cmake/rkcommon-1.11.0 \
-    # -Dopenvkl_DIR=`$SPACK_CMD location -i openvkl`/lib64/cmake/openvkl-1.3.2 \
-    # -Dospray_DIR=`$SPACK_CMD location -i ospray`/lib64/cmake/ospray-2.12.0
-    # -DVTK_MODULE_ENABLE_VTK_IOIOSS=NO                       \
-    # -DVTK_MODULE_ENABLE_VTK_ioss=NO                         \
-    #
-
-# cuda + egl
-#   -DVTK_OPENGL_HAS_EGL:BOOL=ON -DVTK_USE_X:BOOL=OFF \
-#   \
-#   -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX:BOOL=ON \
-#   -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX:BOOL=ON \
-#   \
-#   -DPARAVIEW_USE_VTKM=ON -DPARAVIEW_USE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=90 \
-
-#   -DCDI_DIR=${cdi_install_dir}/lib/cmake/cdi \
 # =====================================
 debug_output "build and install paraview"
 ninja
@@ -237,8 +206,8 @@ cmake \
 debug_output "convenience script to copy rc-submit-pvserver.sh"
 cat <<EOF > $mount_path/init.sh
 #!/bin/bash
-echo "Copying rc-submit-pvserver.sh to users' home directory"
-cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-submit-pvserver.sh
+echo "Copying Remote-Connection pvserver launch script to users' home directory"
+cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-pvserver-$cluster.sh
 EOF
 chmod +x $mount_path/init.sh
 

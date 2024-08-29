@@ -22,19 +22,27 @@ function debug_output() {
 # -------------------------------------
 export PYTHONUNBUFFERED=1
 
+# -------------------------------------
+# useful variables
+# -----------------------------------------"
+debug_output "Setup env vars"
 CLUSTER=eiger
 IMAGE=paraview
 ARCH=zen2
 VARIANT=osmesa
 VERSION=5.13
 SPACK_ENV_NAME="${IMAGE}-${ARCH}-${VARIANT}-${VERSION}"
-SRC=/users/biddisco/src
+SRC=$HOME/src
 STACKI_DIR=$SRC/alps-vcluster/stackinator
 RECIPE_DIR=$SRC/alps-vcluster/alps-uenv/recipes/${IMAGE}/${ARCH}
 SYSTEM_DIR=$SRC/alps-vcluster/alps-cluster-config/${CLUSTER}
 BUILD_DIR=/dev/shm/biddisco
 DATE=$(date '+%Y-%m-%d')
 SQUASHFS_IMAGE_NAME=$SCRATCH/${SPACK_ENV_NAME}-$DATE.squashfs
+
+# -----------------------------------------"
+http_proxy=http://proxy.cscs.ch:8080
+https_proxy=$http_proxy
 
 # -----------------------------------------"
 debug_output "Setup/clean build dir"
@@ -51,18 +59,8 @@ debug_output "cd $BUILD_DIR"
 cd $BUILD_DIR
 
 # -----------------------------------------"
-debug_output "make environments"
-export http_proxy=http://proxy.cscs.ch:8080
-export https_proxy=$http_proxy
-# env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make environments -j32
-
-# -----------------------------------------"
-debug_output "make post_install"
-# env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make post-install -j32
-
-# -----------------------------------------"
 debug_output "make squashfs image"
-env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" make store.squashfs -j32
+env --ignore-environment PATH=/usr/bin:/bin:`pwd`/spack/bin HOME="$HOME" http_proxy=$http_proxy https_proxy=$https_proxy no_proxy="$no_proxy" cluster=$CLUSTER make store.squashfs -j32
 
 # -----------------------------------------"
 debug_output "Force push anything that was built successfully"
@@ -85,7 +83,7 @@ fi
 
 # -----------------------------------------"
 debug_output "Cleanup /dev/shm directories"
-#rm -rf   ${BUILD_DIR}/*
+rm -rf   ${BUILD_DIR}/*
 
 # -----------------------------------------"
 debug_output "HOWTO: mount the squashfs image for editing"
