@@ -25,7 +25,7 @@ export PYTHONUNBUFFERED=1
 # useful variables
 # -----------------------------------------"
 debug_output "Setup env vars"
-CLUSTER=todi
+CLUSTER=daint
 IMAGE=paraview
 ARCH=gh200
 VARIANT=egl
