@@ -448,3 +448,39 @@ By default, if
 The plugin will mount the image automatically on the login node
 * come to think of it, why are the modules loaded when calling sbatch on a login node loaded on all the compute nodes?
 
+```bash
+#!/bin/bash
+#SBATCH --uenv=prgenv-gnu/24.7:v3
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --output=job%j.out
+#SBATCH --error=job%j.out
+
+# load the view
+uenv view default
+exe=/capstor/scratch/cscs/bcumming/demo/affinity/build/affinity.cuda
+
+srun -n4 -N1 $exe
+
+# note: within this week the following will be possible
+
+#srun -n4 -N1 --uenv=prgenv-gnu --uenv-view=default affinity.gpu
+```
+
+```bash
+#!/bin/bash
+#SBATCH --uenv=prgenv-gnu/24.7:v3
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --output=job%j.out
+#SBATCH --error=job%j.out
+
+# load the view
+uenv view default
+exe=/capstor/scratch/cscs/bcumming/demo/affinity/build/affinity.cuda
+
+srun -n4 -N1 $exe
+
+arbor=/capstor/scratch/cscs/bcumming/demo/arbor/build/bin/busyring
+srun --uenv=arbor/v0.9 -n4 -N1 --gpus-per-task=1 $arbor
+```
