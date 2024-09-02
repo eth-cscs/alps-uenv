@@ -1,8 +1,7 @@
-name: prgenv-gnu
-spack:
-  commit: jb-develop
-  repo: /capstor/scratch/cscs/biddisco/spack-eiger
+name: ParaView
 store: /user-environment
-description: paraview for eiger using osmesa
+spack:
+  commit: 4f0e336ed09408809df1b570422a64b3e02e9eb2
+  repo: https://github.com/spack/spack.git
+description: ParaView for eiger using osmesa
 modules: false
-
