@@ -15,6 +15,9 @@ nav:
     - 'tutorial: application': pkg-application-tutorial.md
   - 'Compilation':
     - 'uenv and Spack': uenv-compilation-spack.md
+  - 'Tutorials':
+    - 'CSCS user day 2024': userlab-2024-tutorial.md
+
 theme:
   name: material
   features:
