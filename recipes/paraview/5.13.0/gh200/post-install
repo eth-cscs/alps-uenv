@@ -107,8 +107,8 @@ fi
 debug_output "download + extract nvidia index libs"
 NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux
 NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-# cp $SCRATCH/uenv-data/$NVINDEX_TARBALL $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+# wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 
 # =====================================
