@@ -93,6 +93,6 @@ The uenv is designed for deployment on all vClusters - it does not have any GPU-
 
 To find which versions (if any) are available on your target system:
 ```
-uenv find editors
+uenv image find editors
 ```
 
