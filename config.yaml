@@ -68,8 +68,17 @@ uenvs:
         gh200: v0.9/gh200
       deploy:
         eiger: [zen2]
-        santis: [gh200]
         todi: [gh200]
+  editors:
+    "24.7":
+      recipes:
+        zen2: "24.7"
+        zen3: "24.7"
+        gh200: "24.7"
+      deploy:
+        eiger: [zen2]
+        todi: [gh200]
+      mount: "/user-tools"
   gromacs:
     "2023":
       recipes:

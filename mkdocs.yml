@@ -4,6 +4,7 @@ nav:
   - 'uenv':
     - 'Overview': uenv-overview.md
     - 'cp2k': uenv-cp2k.md
+    - 'editors': uenv-editors.md
     - 'gromacs': uenv-gromacs.md
     - 'lammps': uenv-lammps.md
     - 'linaro-forge': uenv-linaro-forge.md
