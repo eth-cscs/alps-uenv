@@ -141,12 +141,10 @@ uenvs:
         santis: [gh200]
       develop: False
   linaro-forge:
-    "23.1.2":
+    "24.0.2":
       recipes:
-        zen2: "23.1.2"
-        zen3: "23.1.2"
-        a100: "23.1.2"
-        gh200: "23.1.2"
+        zen2: "24.0.2"
+        gh200: "24.0.2"
       deploy:
         eiger: [zen2]
         santis: [gh200]
