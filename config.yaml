@@ -69,6 +69,15 @@ uenvs:
       deploy:
         eiger: [zen2]
         todi: [gh200]
+  climana:
+    "24.7":
+      recipes:
+        zen2: mch/climana/24.7
+        zen3: mch/climana/24.7
+        a100: mch/climana/24.7
+      deploy:
+        balfrin: [zen3, a100]
+      develop: False
   editors:
     "24.7":
       recipes:
