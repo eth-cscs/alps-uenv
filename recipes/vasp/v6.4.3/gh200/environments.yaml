@@ -1,0 +1,35 @@
+vasp:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13.2
+  - toolchain: llvm
+    spec: nvhpc@24.5
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.30%nvhpc
+    gpu: cuda
+  specs:
+      - vasp@6.4.3%nvhpc cuda_arch=90 +cuda +openmp +inplace +collective +scalapack +avoidalloc +bse +tbdyn +fock_dblbuf +ncclp2p ~profiling ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib +hdf5 +wannier90 ~libxc ~cusolvermp
+      - cuda@12.4%nvhpc
+      - wannier90%nvhpc
+      - libxc~cuda~fhc%nvhpc
+      - fftw%nvhpc +openmp
+      - nvpl-blas%nvhpc threads=openmp
+      - nvpl-lapack%nvhpc threads=openmp
+      - netlib-scalapack%nvhpc ~shared
+      - hdf5%nvhpc +fortran
+      - cmake
+      - ninja
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+  packages:
+  - perl
+

@@ -5,11 +5,11 @@ nvhpc-env:
     - toolchain: llvm
       spec: nvhpc
   mpi:
-    spec: cray-mpich@8.1.29%nvhpc
+    spec: cray-mpich@8.1.30%nvhpc
     gpu: cuda
   unify: true
   specs:
-  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack +openmp
+  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack +openmp +mpigpu
   - netlib-scalapack
   - fftw%nvhpc
   - nvpl-blas threads=openmp
