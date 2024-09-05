@@ -1,0 +1,10 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  unify: true
+  specs:
+  - linaro-forge@24.0.2 +accept-eula
+  views:
+    forge:
+      link: roots

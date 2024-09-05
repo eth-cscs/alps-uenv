@@ -1,0 +1,49 @@
+namd-single-node:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12.4
+  - fftw@3.3.10 +openmp ~mpi
+  - tcl@8.6
+  - charmpp@=8.0.0 backend=multicore +production +tracing
+  - namd@=3.0 +cuda cuda_arch=90 +single_node_gpu
+  views:
+    develop-single-node:
+      link: roots
+      exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    namd-single-node:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+namd:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cuda@12.4
+  - fftw@3.3.10 +openmp
+  - tcl@8.6
+  - charmpp@=8.0.0 backend=mpi +production +tracing ^cray-mpich
+  - namd@=3.0 +cuda cuda_arch=90
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  views:
+    develop:
+      link: roots
+      exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    namd:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
