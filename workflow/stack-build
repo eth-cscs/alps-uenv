@@ -98,8 +98,8 @@ log "mount       ${mount}"
 # Check if the recipe path exists
 [[ -d "${recipe_path}" ]] || err "recipe path '$recipe_path' does not exist"
 
-# add scripts to PATH
-export PATH="${ci_path}/scripts:$PATH"
+# add workflow directory to PATH
+export PATH="${ci_path}/workflow:$PATH"
 
 ##
 # Set up build cache flags if a build cache is available
@@ -126,7 +126,7 @@ fi
 ##
 
 log "configuring oras"
-source ${ci_path}/scripts/setup-oras
+source ${ci_path}/workflow/setup-oras
 
 
 ##
@@ -134,7 +134,7 @@ source ${ci_path}/scripts/setup-oras
 ##
 
 # Initialise the stackinator
-source ${ci_path}/scripts/setup-stackinator
+source ${ci_path}/workflow/setup-stackinator
 
 ##
 # Configure the build
@@ -164,7 +164,7 @@ cd "${build_path}"
 log "building image in ${build_path}"
 
 echo "env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin make store.squashfs -j64"
-# Propagate username and password defined in scripts/setup-oras (to be used in pre-install script)
+# Propagate username and password defined in workflow/setup-oras (to be used in pre-install script)
 env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" CSCS_REGISTRY_USERNAME=$jfrog_u CSCS_REGISTRY_PASSWORD=$jfrog_p make store.squashfs -kj64
 [[ $? -eq 0  ]] || env --ignore-environment PATH=/usr/bin:/bin:${PWD}/spack/bin  HOME=$HOME https_proxy=$https_proxy http_proxy=$http_proxy no_proxy="$no_proxy" CSCS_REGISTRY_USERNAME=$jfrog_u CSCS_REGISTRY_PASSWORD=$jfrog_p make store.squashfs -kj8
 

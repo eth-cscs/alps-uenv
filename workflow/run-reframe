@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 #usage: run-reframe -s system -n name
 
@@ -61,7 +61,7 @@ log "ci_path     ${ci_path}"
 log "test_path   ${test_path}"
 
 # configure oras
-source ${ci_path}/scripts/setup-oras
+source ${ci_path}/worfklow/setup-oras
 
 # create the path in which tests will run...
 mkdir -p ${test_path}
