@@ -2,7 +2,7 @@ site_name: alps-uenv
 nav:
   - Home: index.md
   - 'uenv':
-    - 'Overview': uenv-overview.md
+    - 'uenv': uenv-overview.md
     - 'cp2k': uenv-cp2k.md
     - 'editors': uenv-editors.md
     - 'gromacs': uenv-gromacs.md
@@ -12,13 +12,13 @@ nav:
     - 'prgenv-gnu': uenv-prgenv-gnu.md
     - 'quantumespresso': uenv-qe.md
     - 'vasp': uenv-vasp.md
-  - 'Developers':
-    - 'Overview': developers-overview.md
+  - 'developers':
+    - 'developers': developers-overview.md
     - 'recipe writing best practices': pkg-application-tutorial.md
     - 'how to write reframe tests': pkg-reframe.md
     - 'writing uenv documentation': pkg-writing-docs.md
-  - 'Tutorials':
-    - 'Overview': tutorial-overview.md
+  - 'tutorials':
+    - 'tutorials': tutorial-overview.md
     - 'uenv and Spack': tutorial-spack.md
     - 'CSCS user day 2024': tutorial-userday-2024.md
 
@@ -45,6 +45,10 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 extra_css:
   - stylesheets/extra.css
 repo_url: https://github.com/eth-cscs/alps-uenv
