@@ -119,6 +119,10 @@ uenvs:
       recipes:
         gh200: 2024.2/gh200
         zen2: 2024.2/mc
+    "2024.3":
+      recipes:
+        gh200: 2024.3/gh200
+        zen2: 2024.3/mc
       deploy:
         daint: [gh200]
         todi: [gh200]
