@@ -16,16 +16,8 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          # new daint has a custom url (temporary?)
-          F7T_URL: "https://firecrest-hpc.v1.svc.cscs.ch"
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
-    #targets:
-    #  -
-    #    uarch: 'gh200'
-    #    partition: 'normal'
-    #runner:
-    #  slurm-tag:  daint-spack-stack-builder
-    #  baremetal-tag: daint-login-baremetal
   eiger:
     targets:
       -
@@ -44,22 +36,14 @@ clusters:
           F7T_URL: 'https://firecrest-dev.cscs.ch'
     runner: f7t
     #no_bwrap: True
-  santis:
-    targets:
-      -
-        uarch: 'gh200'
-        partition: 'normal'
-    runner:
-      slurm-tag:  santis-spack-stack-builder
-      baremetal-tag: santis-login-baremetal
   todi:
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  todi-spack-stack-builder
-      baremetal-tag: todi-login-baremetal
+        variables:
+          F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
+    runner: f7t
 uenvs:
   arbor:
     "v0.9":
