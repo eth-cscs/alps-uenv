@@ -36,6 +36,14 @@ clusters:
           F7T_URL: 'https://firecrest-dev.cscs.ch'
     runner: f7t
     #no_bwrap: True
+  santis:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+    runner:
+      slurm-tag:  santis-spack-stack-builder
+      baremetal-tag: santis-login-baremetal
   todi:
     targets:
       -
