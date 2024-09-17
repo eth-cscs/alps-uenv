@@ -90,6 +90,7 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         santis: [gh200]
+        daint: [gh200]
   cp2k:
     "2024.1":
       recipes:
