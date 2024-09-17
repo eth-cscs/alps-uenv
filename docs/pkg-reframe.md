@@ -1,12 +1,12 @@
 # ReFrame Testing Tutorial
 
-When ReFrame tests are enabled for a uenv, they are automatically run:
+When [ReFrame] tests are enabled for a uenv, they are automatically run:
 
 * in the CI/CD pipeline after the image has been built;
 * in daily/weekly testing of individual vClusters;
 * and when upgrading and updating vClusters.
 
-This page is a tutorial, that will guide you through the process of enabling testing in your uenv, and on writing portable tests that will run on any uenv-enabled system on Alps.
+This page is a tutorial, that will guide you through the process of enabling testing for your uenv, and on writing portable tests that will run on any uenv-enabled system on [Alps].
 
 !!! info
 
@@ -18,7 +18,7 @@ This page is a tutorial, that will guide you through the process of enabling tes
 
 ## How uenv ReFrame testing works
 
-CSCS maintains a set of ReFrame tests in the CSCS ReFrame tests repository [eth-cscs/cscs-reframe-tests].
+CSCS maintains a set of [ReFrame] tests in the CSCS ReFrame tests repository [eth-cscs/cscs-reframe-tests].
 These tests cover a very wide range of features, including application tests, login node health and Slurm, and can be run on any vCluster on Alps.
 
 !!! info
@@ -35,7 +35,7 @@ Setting up tests for a uenv requires making changes to two repositories:
 
 ### uenv recipe meta data
 
-To enable ReFrame tests in your uenv, and yaml file `extra/reframe.yaml` should be added to the recipe.
+To enable ReFrame tests in your uenv, a yaml file `extra/reframe.yaml` should be added to the recipe.
 
 Below is an example `reframe.yaml` file:
 
@@ -65,13 +65,13 @@ This configuration defines a single _environment_ named `develop`, which corresp
 * `views`: **(optional)** a list of views to load.
     * in this case `develop` view is to be loaded.
 
-Uenv can provide multiple views, for different use cases.
+A uenv can provide multiple views, for different use cases.
 The most common example is a uenv that provides two views: one that provides an application, and another that provides the tools used to build the application. Another example is the `modules` and `spack` views, that expose a module interface or useful configuration for using Spack with the uenv.
 
 Similarly, it is possible to create multiple environments to test.
 The example below defines two environments that provide the same features, i.e. the same tests will be run on each.
 The first example is the one above, and the second sets up an equivalent environment using modules.
-This would be useful for a uenv that has some users who insist on using modules to set up their build enviroment.
+This would be useful for a uenv that has some users who insist on using modules to set up their build environment.
 
 ```yaml title="extra/reframe.yaml for multiple environments to test"
 develop:
@@ -105,7 +105,7 @@ modules:
 
 !!! question "What is an environment?"
 
-    What is the difference between using `module load`, activating a python venv, loading a spack environment, or a uenv view?
+    What is the difference between using `module load`, activating a python venv, loading a Spack environment, or a uenv view?
 
     Nothing!
 
@@ -113,17 +113,17 @@ modules:
 
     The main variables that change the behavior of the system are `PATH` and `LD_LIBRARY_PATH`, though there are many others like `PKG_CONFIG_PATH`, `CUDA_HOME`, `MODULEPATH` etc that will have more subtle effects on configuring and building software.
 
-    Configur an environment for running tests requires specifying the commands that will **modify and set environment variables** such that the tests can run. For example, a view or module might be loaded to make the executable of a scientific code be in `PATH`, or to add tools like `cmake`, `nvcc` and `gcc` to `PATH` so that we can run a test that builds an application.
+    Configuring an environment for running tests requires specifying the commands that will **modify and set environment variables** such that the tests can run. For example, a view or module might be loaded to make the executable of a scientific code be in `PATH`, or to add tools like `cmake`, `nvcc` and `gcc` to `PATH` so that we can run a test that builds an application.
 
 ## Creating uenv tests
 
 The final objective for adding tests to a uenv is to have:
 
-1. a uenv deployed with an `meta/extra/reframe.yaml` file;
+1. a uenv deployed with a `extra/reframe.yaml` file;
 2. and tests in the [eth-cscs/cscs-reframe-tests] repository
 
 In this second half of the tutorial, a workflow for doing this that minimises the amount of time spent
-waiting in job and ci/cd queues is provided.
+waiting in job and CI/CD queues is provided.
 Before starting, you will need the following:
 
 * a working uenv squashfs image with corresponding meta data path;
@@ -141,7 +141,7 @@ $ meta=$(uenv image inspect cp2k/2024.2:v1 --format={meta})
 # check the path - your location will be different
 $ echo ${meta}
 
-# create the reframe meta data eile
+# create the reframe meta data file
 $ mkdir -p ${meta}/extra
 $ vim ${meta}/extra/reframe.yaml
 ```
@@ -152,7 +152,7 @@ The `meta` path is the meta data for the uenv for the image.
 
     We inject the `reframe.yaml` file into the meta data in the uenv repo to create a "development environment", where it can be modified while developing the tests in an interactive shell.
 
-    The `reframe.yaml` file will be added to the recipe later, once it is time to start testing in a ci/cd pipeline.
+    The `reframe.yaml` file will be added to the recipe later, once it is time to start testing in a CI/CD pipeline.
 
 
 ### Step 2: set up the CSCS reframe tests
@@ -555,3 +555,5 @@ $ reframe -C cscs-reframe-tests/config/cscs.py \
 [eth-cscs/alps-uenv]: https://github.com/eth-cscs/alps-uenv
 [eth-cscs/cscs-reframe-tests]: https://github.com/eth-cscs/cscs-reframe-tests
 [ReFrame environment]: https://reframe-hpc.readthedocs.io/en/stable/tutorial.html#environment-features-and-extras
+[ReFrame]: https://reframe-hpc.readthedocs.io/en/stable/
+[Alps]: https://www.cscs.ch/computers/alps
