@@ -1,6 +1,6 @@
 !/bin/bash
 
-#usage: run-reframe -s system -n name
+#usage: stage-test -s system -n name
 
 datetime () { date +"%Y-%m-%d %H:%M:%S"; }
 
@@ -61,7 +61,7 @@ log "ci_path     ${ci_path}"
 log "test_path   ${test_path}"
 
 # configure oras
-source ${ci_path}/worfklow/setup-oras
+source ${ci_path}/worfklow/util/setup-oras
 
 # create the path in which tests will run...
 mkdir -p ${test_path}

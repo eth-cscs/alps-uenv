@@ -9,7 +9,7 @@ import yaml
 
 prefix = pathlib.Path(__file__).parent.resolve()
 root_path = prefix.parent.resolve().parent.resolve()
-recipe_path = root_path / "recipes"
+recipe_path = root_path / "../recipes"
 
 sys.path = [prefix.as_posix()] + sys.path
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # read and validate the configuration
     print(recipe_path)
     try:
-        config = configuration.Config(prefix / "../../config.yaml", recipe_path)
+        config = configuration.Config(prefix / "../../../config.yaml", recipe_path)
     except jsonschema.exceptions.ValidationError as e:
         print()
         where = e.json_path.replace("$.","").replace(".", ":")
@@ -135,7 +135,8 @@ if __name__ == "__main__":
     # generate top level makefiles
     pipeline_template = jinja_env.get_template("pipeline.yml")
 
-    with (root_path / "pipeline.yml").open("w") as f:
+    dir_path = pathlib.Path.cwd()
+    with (dir_path / "pipeline.yml").open("w") as f:
         f.write(pipeline_template.render(jobs=[job]))
 
 
