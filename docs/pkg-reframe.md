@@ -1,12 +1,12 @@
 # ReFrame Testing Tutorial
 
-When [ReFrame] tests are enabled for a uenv, they are automatically run:
+When [ReFrame] tests are enabled for an uenv, they are automatically run:
 
 * in the CI/CD pipeline after the image has been built;
 * in daily/weekly testing of individual vClusters;
 * and when upgrading and updating vClusters.
 
-This page is a tutorial, that will guide you through the process of enabling testing for your uenv, and on writing portable tests that will run on any uenv-enabled system on [Alps].
+This page is a tutorial that will guide you through the process of enabling testing for your uenv, and on writing portable tests that will run on any uenv-enabled system on [Alps].
 
 !!! info
 
@@ -25,9 +25,9 @@ These tests cover a very wide range of features, including application tests, lo
 
     When running this test suite with a uenv, only the subset of the test suite that is relevant for the uenv will be run.
 
-Setting up tests for a uenv requires making changes to two repositories:
+Setting up tests for an uenv requires making changes to two repositories:
 
-* [eth-cscs/alps-uenv] **adding meta data to the uenv** to be used by ReFrame to:
+* [eth-cscs/alps-uenv] **adding metadata to the uenv** to be used by ReFrame to:
     * load the uenv and configure the environment so that it is ready to run tests;
     * and, choose which tests from the test suite are used to test the uenv.
 * [eth-cscs/cscs-reframe-tests] **updating and adding tests** in the that are relevant to the uenv.
@@ -57,7 +57,7 @@ This configuration defines a single _environment_ named `develop`, which corresp
 * `features`: a list of ReFrame features that are provided by the environment.
     * used to decide which tests will be run against the uenv.
     * in this case the uenv provides:
-        * `cuda`: expect tests that compile and test NVIDIA gpu aware problems.
+        * `cuda`: expect tests that compile and test NVIDIA GPU aware problems.
         * `mpi`: expect basic MPI tests that compile and validate MPI to be run. When combined with `cuda` above, tests for GPU-aware MPI will be run.
         * `arbor-dev`: a specific feature that specifies that _the environment provides everything required to build and run arbor_.
 * `cc`, `cxx`, `ftn`: define the compiler aliases
@@ -146,7 +146,7 @@ $ mkdir -p ${meta}/extra
 $ vim ${meta}/extra/reframe.yaml
 ```
 
-The `meta` path is the meta data for the uenv for the image.
+The `meta` path is the metadata for the uenv for the image.
 
 ??? note "why create reframe.yaml in this location?"
 
@@ -161,11 +161,11 @@ The next step is to check out and setup ReFrame and the CSCS ReFrame test suite.
 
 It might be a good idea to create a path for this work, and cloning the ReFrame and CSCS test suite repos as sub-directories.
 
-### set up ReFrame
+### Set up ReFrame
 
 The first step is to download and set up ReFrame:
 
-* clone from GitHub;
+* clone from [ReFrame GitHub repository](https://github.com/reframe-hpc/reframe)
 * run the bootstrap process that installs ReFrame's dependencies;
 * then add reframe to `PATH`.
 
@@ -181,7 +181,7 @@ $ export PATH=$PWD/reframe/bin:$PATH
 $ reframe --version
 ```
 
-### set up the ReFrame tests
+### Set up the ReFrame tests
 
 The next step is to clone the CSCS test suite, and create a new branch where we will make any changes required to test our uenv.
 
@@ -199,7 +199,7 @@ git switch -c uenv-arbor
     Always create your working branch off of the `alps` branch.
     The `alps` branch is used for tests run on Alps vClusters. It will become the main branch, once Piz Daint is decommisioned.
 
-## Adding/Updating tests to a uenv
+## Adding/updating tests to a uenv
 
 Now everything is in place to implement the tests for your uenv, which will involve one or two of the following:
 
@@ -225,7 +225,7 @@ In this tutorial we will write tests that:
 3. run a benchmark with a single MPI rank on one GH200 GPU
 3. run a benchmark with 4 ranks and 4 GPUs on a GH200 node.
 
-[link to the tests](https://github.com/eth-cscs/cscs-reframe-tests/tree/alps/checks/apps/arbor).
+[Link to the tests](https://github.com/eth-cscs/cscs-reframe-tests/tree/alps/checks/apps/arbor).
 
 !!! note
 
@@ -243,18 +243,16 @@ import uenv
 ```
 
 It provides the `uenv.uarch()` function, that will be used to determine the uenv
-uarch (`gh200`, `a100`, `zen2`, etc) of the system where tests are running.
+uarch (`gh200`, `a100`, `zen2`, etc.) of the system where tests are running.
 We will see it in action below.
 
-### test: building the software
+### Test: building the software
 
-[Link](https://github.com/eth-cscs/cscs-reframe-tests/blob/alps/checks/apps/arbor/arbor-dev.py#L47-L93).
-
-Building is handled by a test, in this case called `arbor_build`, that derives from `rfm.CompileOnlyRegressionTest`.
+Building is handled by a test, in this case called [`arbor_build`](https://github.com/eth-cscs/cscs-reframe-tests/blob/alps/checks/apps/arbor/arbor-dev.py#L47-L93), that derives from `rfm.CompileOnlyRegressionTest`.
 
 !!! info
 
-    Points of interest are annotated in the code below with :heavy_plus_sign: symbols, click on them to expand.
+    Points of interest are annotated in the code below with :material-plus-circle: symbols, click on them to expand.
 
 ``` { .python .annotate }
 class arbor_build(rfm.CompileOnlyRegressionTest):
@@ -305,7 +303,7 @@ class arbor_build(rfm.CompileOnlyRegressionTest):
 1.  Restrict this test to only run in environments that provide the `arbor-dev` feature.
     This can be a list of environments, e.g. `['+arbor-dev+cuda', '+python']` would run the test in environments that provide both `arbor-dev` and `cuda`, or environments that provide `python`.
 2.  `arbor_download` is a [ReFrame fixture](https://reframe-hpc.readthedocs.io/en/v4.5.0/tutorial_fixtures.html), that handles downloading the source for Arbor.
-3.  The build stage is performed on a compute node using an sbatch job.
+3.  The build stage is performed on a compute node using a sbatch job.
     Required so that the environment is configured properly, by adding the
     correct flags to the script:
     ```
@@ -330,7 +328,7 @@ class arbor_build(rfm.CompileOnlyRegressionTest):
 
     The new approach of parameterising over uarch means that the test can be configured for _any_ vCluster with gh200 nodes.
 
-### test: run the unit tests
+### Test: run the unit tests
 
 The C++ Arbor library provides GoogleTest unit tests that are bundled in a single executable `unit`.
 The tests are not MPI enabled, and take less than 30 seconds to run 1000 individual tests.
@@ -360,11 +358,11 @@ class arbor_unit(rfm.RunOnlyRegressionTest):
 1.  This is the first time that we have added an annotation to a test.
     This is a "leaf" in our set of test dependencies, run after the download
     and build stages that are its dependencies have run.
-2.  The unit tests run quickly - so set a short time limit for higher priority queueing
+2.  The unit tests run quickly - so set a short time limit for higher priority queuing
 3.  The `arbor_build` stage has to be run before this test, to build the unit tests.
 4.  Just check that the tests passed - performance checks are implemented elsewhere
 
-### test: single GPU benchmark
+### Test: single GPU benchmark
 
 Use the `miniring` benchmark provided by Arbor to check both correctness and performance.
 
@@ -397,8 +395,8 @@ arbor_references = {
 }
 ```
 
-1.  Currently we only have Arbor performance targets for gh200, fields for `zen2` would be added for Eiger testing.
-2.  These are labelled reference targes. A link will be added when it is found in ReFrame's "documentation".
+1. Currently, we only have Arbor performance targets for `gh200`, fields for `zen2` would be added for Eiger testing.
+2. These are labelled reference targets. A link will be added when it is found in ReFrame's "documentation".
 
 The test itself:
 
@@ -449,7 +447,7 @@ class arbor_busyring(rfm.RunOnlyRegressionTest):
    In other words - the performance target is set dynamically based on the architecture of the node,
    instead of being hard coded using if-else statements in the test itself.
 
-     * `self.uarch` is one of the alps arch: `"gh200"`, `"zen2"`, `"a100"`, ... etc, or `None`
+     * `self.uarch` is one of the alps arch: `"gh200"`, `"zen2"`, `"a100"`, ... etc., or `None`
      * `self.current_partition.fullname` is the `vcluster:partition` string, for example `"daint:normal"` or `"todi:debug"`.
 
 !!! note
@@ -458,7 +456,7 @@ class arbor_busyring(rfm.RunOnlyRegressionTest):
     does not provide values for the current uarch.
     However, in such cases, no comparison is made and the test will pass.
 
-### test: MPI tests
+### Test: MPI tests
 
 ``` { .python .annotate }
 slurm_config = { #(1)
@@ -540,7 +538,7 @@ $ reframe -C cscs-reframe-tests/config/cscs.py \
 * `--keep-stage-files`: this will keep all of the intermediate scripts and configuration
     * stored in the `stage` sub-directory of the current path.
     * very useful for debugging problems with our tests.
-* `--dry-run`: generate all of the stage files and scripts without running the tests.
+* `--dry-run`: generate all the stage files and scripts without running the tests.
 
 !!! tip
 
