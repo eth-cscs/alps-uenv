@@ -1,7 +1,0 @@
-name: julia
-spack:
-  commit: releases/v0.22
-  repo: https://github.com/spack/spack.git
-store: /user-environment
-description: Julia programming language + GNU Compiler toolchain with cray-mpich, HDF5, ADIOS2, Python, CMake and other development tools.
-
