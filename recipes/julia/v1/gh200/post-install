@@ -14,7 +14,7 @@ export ENV_EXTRA=$ENV_META/extra
 export ENV_JSON=$ENV_META/env.json
 
 
-# Environment variables for HPC key packages that require system libraries (MPI.jl, CUDA.jl, HDF5.jl and ADIOS2.jl)
+# Environment variables for HPC key packages that require system libraries (MPI.jl, CUDA.jl, AMDGPU.jl, HDF5.jl and ADIOS2.jl)
 export JUHPC_CUDA_HOME=$(spack -C $ENV_MOUNT/config location -i cuda)
 export JUHPC_CUDA_RUNTIME_VERSION=$(spack --color=never -C $ENV_MOUNT/config find cuda | \
                                     perl -ne 'print $1 if /cuda@([\d.]+)/')
