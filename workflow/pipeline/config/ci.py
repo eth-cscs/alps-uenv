@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import jinja2
 import jsonschema
 import os
@@ -9,7 +10,6 @@ import yaml
 
 prefix = pathlib.Path(__file__).parent.resolve()
 root_path = prefix.parent.resolve().parent.resolve()
-recipe_path = root_path / "../recipes"
 
 sys.path = [prefix.as_posix()] + sys.path
 
@@ -24,7 +24,7 @@ class EnvError(Exception):
         self.message = f"Environment: {message}"
         super().__init__(self.message)
 
-def readenv(config):
+def readenv(config, args):
     """
     returns a dictionary with the following fields:
     {
@@ -41,16 +41,9 @@ def readenv(config):
         - uenv
     """
 
-    system = os.getenv("system", default=None)
-    uarch = os.getenv("uarch", default=None)
-    target = os.getenv("uenv", default=None)
-
-    if system is None:
-        raise EnvError("'system' environment variable not set")
-    if uarch is None:
-        raise EnvError("'uarch' environment variable not set")
-    if target is None:
-        raise EnvError("'uenv' environment variable not set")
+    system = args.system
+    uarch = args.uarch
+    target = args.uenv
 
     # check that system+uarch are valid
     if uarch not in configuration.valid_uarch:
@@ -77,21 +70,44 @@ def readenv(config):
         "recipe": recipe,
     }
 
+def make_argparser():
+    parser = argparse.ArgumentParser(description=("Generate a build configuration for a spack stack from " "a recipe."))
+    # strictly necessary always
+    parser.add_argument("-s", "--system", required=True, type=str)
+    parser.add_argument("-a", "--uarch", required=True, type=str)
+    parser.add_argument("-o", "--output", required=True, type=str)
+    # if config is split into clusters and recipes part, then
+    # only the cluster part would be required always
+    parser.add_argument("-c", "--config", required=True, type=str)
+    # alternatively a user could provide a single recipe, instead of a uenv argument
+    # that is looked up in the recipes path via the cluster config
+    parser.add_argument("-r", "--recipes", required=True, type=str)
+    parser.add_argument("-u", "--uenv", required=True, type=str)
+
+    return parser
+
 if __name__ == "__main__":
     ### TODO ###
     # read CLI arguments
     #   - output path for the pipeline.yml file (required)
-    #   - path of the configuration file (required)
+    #   + path of the configuration file (required)
     #   - JOB_ID (if needed?)
     if os.getenv("UENVCITEST", default=None) is not None:
         os.environ["system"] = "santis"
         os.environ["uarch"] = "gh200"
         os.environ["uenv"] = "netcdf-tools:2024"
 
-    # read and validate the configuration
-    print(recipe_path)
     try:
-        config = configuration.Config(prefix / "../../../config.yaml", recipe_path)
+        parser = make_argparser()
+        args = parser.parse_args()
+    except Exception as e:
+        print(f"ERROR parsing CLI arguments: str(e)")
+        exit(1)
+
+    # read and validate the configuration
+    try:
+        config = configuration.Config(pathlib.Path(args.config),pathlib.Path(args.recipes))
+
     except jsonschema.exceptions.ValidationError as e:
         print()
         where = e.json_path.replace("$.","").replace(".", ":")
@@ -105,7 +121,7 @@ if __name__ == "__main__":
 
     # read environment variables that describe image(s) to build in this run
     try:
-        env = readenv(config)
+        env = readenv(config, args)
     except EnvError as e:
         print()
         print(f"{util.colorize('[error] ', 'red')}{e.message}")
@@ -135,8 +151,9 @@ if __name__ == "__main__":
     # generate top level makefiles
     pipeline_template = jinja_env.get_template("pipeline.yml")
 
-    dir_path = pathlib.Path.cwd()
-    with (dir_path / "pipeline.yml").open("w") as f:
+    output_path = pathlib.Path(args.output)
+    with output_path.open("w") as f:
         f.write(pipeline_template.render(jobs=[job]))
 
+    print(f"\n{util.colorize('SUCCESS', 'green')} wrote {output_path} output file\n")
 
