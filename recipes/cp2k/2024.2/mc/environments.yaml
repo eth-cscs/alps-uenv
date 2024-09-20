@@ -1,0 +1,40 @@
+cp2k:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - intel-oneapi-mkl +cluster +gfortran mpi_family=mpich threads=openmp
+  - libxc
+  - libint
+  - spglib
+  - spla ^intel-oneapi-mkl
+  - elpa ^intel-oneapi-mkl
+  - libxsmm
+  - plumed
+  # COSMA dependencies (need to be in the develop view)
+  - costa ^intel-oneapi-mkl
+  - cosma ^intel-oneapi-mkl
+  # SIRIUS dependencies (need to be in the develop view)
+  - hdf5
+  - spfft ^intel-oneapi-mkl
+  - sirius ~memory_pool ^intel-oneapi-mkl
+  # CP2K
+  - dbcsr@2.7.0 ^intel-oneapi-mkl
+  - cp2k@2024.2 +spglib +cosma +spla +elpa +sirius +plumed ^intel-oneapi-mkl
+  variants:
+    - +mpi
+    - +openmp
+    - build_type=Release
+    - ~cuda
+    - ~rocm
+  mpi:
+    spec: cray-mpich@8.1.30
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots

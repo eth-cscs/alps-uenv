@@ -1,0 +1,24 @@
+modules:
+  # Paths to check when creating modules for all module sets
+  prefix_inspections:
+    bin:
+      - PATH
+    lib:
+      - LD_LIBRARY_PATH
+    lib64:
+      - LD_LIBRARY_PATH
+
+  default:
+    arch_folder: false
+    # Where to install modules
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      hash_length: 0
+      exclude_implicits: true
+      include: ['gcc@13.2%gcc@13.2', 'nvpc@23.9%gcc@13.2', '%nvhpc', 'cmake', 'ninja']
+      exclude: ['%gcc']
+      projections:
+        all: '{name}/{version}'
