@@ -51,6 +51,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
+          SBATCH_RESERVATION: "daint"
     runner: f7t
 uenvs:
   arbor:
