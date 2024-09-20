@@ -130,6 +130,13 @@ uenvs:
         todi: [gh200]
         santis: [gh200]
       develop: False
+  julia:
+    "24.9":
+      recipes:
+        zen2:  "24.9/mc"
+        zen3:  "24.9/mc"
+        gh200: "24.9/gh200"
+      develop: False
   lammps:
     "2023":
       recipes:
