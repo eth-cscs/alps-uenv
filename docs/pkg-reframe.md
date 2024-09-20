@@ -133,7 +133,7 @@ Before starting, you will need the following:
 
 ```bash
 # pull the image that you want to start developing tests for, e.g.:
-$ uenv image pull cp2k/24.7:v1
+$ uenv image pull cp2k/2404.2:v1
 
 # get the meta data path
 $ meta=$(uenv image inspect cp2k/2024.2:v1 --format={meta})
@@ -174,10 +174,11 @@ The first step is to download and set up ReFrame:
 $ git clone git@github.com:reframe-hpc/reframe.git
 
 # run bootstrap process (only needs to be done once)
-$ (cd reframe; ./bootstrap.sh)
+$ cd reframe
+$ ./bootstrap.sh
 
 # add to PATH and verify that everything works
-$ export PATH=$PWD/reframe/bin:$PATH
+$ export PATH=$PWD/bin:$PATH
 $ reframe --version
 ```
 
@@ -517,16 +518,23 @@ $ export UENV=arbor/v0.9:v1
     It will be a hard requirement that the meta data path will be in the same path
     as the `store.squashfs` file.
 
+!!! warning
+    If the `UENV` variable is not set proprely, the `reframe.yaml` file can't be found and you will see an error:
+    ```
+    ERROR: failed to load configuration: problem loading the metadata from 'extra/reframe.yaml' 
+    ```
+
 To run the tests use the following commands:
 
 ```bash
 # run the tests
 $ reframe -C cscs-reframe-tests/config/cscs.py \
-  -c cscs-reframe-tests/checks/apps/arbor/ -r --keep-stage-files
+  -c cscs-reframe-tests/checks/apps/arbor/ --keep-stage-files \
+  -r
 
 # perform a dry run of tests
 $ reframe -C cscs-reframe-tests/config/cscs.py \
-  -c cscs-reframe-tests/checks/apps/arbor/ -r --keep-stage-files \
+  -c cscs-reframe-tests/checks/apps/arbor/ --keep-stage-files \
   --dry-run
 ```
 
