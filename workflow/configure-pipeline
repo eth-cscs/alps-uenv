@@ -47,7 +47,7 @@ done
 [[ "-" == "${uenv}" ]]        && usage "missing -u argument for uenv"
 
 script_path=$(dirname $(realpath $0))
-pipeline_path=${script_path}/config
+pipeline_path=${script_path}/pipeline
 
 #
 # print status
