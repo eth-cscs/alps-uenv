@@ -12,7 +12,7 @@ gcc-env:
   - cuda@12.4
   - fftw
   - fmt
-  - hdf5+hl
+  - hdf5+hl+mpi+fortran
   - libtree
   - meson
   - nccl
