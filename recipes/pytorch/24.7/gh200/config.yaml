@@ -1,7 +1,0 @@
-name: pytorch
-store: /user-environment
-description: PyTorch for GH200
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: releases/v0.22
-modules: true
