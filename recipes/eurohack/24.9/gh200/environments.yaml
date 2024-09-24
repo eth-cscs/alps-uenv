@@ -23,6 +23,8 @@ gcc-env:
   - python@3.12
   - gsl
   - gtest
+  - boost
+  - pfft
   variants:
   - +mpi
   - +cuda
