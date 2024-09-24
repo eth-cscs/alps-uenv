@@ -1,0 +1,9 @@
+name: deepmd
+store: /user-environment
+description: DeepMD for GH200, based on TensorFlow
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: befbbec2b33a53203b42b2359a77dfd2cf345731
+  # above is the latest version as of Sept 24, 2024
+  #commit: releases/v0.22
+modules: false
