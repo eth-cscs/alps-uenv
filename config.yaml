@@ -254,4 +254,10 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
-
+  eurohack:
+    "24.9":
+      recipes:
+        gh200: 24.9/gh200
+      deploy:
+        # deploy to both the production and test clusters
+        todi: [gh200]
