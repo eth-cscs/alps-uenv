@@ -7,19 +7,19 @@ clusters:
         variables:
           SLURM_CONSTRAINT: 'mc'
     runner: f7t
-    no_bwrap: True
   balfrin:
     targets:
       -
         uarch: 'a100'
         partition: 'normal'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
       -
         uarch: 'zen3'
         partition: 'postproc'
-    runner:
-      runner: f7t
-      #slurm-tag: balfrin-spack-stack-builder
-      #baremetal-tag: balfrin-login-baremetal
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+    runner: f7t
   pilatus:
     targets:
       -
@@ -29,7 +29,6 @@ clusters:
           SLURM_CONSTRAINT: 'mc'
           F7T_URL: 'https://firecrest-dev.cscs.ch'
     runner: f7t
-    #no_bwrap: True
   santis:
     targets:
       -
