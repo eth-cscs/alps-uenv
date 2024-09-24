@@ -1,0 +1,27 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - cmake
+  - fftw
+  - fmt
+  - hdf5+hl
+  - ninja@1.11
+  - openblas threads=openmp
+  - python@3.12
+  - py-pybind11
+  - osu-micro-benchmarks@5.9
+  variants:
+  - +mpi
+  views:
+    develop:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
