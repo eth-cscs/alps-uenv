@@ -12,6 +12,7 @@ cp2k:
   - spglib
   - spla ^intel-oneapi-mkl
   - elpa ^intel-oneapi-mkl
+  - libxsmm
   # COSMA dependencies (need to be in the develop view)
   - costa ^intel-oneapi-mkl
   - cosma ^intel-oneapi-mkl
