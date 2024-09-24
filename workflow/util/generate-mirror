@@ -1,4 +1,4 @@
-# to be sourced from stack-build
+# to be sourced from stage-build
 
 log "build cache: generating configuration"
 
