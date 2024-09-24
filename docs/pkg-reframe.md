@@ -558,6 +558,10 @@ $ reframe -C cscs-reframe-tests/config/cscs.py \
     Look in the `stage` path that is created in the path where you called reframe for all
     of the job scripts, build files, and results.
 
+!!! tip
+    If ReFrame tests fail because of `ReqNodesNotAvail` and you think it is a fluke, try setting
+    `RFM_IGNORE_REQNODENOTAVAIL=y`.
+
 [eth-cscs/alps-uenv]: https://github.com/eth-cscs/alps-uenv
 [eth-cscs/cscs-reframe-tests]: https://github.com/eth-cscs/cscs-reframe-tests
 [ReFrame environment]: https://reframe-hpc.readthedocs.io/en/stable/tutorial.html#environment-features-and-extras
