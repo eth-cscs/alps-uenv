@@ -1,6 +1,6 @@
 # ReFrame Testing Tutorial
 
-When [ReFrame] tests are enabled for an uenv, they are automatically run:
+When [ReFrame] tests are enabled for a uenv, they are automatically run:
 
 * in the CI/CD pipeline after the image has been built;
 * in daily/weekly testing of individual vClusters;
@@ -25,7 +25,7 @@ These tests cover a very wide range of features, including application tests, lo
 
     When running this test suite with a uenv, only the subset of the test suite that is relevant for the uenv will be run.
 
-Setting up tests for an uenv requires making changes to two repositories:
+Setting up tests for a uenv requires making changes to two repositories:
 
 * [eth-cscs/alps-uenv] **adding metadata to the uenv** to be used by ReFrame to:
     * load the uenv and configure the environment so that it is ready to run tests;
