@@ -11,9 +11,7 @@ clusters:
         partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
-    runner:
-      slurm-tag: balfrin-spack-stack-builder
-      baremetal-tag: balfrin-login-baremetal
+    runner: f7t
   daint:
     targets:
       -
