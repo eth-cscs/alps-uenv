@@ -17,8 +17,9 @@ clusters:
         uarch: 'zen3'
         partition: 'postproc'
     runner:
-      slurm-tag: balfrin-spack-stack-builder
-      baremetal-tag: balfrin-login-baremetal
+      runner: f7t
+      #slurm-tag: balfrin-spack-stack-builder
+      #baremetal-tag: balfrin-login-baremetal
   pilatus:
     targets:
       -

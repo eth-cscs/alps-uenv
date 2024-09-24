@@ -1,3 +1,21 @@
+tools:
+  compiler:
+    - toolchain: gcc
+      spec: gcc
+  unify: when_possible
+  specs:
+  - cmake@3.24
+  - python@3.7
+  - python@3.10
+  - libtree
+  - tree
+  - ruby@3.1.0
+  #- r@4.0.5
+  packages:
+  - perl
+  views:
+    tools:
+      exclude: ['python@3.7']
 prgenv-nvidia:
   compiler:
     - toolchain: gcc

@@ -4,8 +4,7 @@ stages:
 
 pipeline-configure:
   stage: configure
-  #tags: [rosa-k8s-lightweight]
-  tags: [balfrin-login-baremetal]
+  tags: [rosa-k8s-lightweight]
   image: docker.io/python:latest
   script:
     - ./ci/configure-pipeline
