@@ -23,7 +23,7 @@ gcc-env:
   - python@3.12
   - gsl
   - gtest
-  - boost
+  - boost+chrono+filesystem+iostreams+regex+serialization+system+timer+mpi+python+shared
   - pfft
   variants:
   - +mpi
