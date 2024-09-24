@@ -119,7 +119,7 @@ modules:
 
 The final objective for adding tests to a uenv is to have:
 
-1. a uenv deployed with a `extra/reframe.yaml` file;
+1. a uenv deployed with an `extra/reframe.yaml` file;
 2. and tests in the [eth-cscs/cscs-reframe-tests] repository
 
 In this second half of the tutorial, a workflow for doing this that minimises the amount of time spent
@@ -133,7 +133,7 @@ Before starting, you will need the following:
 
 ```bash
 # pull the image that you want to start developing tests for, e.g.:
-$ uenv image pull cp2k/2404.2:v1
+$ uenv image pull cp2k/2024.2:v1
 
 # get the meta data path
 $ meta=$(uenv image inspect cp2k/2024.2:v1 --format={meta})
