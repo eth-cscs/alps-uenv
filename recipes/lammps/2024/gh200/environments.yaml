@@ -12,7 +12,7 @@ lammps-kokkos:
   - cuda@12
   - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
   # lammps + kokkos package
-  - lammps@20240417 +kokkos +cuda cuda_arch=90 +python +extra-dump
+  - lammps +kokkos +cuda cuda_arch=90 +python +extra-dump
   variants:
   - +mpi
   - +cuda
@@ -22,11 +22,13 @@ lammps-kokkos:
       link: roots
       exclude: ["lammps"]
       uenv:
+        add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
     kokkos:
       link: roots
       uenv:
+        add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
 lammps-gpu:
@@ -43,7 +45,7 @@ lammps-gpu:
   - cuda@12
   - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
   # lammps + GPU package, MPS enabled
-  - lammps@20240417 ~kokkos +cuda cuda_arch=90 +python +extra-dump +cuda_mps
+  - lammps ~kokkos +cuda cuda_arch=90 +python +extra-dump +cuda_mps
   variants:
   - +mpi
   - +cuda
@@ -53,11 +55,13 @@ lammps-gpu:
       link: roots
       exclude: ["lammps"]
       uenv:
+        add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
     gpu:
       link: roots
       uenv:
+        add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
 
