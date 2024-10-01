@@ -6,14 +6,14 @@
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view kokkos
+uenv view lammps:kokkos
 ```
 
 or
 
 ```bash
 uenv start <LAMMPS_UENV>
-uenv view gpu
+uenv view lammps:gpu
 ```
 
 In the former, lammps has been compiled with the kokkos package enabled. In the later, lammps has been compiled with the GPU package enabled.
@@ -29,7 +29,7 @@ The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] fro
 ```bash
 # Start uenv and load develop view
 uenv start <LAMMPS_UENV>
-uenv view develop-kokkos # or uenv view develop-gpu, if building using the GPU package
+uenv view lammps:develop-kokkos # or uenv view lammps:develop-gpu, if building using the GPU package
 
 # cd to LAMMPS source directory
 cd <PATH_TO_LAMMPS_SOURCE>
