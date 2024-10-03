@@ -30,6 +30,8 @@ The following packages are provided:
 * `python`
     * a recent version of python 3
 
+## TODO: Changelog?
+
 ## How to use
 
 The environment is designed as a fairly minimal set of 
