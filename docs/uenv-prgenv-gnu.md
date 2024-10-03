@@ -7,6 +7,7 @@ It provides the GCC compilers (gcc, g++ and gfortran), MPI (cray-mpich), Python,
 The following packages are provided:
   
 * `aws-ofi-nccl`
+* `boost`
 * `cmake`
 * `cray-mpich`
     * built with `cuda` support on systems with NVIDIA GPUs
@@ -15,7 +16,9 @@ The following packages are provided:
 * `fftw`
 * `fmt`
 * `gcc`
+* `gsl`
 * `hdf5`
+* `kokkos`, `kokkos-kernels`, and `kokkos-tools`
 * `libtree`
 * `meson`
 * `nccl-tests`
