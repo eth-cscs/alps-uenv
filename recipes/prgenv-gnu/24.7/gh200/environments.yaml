@@ -8,6 +8,7 @@ gcc-env:
   unify: true
   specs:
   - aws-ofi-nccl@master
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - cuda@12.4
   - fftw
