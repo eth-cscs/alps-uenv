@@ -10,7 +10,7 @@ gcc-env:
   - aws-ofi-nccl@master
   - cmake
   - cuda@12.4
-  - fftw
+  - fftw+openmp
   - fmt
   - hdf5+hl+mpi+fortran
   - libtree
