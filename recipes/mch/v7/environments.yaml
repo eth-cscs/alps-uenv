@@ -5,7 +5,8 @@ tools:
   unify: when_possible
   specs:
   - cmake@3.24
-  - python@3.7
+  # removed because it requires deprecated curl@7.79.1
+  #- python@3.7
   - python@3.10
   - libtree
   - tree
@@ -76,8 +77,6 @@ prgenv-gcc:
   - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
   - netcdf-fortran@4.5.4 ^netcdf-c+mpi
   - netcdf-fortran@4.5.4 ^netcdf-c~mpi
-  - python@3.7
-  - python@3.10
   variants:
   - +mpi
   views:
