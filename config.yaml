@@ -255,4 +255,11 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
-
+  paraview:
+    "5.13.0":
+      recipes:
+        gh200: 5.13.0/gh200
+        zen2: 5.13.0/zen2
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]

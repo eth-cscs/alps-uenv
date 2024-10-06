@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bd935a0a0ae6..f7af3539a320 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -794,8 +794,8 @@ if (WIN32)
+ else()
+     # ISPC doesn't use pthreads directly, but LLVM does. Although, it looks
+     # like we do not use LLVM code that depend on pthreads, don't we?
+-    find_library(PTHREAD_LIB REQUIRED NAMES pthread)
+-    list(APPEND LINK_LIBRARIES ${PTHREAD_LIB})
++    find_package(Threads QUIET)
++    list(APPEND LINK_LIBRARIES Threads::Threads)
+ endif()
+ 
+ # This function configures compile definitions, options and include dirs.
