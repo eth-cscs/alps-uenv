@@ -1,0 +1,6 @@
+name: eurohack-nvhpc
+spack:
+  commit: releases/v0.22
+  repo: https://github.com/spack/spack.git
+store: /user-environment
+description: NVHPC toolchain with cray-mpich, Python, CMake and other development tools.
