@@ -262,3 +262,9 @@ uenvs:
       deploy:
         # deploy to both the production and test clusters
         todi: [gh200]
+    "24.9-nvhpc":
+      recipes:
+        gh200: 24.9-nvhpc/gh200
+      deploy:
+        # deploy to both the production and test clusters
+        todi: [gh200]
