@@ -52,6 +52,7 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
           SLURM_PARTITION: "debug"
+          SLURM_TIMELIMIT: "30"
     runner: f7t
 uenvs:
   arbor:
