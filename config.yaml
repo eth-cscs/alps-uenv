@@ -4,12 +4,14 @@ clusters:
       -
         uarch: 'a100'
         partition: 'normal'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
       -
         uarch: 'zen3'
         partition: 'postproc'
-    runner:
-      slurm-tag: balfrin-spack-stack-builder
-      baremetal-tag: balfrin-login-baremetal
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+    runner: f7t
   daint:
     targets:
       -
@@ -35,7 +37,6 @@ clusters:
           SLURM_CONSTRAINT: 'mc'
           F7T_URL: 'https://firecrest-dev.cscs.ch'
     runner: f7t
-    #no_bwrap: True
   santis:
     targets:
       -
@@ -68,6 +69,15 @@ uenvs:
         zen2: mch/climana/24.7
         zen3: mch/climana/24.7
         a100: mch/climana/24.7
+      deploy:
+        balfrin: [zen3, a100]
+      develop: False
+  climana:
+    "24.10":
+      recipes:
+        zen2: mch/climana/24.10
+        zen3: mch/climana/24.10
+        a100: mch/climana/24.10
       deploy:
         balfrin: [zen3, a100]
       develop: False
