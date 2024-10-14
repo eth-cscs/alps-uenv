@@ -16,3 +16,4 @@ oras
 
 ci/.pyenv
 __pycache__
+uenv-pipeline
