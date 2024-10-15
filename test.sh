@@ -11,7 +11,7 @@ if [ -d ./uenv-pipeline ]; then
     echo "== cleaning up old copy"
     rm -rf uenv-pipeline
 fi
-git clone -biterate https://github.com/eth-cscs/uenv-pipeline.git
+git clone https://github.com/eth-cscs/uenv-pipeline.git
 
 echo ""
 echo "==== CONFIGURING THE PIPELINE ===="
