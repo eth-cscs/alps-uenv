@@ -20,6 +20,7 @@ generated-pipeline:
   needs: [pipeline-configure]
   variables:
     CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
+    PARENT_PIPELINE_ID: "$CI_PIPELINE_ID"
   trigger:
     include:
       - artifact: pipeline.yml
