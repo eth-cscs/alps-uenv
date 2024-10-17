@@ -1,0 +1,38 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: cuda
+  unify: true
+  specs:
+  - aws-ofi-nccl@master
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - cuda@12.4
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+hl
+  - kokkos +aggressive_vectorization +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
+  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - libtree
+  - meson
+  - nccl
+  - nccl-tests
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - python@3.12
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
