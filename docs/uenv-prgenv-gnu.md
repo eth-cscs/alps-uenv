@@ -30,7 +30,15 @@ The following packages are provided:
 * `python`
     * a recent version of python 3
 
-## TODO: Changelog?
+## Changelog
+
+### v4
+
+- Added GSL
+- Added Boost with Chrono, Filesystem, Iostreams, MPI, Python, Regex, Serialization, System, Timer
+- Added Kokkos with the CUDA, OpenMP, and Serial execution spaces
+- Added Kokkos Kernels with explicit template instantiations and support for the most commonly used third party libraries
+- Added Kokkos Tools
 
 ## How to use
 
