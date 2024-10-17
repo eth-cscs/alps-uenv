@@ -32,7 +32,7 @@ The following packages are provided:
 
 ## Changelog
 
-### v4
+### 24.11
 
 - Added GSL
 - Added Boost with Chrono, Filesystem, Iostreams, MPI, Python, Regex, Serialization, System, Timer
