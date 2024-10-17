@@ -3,10 +3,10 @@
 [Linaro Forge](https://www.linaroforge.com/downloadForge) is a suite of profiling
 and debugging tools. It includes Linaro DDT debugger and Linaro MAP profiler. These
 tools allow source-level debugging and profiling of Fortran, C, C++ and Python codes.
-They can be used for debugging serial, multi-threaded (OpenMP), multi-process (MPI) and
-accelerated (Cuda, OpenACC) programs running on research and production
-systems, including CSCS Alps system. They can be executed either as a graphical
-user interface or from the command-line.
+They can be used for debugging and profiling serial, multi-threaded (OpenMP),
+multi-process (MPI) and accelerated (Cuda, OpenACC) programs running on research and
+production systems, including CSCS Alps system. They can be executed either as a
+graphical user interface or from the command-line.
 
 ## Quickstart guide
 
@@ -242,11 +242,11 @@ More information regarding how to use Linaro DDT be found in the Forge [User Gui
 
 #### Linaro MAP
 
-Linaro MAP can be used to profile an application either by the GUI or by the CLI. In the first case the user can set the profiling configuration using the GUI and then see the results. In the latter, the user can use the MAP executable to launch the application they want to profile which will generate an output report file that can then be opened from the GUI.
+Linaro MAP can be used to profile an application either by the GUI or by the CLI. In the first case the user can set the profiling configuration using the GUI and then see the results. In the latter, the user can use the MAP executable to launch the application they want to profile which will generate a report file that can then be opened from the GUI.
 
 ##### Profile application
 
-We'll focus here on the profiling using the CLI but the same configurations apply in the other case.
+We'll focus here on the profiling using the CLI but the same configuration applies in the other case as well.
 
 To debug an MPI application on Alps the following script is necessary:
 
@@ -256,19 +256,17 @@ map -n <num_of_procs> --mpi=slurm --mpiargs="<slurm_arguments>" --profile <execu
 
 This will generate a profile report in a binary file with suffix `.map`.
 
-To open this file we can open the Linaro Forge Client on our client, navigate to the `linaro MAP` tab, connect to the corresponding `Remote` and then select `LOAD PROFILE DATA FILE` to locate the file.
+To open this file we can open the Linaro Forge Client on our local machine, navigate to the `linaro MAP` tab, connect to the corresponding `Remote` and then select `LOAD PROFILE DATA FILE` to locate the file.
 
 After loading the report file we'll be in the home of Linaro MAP.
-```
-TODO: Add picture of HOME with Python application
-```
+
+<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs/map-home.png" width="800" />
+
 More information regarding how to use Linaro MAP can be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
 
-Linaro MAP also allows the generation of a high level HTML report that shows key metrics of the profiled application. To see this we can click in the toolbar `Reports > View HTML Performance Report in browser`. This will look like the following:
+Linaro MAP also allows the generation of a high level Performance Report in HTML format that shows key metrics of the profiled application. To see this we can click in the toolbar `Reports > View HTML Performance Report in browser`. This will look like the following:
 
-```
-TODO: Add performance report screenshot
-```
+<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs/perf-report.png" width="800" />
 
 ## Troubleshooting
 
