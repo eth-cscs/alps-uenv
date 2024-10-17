@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# don't generate an error message if a glob does not match any files
+shopt -s nullglob
+
+# where all of the applications built by spack are installed
+# this has to change if
+# - the compiler version used to build software changes
+# - we build for a different micro-architecture
+# - we upgrade to SLES 16
+install_base=/user-environment/linux-sles15-zen3/gcc-12.3.0
+view_base=/user-environment/env/climana
+
+# iterate over all of the locations where pkgconfig files are likely to be installed
+for pkbase in "lib/pkgconfig" "lib64/pkgconfig" "share/pkgconfig" "rlib/pkgconfig"
+do
+    # find all directories that match the pattern
+    pkgpaths=$(find $install_base -type d -path '*/'$pkbase)
+
+    # iterate over each directory, searching for pkg-config .pc files
+    for pkpath in $pkgpaths
+    do
+        pcfiles=($pkpath/*.pc)
+        for pcpath in ${pcfiles[@]}
+        do
+            pcfile=$(basename $pcpath)
+            from=$pkpath/$pcfile
+            to_root=$view_base/$pkbase
+            to=$to_root/$pcfile
+            mkdir -p $to_root
+            if [ ! -e $to ]; then
+                echo '+    ' $pkbase/$pcfile
+                ln -s "$from" "$to"
+            else
+                echo 'skip ' $pkbase/$pcfile
+            fi
+        done
+    done
+done
