@@ -33,18 +33,15 @@ they can be used alongside application and development uenv mounted at
     # (will give warnings if there are problems)
     uenv status
 
-    uenv view prgenv-gnu:default
     source /user-tools/activate
+    uenv view prgenv-gnu:default
 
     # check that ddt is in the path
     ddt --version
     ```
 
-    The `/user-tools/activate` script will make the forge executables available in your environment, and **must be run after** any other uenv view command.
-
-    ```
-    TODO: Make sure that above is correct
-    ```
+    The `/user-tools/activate` script will make the forge executables available in your environment, and **must be run before**
+    any other uenv view command otherwise the environment variables set from the other uenv will be overwritten.
 
 === "standalone"
 
