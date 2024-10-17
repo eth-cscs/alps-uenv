@@ -257,13 +257,13 @@ To open this file we can open the Linaro Forge Client on our local machine, navi
 
 After loading the report file we'll be in the home of Linaro MAP.
 
-<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs/map-home.png" width="800" />
+![map-home](images/map-home.png)
 
 More information regarding how to use Linaro MAP can be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
 
 Linaro MAP also allows the generation of a high level Performance Report in HTML format that shows key metrics of the profiled application. To see this we can click in the toolbar `Reports > View HTML Performance Report in browser`. This will look like the following:
 
-<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs/perf-report.png" width="800" />
+![perf-report](images/perf-report.png)
 
 ## Troubleshooting
 
