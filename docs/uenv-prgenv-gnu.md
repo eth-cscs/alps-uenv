@@ -7,6 +7,7 @@ It provides the GCC compilers (gcc, g++ and gfortran), MPI (cray-mpich), Python,
 The following packages are provided:
   
 * `aws-ofi-nccl`
+* `boost`
 * `cmake`
 * `cray-mpich`
     * built with `cuda` support on systems with NVIDIA GPUs
@@ -15,7 +16,9 @@ The following packages are provided:
 * `fftw`
 * `fmt`
 * `gcc`
+* `gsl`
 * `hdf5`
+* `kokkos`, `kokkos-kernels`, and `kokkos-tools`
 * `libtree`
 * `meson`
 * `nccl-tests`
@@ -26,6 +29,16 @@ The following packages are provided:
 * `osu-micro-benchmarks`
 * `python`
     * a recent version of python 3
+
+## Changelog
+
+### 24.11
+
+- Added GSL
+- Added Boost with Chrono, Filesystem, Iostreams, MPI, Python, Regex, Serialization, System, Timer
+- Added Kokkos with the CUDA, OpenMP, and Serial execution spaces
+- Added Kokkos Kernels with explicit template instantiations and support for the most commonly used third party libraries
+- Added Kokkos Tools
 
 ## How to use
 
