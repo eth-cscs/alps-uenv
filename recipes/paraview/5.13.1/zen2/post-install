@@ -68,7 +68,7 @@ SCRATCH=/capstor/scratch/cscs/biddisco
 
 # setup paths for src/build/install
 PARAVIEW_VERSION_MAIN=5.13
-PARAVIEW_VERSION_FULL=5.13.0
+PARAVIEW_VERSION_FULL=5.13.1
 PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
 PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
 PARAVIEW_INSTALL_DIR=$mount_path/ParaView-$PARAVIEW_VERSION_MAIN
@@ -98,8 +98,8 @@ if [[ $CLONE_PARAVIEW == "true" ]]; then
     cd $PARAVIEW_SRC_DIR/VTK/ThirdParty/vtkm/vtkvtkm/vtk-m
     git checkout v2.1.0
 else
-    # wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
-    cp $SCRATCH/uenv-data/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz .
+    wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
+    # cp $SCRATCH/uenv-data/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz .
     tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 fi
 
@@ -140,6 +140,7 @@ cmake -G Ninja \
     `# Plugin related options`                              \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
+    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
     `# use external libraries wherever possible`            \
