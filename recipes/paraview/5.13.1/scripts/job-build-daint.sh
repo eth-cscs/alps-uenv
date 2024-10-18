@@ -7,7 +7,6 @@
 #SBATCH --account=csstaff
 #SBATCH --output=/users/biddisco/stackinator-output.%j.txt
 #SBATCH --error=/users/biddisco/stackinator-error.%j.txt
-#SBATCH --constraint=mc
 
 # -------------------------------------
 function debug_output() {
@@ -26,11 +25,11 @@ export PYTHONUNBUFFERED=1
 # useful variables
 # -----------------------------------------"
 debug_output "Setup env vars"
-CLUSTER=eiger
+CLUSTER=daint
 IMAGE=paraview
-ARCH=zen2
-VARIANT=osmesa
-VERSION=5.13.0
+ARCH=gh200
+VARIANT=egl
+VERSION=5.13.1
 SPACK_ENV_NAME="${IMAGE}-${ARCH}-${VARIANT}-${VERSION}"
 SRC=$HOME/src
 STACKI_DIR=$SRC/alps-vcluster/stackinator

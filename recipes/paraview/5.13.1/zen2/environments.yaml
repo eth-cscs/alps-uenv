@@ -90,6 +90,7 @@ paraview-zen2-osmesa:
   - py-matplotlib
   - py-mpi4py
   - py-cftime
+  - py-h5py
 
   # raytracing in VTK/ParaView
   - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
@@ -138,3 +139,4 @@ paraview-python:
   - py-matplotlib
   - py-mpi4py
   - py-cftime
+  - py-h5py
