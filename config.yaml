@@ -176,6 +176,12 @@ uenvs:
       deploy:
         balfrin: [a100]
       develop: False
+    "prgenv-icon":
+      recipes:
+        a100: prgenv-icon
+      deploy:
+        balfrin: [a100]
+      develop: False
   namd:
     "3.0":
       recipes:
