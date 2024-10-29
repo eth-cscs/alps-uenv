@@ -52,6 +52,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
+          SLURM_RESERVATION: "daint"
     runner: f7t
 uenvs:
   arbor:
@@ -68,6 +69,15 @@ uenvs:
         zen2: mch/climana/24.7
         zen3: mch/climana/24.7
         a100: mch/climana/24.7
+      deploy:
+        balfrin: [zen3, a100]
+      develop: False
+  climana:
+    "24.10":
+      recipes:
+        zen2: mch/climana/24.10
+        zen3: mch/climana/24.10
+        a100: mch/climana/24.10
       deploy:
         balfrin: [zen3, a100]
       develop: False

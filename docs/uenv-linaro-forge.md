@@ -1,11 +1,12 @@
-# Linaro Forge (DDT) debugger
+# Linaro Forge tools
 
-[Linaro Forge](https://www.linaroforge.com/downloadForge) (formerly known as
-DDT) allows source-level debugging of Fortran, C, C++ and Python codes. It can
-be used for debugging serial, multi-threaded (OpenMP), multi-process (MPI) and
-accelerated (Cuda, OpenACC) programs running on research and production
-systems, including CSCS Alps system. It can be executed either as a graphical
-user interface or from the command-line.
+[Linaro Forge](https://www.linaroforge.com/downloadForge) is a suite of profiling
+and debugging tools. It includes Linaro DDT debugger and Linaro MAP profiler. These
+tools allow source-level debugging and profiling of Fortran, C, C++ and Python codes.
+They can be used for debugging and profiling serial, multi-threaded (OpenMP),
+multi-process (MPI) and accelerated (Cuda, OpenACC) programs running on research and
+production systems, including CSCS Alps system. They can be executed either as a
+graphical user interface or from the command-line.
 
 ## Quickstart guide
 
@@ -32,14 +33,15 @@ they can be used alongside application and development uenv mounted at
     # (will give warnings if there are problems)
     uenv status
 
-    uenv view prgenv-gnu:default
     source /user-tools/activate
+    uenv view prgenv-gnu:default
 
     # check that ddt is in the path
     ddt --version
     ```
 
-    The `/user-tools/activate` script will make the forge executables available in your environment, and **must be run after** any other uenv view command.
+    The `/user-tools/activate` script will make the forge executables available in your environment, and **must be run before**
+    any other uenv view command otherwise the environment variables set from the other uenv will be overwritten.
 
 === "standalone"
 
@@ -61,10 +63,10 @@ they can be used alongside application and development uenv mounted at
 In order to debug your code on Alps, you need to:
 
 1. pull the linaro-forge uenv on the target Alps vCluster
-- install the Forge/DDT client on your laptop
+- install the Linaro Forge client on your local system (desktop/laptop)
 - build an executable with debug flags
 - launch a job with the debugger on Alps
-- start debugging.
+- start debugging/profiling
 
 ### Pull the Linaro Forge uenv on the Alps cluster
 
@@ -94,7 +96,7 @@ uenv/version:tag                        uarch date       id               size
 linaro-forge/23.1.2:latest              gh200 2024-04-05 ea67dbb33801c7c3 342MB
 ```
 
-### Install and configure the client on your laptop
+### Install and configure the client on your local machine
 
 We recommend installing the [desktop client](https://www.linaroforge.com/downloadForge) 
 on your local workstation/laptop. 
@@ -180,12 +182,14 @@ nvcc -c -arch=sm_90 -g -G test_gpu.cu
 mpicxx -g test_cpu.cpp test_gpu.o -o myexe
 ```
 
-### Launch the code with the debugger
+### Launch Linaro Forge
+
+#### Linaro DDT
 
 To use the DDT client with uenv, it must be launched in `Manual Launch` mode
 (assuming that it is connected to Alps via `Remote Launch`):
 
-=== "on laptop"
+=== "on local machine"
 
     Start DDT, and connect to the target cluster using the drop down menu for Remote Launch.
 
@@ -209,7 +213,7 @@ To use the DDT client with uenv, it must be launched in `Manual Launch` mode
         ./cuda_visible_devices.sh   ddt-client   ./myexe
     ```
 
-### Start debugging
+##### Start debugging
 
 By default, DDT will pause execution on the call to MPI_Init:
 <img src="https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/1.png" width="600" />
@@ -231,9 +235,37 @@ There are more than 1 mechanism for controlling program execution:
 
 This screenshot shows a debugging session on 128 gpus: ![DDTgpus](https://raw.githubusercontent.com/jgphpc/cornerstone-octree/ddt/scripts/img/ddt/5.png)
 
-More informations will be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
+More information regarding how to use Linaro DDT be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
 
-## Troubleshooting¶
+#### Linaro MAP
+
+Linaro MAP can be used to profile an application either by the GUI or by the CLI. In the first case the user can set the profiling configuration using the GUI and then see the results. In the latter, the user can use the MAP executable to launch the application they want to profile which will generate a report file that can then be opened from the GUI.
+
+##### Profile application
+
+We'll focus here on the profiling using the CLI but the same configuration applies in the other case as well.
+
+To debug an MPI application on Alps the following script is necessary:
+
+```bash
+map -n <num_of_procs> --mpi=slurm --mpiargs="<slurm_arguments>" --profile <executable> <executable_arguments>
+```
+
+This will generate a profile report in a binary file with suffix `.map`.
+
+To open this file we can open the Linaro Forge Client on our local machine, navigate to the `linaro MAP` tab, connect to the corresponding `Remote` and then select `LOAD PROFILE DATA FILE` to locate the file.
+
+After loading the report file we'll be in the home of Linaro MAP.
+
+<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs_archive/docs/images/map-home.png" width="800" />
+
+More information regarding how to use Linaro MAP can be found in the Forge [User Guide](https://docs.linaroforge.com/latest/html/forge/index.html).
+
+Linaro MAP also allows the generation of a high level Performance Report in HTML format that shows key metrics of the profiled application. To see this we can click in the toolbar `Reports > View HTML Performance Report in browser`. This will look like the following:
+
+<img src="https://raw.githubusercontent.com/iomaganaris/alps-uenv/refs/heads/linaro_map_docs_archive/docs/images/perf-report.png" width="800" />
+
+## Troubleshooting
 
 Notes on using specific systems:
 

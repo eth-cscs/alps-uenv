@@ -1,0 +1,56 @@
+climana:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@12
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.28
+  packages:
+  - perl
+  - autoconf
+  - m4
+  - automake
+  - texinfo
+  - libtool
+  - gawk
+  - curl
+  specs:
+  # choose fftw instead of the default intel-oneapi-mkl.
+  # this saves ~2GB of space, and reduces image build time.
+  - cdo ^[virtuals=fftw-api] fftw
+  - gdal
+  - geos
+  - gsl
+  - hdf5@1.12.2 +fortran +threadsafe ~mpi
+  - imagemagick
+  - ncview
+  - nco
+  - ncl
+  - netcdf-c@4.8.1~mpi ^hdf5~mpi api=v18
+  - proj
+  - python@3.11
+  - sqlite
+  - udunits
+  # R and its packages
+  # +X is required for png, tiff, jpeg, etc support
+  - r@4.4 +X
+  # install here so that the openssl built by Spack is used.
+  - r-curl
+  # R needs to find all of the following use pkg-config
+  # so we add them to the view, where they will be picked up.
+  - freetype
+  - fribidi
+  - glib
+  - harfbuzz
+  - libjpeg-turbo
+  - libpng
+  - libtiff
+  - zstd
+  # required as a runtime dependency of the ssl R package
+  - openssl
+  views:
+    climana:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
