@@ -36,6 +36,7 @@ climana:
   - r@4.4 +X
   # install here so that the openssl built by Spack is used.
   - r-curl
+  - r-xlconnect
   # R needs to find all of the following use pkg-config
   # so we add them to the view, where they will be picked up.
   - freetype
