@@ -3,7 +3,8 @@ clusters:
     targets:
       -
         uarch: 'a100'
-        partition: 'normal'
+        # use postproc for building, because it is usually less busy
+        partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
       -
@@ -173,6 +174,12 @@ uenvs:
     "v7":
       recipes:
         a100: v7
+      deploy:
+        balfrin: [a100]
+      develop: False
+    "v8":
+      recipes:
+        a100: v8
       deploy:
         balfrin: [a100]
       develop: False
