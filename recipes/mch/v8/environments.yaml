@@ -11,6 +11,9 @@ tools:
   - ruby@3.1.0
   packages:
   - perl
+  - gmake
+  - autoconf
+  - automake
   views:
     tools:
       exclude: []
@@ -26,7 +29,6 @@ prgenv-nvidia:
     gpu: cuda
   packages:
   - perl
-  - curl
   - gmake
   - autoconf
   - automake
@@ -61,8 +63,10 @@ prgenv-gcc:
     spec: cray-mpich@8.1.30%gcc
   packages:
   - perl
-  - curl
   - libx11
+  - gmake
+  - autoconf
+  - automake
   specs:
   - osu-micro-benchmarks@5.9
   - openblas@0.3.21
