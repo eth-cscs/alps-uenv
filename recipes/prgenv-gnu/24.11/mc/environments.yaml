@@ -3,7 +3,7 @@ gcc-env:
       - toolchain: gcc
         spec: gcc@13
   mpi:
-      spec: cray-mpich
+      spec: cray-mpich@8.1.30
       gpu: Null
   unify: true
   specs:
@@ -16,6 +16,7 @@ gcc-env:
   - kokkos +aggressive_vectorization cxxstd=17 +openmp +pic +serial +shared +tuning
   - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
+  - lua
   - libtree
   - meson
   - ninja

@@ -7,10 +7,8 @@ gcc-env:
       gpu: cuda
   unify: true
   specs:
-  - aws-ofi-nccl@master
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
-  - cuda@12.6
   - fftw
   - fmt
   - gsl
@@ -18,14 +16,18 @@ gcc-env:
   - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
   - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
+  - lua
   - libtree
   - meson
-  - nccl
-  - nccl-tests
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
   - python@3.12
+  # add GPU-specific packages here, for easier comparison with mc version
+  - nccl
+  - nccl-tests
+  - cuda@12.6
+  - aws-ofi-nccl@master
   variants:
   - +mpi
   - +cuda
@@ -34,5 +36,6 @@ gcc-env:
     default:
       link: roots
       uenv:
+        add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]

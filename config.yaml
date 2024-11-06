@@ -231,6 +231,7 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
+      develop: True
   quantumespresso:
     "v7.1":
       recipes:
