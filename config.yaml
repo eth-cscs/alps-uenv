@@ -5,9 +5,10 @@ clusters:
         uarch: 'a100'
         # ~use postproc for building, because it is usually less busy~
         # use normal for building, because postproc does not give enough resources
-        partition: 'normal'
+        partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          SLURM_CPUS_PER_TASK: 128
       -
         uarch: 'zen3'
         partition: 'postproc'
