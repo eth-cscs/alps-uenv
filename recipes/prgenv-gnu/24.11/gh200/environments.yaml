@@ -22,6 +22,7 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
+  - papi ~cuda
   - python@3.12
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
