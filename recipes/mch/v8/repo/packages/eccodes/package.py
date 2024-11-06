@@ -50,7 +50,10 @@ class Eccodes(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
-    version("2.36.0", sha256="da74143a64b2beea25ea27c63875bc8ec294e69e5bd0887802040eb04151d79a")
+    version("2.36.4",
+            sha256="198ccb26e8df96544c668ea6853ea153535ab78b10c43339a678f271337aa0da",
+            url="https://github.com/ecmwf/eccodes/archive/refs/tags/2.36.4.tar.gz"
+            )
     version("2.34.0", sha256="3cd208c8ddad132789662cf8f67a9405514bfefcacac403c0d8c84507f303aba")
     version("2.33.0", sha256="bdcec8ce63654ec6803400c507f01220a9aa403a45fa6b5bdff7fdcc44fd7daf")
     version("2.32.1", sha256="ad2ac1bf36577b1d35c4a771b4d174a06f522a1e5ef6c1f5e53a795fb624863e")
@@ -118,7 +121,12 @@ class Eccodes(CMakePackage):
     depends_on("cmake@3.6:", type="build")
     depends_on("cmake@3.12:", when="@2.19:", type="build")
 
-    depends_on("ecbuild", type="build", when="@develop")
+    # TODO: ecbuild was only used for the @develop branch
+    # however, testing 2.36.4, it appears to be a requirement.
+    # this might be because they package the software differently in GitHub
+    # (they normally provide releases as tar balls on Confluence)
+    depends_on("ecbuild", type="build")
+    #depends_on("ecbuild", type="build", when="@develop")
 
     conflicts("+openmp", when="+pthreads", msg="Cannot enable both POSIX threads and OMP")
 
