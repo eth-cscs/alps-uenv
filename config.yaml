@@ -8,7 +8,7 @@ clusters:
         partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
-          SLURM_CPUS_PER_TASK: 128
+          SLURM_CPUS_PER_TASK: '128'
       -
         uarch: 'zen3'
         partition: 'postproc'
