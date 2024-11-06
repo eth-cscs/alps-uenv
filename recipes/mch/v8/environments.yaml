@@ -2,7 +2,8 @@ tools:
   compiler:
     - toolchain: gcc
       spec: gcc
-  unify: when_possible
+  #unify: when_possible
+  unify: true
   specs:
   - cmake@3.24
   - python@3.10
@@ -23,7 +24,7 @@ prgenv-nvidia:
       spec: gcc
     - toolchain: llvm
       spec: nvhpc
-  unify: when_possible
+  unify: true
   mpi:
     spec: cray-mpich@8.1.30%nvhpc
     gpu: cuda
@@ -58,7 +59,7 @@ prgenv-gcc:
   compiler:
     - toolchain: gcc
       spec: gcc
-  unify: when_possible
+  unify: true
   mpi:
     spec: cray-mpich@8.1.30%gcc
   packages:
