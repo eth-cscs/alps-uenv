@@ -18,7 +18,9 @@ The following packages are provided:
 * `gcc`
 * `gsl`
 * `hdf5`
-* `kokkos`, `kokkos-kernels`, and `kokkos-tools`
+* `kokkos`
+* `kokkos-kernels`
+* `kokkos-tools`
 * `libtree`
 * `meson`
 * `nccl-tests`
