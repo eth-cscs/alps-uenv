@@ -1,0 +1,7 @@
+name: julia
+spack:
+  commit: releases/v0.22
+  repo: https://github.com/spack/spack.git
+store: /user-environment
+description: HPC setup for juliaup, julia and some HPC key packages (MPI.jl, CUDA.jl, AMDGPU.jl, HDF5.jl, ADIOS2.jl, ...) + GNU Compiler toolchain with cray-mpich, HDF5, ADIOS2, Python, CMake and other development tools.
+

@@ -52,7 +52,6 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
-          SLURM_RESERVATION: "daint"
     runner: f7t
 uenvs:
   arbor:
@@ -140,6 +139,13 @@ uenvs:
       deploy:
         todi: [gh200]
         santis: [gh200]
+      develop: False
+  julia:
+    "24.9":
+      recipes:
+        zen2:  "24.9/mc"
+        zen3:  "24.9/mc"
+        gh200: "24.9/gh200"
       develop: False
   lammps:
     "2023":
