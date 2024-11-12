@@ -9,6 +9,9 @@ tools:
   - libtree
   - tree
   - ruby@3.1.0
+  # TODO: this old version of R does not build - it requires a deprecated curl version
+  #   update it to a version that meets MCH requirements
+  #- r@4.0.5
   packages:
   - perl
   - gmake
@@ -69,7 +72,8 @@ prgenv-gcc:
   - automake
   specs:
   - osu-micro-benchmarks@5.9
-  - openblas@0.3.21
+  - cmake
+  - openblas@0.3.26
   - libfyaml@0.7.12
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
   - hdf5@1.12.2 +fortran +threadsafe +mpi
