@@ -1,0 +1,36 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich
+      gpu: Null
+  unify: true
+  specs:
+  - cmake
+  - fftw
+  - fmt
+  - hdf5+hl
+  - ninja@1.11
+  - openblas threads=openmp
+  - python
+  - py-pybind11
+  - osu-micro-benchmarks@5.9
+  - bzip2
+  - zfp
+  - sz
+  - libpng
+  - c-blosc2
+  - libpressio
+  - mgard
+  - libcatalyst
+  - adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+libpressio+mgard+libcatalyst
+  variants:
+  - +mpi
+  views:
+    develop:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

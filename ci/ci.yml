@@ -7,16 +7,19 @@ pipeline-configure:
   tags: [rosa-k8s-lightweight]
   image: docker.io/python:latest
   script:
-    - ./ci/configure-pipeline
+    - git clone https://github.com/eth-cscs/uenv-pipeline.git
+    - ./uenv-pipeline/configure-pipeline -c./config.yaml -r./recipes -s$system -u$uenv -a$uarch -o./pipeline.yml
   artifacts:
     paths:
       - pipeline.yml
+      - uenv-pipeline
 
 generated-pipeline:
   stage: run
   needs: [pipeline-configure]
   variables:
     CSCS_NOTIFICATION_CONTEXT:  "$system-$uarch-$uenv"
+    PARENT_PIPELINE_ID: "$CI_PIPELINE_ID"
   trigger:
     include:
       - artifact: pipeline.yml

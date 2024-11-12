@@ -1,0 +1,5 @@
+#!/bin/bash
+
+forge_bin={{ env.mount }}/env/forge/bin
+echo "export PATH=$forge_bin:\$PATH" >> {{ env.mount }}/activate
+echo "export UENV_DDT_VERSION=24.0.2" >> {{ env.mount }}/activate
