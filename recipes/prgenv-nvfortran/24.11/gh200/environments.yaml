@@ -20,13 +20,13 @@ gcc-env:
   - libtree
   - lz4
   - meson
-  - netlib-scalapack%nvhpc
+  #- netlib-scalapack%nvhpc
   - nccl
   - nccl-tests
   - ninja
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
-  - openblas%nvhpc
+  #- openblas%nvhpc
   - osu-micro-benchmarks@5.9%nvhpc
   - python@3.12
   - zlib-ng
@@ -35,7 +35,7 @@ gcc-env:
   - +cuda
   - cuda_arch=90
   views:
-    default:
+    nvfort:
       link: roots
       uenv:
         prefix_paths:
