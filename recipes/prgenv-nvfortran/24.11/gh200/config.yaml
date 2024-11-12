@@ -1,4 +1,4 @@
-name: prgenv-gnu
+name: prgenv-nvfortran
 spack:
   commit: releases/v0.22
   repo: https://github.com/spack/spack.git

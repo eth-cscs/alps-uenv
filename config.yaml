@@ -236,10 +236,10 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
-  prgenv-nvidia:
-    "24.7":
+  prgenv-nvfortran:
+    "24.11":
       recipes:
-        gh200: 24.7/gh200
+        gh200: 24.11/gh200
       deploy:
         todi: [gh200]
   quantumespresso:

@@ -11,19 +11,25 @@ gcc-env:
   specs:
   - aws-ofi-nccl@master
   - cmake
-  - cuda@12.4
+  - cuda@12.6
   - fftw%nvhpc +openmp
   - fmt
   - hdf5+hl+mpi
   - libtree
+  - lua
+  - libtree
+  - lz4
   - meson
+  - netlib-scalapack%nvhpc
   - nccl
   - nccl-tests
   - ninja
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
-  - osu-micro-benchmarks@5.9
+  - openblas%nvhpc
+  - osu-micro-benchmarks@5.9%nvhpc
   - python@3.12
+  - zlib-ng
   variants:
   - +mpi
   - +cuda
