@@ -19,14 +19,14 @@ lammps-kokkos:
   - cuda_arch=90
   views:
     develop-kokkos:
-      link: roots
+      link: all
       exclude: ["lammps"]
       uenv:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
     kokkos:
-      link: roots
+      link: all
       uenv:
         add_compilers: true
         prefix_paths:
@@ -52,14 +52,14 @@ lammps-gpu:
   - cuda_arch=90
   views:
     develop-gpu:
-      link: roots
+      link: all
       exclude: ["lammps"]
       uenv:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
     gpu:
-      link: roots
+      link: all
       uenv:
         add_compilers: true
         prefix_paths:
