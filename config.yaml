@@ -279,3 +279,4 @@ uenvs:
         zen2: v4.1.8/mc
       deploy:
         eiger: [zen2]
+      mount: "/user-tools"
