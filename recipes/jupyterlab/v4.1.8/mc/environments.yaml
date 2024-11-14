@@ -17,7 +17,7 @@ gcc-env:
   variants:
   - +mpi
   views:
-    develop:
+    jupyter:
       link: roots
       uenv:
         add_compilers: true
