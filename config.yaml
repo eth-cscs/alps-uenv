@@ -328,7 +328,12 @@ uenvs:
     "v6.5.0":
       recipes:
         gh200: v6.5.0/gh200
-      deploy:
-        todi: [gh200]
-        daint: [gh200]
       develop: False
+  jupyterlab:
+    "v4.1.8":
+      recipes:
+        zen2: v4.1.8/mc
+        gh200: v4.1.8/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
