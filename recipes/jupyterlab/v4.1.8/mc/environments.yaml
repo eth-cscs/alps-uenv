@@ -6,10 +6,7 @@ gcc-env:
   unify: true
   specs:
   - cmake
-  - fftw
-  - hdf5+hl
   - ninja@1.11
-  - openblas threads=openmp
   - python@3.12
   - py-pip
   views:
