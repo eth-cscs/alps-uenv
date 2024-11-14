@@ -1,7 +1,7 @@
 name: prgenv-gnu
 spack:
   # TODO: Change to releases/v0.23
-  commit: 360dbe41f7b7a380651db3735ea6e0a7cf1b1920
+  commit: develop
   repo: https://github.com/spack/spack.git
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
