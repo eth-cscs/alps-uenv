@@ -25,7 +25,8 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
-  - petsc +superlu-dist
+  # the +batch option stops configure from using srun to test for MPI features.
+  - petsc +superlu-dist +fftw +batch
   - superlu-dist
   - slepc
   - python@3.12
