@@ -2,9 +2,7 @@ gcc-env:
   compiler:
       - toolchain: gcc
         spec: gcc@13
-  mpi:
-      spec: cray-mpich@8.1.30
-      gpu: Null
+  mpi: null
   unify: true
   specs:
   - cmake
@@ -14,8 +12,6 @@ gcc-env:
   - openblas threads=openmp
   - python@3.12
   - py-pip
-  variants:
-  - +mpi
   views:
     jupyter:
       link: roots
