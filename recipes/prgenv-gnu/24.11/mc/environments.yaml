@@ -25,6 +25,7 @@ gcc-env:
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
   - python@3.12
+  - superlu
   - zlib-ng
   variants:
   - +mpi
