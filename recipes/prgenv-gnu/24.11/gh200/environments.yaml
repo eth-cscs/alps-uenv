@@ -7,7 +7,6 @@ gcc-env:
       gpu: cuda
   unify: true
   specs:
-  - arpack-ng
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
@@ -26,9 +25,6 @@ gcc-env:
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
   - papi ~cuda
-  - petsc +superlu-dist
-  - superlu-dist
-  - slepc
   - python@3.12
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version

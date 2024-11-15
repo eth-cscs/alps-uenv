@@ -7,7 +7,6 @@ gcc-env:
       gpu: Null
   unify: true
   specs:
-  - arpack-ng
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
@@ -25,9 +24,6 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
-  - petsc +superlu-dist
-  - superlu-dist
-  - slepc
   - python@3.12
   - zlib-ng
   variants:
