@@ -1,0 +1,51 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: Null
+  unify: true
+  specs:
+  - arpack-ng
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - eigen
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+hl
+  - hwloc
+  - hypre +superlu-dist
+  - kokkos +aggressive_vectorization cxxstd=17 +openmp +pic +serial +shared +tuning
+  - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - metis
+  - mumps +parmetis +ptscotch
+  - netcdf-c
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - p4est +mpi
+  - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - python@3.12
+  - suite-sparse
+  - superlu
+  - superlu-dist
+  - swig
+  - trilinos +adios2 +amesos2 +belos +boost cxxstd=17 +explicit_template_instantiation +hdf5 +hypre +ifpack2 +intrepid2 +kokkos +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
+  - zlib-ng
+  variants:
+  - +mpi
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

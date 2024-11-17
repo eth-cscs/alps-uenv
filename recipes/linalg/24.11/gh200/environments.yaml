@@ -1,0 +1,54 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: cuda
+  unify: true
+  specs:
+  - arpack-ng
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - eigen
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+hl
+  - hwloc
+  - hypre +superlu-dist
+  - kokkos-tools +mpi +papi
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - p4est +mpi
+  - papi ~cuda
+  - petsc +batch +hwloc +hypre +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - python@3.12
+  - suite-sparse ~cuda
+  - superlu
+  - superlu-dist
+  - swig
+  - trilinos +adios2 +amesos2 +belos +boost cxxstd=17 +cuda_constexpr +explicit_template_instantiation +hdf5 +hypre +ifpack2 +intrepid2 +kokkos +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
+  - zlib-ng
+  # add GPU-specific packages here, for easier comparison with mc version
+  - nccl
+  - nccl-tests
+  - cuda@12.6
+  - aws-ofi-nccl@master
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
