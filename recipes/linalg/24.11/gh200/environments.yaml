@@ -23,6 +23,7 @@ gcc-env:
   - libtree
   - lz4
   - meson
+  - nco
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
@@ -30,6 +31,7 @@ gcc-env:
   - papi ~cuda
   - petsc +batch +hwloc +hypre +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - python@3.12
+  - slepc
   - suite-sparse ~cuda
   - superlu
   - superlu-dist
