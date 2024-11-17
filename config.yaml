@@ -163,6 +163,17 @@ uenvs:
         todi: [gh200]
         santis: [gh200]
       develop: False
+  linalg:
+    "24.11":
+      recipes:
+        zen2: "24.11/mc"
+        zen3: "24.11/mc"
+        gh200: "24.11/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        todi: [gh200]
+      develop: True
   linaro-forge:
     "24.0.2":
       recipes:
