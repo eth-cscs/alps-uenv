@@ -412,6 +412,10 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4.3.01", when="@16.0.0 +kokkos")
     depends_on("kokkos@4.2.01", when="@15.1.0:15.1.1 +kokkos")
     depends_on("kokkos@4.1.00", when="@14.4.0:15.0.0 +kokkos")
+    depends_on("kokkos-kernels@4.4.01", when="@master: +kokkos")
+    depends_on("kokkos-kernels@4.3.01", when="@16.0:16 +kokkos")
+    depends_on("kokkos-kernels@4.2.01", when="@15.1:15 +kokkos")
+    depends_on("kokkos-kernels@4.1.00", when="@14.4:15.0 +kokkos")
 
     depends_on("kokkos +wrapper", when="trilinos@14.4.0: +kokkos +wrapper")
     depends_on("kokkos ~wrapper", when="trilinos@14.4.0: +kokkos ~wrapper")
@@ -902,6 +906,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         # External Kokkos
         if spec.satisfies("@14.4.0: +kokkos"):
             options.append(define_tpl_enable("Kokkos"))
+            options.append(define_tpl_enable("KokkosKernels", True))
 
         # MPI settings
         options.append(define_tpl_enable("MPI"))
@@ -1083,4 +1088,3 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             # currently Trilinos doesn't perform the memory fence so
             # it relies on blocking CUDA kernel launch.
             env.set("CUDA_LAUNCH_BLOCKING", "1")
-
