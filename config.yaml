@@ -237,9 +237,9 @@ uenvs:
         eiger: [zen2]
         todi: [gh200]
   prgenv-nvfortran:
-    "24.11":
+    "24.12":
       recipes:
-        gh200: 24.11/gh200
+        gh200: 24.12/gh200
       deploy:
         todi: [gh200]
   quantumespresso:
