@@ -17,9 +17,12 @@ gcc-env:
   - hdf5+hl
   - hwloc
   - hypre +superlu-dist
-  - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
+  - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
   - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
+  - metis
+  - mumps +parmetis +ptscotch
+  - netcdf-c
   - netlib-scalapack
   - lua
   - libtree
@@ -38,7 +41,7 @@ gcc-env:
   - superlu
   - superlu-dist
   - swig
-  - trilinos +adios2 +amesos2 +belos +boost cxxstd=17 +cuda_constexpr +explicit_template_instantiation +hdf5 +hypre +ifpack2 +intrepid2 +kokkos +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
+  - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl

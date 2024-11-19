@@ -17,7 +17,7 @@ gcc-env:
   - hdf5+hl
   - hwloc
   - hypre +superlu-dist
-  - kokkos +aggressive_vectorization cxxstd=17 +openmp +pic +serial +shared +tuning
+  - kokkos +aggressive_vectorization cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
   - metis
@@ -40,7 +40,7 @@ gcc-env:
   - superlu
   - superlu-dist
   - swig
-  #- trilinos +adios2 +amesos2 +belos +boost cxxstd=17 +explicit_template_instantiation +hdf5 +hypre +ifpack2 +intrepid2 +kokkos +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
+  - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
   - zlib-ng
   variants:
   - +mpi
