@@ -15,6 +15,7 @@ nvhpc-env:
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
+  - cmake
   packages:
   - git
   variants:
