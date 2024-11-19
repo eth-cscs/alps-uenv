@@ -34,14 +34,14 @@ gcc-env:
   - osu-micro-benchmarks@5.9
   - p4est +mpi
   - parmetis
-  - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - petsc +batch +complex +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - python@3.12
   - slepc
   - suite-sparse
   - superlu
   - superlu-dist
   - swig
-  - trilinos@16 +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
+  - trilinos@16 +adios2 ~amesos +amesos2 +belos +boost +complex cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
   - zlib-ng
   variants:
   - +mpi
