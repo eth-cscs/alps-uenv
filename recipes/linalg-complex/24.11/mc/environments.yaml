@@ -41,7 +41,7 @@ gcc-env:
   - superlu
   - superlu-dist
   - swig
-  - trilinos@16 +adios2 ~amesos +amesos2 +belos +boost +complex cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +zoltan2
+  - trilinos@16 +adios2 ~amesos +amesos2 +belos +boost +complex cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +tpetra +zoltan2
   - zlib-ng
   variants:
   - +mpi
