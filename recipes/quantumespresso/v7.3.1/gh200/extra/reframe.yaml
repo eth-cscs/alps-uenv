@@ -1,0 +1,22 @@
+develop:
+ features:
+   - cuda
+   - mpi
+   - qe-dev
+ cc: mpicc
+ cxx: mpic++
+ ftn: mpifort
+ views:
+   - develop
+modules:
+  features:
+    - cuda
+    - mpi
+    - qe
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load quantum-espresso
