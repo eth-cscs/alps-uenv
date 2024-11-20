@@ -16,7 +16,7 @@ nvhpc-env:
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
   - cmake
-  - nvhpc@24.11
+  - nvhpc@24.11 ~blas ~lapack ~mpi
   packages:
   - git
   variants:
