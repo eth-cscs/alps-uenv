@@ -59,7 +59,6 @@ clusters:
       -
         uarch: 'gh200'
         partition: 'normal'
-        reservation: 'NCCL'
         variables:
           SLURM_RESERVATION: 'icon'
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
@@ -321,4 +320,3 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
-
