@@ -49,16 +49,16 @@ python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/re
 
 # =====================================
 debug_output "create build-env"
-BUILD_ENV=$mount_path/paraview-buildenv.rc
+BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
 SPEC="$SPACK_ENV_NAME %gcc@12 ^[virtuals=gl] osmesa ^mesa +osmesa"
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ env activate --sh
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
-$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV "$SPEC"
+$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV "$SPEC"
 
 # =====================================
 debug_output "source build-env"
-source $BUILD_ENV
+source $BUILD_ENV_DEV
 
 # =====================================
 debug_output "checkout paraview/vtk/vtkm branches"
@@ -179,6 +179,25 @@ cmake -G Ninja \
 ninja
 ninja install
 ninja clean
+
+# =====================================
+debug_output "cleanup user build environemnt"
+# make a copy of the dev build-env and remove the /dev/shm version
+BUILD_ENV=$PARAVIEW_INSTALL_DIR/buildenv.rc
+cp $BUILD_ENV_DEV $BUILD_ENV
+rm $BUILD_ENV_DEV
+# add paraview path to build env
+sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD_ENV
+
+# remove /dev/shm paths from build-env that will not be available to the final user
+GCCLOC=$($SPACK_CMD location -i gcc@12)
+sed -i "s|/dev/shm/biddisco/spack/lib/spack/env/gcc|$GCCLOC/bin|g"  $BUILD_ENV
+sed -i "s|/dev/shm/biddisco/spack/bin|\$PATH|"                      $BUILD_ENV
+
+sed -i "/^HOME=/d"                                                  $BUILD_ENV
+sed -i "/^SPACK_ROOT=/d"                                            $BUILD_ENV
+sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"                              $BUILD_ENV
+sed -i "/^SPACK_USER_CACHE_PATH=/d"                                 $BUILD_ENV
 
 # =====================================
 debug_output "set permissions"
