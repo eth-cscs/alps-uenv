@@ -337,4 +337,5 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        todi: [gh200]
       mount: "/user-tools"
