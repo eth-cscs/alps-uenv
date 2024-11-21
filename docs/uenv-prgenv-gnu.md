@@ -41,6 +41,14 @@ The following packages are provided:
 - Added Kokkos with the CUDA, OpenMP, and Serial execution spaces
 - Added Kokkos Kernels with explicit template instantiations and support for the most commonly used third party libraries
 - Added Kokkos Tools
+- Added PAPI
+- Added SuperLU
+- Added netlib-scalapack
+- Added Lua
+- Added lz4
+- Added zlib-ng
+- Updated CUDA to 12.6
+- Changed aws-ofi-nccl to 1.9.2
 
 ## How to use
 
