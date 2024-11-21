@@ -1,13 +1,15 @@
 develop:
- features:
-   - cuda
-   - mpi
-   - qe-dev
- cc: mpicc
- cxx: mpic++
- ftn: mpifort
- views:
-   - develop
+  features:
+    - cuda
+    - mpi
+    - qe-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc
 modules:
   features:
     - cuda
