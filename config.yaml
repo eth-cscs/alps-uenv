@@ -277,6 +277,8 @@ uenvs:
     "v4.1.8":
       recipes:
         zen2: v4.1.8/mc
+        gh200: v4.1.8/mc
       deploy:
         eiger: [zen2]
+        todi: [gh200]
       mount: "/user-tools"
