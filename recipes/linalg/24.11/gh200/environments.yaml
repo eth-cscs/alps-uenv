@@ -48,7 +48,7 @@ gcc-env:
   - nccl
   - nccl-tests
   - cuda@12.6
-  - aws-ofi-nccl@master
+  - aws-ofi-nccl@git.v1.9.2-aws=1.9.2
   variants:
   - +mpi
   - +cuda
