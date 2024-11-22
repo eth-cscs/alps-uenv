@@ -14,7 +14,7 @@ gcc-env:
   - fftw
   - fmt
   - gsl
-  - hdf5+hl
+  - hdf5 +fortran +hl
   - hwloc
   - hypre +superlu-dist
   - kokkos +aggressive_vectorization cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning

@@ -14,7 +14,7 @@ gcc-env:
   - fftw
   - fmt
   - gsl
-  - hdf5+hl
+  - hdf5 +fortran +hl
   - hwloc
   - hypre +superlu-dist
   - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
