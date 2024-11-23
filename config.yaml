@@ -52,6 +52,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
+          SLURM_RESERVATION: NCCL
     runner: f7t
 uenvs:
   arbor:
