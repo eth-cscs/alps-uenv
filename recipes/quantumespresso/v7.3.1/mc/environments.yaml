@@ -8,6 +8,8 @@ nvhpc-env:
   specs:
   - quantum-espresso@7.3.1 +libxc +scalapack +openmp
   - netlib-scalapack
+  - cmake
+  - libxc
   - fftw
   - openblas threads=openmp
   packages:
