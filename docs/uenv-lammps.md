@@ -4,6 +4,7 @@
 
 ## Running
 
+We provide two versions of LAMMPS, one with the kokkos package enabled, and one with the GPU packaged enabled. These can be loaded as follows:
 ```bash
 uenv start <LAMMPS_UENV>
 uenv view lammps:kokkos
@@ -15,9 +16,6 @@ or
 uenv start <LAMMPS_UENV>
 uenv view lammps:gpu
 ```
-
-In the former, lammps has been compiled with the kokkos package enabled. In the later, lammps has been compiled with the GPU package enabled.
-
 
 !!! warning
     [LAMMPS] is built with GPU-aware MPI. Make sure to set `MPICH_GPU_SUPPORT_ENABLED=1` when running [LAMMPS].
