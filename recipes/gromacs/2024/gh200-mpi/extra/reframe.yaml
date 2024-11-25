@@ -1,4 +1,4 @@
-develop:
+run:
   features:
     - gromacs 
     - cuda
@@ -6,4 +6,4 @@ develop:
   cc: gcc
   cxx: g++
   views:
-    - develop
+    - gromacs
