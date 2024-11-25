@@ -5,8 +5,6 @@ gcc-env:
   mpi: null
   unify: true
   specs:
-  - cmake
-  - ninja@1.11
   - python@3.12
   - py-pip
   views:
