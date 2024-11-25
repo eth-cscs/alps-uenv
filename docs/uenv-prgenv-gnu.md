@@ -47,6 +47,7 @@ The following packages are provided:
 - Added Lua
 - Added lz4
 - Added zlib-ng
+- Added Fortran support to HDF5
 - Updated CUDA to 12.6
 - Changed aws-ofi-nccl to 1.9.2
 
