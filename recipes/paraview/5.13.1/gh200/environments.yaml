@@ -45,7 +45,6 @@ paraview-gh200-egl-cuda:
   # IO and parallelism
   - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
   - netcdf-c +mpi
-  - h5hut@master
   - lz4
   - adios2 +python +hdf5
 
