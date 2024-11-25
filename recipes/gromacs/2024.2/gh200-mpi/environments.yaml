@@ -1,20 +1,21 @@
 gromacs:
   compiler:
   - toolchain: gcc
-    spec: gcc@12.3
+    spec: gcc@13.2
   unify: when_possible
   specs:
   - cmake
   - cuda
-  - nvhpc@24.7
+  - nvhpc@24.9
   - blas
   - lapack
   - hwloc
   - fftw
   - python@3.10
-  - gromacs@2024.2 +cuda +mpi +hwloc +cufftmp
+  - gromacs@2024.3 +cuda +mpi +hwloc +cufftmp
+  - gromacs@2024.3 +cuda ~shared +mpi +hwloc +cufftmp +plumed
   mpi:
-    spec: cray-mpich
+    spec: cray-mpich@8.1.30
     gpu: cuda
   variants:
   - +mpi
@@ -23,7 +24,11 @@ gromacs:
   views:
     develop:
       exclude: ['gromacs']
-    gromacs:
+    gromacs: 
+      exclude: ['gromacs+plumed']
+      link: run
+    plumed:
+      exclude: ['gromacs@2024.3']
       link: run
   packages:
   - perl
