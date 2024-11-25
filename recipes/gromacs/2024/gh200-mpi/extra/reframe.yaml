@@ -1,0 +1,9 @@
+develop:
+  features:
+    - gromacs 
+    - cuda
+    - mpi
+  cc: gcc
+  cxx: g++
+  views:
+    - develop
