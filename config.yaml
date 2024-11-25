@@ -4,12 +4,14 @@ clusters:
       -
         uarch: 'a100'
         partition: 'normal'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
       -
         uarch: 'zen3'
         partition: 'postproc'
-    runner:
-      slurm-tag: balfrin-spack-stack-builder
-      baremetal-tag: balfrin-login-baremetal
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+    runner: f7t
   daint:
     targets:
       -
@@ -35,7 +37,6 @@ clusters:
           SLURM_CONSTRAINT: 'mc'
           F7T_URL: 'https://firecrest-dev.cscs.ch'
     runner: f7t
-    #no_bwrap: True
   santis:
     targets:
       -
@@ -51,7 +52,6 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
-          SLURM_RESERVATION: "daint"
     runner: f7t
 uenvs:
   arbor:
@@ -68,6 +68,15 @@ uenvs:
         zen2: mch/climana/24.7
         zen3: mch/climana/24.7
         a100: mch/climana/24.7
+      deploy:
+        balfrin: [zen3, a100]
+      develop: False
+  climana:
+    "24.10":
+      recipes:
+        zen2: mch/climana/24.10
+        zen3: mch/climana/24.10
+        a100: mch/climana/24.10
       deploy:
         balfrin: [zen3, a100]
       develop: False
@@ -130,6 +139,13 @@ uenvs:
       deploy:
         todi: [gh200]
         santis: [gh200]
+      develop: False
+  julia:
+    "24.9":
+      recipes:
+        zen2:  "24.9/mc"
+        zen3:  "24.9/mc"
+        gh200: "24.9/gh200"
       develop: False
   lammps:
     "2023":
@@ -232,10 +248,12 @@ uenvs:
     "v7.3.1":
       recipes:
         gh200: v7.3.1/gh200
+        zen2: v7.3.1/mc
       deploy:
         santis: [gh200]
         todi: [gh200]
         daint: [gh200]
+        eiger: [zen2]
   sirius:
     "v7.5":
       recipes:

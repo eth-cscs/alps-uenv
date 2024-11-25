@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Author: Samuel Omlin, CSCS (omlins)
+#
+# Description: Definition of site specific variables and call of JUHPC.
+# Site: ALPS:todi, Swiss National Supercomputing Centre (CSCS)
+# Base: uenv
+
+
+# UENV specific environment variables
+export ENV_MOUNT={{ env.mount }}    # export ENV_MOUNT=/user-environment
+export ENV_META=$ENV_MOUNT/meta
+export ENV_EXTRA=$ENV_META/extra
+export ENV_JSON=$ENV_META/env.json
+
+
+# Environment variables for HPC key packages that require system libraries (MPI.jl, CUDA.jl, AMDGPU.jl, HDF5.jl and ADIOS2.jl)
+export JUHPC_CUDA_HOME=$(spack -C $ENV_MOUNT/config location -i cuda)
+export JUHPC_CUDA_RUNTIME_VERSION=$(spack --color=never -C $ENV_MOUNT/config find cuda | \
+                                    perl -ne 'print $1 if /cuda@([\d.]+)/')
+export JUHPC_MPI_HOME=$(spack -C $ENV_MOUNT/config location -i cray-mpich)
+export JUHPC_MPI_EXEC="srun -C gpu"
+export JUHPC_HDF5_HOME=$(spack -C $ENV_MOUNT/config location -i hdf5)
+export JUHPC_ADIOS2_HOME=$(spack -C $ENV_MOUNT/config location -i adios2)
+
+
+# Call JUHPC
+JUHPC_SETUP_INSTALLDIR=$ENV_MOUNT/juhpc_setup
+JULIAUP_INSTALLDIR="\$SCRATCH/\${HOSTNAME%%-*}/juliaup"
+JUHPC_POST_INSTALL_JL=$ENV_EXTRA/uenv_view.jl
+VERSION="v0.2.0"
+wget https://raw.githubusercontent.com/JuliaParallel/JUHPC/$VERSION/juhpc -O /tmp/juhpc
+bash -l /tmp/juhpc $JUHPC_SETUP_INSTALLDIR $JULIAUP_INSTALLDIR $JUHPC_POST_INSTALL_JL
