@@ -241,10 +241,12 @@ uenvs:
         zen2: 24.11/mc
         zen3: 24.11/mc
         gh200: 24.11/gh200
+        a100: 24.11/a100
       deploy:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
+        bristen: [a100]
       develop: True
   quantumespresso:
     "v7.1":
