@@ -12,6 +12,14 @@ clusters:
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
     runner: f7t
+  bristen:
+    targets:
+      -
+        uarch: 'a100'
+        partition: 'normal'
+        variables:
+          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+    runner: f7t
   daint:
     targets:
       -
