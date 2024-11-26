@@ -82,8 +82,7 @@ paraview-gh200-egl-cuda:
   - seacas ~fortran ~applications ~legacy ~tests ~x11
   - utf8cpp
 
-  # c2sm
-  # - libcdi-pio
+  # climate/weather
   - cdi
 
   # python
@@ -97,7 +96,7 @@ paraview-gh200-egl-cuda:
 
   # raytracing in VTK/ParaView
   - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
-  - ispc@main
+  - ispc@1.24
   - openvkl
   - embree
   - rkcommon
