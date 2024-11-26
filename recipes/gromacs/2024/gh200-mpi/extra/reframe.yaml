@@ -7,3 +7,13 @@ run:
   cxx: g++
   views:
     - gromacs
+
+build:
+  features:
+    - gromacs 
+    - cuda
+    - mpi
+  cc: gcc
+  cxx: g++
+  views:
+    - develop
