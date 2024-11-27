@@ -58,8 +58,9 @@ clusters:
     targets:
       -
         uarch: 'gh200'
-        partition: 'debug'
+        partition: 'normal'
         variables:
+          SLURM_RESERVATION: 'icon'
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
 uenvs:
