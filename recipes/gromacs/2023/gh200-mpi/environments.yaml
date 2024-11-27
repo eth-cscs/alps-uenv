@@ -1,4 +1,7 @@
 gromacs:
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
@@ -12,9 +15,6 @@ gromacs:
   - hwloc
   - fftw
   - python@3.10
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
   variants:
   - +mpi
   - +cuda
