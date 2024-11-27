@@ -18,7 +18,8 @@ clusters:
         uarch: 'a100'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
+          SLURM_ACCOUNT: ''
     runner: f7t
   daint:
     targets:
