@@ -44,6 +44,30 @@ The `plumed` view contains GROMACS 2022.5 (older version) with PLUMED 2.9.0. Thi
 
 The `gromacs` view contains the newest GROMACS 2024.1 that has been configured and tested for the highest performance on the Grace-Hopper nodes.
 
+### Build from Source
+
+Users that require customized variants of the packages can build their own using the `develop` view. One can use the following set of commands to do the same.
+
+```bash
+uenv start gromacs/2024:v1 
+
+# this sets PATH, LD_LIBRARY_PATH and PKG_CONFIG_PATH with the dependencies of gromacs and plumed
+uenv view develop
+
+# load GROMACS source from repo/tarball and cd to it
+mkdir build
+cd build
+CXX=mpic++ CC=mpicc ftn=mpif90
+cmake .. -DGMX_MPI=on -DGMX_GPU=CUDA -DGMX_SIMD=ARM_NEON_ASIMD
+make
+make check
+make install
+source /usr/local/gromacs/bin/GMXRC
+
+# same for plumed
+# set CXX, etc and call the build system
+```
+
 ### How to Run
 
 To start a job, 2 bash scripts are required: a standard SLURM submission script, and a wrapper to start the CUDA MPS daemon (in order to have multiple MPI ranks per GPU).
