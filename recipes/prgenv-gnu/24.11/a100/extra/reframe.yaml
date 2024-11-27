@@ -8,4 +8,4 @@ default:
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
-  activation: /user-environment/env/default/activate.sh
+  activation: uenv view develop
