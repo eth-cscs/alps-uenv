@@ -36,7 +36,7 @@ gcc-env:
   variants:
   - +mpi
   - +cuda
-  - cuda_arch=90
+  - cuda_arch=80
   views:
     default:
       link: roots
