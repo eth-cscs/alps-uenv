@@ -12,6 +12,15 @@ clusters:
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
     runner: f7t
+  bristen:
+    targets:
+      -
+        uarch: 'a100'
+        partition: 'normal'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
+          SLURM_ACCOUNT: ''
+    runner: f7t
   daint:
     targets:
       -
@@ -51,7 +60,8 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/cscs/firecrest/v1"
+          #SLURM_RESERVATION: 'icon'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
 uenvs:
   arbor:
@@ -186,6 +196,17 @@ uenvs:
         todi: [gh200]
       develop: False
   linaro-forge:
+    "24.1":
+      recipes:
+        zen2: "24.1"
+        gh200: "24.1"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        todi: [gh200]
+      develop: False
+      mount: "/user-tools"
     "24.0.2":
       recipes:
         zen2: "24.0.2"
@@ -233,15 +254,6 @@ uenvs:
       deploy:
         eiger: [zen2]
   prgenv-gnu:
-    "23.11":
-      recipes:
-        # zen2 and zen3 targets use the same recipe
-        zen2: 23.11/mc
-        zen3: 23.11/mc
-        a100: 23.11/a100
-      deploy:
-        # deploy to both the production and test clusters
-        eiger: [zen2]
     "24.2":
       recipes:
         gh200: 24.2/gh200
@@ -258,6 +270,19 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
+    "24.11":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        zen2: 24.11/mc
+        zen3: 24.11/mc
+        gh200: 24.11/gh200
+        a100: 24.11/a100
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        todi: [gh200]
+        bristen: [a100]
+      develop: True
   quantumespresso:
     "v7.1":
       recipes:

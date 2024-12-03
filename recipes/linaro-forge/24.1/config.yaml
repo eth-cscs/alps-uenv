@@ -1,0 +1,7 @@
+name: linaro
+store: /user-tools
+description: https://www.linaroforge.com/download-documentation
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.22
+modules: True
