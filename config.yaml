@@ -60,7 +60,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          #SLURM_RESERVATION: 'icon'
+          SLURM_RESERVATION: 'icon'
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
 uenvs:
@@ -172,6 +172,28 @@ uenvs:
         daint: [gh200]
         todi: [gh200]
         santis: [gh200]
+      develop: False
+  linalg:
+    "24.11":
+      recipes:
+        zen2: "24.11/mc"
+        zen3: "24.11/mc"
+        gh200: "24.11/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        todi: [gh200]
+      develop: False
+  linalg-complex:
+    "24.11":
+      recipes:
+        zen2: "24.11/mc"
+        zen3: "24.11/mc"
+        gh200: "24.11/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        todi: [gh200]
       develop: False
   linaro-forge:
     "24.1":
