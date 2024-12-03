@@ -173,7 +173,7 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
-      develop: True
+      develop: False
   linalg-complex:
     "24.11":
       recipes:
@@ -184,7 +184,7 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
-      develop: True
+      develop: False
   linaro-forge:
     "24.0.2":
       recipes:
