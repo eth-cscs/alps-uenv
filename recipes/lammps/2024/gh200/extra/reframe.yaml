@@ -4,11 +4,11 @@ build:
     - mpi
     - lammps-kokkos
   views:
-    - lammps-kokkos
+    - develop-kokkos
 run:
   features:
     - cuda
     - mpi
     - lammps-kokkos
   views:
-    - lammps-kokkos
+    - kokkos
