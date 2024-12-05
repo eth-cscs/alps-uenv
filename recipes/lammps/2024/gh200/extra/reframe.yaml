@@ -1,0 +1,12 @@
+develop:
+  features:
+    - cuda
+    - lammps-kokkos
+  views:
+    - lammps-kokkos
+run:
+  features:
+    - cuda
+    - lammps-kokkos
+  views:
+    - lammps-kokkos
