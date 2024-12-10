@@ -1,14 +1,23 @@
-build:
+build-kokkos:
   features:
     - cuda
     - mpi
-    - lammps-kokkos
+    - lammps-kokkos-dev
   views:
     - develop-kokkos
+
+build-gpu:
+  features:
+    - cuda
+    - mpi
+    - lammps-gpu-dev
+  views:
+    - develop-gpu
+
 run:
   features:
     - cuda
     - mpi
-    - lammps-kokkos
+    - lammps-kokkos-prod
   views:
     - kokkos
