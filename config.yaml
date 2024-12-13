@@ -283,6 +283,12 @@ uenvs:
         todi: [gh200]
         bristen: [a100]
       develop: True
+  prgenv-nvfortran:
+    "24.11":
+      recipes:
+        gh200: 24.11/gh200
+      deploy:
+        todi: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
