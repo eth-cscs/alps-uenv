@@ -3,7 +3,3 @@ bootstrap:
 gcc:
   specs:
   - gcc@12
-llvm:
-  requires: gcc@12
-  specs:
-  - nvhpc@24.11

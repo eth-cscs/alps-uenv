@@ -1,0 +1,38 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: Null
+  unify: true
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - kokkos +aggressive_vectorization cxxstd=17 +openmp +pic +serial +shared +tuning
+  - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - python@3.12
+  - superlu
+  - zlib-ng
+  variants:
+  - +mpi
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

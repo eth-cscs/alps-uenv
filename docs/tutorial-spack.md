@@ -15,9 +15,8 @@ This guide explains a _developer workflow_ allowing to either build your own pac
 !!! tip
     To avoid compatibility issues, try to match the version of your local [Spack] instance with the version of [Spack] of the uenv. You can use the following command to clone the same [Spack] version used by the uenv:
     ```bash
-    git clone \
-        -b $(jq -r .spack.commit /user-environment/meta/configure.json) \
-        $(jq -r .spack.repo /user-environment/meta/configure.json) $SCRATCH/spack
+    git clone --filter=tree:0 $(jq -r .spack.repo /user-environment/meta/configure.json)
+    git -C spack checkout $(jq -r .spack.commit /user-environment/meta/configure.json)
     ```
 
 !!! warning
