@@ -321,6 +321,13 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
         eiger: [zen2]
+    "v7.4":
+      recipes:
+        gh200: v7.4/gh200
+        zen2: v7.4/mc
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
   sirius:
     "v7.5":
       recipes:
