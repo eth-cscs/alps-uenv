@@ -281,4 +281,6 @@ uenvs:
       deploy:
         eiger: [zen2]
         todi: [gh200]
+        daint: [gh200]
+        pilatus: [zen2]
       mount: "/user-tools"
