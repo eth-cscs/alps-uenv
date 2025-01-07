@@ -338,4 +338,6 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         todi: [gh200]
+        daint: [gh200]
+        pilatus: [zen2]
       mount: "/user-tools"
