@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=stackinator-paraview
+#SBATCH --job-name=uenv-prepare
 #SBATCH --time=04:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=normal

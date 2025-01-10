@@ -3,15 +3,27 @@ paraview-gh200-egl-cuda:
   - toolchain: gcc
     spec: gcc
   mpi:
-    spec: cray-mpich@8.1.30
+    spec: cray-mpich
     gpu: cuda
   unify: true
   views:
-    paraview-gh200-egl-cuda:
+    develop:
+      exclude: []
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    paraview:
       link: run
       exclude: []
       uenv:
         add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    paraview-python:
+      link: run
+      exclude: []
+      uenv:
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
 
@@ -113,28 +125,4 @@ paraview-gh200-egl-cuda:
   - ~x11
   - ~examples
   - ~tests
-
-paraview-python:
-  compiler:
-  - toolchain: gcc
-    spec: gcc
-  mpi:
-    spec: cray-mpich@8.1.30
-    gpu: Null
-  unify: true
-  views:
-    paraview-python:
-      link: run
-      exclude: []
-      uenv:
-        prefix_paths:
-          LD_LIBRARY_PATH: [lib, lib64]
-
-  specs:
-  - python@3.11
-  - py-numpy
-  - py-pandas
-  - py-matplotlib
-  - py-mpi4py
-  - py-cftime
-  - py-h5py
+  - +cxx
