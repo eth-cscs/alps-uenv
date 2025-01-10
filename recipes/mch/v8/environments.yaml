@@ -23,7 +23,7 @@ prgenv-nvidia:
       spec: gcc
     - toolchain: llvm
       spec: nvhpc
-  unify: when_possible
+  unify: true
   mpi:
     spec: cray-mpich@8.1.30%nvhpc
     gpu: cuda
@@ -36,8 +36,8 @@ prgenv-nvidia:
   - osu-micro-benchmarks@5.9%nvhpc
   - cuda@12.3
   - eccodes@2.36.4%nvhpc +tools +fortran +aec +openmp jp2k=jasper
-  - netcdf-c@4.9.2
-  - netcdf-fortran@4.6.1%nvhpc ^netcdf-c@4.9.2+mpi
+  - netcdf-c@4.9.2%nvhpc +mpi
+  - netcdf-fortran@4.6.1%nvhpc
   - hdf5%nvhpc +szip +hl +fortran +mpi
   - openblas@0.3.21%nvhpc
   - libfyaml

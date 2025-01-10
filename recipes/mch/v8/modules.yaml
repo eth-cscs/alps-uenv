@@ -39,14 +39,18 @@ modules:
           set:
             NETCDF_C_ROOT: '{prefix}'
       hash_length: 0
+      hide_implicits: true
       exclude_implicits: true
       include:
         - cuda
         - hdf5
         - zlib+shared
+        - gcc@12.3.0
       exclude:
         - '%gcc@7.5.0'
         - 'gcc %gcc@7.5.0'
+        - '%gcc@11.3.0'
+        - zstd
       projections:
         all: '{name}/{version}-{compiler.name}'
         nvhpc: '{name}/{version}'
