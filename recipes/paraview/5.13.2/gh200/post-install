@@ -40,7 +40,7 @@ source $SPACK_ROOT/share/spack/setup-env.sh
 # =====================================
 debug_output "declare the name we are using for spack environment"
 # this name must match the one we are using from environments.yaml
-SPACK_ENV_NAME="paraview-zen2-osmesa"
+SPACK_ENV_NAME="paraview-gh200-egl-cuda"
 
 # =====================================
 debug_output "convert stackinator environment into a package"
@@ -50,7 +50,7 @@ python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/re
 # =====================================
 debug_output "create build-env"
 BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
-SPEC="$SPACK_ENV_NAME %gcc@12 ^[virtuals=gl] osmesa ^mesa +osmesa"
+SPEC="$SPACK_ENV_NAME %gcc@12 ^[virtuals=gl] egl"
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ env activate --sh
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
@@ -68,7 +68,7 @@ SCRATCH=/capstor/scratch/cscs/biddisco
 
 # setup paths for src/build/install
 PARAVIEW_VERSION_MAIN=5.13
-PARAVIEW_VERSION_FULL=5.13.1
+PARAVIEW_VERSION_FULL=5.13.2
 PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
 PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
 PARAVIEW_INSTALL_DIR=$mount_path/ParaView-$PARAVIEW_VERSION_MAIN
@@ -123,7 +123,7 @@ cmake -G Ninja \
     -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
     -DPARAVIEW_USE_MPI=ON                                   \
     -DVTK_USE_X=OFF                                         \
-    -DVTK_OPENGL_HAS_OSMESA=ON                              \
+    -DVTK_OPENGL_HAS_EGL=ON                                 \
     -DPARAVIEW_USE_PYTHON=ON                                \
     -DPARAVIEW_ENABLE_CATALYST=ON                           \
     -DPARAVIEW_BUILD_TESTING=OFF                            \
@@ -131,16 +131,17 @@ cmake -G Ninja \
     `# Multithreading options`                              \
     -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
     `# CUDA related options`                                \
-    -DPARAVIEW_USE_CUDA=OFF                                 \
+    -DPARAVIEW_USE_CUDA=ON                                  \
+    -DCMAKE_CUDA_ARCHITECTURES=90                           \
     `# VTM-m`                                               \
     -DPARAVIEW_USE_VTKM=ON                                  \
     `# NVidia index`                                        \
-    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=OFF              \
-    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
+    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
+    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=ON             \
     `# Plugin related options`                              \
+    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
-    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
     `# use external libraries wherever possible`            \
