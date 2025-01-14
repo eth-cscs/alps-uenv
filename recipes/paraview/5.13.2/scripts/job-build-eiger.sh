@@ -1,12 +1,13 @@
 #!/bin/bash
 
-#SBATCH --job-name=uenv-prepare
+#SBATCH --job-name=stackinator-paraview
 #SBATCH --time=04:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=normal
 #SBATCH --account=csstaff
 #SBATCH --output=/users/biddisco/stackinator-output.%j.txt
 #SBATCH --error=/users/biddisco/stackinator-error.%j.txt
+#SBATCH --constraint=mc
 
 # -------------------------------------
 function debug_output() {
@@ -25,11 +26,11 @@ export PYTHONUNBUFFERED=1
 # useful variables
 # -----------------------------------------"
 debug_output "Setup env vars"
-CLUSTER=daint
+CLUSTER=eiger
 IMAGE=paraview
-ARCH=gh200
-VARIANT=egl
-VERSION=5.13.1
+ARCH=zen2
+VARIANT=osmesa
+VERSION=5.13.2
 SPACK_ENV_NAME="${IMAGE}-${ARCH}-${VARIANT}-${VERSION}"
 SRC=$HOME/src
 STACKI_DIR=$SRC/alps-vcluster/stackinator
