@@ -3,17 +3,14 @@ tools:
     - toolchain: gcc
       spec: gcc
   unify: when_possible
+  # don't use system packages, in order to avoid concretization issues
   specs:
   - cmake@3.24
   - python@3.10
   - libtree
   - tree
   - ruby@3.1.0
-  packages:
-  - perl
-  - gmake
-  - autoconf
-  - automake
+  packages: []
   views:
     tools:
       exclude: []
@@ -27,11 +24,8 @@ prgenv-nvidia:
   mpi:
     spec: cray-mpich@8.1.30%nvhpc
     gpu: cuda
-  packages:
-  - perl
-  - gmake
-  - autoconf
-  - automake
+  # don't use system packages, in order to avoid concretization issues
+  packages: []
   specs:
   - osu-micro-benchmarks@5.9%nvhpc
   - cuda@12.3
@@ -43,14 +37,14 @@ prgenv-nvidia:
   - libfyaml
   # the following are explicitly set for backwards compatibility
   - cray-pals@1.2.12
+  # explicitly add these for icon concretization
+  - python@3.11.7
+  - cmake@3.24
+  - zlib-ng
   variants:
   - cuda_arch=80
   - +mpi
   - +cuda
-  views:
-    prgenv-icon:
-      exclude: ['eccodes@2.25.0']
-      link: roots
 prgenv-gcc:
   compiler:
     - toolchain: gcc
@@ -58,15 +52,13 @@ prgenv-gcc:
   unify: when_possible
   mpi:
     spec: cray-mpich@8.1.30%gcc
+  # only use libx11 from the system, in order to avoid concretization issues
+  packages: []
   packages:
-  - perl
   - libx11
-  - gmake
-  - autoconf
-  - automake
   specs:
   - osu-micro-benchmarks@5.9
-  - cmake
+  - cmake@3.24
   - openblas@0.3.26
   - libfyaml@0.7.12
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
@@ -87,5 +79,4 @@ prgenv-gcc:
       - hdf5+mpi
       - netcdf-c+mpi
       - netcdf-fortran ^netcdf-c+mpi
-      - eccodes@2.25.0
       link: roots
