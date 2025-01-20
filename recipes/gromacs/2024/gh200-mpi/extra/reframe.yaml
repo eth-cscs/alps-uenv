@@ -10,7 +10,7 @@ run:
 
 build:
   features:
-    - gromacs 
+    - gromacs-dev
     - cuda
     - mpi
   cc: gcc
