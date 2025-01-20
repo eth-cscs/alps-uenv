@@ -1,0 +1,61 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: cuda
+  unify: true
+  specs:
+  - arpack-ng
+  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +iostreams +json +log +mpi +multithreaded +program_options +python +random +regex +serialization +shared +system +test +thread +timer +url
+  - cmake
+  - eigen
+  - fftw
+  - fmt
+  - gsl
+  - hdf5 +fortran +hl
+  - hwloc
+  - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
+  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - metis
+  - mumps +parmetis +ptscotch
+  - netcdf-c
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - nco
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - p4est +mpi
+  - papi ~cuda
+  - parmetis
+  - petsc +batch +complex +hwloc ~hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - python@3.12
+  - slepc
+  - suite-sparse ~cuda
+  - superlu
+  - superlu-dist
+  - swig
+  - trilinos@16 +adios2 ~amesos +amesos2 +belos +boost +complex cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 ~hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +tpetra +zoltan2
+  - zlib-ng
+  # add GPU-specific packages here, for easier comparison with mc version
+  - nccl
+  - nccl-tests
+  - cuda@12.6
+  - aws-ofi-nccl
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
