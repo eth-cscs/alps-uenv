@@ -9,7 +9,7 @@ lammps-kokkos:
   specs:
   - python@3.11
   - cmake
-  - cuda@12
+  - cuda@12.1
   - kokkos@4.4.01 +cuda cuda_arch=90 +wrapper 
   # lammps + kokkos package
   - lammps@20240829.1 +cuda cuda_arch=90 fft_kokkos=cufft +kokkos +python +extra-dump +plumed +replica +extra-molecule
@@ -43,7 +43,7 @@ lammps-gpu:
   specs:
   - python@3.11
   - cmake
-  - cuda@12
+  - cuda@12.1
   # lammps + GPU package, MPS enabled
   - lammps@20240829.1 +cuda cuda_arch=90 +python +extra-dump +plumed +replica +cuda_mps +extra-molecule
   variants:
