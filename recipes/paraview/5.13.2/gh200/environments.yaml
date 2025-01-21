@@ -3,7 +3,7 @@ paraview-gh200-egl-cuda:
   - toolchain: gcc
     spec: gcc
   mpi:
-    spec: cray-mpich
+    spec: cray-mpich@8.1.30
     gpu: cuda
   unify: true
   views:
