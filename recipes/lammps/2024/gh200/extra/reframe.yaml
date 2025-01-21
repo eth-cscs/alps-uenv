@@ -14,10 +14,14 @@ build-gpu:
   views:
     - develop-gpu
 
-run:
+run-kokkos:
   features:
-    - cuda
-    - mpi
     - lammps-kokkos-prod
   views:
     - kokkos
+
+run-gpu:
+  features:
+    - lammps-gpu-prod
+  views:
+    - gpu
