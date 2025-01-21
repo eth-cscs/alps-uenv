@@ -1,0 +1,42 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+      - toolchain: llvm
+        spec: nvhpc
+  mpi:
+      spec: cray-mpich@8.1.30%nvhpc
+      gpu: cuda
+  unify: true
+  specs:
+  - aws-ofi-nccl@master
+  - cmake
+  - cuda@12.6
+  - fftw%nvhpc +openmp
+  - fmt
+  - hdf5+hl+mpi
+  - libtree
+  - lua
+  - libtree
+  - lz4
+  - meson
+  #- netlib-scalapack%nvhpc
+  - nccl
+  - nccl-tests
+  - ninja
+  - nvpl-blas threads=openmp
+  - nvpl-lapack threads=openmp
+  #- openblas%nvhpc
+  - osu-micro-benchmarks@5.9%nvhpc
+  - python@3.12
+  - zlib-ng
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    nvfort:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

@@ -10,6 +10,7 @@ nav:
     - 'linaro-forge': uenv-linaro-forge.md
     - 'namd': uenv-namd.md
     - 'prgenv-gnu': uenv-prgenv-gnu.md
+    - 'prgenv-nvfortran': uenv-prgenv-nvfortran.md
     - 'quantumespresso': uenv-qe.md
     - 'vasp': uenv-vasp.md
   - 'developers':
