@@ -196,6 +196,17 @@ uenvs:
         todi: [gh200]
       develop: False
   linaro-forge:
+    "24.1.1":
+      recipes:
+        zen2: "24.1.1"
+        gh200: "24.1.1"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        # clariden ?
+      develop: False
+      mount: "/user-tools"
     "24.1":
       recipes:
         zen2: "24.1"
@@ -204,18 +215,6 @@ uenvs:
         eiger: [zen2]
         santis: [gh200]
         daint: [gh200]
-        todi: [gh200]
-      develop: False
-      mount: "/user-tools"
-    "24.0.2":
-      recipes:
-        zen2: "24.0.2"
-        gh200: "24.0.2"
-      deploy:
-        eiger: [zen2]
-        santis: [gh200]
-        daint: [gh200]
-        todi: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
