@@ -3,5 +3,5 @@ store: /user-environment
 description: GPU-optimised Gromacs with and without Plumed, and the toolchain to build your own Gromacs.
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v0.21.2
+  commit: releases/v0.22
 modules: false
