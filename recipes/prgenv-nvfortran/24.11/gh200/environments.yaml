@@ -30,6 +30,10 @@ gcc-env:
   - osu-micro-benchmarks@5.9%nvhpc
   - python@3.12
   - zlib-ng
+  # added in v2
+  - hdf5+fortran+threadsafe+hl
+  - netcdf-c
+  - netcdf-fortran%nvhpc
   variants:
   - +mpi
   - +cuda
