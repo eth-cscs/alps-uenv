@@ -1,14 +1,13 @@
 gcc-env:
   compiler:
       - toolchain: gcc
-        spec: gcc
+        spec: gcc@13
   mpi:
       spec: cray-mpich@8.1.30
       gpu: cuda
   unify: true
   specs:
-  - aws-ofi-nccl@master
-  - cmake
+  - cmake@3.27
   - cuda@12.6
   - fftw
   - fmt
@@ -26,10 +25,13 @@ gcc-env:
   - sz
   - libpng
   - c-blosc2
-  - libpressio
+  - libpressio@0.95.1
   - mgard
   - libcatalyst
-  - adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+libpressio+mgard+libcatalyst
+  - adios2@2.10+hdf5+python+fortran
+  - 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+mgard+libcatalyst'
+  # disable libpressio because it causes compilation errors when building adios2
+  #- 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+libpressio+mgard+libcatalyst'
   variants:
   - +mpi
   - +cuda

@@ -159,9 +159,7 @@ uenvs:
       develop: False
     "25.1":
       recipes:
-        zen2:  "24.9/mc"
-        zen3:  "24.9/mc"
-        gh200: "24.9/gh200"
+        gh200: "25.1/gh200"
       develop: False
   lammps:
     "2023":

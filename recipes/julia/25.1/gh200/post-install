@@ -19,14 +19,15 @@ export JUHPC_CUDA_HOME=$(spack -C $ENV_MOUNT/config location -i cuda)
 export JUHPC_CUDA_RUNTIME_VERSION=$(spack --color=never -C $ENV_MOUNT/config find cuda | \
                                     perl -ne 'print $1 if /cuda@([\d.]+)/')
 export JUHPC_MPI_HOME=$(spack -C $ENV_MOUNT/config location -i cray-mpich)
-export JUHPC_MPI_EXEC="srun -C gpu"
+export JUHPC_MPI_EXEC="srun"
 export JUHPC_HDF5_HOME=$(spack -C $ENV_MOUNT/config location -i hdf5)
 export JUHPC_ADIOS2_HOME=$(spack -C $ENV_MOUNT/config location -i adios2)
 
 
 # Call JUHPC
 JUHPC_SETUP_INSTALLDIR=$ENV_MOUNT/juhpc_setup
-JULIAUP_INSTALLDIR="\$SCRATCH/\${HOSTNAME%%-*}/juliaup"
+#JULIAUP_INSTALLDIR="\$SCRATCH/\${HOSTNAME%%-*}/juliaup"
+JULIAUP_INSTALLDIR="\$SCRATCH/gh200/juliaup"
 JUHPC_POST_INSTALL_JL=$ENV_EXTRA/uenv_view.jl
 VERSION="v0.2.0"
 wget https://raw.githubusercontent.com/JuliaParallel/JUHPC/$VERSION/juhpc -O /tmp/juhpc

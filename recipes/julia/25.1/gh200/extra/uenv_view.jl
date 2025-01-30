@@ -53,7 +53,7 @@ julia_view_env = Dict(
 # Define the julia view
 
 julia_view = Dict(
-    "julia" => Dict(
+    "juliaup" => Dict(
         "root" => "/user-environment/env/julia",
         "env" => julia_view_env,
         "activate" => "/dev/null",
