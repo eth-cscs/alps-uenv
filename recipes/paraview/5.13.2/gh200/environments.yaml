@@ -51,7 +51,6 @@ paraview-gh200-egl-cuda:
 
   # c++ helpers
   - fmt@10
-  - stdexec@main
   - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
 
   # IO and parallelism
@@ -107,7 +106,7 @@ paraview-gh200-egl-cuda:
   - py-h5py
 
   # raytracing in VTK/ParaView
-  - ospray@3.1 ~mpi +denoiser +volumes ~apps ~glm
+  - ospray@3.2 ~mpi +denoiser +volumes ~apps ~glm
   - ispc@1.24
   - openvkl
   - embree

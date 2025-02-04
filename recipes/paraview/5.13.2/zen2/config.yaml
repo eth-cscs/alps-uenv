@@ -1,7 +1,7 @@
 name: ParaView
 store: /user-environment
 spack:
-  commit: 4f0e336ed09408809df1b570422a64b3e02e9eb2
+  commit: 195b869e1c5f0f850fe16ca1cc0c77fc71f5fcd6
   repo: https://github.com/spack/spack.git
 description: ParaView for eiger using osmesa
 modules: false
