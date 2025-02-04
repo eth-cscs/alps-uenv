@@ -1,6 +1,7 @@
 default:
    features:
      - ddt
+     - map
    cc: gcc
    cxx: g++
    ftn: gfortran
