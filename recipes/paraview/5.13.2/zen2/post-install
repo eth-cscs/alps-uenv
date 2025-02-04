@@ -138,9 +138,9 @@ cmake -G Ninja \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=OFF              \
     -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     `# Plugin related options`                              \
+    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
-    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
     `# use external libraries wherever possible`            \
@@ -212,22 +212,51 @@ debug_output "download nvindex license file"
 curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
 # =====================================
-debug_output "generate user scripts to setup client/server environment"
+# this runs during post install so we use $HOME to refer to /dev/shm mount
+debug_output "generate paraview proto-launch script for remote connection"
 cmake \
-    -DOUTPUT_DIR=${PARAVIEW_INSTALL_DIR}/                                   \
+    -DINPUT_FILE_NAME="${HOME}/store/meta/recipe/scripts/rc-submit-pvserver.sh.cmake" \
+    -DOUTPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"                \
     -DPARAVIEW_VERSION=${PARAVIEW_VERSION_MAIN}                             \
     -DPARAVIEW_INSTALL_DIR=${PARAVIEW_INSTALL_DIR}                          \
     -DPARAVIEW_PLUGINS_DIR=${PARAVIEW_PLUGINS_DIR}                          \
     -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib       \
-    -DUENV_IMAGE=${SCRATCH}/images/${SPACK_ENV_NAME}-${PARAVIEW_VERSION_MAIN}.squashfs   \
-    -P ${HOME}/store/meta/recipe/scripts/setup-rc-submit-script.cmake
+    -DUENV_IMAGE="@UENV_IMAGE@"                                       \
+    -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
 
 # =====================================
-debug_output "convenience script to copy rc-submit-pvserver.sh"
+# this runs during post install so we use $HOME to refer to /dev/shm mount
+debug_output "Copy and substitute vars in gpu wrapper launch script helper"
+cmake \
+    -DINPUT_FILE_NAME="${HOME}/store/meta/recipe/scripts/gpu_wrapper.sh.cmake" \
+    -DOUTPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/gpu_wrapper.sh"                \
+    -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib \
+    -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
+
+# =====================================
+# this runs during postin install, but writes a new script that is run
+# after the user has mounted the uenv, so here $HOME refers to the user's home
+debug_output "generate final user-init script to finalize paraview launch script for remote connection"
+
 cat <<EOF > $mount_path/init.sh
 #!/bin/bash
 echo "Copying Remote-Connection pvserver launch script to users' home directory"
-cp ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh \${HOME}/rc-pvserver-$cluster.sh
+
+PVSERVER_LAUNCH_SCRIPT="\${HOME}/rc-pvserver-\${CLUSTER_NAME}.sh"
+
+if [ -f "\${PVSERVER_LAUNCH_SCRIPT}" ]; then
+    echo "Backing up existing \${PVSERVER_LAUNCH_SCRIPT}"
+    mv "\${PVSERVER_LAUNCH_SCRIPT}" "\${PVSERVER_LAUNCH_SCRIPT}.\$(date +%Y-%m-%d)"
+fi
+
+# each alps cluster has its own CLUSTER_NAME environment variable
+# UENV_MOUNT_FILE is set by the uenv image/engine when loaded
+cmake \
+    -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"    \
+    -DOUTPUT_FILE_NAME="\${PVSERVER_LAUNCH_SCRIPT}"                       \
+    -DUENV_IMAGE="\${UENV_MOUNT_FILE}"                                    \
+    -P ${mount_path}/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
+
 EOF
 chmod +x $mount_path/init.sh
 
