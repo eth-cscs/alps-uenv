@@ -8,4 +8,5 @@ default:
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
+  # TODO: Update this and other reframe activations?
   activation: uenv view develop
