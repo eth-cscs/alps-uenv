@@ -33,7 +33,7 @@ with open(f'{args.filename}', 'r') as stream:
 output = f"# This file was auto-generated from {args.filename}\n"
 output += "\n"
 output += "import itertools, os, sys\n"
-output += "from spack import *\n"
+output += "from spack.package import *\n"
 output += "\n"
 output +=f"class {packagenameU}(CMakePackage):\n"
 output += "    homepage = \"https://www.dummy.org/\"\n"
