@@ -1,0 +1,8 @@
+export PATH=/user-tools/env/jupyter/bin:$PATH
+# pip install --no-cache jupyterhub==4.1.5 pyfirecrest==2.1.0 SQLAlchemy==1.4.52 oauthenticator==16.0.7 jupyterlab==4.1.8
+pip install -r requirements.txt
+
+git clone --filter=tree:0 https://github.com/eth-cscs/firecrestspawner.git
+git -C firecrestspawner checkout 0.1.2
+cd firecrestspawner
+pip install .
