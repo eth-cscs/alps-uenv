@@ -27,19 +27,19 @@ they can be used alongside application and development uenv mounted at
     When using alongside another uenv, start a uenv session with both uenv with `linaro-forge` after the main uenv, to mount the images at the respective `/user-environment` and `/user-tools` locations:
 
     ```bash
-    uenv start prgenv-gnu/24.2:v3 linaro-forge/23.1.2
+    uenv start --view=prgenv-gnu:default prgenv-gnu/24.2:v3 linaro-forge/23.1.2
 
     # test that everything has been mounted correctly
     # (will give warnings if there are problems)
     uenv status
 
     source /user-tools/activate
-    uenv view prgenv-gnu:default
 
     # check that ddt is in the path
     ddt --version
     ```
 
+    TODO: Does this break with uenv start --view?
     The `/user-tools/activate` script will make the forge executables available in your environment, and **must be run before**
     any other uenv view command otherwise the environment variables set from the other uenv will be overwritten.
 
@@ -175,8 +175,7 @@ with the `-g` (for cpu) and `-G` (for gpu) debugging flags. For example, we can
 build a cuda test with a user environment:
 
 ```bash
-uenv start prgenv-gnu:24.2:v2
-uenv view default
+uenv start --view=default prgenv-gnu:24.2:v2
 
 nvcc -c -arch=sm_90 -g -G test_gpu.cu
 mpicxx -g test_cpu.cpp test_gpu.o -o myexe
@@ -205,8 +204,8 @@ To use the DDT client with uenv, it must be launched in `Manual Launch` mode
     ```bash
     # start a session with both the PE used to build your application
     # and the linaro-forge uenv mounted
-    uenv start prgenv-gnu/24.2 linaro-forge/23.1.2
-    uenv view prgenv-gnu:default
+    # TODO???
+    uenv start --view=prgenv-gnu:default prgenv-gnu/24.2 linaro-forge/23.1.2
     source /user-tools/activate
 
     srun -N1 -n4 -t15 -pdebug \

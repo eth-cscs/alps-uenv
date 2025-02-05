@@ -17,16 +17,14 @@ The default build of vasp includes MPI, HDF5, Wannier90 and OpenACC (on GH200 an
 Start the uenv and load the `vasp` view:
 
 ```
-uenv start ${path_to_vasp_image}
-uenv view vasp
+uenv start --view=vasp ${path_to_vasp_image}
 ```
 The `vasp_std`, `vasp_gam` and `vasp_ncl` executables are now available for use.
 
 ## Build from source
 Start the uenv and load the `develop` view:
 ```
-uenv start ${path_to_vasp_image}
-uenv view develop
+uenv start --view=vasp ${path_to_vasp_image}
 ```
 This will ensure that compiler executables are in `PATH`.
 The appropriate makefile from the `arch` directory in the vasp source tree should be selected and link / include paths changed to use the `/user-environment/env/develop` prefix,
