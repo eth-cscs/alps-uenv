@@ -1,0 +1,2 @@
+root: $SCRATCH/uenv-cache
+key:  $SCRATCH/.keys/.gpg-spack-paraview

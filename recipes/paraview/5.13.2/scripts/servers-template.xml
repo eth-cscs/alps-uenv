@@ -1,0 +1,87 @@
+<Servers>
+  <Server name="Reverse-Connect-@CLUSTER@" configuration="" resource="csrc://:11111" timeout="-1">
+    <CommandStartup>
+      <Options>
+        <Option name="MACHINE" label="remote cluster" save="true">
+          <String default="@CLUSTER@.cscs.ch"/>
+        </Option>
+        <Option name="SSH_USER" label="SSH Username" save="true">
+          <String default="@USER@"/>
+        </Option>
+        <Option name="ACCOUNT" label="Account to be charged" save="true">
+          <String default="ACCOUNT"/>
+        </Option>
+        <Option name="RESERVATION" label="reservation name" save="true">
+          <Enumeration default="none">
+            <Entry value="" label="none"/>
+            <Entry value="interact" label="interact"/>
+          </Enumeration>
+        </Option>
+        <Option name="SSH_CMD" label="SSH command" save="true">
+          <File default="/usr/bin/ssh"/>
+        </Option>
+        <Option name="REMOTESCRIPT" label="The remote script which generates the SLURM job" save="true">
+          <String default="@HOME@/rc-pvserver-@CLUSTER@.sh"/>
+        </Option>
+        <Option name="PVNodes" label="Number of cluster nodes" save="true">
+          <Range type="int" min="1" max="128" step="1" default="1"/>
+        </Option>
+        <Option name="PVTasks" label="Number of pvserver per node" save="true">
+          <Range type="int" min="1" max="256" step="1" default="4"/>
+        </Option>
+        <Option name="Queue" label="Queue" save="true">
+          <Enumeration default="normal">
+            <Entry value="normal" label="normal"/>
+            <Entry value="nvgpu" label="nvgpu"/>
+            <Entry value="amdgpu" label="amdgpu"/>
+            <Entry value="cpu" label="cpu"/>
+          </Enumeration>
+        </Option>
+        <Option name="MemxNode" label="MemxNode" save="true">
+          <Enumeration default="standard">
+            <Entry value="high" label="high"/>
+            <Entry value="standard" label="standard"/>
+          </Enumeration>
+        </Option>
+        <Option name="VERSION" label="VERSION ?" save="true">
+          <Enumeration default="osmesa">
+            <Entry value="osmesa" label="5.13 - osmesa"/>
+            <Entry value="nvidia" label="5.13 - nvidia"/>
+          </Enumeration>
+        </Option>
+        <Option name="PV_SERVER_PORT" label="pvserver port" save="true">
+          <Range type="int" min="1024" max="65535" step="1" default="1100"/>
+        </Option>
+        <Option name="NUMMIN" label="job wall time" save="true">
+          <String default="00:29:59"/>
+        </Option>
+        <Option name="SESSIONID" label="Session id" save="true">
+          <String default="@CLUSTER@_ParaViewServer"/>
+        </Option>
+      </Options>
+      <Command exec="$SSH_CMD$" timeout="0" delay="5" process_wait="0">
+        <Arguments>
+          <Argument value="-l"/>
+          <Argument value="$SSH_USER$"/>
+          <Argument value="-R"/>
+          <Argument value="$PV_SERVER_PORT$:localhost:$PV_SERVER_PORT$"/>
+          <Argument value="$MACHINE$"/>
+          <Argument value="$REMOTESCRIPT$"/>
+          <Argument value="$SESSIONID$"/>
+          <Argument value="$NUMMIN$"/>
+          <Argument value="$PVNodes$"/>
+          <Argument value="$PVTasks$"/>
+          <Argument value="$PV_SERVER_PORT$"/>
+          <Argument value="$MACHINE$"/>
+          <Argument value="$VERSION$"/>
+          <Argument value="$Queue$"/>
+          <Argument value="$MemxNode$"/>
+          <Argument value="$ACCOUNT$"/>
+          <Argument value="$RESERVATION$;"/>
+          <Argument value="sleep"/>
+          <Argument value="300"/>
+        </Arguments>
+      </Command>
+    </CommandStartup>
+  </Server>
+</Servers>
