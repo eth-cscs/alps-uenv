@@ -7,16 +7,14 @@ CP2K provides a general framework for different modeling methods such as DFT usi
 ## Running
 
 ```bash
-uenv start <CP2K_UENV>
-uenv view modules
+uenv start --view=modules <CP2K_UENV>
 module load cp2k
 ```
 
 or
 
 ```bash
-uenv start <CP2K_UENV>
-uenv view cp2k
+uenv start --view=cp2k <CP2K_UENV>
 ```
 
 !!! warning
@@ -28,8 +26,7 @@ The [CP2K] `uenv` provides all the dependencies required to build [CP2K] from so
 
 ```bash
 # Start uenv and load develop view
-uenv start <CP2K_UENV>
-uenv view develop
+uenv start --view=develop <CP2K_UENV>
 
 # cd to CP2K source directory
 cd <PATH_TO_CP2K_SOURCE>
