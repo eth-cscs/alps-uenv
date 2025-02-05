@@ -5,8 +5,7 @@
 ## Running
 
 ```bash
-uenv start <LAMMPS_UENV>
-uenv view lammps
+uenv start --view=lammps <LAMMPS_UENV>
 ```
 
 !!! warning
@@ -18,8 +17,7 @@ The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] fro
 
 ```bash
 # Start uenv and load develop view
-uenv start <LAMMPS_UENV>
-uenv view develop
+uenv start --view=develop <LAMMPS_UENV>
 
 # cd to LAMMPS source directory
 cd <PATH_TO_LAMMPS_SOURCE>

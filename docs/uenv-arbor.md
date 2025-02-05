@@ -36,8 +36,7 @@ Below is an example of building the most up-to0date version of Arbor, in `master
 
     ```bash
     # set up the environment
-    uenv start arbor/v0.9:v1
-    uenv view develop
+    uenv start --view=develop arbor/v0.9:v1
 
     # clone arbor and set up build path
     git clone --recursive https://github.com/arbor-sim/arbor.git
@@ -56,8 +55,7 @@ Below is an example of building the most up-to0date version of Arbor, in `master
 
     ```bash
     # set up the environment
-    uenv start arbor/v0.9:v1
-    uenv view develop
+    uenv start --view=develop arbor/v0.9:v1
 
     # clone arbor and set up build path
     git clone --recursive https://github.com/arbor-sim/arbor.git

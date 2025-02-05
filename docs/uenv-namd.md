@@ -26,8 +26,7 @@ The [NAMD] `uenv` provides all the dependencies required to build [NAMD] from so
 export DEV_VIEW_NAME="develop-single-node"
 
 # Start uenv and load develop view
-uenv start <NAMD_UENV>
-uenv view ${DEV_VIEW_NAME}
+uenv start --view=${DEV_VIEW_NAME} <NAMD_UENV>
 
 # Set variable VIEW_PATH to the view
 export DEV_VIEW_PATH=/user-environment/env/${DEV_VIEW_NAME}
@@ -100,8 +99,7 @@ The [NAMD] `uenv` provides all the dependencies required to build [NAMD] from so
 export DEV_VIEW_NAME="develop"
 
 # Start uenv and load develop view
-uenv start <NAMD_UENV>
-uenv view ${DEV_VIEW_NAME}
+uenv start --view=${DEV_VIEW_NAME} <NAMD_UENV>
 
 # Set variable VIEW_PATH to the view
 export DEV_VIEW_PATH=/user-environment/env/${DEV_VIEW_NAME}
