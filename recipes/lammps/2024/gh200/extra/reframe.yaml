@@ -1,0 +1,43 @@
+build-kokkos:
+  features:
+    - cuda
+    - mpi
+    - lammps-kokkos-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-kokkos
+
+build-gpu:
+  features:
+    - cuda
+    - mpi
+    - lammps-gpu-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-gpu
+
+run-kokkos:
+  features:
+    - cuda
+    - mpi
+    - lammps-kokkos-prod
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - kokkos
+
+run-gpu:
+  features:
+    - cuda
+    - mpi
+    - lammps-gpu-prod
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - gpu
