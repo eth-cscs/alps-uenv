@@ -6,15 +6,13 @@
 
 We provide two versions of LAMMPS, one with the kokkos package enabled, and one with the GPU packaged enabled. These can be loaded as follows:
 ```bash
-uenv start <LAMMPS_UENV>
-uenv view lammps:kokkos
+uenv start --view kokkos <LAMMPS_UENV>
 ```
 
 or
 
 ```bash
-uenv start <LAMMPS_UENV>
-uenv view lammps:gpu
+uenv start --view gpu <LAMMPS_UENV>
 ```
 
 !!! warning
@@ -26,15 +24,14 @@ The [LAMMPS] `uenv` provides all the dependencies required to build [LAMMPS] fro
 
 ```bash
 # Start uenv and load develop view
-uenv start <LAMMPS_UENV>
-uenv view lammps:develop-kokkos # or uenv view lammps:develop-gpu, if building using the GPU package
+uenv start --view develop-kokkos <LAMMPS_UENV> # or uenv start --view develop-gpu <LAMMPS_UENV>, if building using the GPU package
 
 # cd to LAMMPS source directory
 cd <PATH_TO_LAMMPS_SOURCE>
 
 # CMake
 mkdir build && cd build
-cmake -C ../cmake/presets/kokkos-cuda.cmake ../cmake/  -DKokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC=OFF -DKokkos_ARCH_NATIVE=yes -DKokkos_ARCH_HOPPER90=yes
+cmake -C ../cmake/presets/kokkos-cuda.cmake ../cmake/  -DKokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC=OFF -DKokkos_ARCH_NATIVE=ON -DKokkos_ARCH_HOPPER90=ON -DKokkos_ARCH_PASCAL60=OFF
 
 cmake --build . --parallel 32
 ```
