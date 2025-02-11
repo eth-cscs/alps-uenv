@@ -3,9 +3,12 @@ clusters:
     targets:
       -
         uarch: 'a100'
-        partition: 'normal'
+        # ~use postproc for building, because it is usually less busy~
+        # use normal for building, because postproc does not give enough resources
+        partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          SLURM_CPUS_PER_TASK: '128'
       -
         uarch: 'zen3'
         partition: 'postproc'
@@ -196,6 +199,17 @@ uenvs:
         todi: [gh200]
       develop: False
   linaro-forge:
+    "24.1.1":
+      recipes:
+        zen2: "24.1.1"
+        gh200: "24.1.1"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        # clariden ?
+      develop: False
+      mount: "/user-tools"
     "24.1":
       recipes:
         zen2: "24.1"
@@ -204,24 +218,18 @@ uenvs:
         eiger: [zen2]
         santis: [gh200]
         daint: [gh200]
-        todi: [gh200]
-      develop: False
-      mount: "/user-tools"
-    "24.0.2":
-      recipes:
-        zen2: "24.0.2"
-        gh200: "24.0.2"
-      deploy:
-        eiger: [zen2]
-        santis: [gh200]
-        daint: [gh200]
-        todi: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
     "v7":
       recipes:
         a100: v7
+      deploy:
+        balfrin: [a100]
+      develop: False
+    "v8":
+      recipes:
+        a100: v8
       deploy:
         balfrin: [a100]
       develop: False
@@ -322,6 +330,13 @@ uenvs:
     "v6.4.3":
       recipes:
         gh200: v6.4.3/gh200
+      deploy:
+        todi: [gh200]
+        daint: [gh200]
+      develop: False
+    "v6.5.0":
+      recipes:
+        gh200: v6.5.0/gh200
       deploy:
         todi: [gh200]
         daint: [gh200]
