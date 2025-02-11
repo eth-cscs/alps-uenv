@@ -6,11 +6,11 @@ cp2k:
   specs:
   - cmake
   - ninja
-  - cuda@12.2 # Can't be newer than driver version, for DBCSR
+  - cuda@12.4 # Can't be newer than driver version, for DBCSR
   - openblas threads=openmp
   - netlib-scalapack
   - fftw
-  - libxc@6 ~cuda # sirius@7.6.1 does not yet support libxc@7
+  - libxc@7 ~cuda
   - libint
   - spglib
   - spla
@@ -18,7 +18,7 @@ cp2k:
   - plumed
   # DLA-Future
   - pika
-  - dla-future +mpi_gpu_aware +miniapps
+  - dla-future@0.7.3 +mpi_gpu_aware +miniapps
   - dla-future-fortran
   # COSMA
   - tiled-mm
@@ -30,7 +30,7 @@ cp2k:
   - sirius ~memory_pool
   # CP2K
   - dbcsr@2.8.0
-  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed lmax=5 build_system=cmake
+  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 lmax=5 build_system=cmake
   variants:
     - +mpi
     - +openmp

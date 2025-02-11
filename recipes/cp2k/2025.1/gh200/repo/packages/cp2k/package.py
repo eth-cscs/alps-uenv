@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import copy
 import os
-import os.path
 import sys
 
 import spack.util.environment
@@ -39,7 +38,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/cp2k/cp2k.git"
     list_url = "https://github.com/cp2k/cp2k/releases"
 
-    maintainers("dev-zero", "mtaillefumier")
+    maintainers("dev-zero", "mtaillefumier", "RMeli", "abussy")
 
     license("GPL-2.0-or-later")
 
@@ -153,6 +152,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("pytorch", default=False, description="Enable libtorch support")
     variant("quip", default=False, description="Enable quip support")
+    variant(
+        "dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support"
+    )
     variant("mpi_f08", default=False, description="Use MPI F08 module")
 
     variant(
@@ -196,6 +198,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     depends_on("python@3", type="build")
+    depends_on("pkgconfig", type="build", when="build_system=cmake")
 
     depends_on("blas")
     depends_on("lapack")
@@ -237,13 +240,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
             )
 
     with when("+libxc"):
-        depends_on("pkgconfig", type="build", when="@7.0:")
+        depends_on("pkgconfig", type="build", when="@7.0: ^libxc@:6")
         depends_on("libxc@4.0.3:4", when="@7.0:8.1")
         depends_on("libxc@5.1.3:5.1", when="@8.2:8")
         depends_on("libxc@5.1.7:5.1", when="@9:2022.2")
         depends_on("libxc@6.1:", when="@2023.1:")
         depends_on("libxc@6.2:", when="@2023.2:")
         depends_on("libxc@:6", when="@:2024.3")
+        depends_on("libxc@7 build_system=cmake", when="@2025.2:")
 
     with when("+spla"):
         depends_on("spla+cuda+fortran", when="+cuda")
@@ -275,7 +279,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("elpa@2023.05.001:", when="@2023.2:")
 
     with when("+dlaf"):
-        # Custom integration, no DLA-Future-Fortran
         with when("@:2024.1"):
             depends_on("dla-future@0.2.1: +scalapack")
             depends_on("dla-future ~cuda", when="~cuda")
@@ -283,7 +286,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
             depends_on("dla-future +cuda", when="+cuda")
             depends_on("dla-future +rocm", when="+rocm")
 
-        # Integration via DLA-Future-Fortran
         with when("@2024.2:"):
             depends_on("dla-future-fortran@0.1.0:")
             depends_on("dla-future-fortran@0.2.0:", when="@2025.1:")
@@ -335,6 +337,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-fypp")
 
     depends_on("spglib", when="+spglib")
+
+    depends_on("dftd4@3.6.0: build_system=cmake", when="+dftd4")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.22:", type="build")
@@ -691,6 +695,12 @@ class MakefileBuilder(makefile.MakefileBuilder):
             ldflags += [spglib.search_flags]
             libs.append(spglib.ld_flags)
 
+        if spec.satisfies("+dftd4"):
+            cppflags += ["-D__DFTD4"]
+            dftd4 = spec["dftd4"].libs
+            ldflags += [dftd4.search_flags]
+            libs.append(dftd4.ld_flags)
+
         cc = spack_cc if "~mpi" in spec else spec["mpi"].mpicc
         cxx = spack_cxx if "~mpi" in spec else spec["mpi"].mpicxx
         fc = spack_fc if "~mpi" in spec else spec["mpi"].mpifc
@@ -852,8 +862,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     "Point environment variable LIBSMM_PATH to "
                     "the absolute path of the libsmm.a file"
                 )
-            except IOError:
-                raise IOError(
+            except OSError:
+                raise OSError(
                     "The file LIBSMM_PATH pointed to does not "
                     "exist. Note that it must be absolute path."
                 )
@@ -878,7 +888,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     "# include Plumed.inc as recommended by"
                     "PLUMED to include libraries and flags"
                 )
-                mkf.write("include {0}\n".format(spec["plumed"].package.plumed_inc))
+                mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
             mkf.write("\n# COMPILER, LINKER, TOOLS\n\n")
             mkf.write(
@@ -1095,6 +1105,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_VORI", "libvori"),
             self.define_from_variant("CP2K_USE_SPLA", "spla"),
             self.define_from_variant("CP2K_USE_QUIP", "quip"),
+            self.define_from_variant("CP2K_USE_DFTD4", "dftd4"),
             self.define_from_variant("CP2K_USE_MPI_F08", "mpi_f08"),
         ]
 
