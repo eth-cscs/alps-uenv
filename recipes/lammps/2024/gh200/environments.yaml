@@ -1,26 +1,66 @@
-lammps:
+lammps-kokkos:
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
   mpi:
-    spec: cray-mpich
+    spec: cray-mpich@8.1.30
     gpu: cuda
   unify: true
   specs:
   - python@3.11
   - cmake
-  - cuda@12
-  - kokkos@4.3.00 +wrapper +cuda cuda_arch=90
-  - mpi
-  - cray-mpich
-  - lammps@20240207.1 +cuda cuda_arch=90 +python +kokkos
+  - cuda@12.1
+  - kokkos@4.4.01 +cuda cuda_arch=90 +wrapper 
+  # lammps + kokkos package
+  - lammps@20240829.1 +cuda cuda_arch=90 fft_kokkos=cufft +kokkos +python +extra-dump +plumed +replica +extra-molecule
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90
   views:
-    develop:
-      link: roots
+    develop-kokkos:
+      link: all
       exclude: ["lammps"]
-    lammps:
-      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    kokkos:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
+lammps-gpu:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  unify: true
+  specs:
+  - python@3.11
+  - cmake
+  - cuda@12.1
+  # lammps + GPU package, MPS enabled
+  - lammps@20240829.1 +cuda cuda_arch=90 +python +extra-dump +plumed +replica +cuda_mps +extra-molecule
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop-gpu:
+      link: all
+      exclude: ["lammps"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    gpu:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
