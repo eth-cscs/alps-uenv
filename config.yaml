@@ -123,26 +123,19 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
   cp2k:
-    "2024.1":
-      recipes:
-        gh200: 2024.1/gh200
-        zen2: 2024.1/mc
-      deploy:
-        todi: [gh200]
-        eiger: [zen2]
-      develop: False
-    "2024.2":
-      recipes:
-        gh200: 2024.2/gh200
-        zen2: 2024.2/mc
     "2024.3":
       recipes:
         gh200: 2024.3/gh200
         zen2: 2024.3/mc
       deploy:
         daint: [gh200]
-        todi: [gh200]
         eiger: [zen2]
+      develop: False
+    "2025.1":
+      recipes:
+        gh200: 2025.1/gh200
+      deploy:
+        daint: [gh200]
       develop: False
   icon-wcp:
     "v1":
