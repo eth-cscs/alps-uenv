@@ -1,0 +1,32 @@
+develop:
+  features:
+    - cp2k-dev
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop
+modules:
+  features:
+    - cp2k-dev
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load cmake cosma costa cray-mpich cuda dbcsr elpa fftw gcc hdf5 libint libxc netlib-scalapack ninja openblas plumed sirius spfft spglib spla tiled-mm dla-future-fortran
+run:
+  features:
+    - cp2k
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - cp2k

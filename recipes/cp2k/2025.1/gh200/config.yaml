@@ -1,0 +1,6 @@
+name: cp2k
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.0
+modules: True
