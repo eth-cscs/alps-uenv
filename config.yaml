@@ -123,6 +123,17 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
   cp2k:
+    "2024.1":
+      recipes:
+        gh200: 2024.1/gh200
+        zen2: 2024.1/mc
+      deploy:
+        eiger: [zen2]
+      develop: False
+    "2024.2":
+      recipes:
+        gh200: 2024.2/gh200
+        zen2: 2024.2/mc
     "2024.3":
       recipes:
         gh200: 2024.3/gh200
