@@ -26,6 +26,7 @@ modules:
             NETCDF_C_ROOT: '{prefix}'
       hash_length: 0
       exclude_implicits: true
+      hide_implicits: true
       include:
         - hdf5
         - zlib+shared
