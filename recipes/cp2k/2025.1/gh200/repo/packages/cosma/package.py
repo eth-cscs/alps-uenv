@@ -80,6 +80,7 @@ class Cosma(CMakePackage):
         depends_on("costa+profiling", when="+profiling")
 
     patch("fj-ssl2.patch", when="^fujitsu-ssl2")
+    patch("mpi-view.patch")
 
     def setup_build_environment(self, env):
         if self.spec.satisfies("+cuda"):
