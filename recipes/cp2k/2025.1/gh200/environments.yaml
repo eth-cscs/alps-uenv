@@ -27,7 +27,7 @@ cp2k:
   # SIRIUS
   - hdf5
   - spfft
-  - sirius ~memory_pool
+  - sirius +dlaf +elpa +scalapack
   # CP2K
   - dbcsr@2.8.0
   - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 lmax=5 build_system=cmake
