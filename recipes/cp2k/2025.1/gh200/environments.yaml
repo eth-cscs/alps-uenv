@@ -17,8 +17,8 @@ cp2k:
   - elpa
   - plumed
   # DLA-Future
-  - pika
-  - dla-future@0.7.3 +mpi_gpu_aware +miniapps
+  - pika@0.30.1 malloc=mimalloc
+  - dla-future@0.7.3 +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps
   - dla-future-fortran
   # COSMA
   - tiled-mm
