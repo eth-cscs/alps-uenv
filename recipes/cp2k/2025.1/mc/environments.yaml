@@ -1,0 +1,46 @@
+cp2k:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc@7
+  - libint
+  - spglib
+  - spla
+  - elpa
+  - libxsmm
+  - plumed
+  # DLA-FUTURE
+  - pika@0.30.1 malloc=mimalloc
+  - dla-future@0.7.3 +scalapack +miniapps
+  - dla-future-fortran
+  # COSMA dependencies (need to be in the develop view)
+  - costa
+  - cosma
+  # SIRIUS dependencies (need to be in the develop view)
+  - hdf5
+  - spfft
+  - sirius +dlaf +elpa+ scalapack
+  # CP2K
+  - dbcsr@2.8.0
+  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - build_type=Release
+    - ~cuda
+    - ~rocm
+  mpi:
+    spec: cray-mpich@8.1.30
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots
