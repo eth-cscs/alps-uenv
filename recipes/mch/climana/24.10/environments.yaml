@@ -18,7 +18,7 @@ climana:
   # choose fftw instead of the default intel-oneapi-mkl.
   # this saves ~2GB of space, and reduces image build time.
   - cdo ^[virtuals=fftw-api] fftw
-  - gdal
+  - gdal +netcdf
   - geos
   - gsl
   - hdf5@1.12.2 +fortran +threadsafe ~mpi
