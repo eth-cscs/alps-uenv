@@ -1,7 +1,5 @@
 run:
   features:
     - dlaf
-    - cuda
-    - mpi
   views:
     - default
