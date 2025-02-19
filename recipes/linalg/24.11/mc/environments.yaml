@@ -36,7 +36,7 @@ gcc-env:
   - p4est +mpi
   - parmetis
   - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
-  - pika malloc=mimalloc +mpi +stdexec
+  - pika malloc=mimalloc +mpi
   - python@3.12
   - slepc
   - suite-sparse
