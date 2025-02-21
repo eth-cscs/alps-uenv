@@ -347,3 +347,10 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
+  vmd:
+    "1.9.4a57":
+      recipes:
+        gh200: 1.9.4a57/gh200
+      deploy:
+        daint: [gh200]
+      develop: False
