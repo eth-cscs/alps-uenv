@@ -7,7 +7,7 @@ LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64:$LIBRARY_PATH
 vmd_name="vmd-1.9.4a57"
 vmd_tarball="${vmd_name}.src.tar.gz"
 vmd_tarball_filepath={{ env.build }}/environments/${vmd_tarball}
-curl --user $CSCS_REGISTRY_USERNAME:$CSCS_REGISTRY_PASSWORD https://jfrog.svc.cscs.ch/artifactory/uenv-sources/vmd/${namd} --output ${vmd_tarball_filepath}
+curl --user $CSCS_REGISTRY_USERNAME:$CSCS_REGISTRY_PASSWORD https://jfrog.svc.cscs.ch/artifactory/uenv-sources/vmd/${vmd_tarball} --output ${vmd_tarball_filepath}
 
 tar xf ${vmd_tarball_filepath}
 
