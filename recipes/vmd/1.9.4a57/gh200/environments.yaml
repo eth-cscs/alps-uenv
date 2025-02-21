@@ -1,0 +1,25 @@
+dlaf-env:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13
+  unify: true
+  specs:
+  - tk@8.5~xss ^ tcl@8.5 # TODO fix package in spack
+  - tcl
+  - fltk
+  - libpng
+  - zlib
+  - cuda@12.4 # TODO check again and document this
+  # mpi:
+  #   spec: cray-mpich
+  #   gpu: cuda
+  variants:
+    - +mpi
+    - +cuda
+    - cuda_arch=90a
+  views:
+    develop:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
