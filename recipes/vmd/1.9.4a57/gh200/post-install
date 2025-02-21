@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -u
+set -e
+
 VIEW_ROOT={{ env.mount }}/env/develop
 LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64:$LIBRARY_PATH
 
