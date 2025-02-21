@@ -4,7 +4,16 @@ set -u
 set -e
 
 VIEW_ROOT={{ env.mount }}/env/develop
-LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64:$LIBRARY_PATH
+
+export PATH=${VIEW_ROOT}/bin:$PATH
+
+export TCL_INCLUDE_DIR=${VIEW_ROOT}/include
+export TK_INCLUDE_DIR=${VIEW_ROOT}/include
+
+export TCL_LIBRARY_DIR=${VIEW_ROOT}/lib
+export TK_LIBRARY_DIR=${VIEW_ROOT}/lib
+
+export LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64
 
 # === DOWNLOAD VMD SOURCEs
 vmd_name="vmd-1.9.4a57"
@@ -15,10 +24,10 @@ curl --user $CSCS_REGISTRY_USERNAME:$CSCS_REGISTRY_PASSWORD https://jfrog.svc.cs
 tar xf ${vmd_tarball_filepath}
 
 # === BUILD PLUGINS
-PLUGINDIR={{ env.mount }}/plugins
+export PLUGINDIR={{ env.mount }}/plugins
 
 pushd plugins
-gmake LINUXARM64
+gmake -j40 LINUXARM64
 gmake distrib
 popd
 
