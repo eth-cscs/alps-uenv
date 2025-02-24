@@ -4,8 +4,8 @@ dlaf-env:
     spec: gcc@13
   unify: true
   specs:
-  - tk@8.5~xss ^ tcl@8.5 # TODO fix package in spack
-  - tcl
+  - tk@8.5~xss
+  - tcl@8.5
   - fltk
   - libpng
   - zlib
