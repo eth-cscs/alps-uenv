@@ -69,7 +69,7 @@ ln -s $VMD_ROOT/lib/vmd/vmd.so $VMD_ROOT/lib/vmd/vmd_LINUXARM64
 popd
 
 cat << EOF > {{ env.mount }}/vmd-activate.sh
-export LD_LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${VIEW_ROOT}/lib:${VIEW_ROOT}/lib64:\$LD_LIBRARY_PATH
 export PLUGINDIR=$PLUGINDIR
-export PATH=${VMD_ROOT}/bin:$PATH
+export PATH=${VMD_ROOT}/bin:\$PATH
 EOF
