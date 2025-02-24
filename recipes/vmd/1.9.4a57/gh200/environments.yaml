@@ -10,9 +10,6 @@ dlaf-env:
   - libpng
   - zlib
   - cuda@12.4 # TODO check again and document this
-  # mpi:
-  #   spec: cray-mpich
-  #   gpu: cuda
   variants:
     - +mpi
     - +cuda
