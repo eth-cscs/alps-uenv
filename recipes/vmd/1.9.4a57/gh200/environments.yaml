@@ -19,4 +19,5 @@ dlaf-env:
       link: roots
       uenv:
         prefix_paths:
+          add_compilers: true
           LD_LIBRARY_PATH: [lib, lib64]
