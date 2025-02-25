@@ -10,18 +10,20 @@ vmd-env:
   - libpng
   - zlib
   - cuda@12.4
+  - vmd
   variants:
     - +cuda
     - cuda_arch=90a
   views:
     develop:
       link: roots
+      exclude: ["vmd"]
       uenv:
         prefix_paths:
           CPATH: [include]
           LIBRARY_PATH: [lib, lib64]
     vmd:
-      link: run
+      link: roots
       uenv:
         add_compilers: false
         LD_LIBRARY_PATH: [lib, lib64]
