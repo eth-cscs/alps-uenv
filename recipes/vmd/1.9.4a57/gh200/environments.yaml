@@ -1,17 +1,16 @@
-dlaf-env:
+vmd-env:
   compiler:
   - toolchain: gcc
     spec: gcc@13
   unify: true
   specs:
-  - tk@8.5~xss
+  - tk@8.5 ~xss
   - tcl@8.5
   - fltk
   - libpng
   - zlib
-  - cuda@12.4 # TODO check again and document this
+  - cuda@12.4
   variants:
-    - +mpi
     - +cuda
     - cuda_arch=90a
   views:
