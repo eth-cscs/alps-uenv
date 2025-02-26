@@ -15,6 +15,11 @@ vmd-env:
     - +cuda
     - cuda_arch=90a
   views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: false
+        LD_LIBRARY_PATH: [lib, lib64]
     develop:
       link: roots
       exclude: ["vmd"]
@@ -22,8 +27,3 @@ vmd-env:
         prefix_paths:
           CPATH: [include]
           LIBRARY_PATH: [lib, lib64]
-    vmd:
-      link: roots
-      uenv:
-        add_compilers: false
-        LD_LIBRARY_PATH: [lib, lib64]
