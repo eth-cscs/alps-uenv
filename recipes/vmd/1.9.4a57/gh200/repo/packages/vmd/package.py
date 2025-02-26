@@ -33,12 +33,10 @@ class Vmd(MakefilePackage, CudaPackage):
     depends_on("tk@8.5")
     depends_on("tcl@8.5")
     depends_on("fltk")
-    depends_on("cuda")
 
     depends_on("libx11", type=("run", "link"))
-    # depends_on("libxi", type=("run", "link"))
-    # depends_on("libxinerama", type=("run", "link"))
     depends_on("gl@3:", type=("run", "link"))
+
     depends_on("patchelf", type="build")
     depends_on("gmake", type="build")
 
@@ -67,7 +65,6 @@ class Vmd(MakefilePackage, CudaPackage):
                 "LINUXARM64",
                 "GCC",
                 "TCL",
-                "CUDA",
                 "FLTK",
                 "FLTKOPENGL",
                 "EGLPBUFFER",
@@ -77,6 +74,10 @@ class Vmd(MakefilePackage, CudaPackage):
                 "LIBPNG",
                 "ZLIB",
             ]
+
+            if "+cuda" in spec:
+                configure_opts.append("CUDA")
+
             configure(*configure_opts)
 
         with working_dir(join_path(VMD_SOURCE_DIR, "src")):
