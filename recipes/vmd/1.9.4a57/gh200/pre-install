@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -u
+
+vmd_version="1.9.4a57"
+vmd_tarball="vmd-${vmd_version}.src.tar.gz"
+vmd_tarball_filepath={{ env.build }}/environments/${vmd_tarball}
+
+curl --user $CSCS_REGISTRY_USERNAME:$CSCS_REGISTRY_PASSWORD https://jfrog.svc.cscs.ch/artifactory/uenv-sources/vmd/${vmd_tarball} --output ${vmd_tarball_filepath}
+
+tar xf ${vmd_tarball_filepath}

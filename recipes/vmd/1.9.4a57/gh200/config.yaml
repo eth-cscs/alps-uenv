@@ -1,0 +1,7 @@
+name: vmd
+description: VMD Visual Molecular Dynamics 1.9.4 alpha 57
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.1
+modules: false

@@ -1,0 +1,29 @@
+vmd-env:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13
+  unify: true
+  specs:
+  - tk@8.5 ~xss
+  - tcl@8.5
+  - fltk
+  - libpng
+  - zlib
+  - cuda@12.4
+  - vmd
+  variants:
+    - +cuda
+    - cuda_arch=90a
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: false
+        LD_LIBRARY_PATH: [lib, lib64]
+    develop:
+      link: roots
+      exclude: ["vmd"]
+      uenv:
+        prefix_paths:
+          CPATH: [include]
+          LIBRARY_PATH: [lib, lib64]
