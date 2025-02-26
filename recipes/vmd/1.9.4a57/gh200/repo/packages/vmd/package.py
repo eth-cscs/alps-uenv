@@ -30,6 +30,9 @@ class Vmd(MakefilePackage, CudaPackage):
     manual_download = True
     redistribute(source=False, binary=False)
 
+    requires("%gcc", msg="Currently GCC is hard-coded.")
+    requires("target=aarch64", msg="Currently LINUXARM64 is hard-coded.")
+
     depends_on("tk@8.5")
     depends_on("tcl@8.5")
     depends_on("fltk")
