@@ -128,7 +128,6 @@ uenvs:
         gh200: 2024.1/gh200
         zen2: 2024.1/mc
       deploy:
-        todi: [gh200]
         eiger: [zen2]
       develop: False
     "2024.2":
@@ -141,7 +140,14 @@ uenvs:
         zen2: 2024.3/mc
       deploy:
         daint: [gh200]
-        todi: [gh200]
+        eiger: [zen2]
+      develop: False
+    "2025.1":
+      recipes:
+        gh200: 2025.1/gh200
+        zen2: 2025.1/mc
+      deploy:
+        daint: [gh200]
         eiger: [zen2]
       develop: False
   icon-wcp:
