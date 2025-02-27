@@ -7,6 +7,8 @@ ascent:
     gpu: cuda
   unify: true
   specs:
+  - cuda@12.4
+  - py-numpy
   - ascent +python
   # - ascent ^cray-mpich +python +cuda cuda_arch=90
   variants:
