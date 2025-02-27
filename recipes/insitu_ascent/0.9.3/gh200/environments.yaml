@@ -1,0 +1,21 @@
+ascent:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  unify: true
+  specs:
+  - ascent +python
+  # - ascent ^cray-mpich +python +cuda cuda_arch=90
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop:
+      link: roots
+      exclude: ["ascent"]
+    ascent:
+      link: roots

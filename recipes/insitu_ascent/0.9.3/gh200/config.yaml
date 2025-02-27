@@ -1,0 +1,7 @@
+name: insitu_ascent
+store: /user-environment
+description: ascent on GH200
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.1
+modules: True
