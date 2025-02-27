@@ -347,3 +347,10 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
+  insitu_ascent:
+    "0.9.3":
+      recipes:
+        gh200: 0.9.3/gh200   
+      deploy:  
+        daint: [gh200]
+        santis: [gh200]
