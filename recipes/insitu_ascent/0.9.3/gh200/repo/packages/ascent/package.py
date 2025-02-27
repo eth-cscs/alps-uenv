@@ -150,8 +150,7 @@ class Ascent(CMakePackage, CudaPackage):
     # patch for finding RAJA more reliably
     # https://github.com/Alpine-DAV/ascent/pull/1123
     patch("ascent-find-raja-pr1123.patch", when="@0.9.0")
-    patch("ascent-find-python.patch")
-    # patch("ascent-find-python-packages_dir.patch")
+    # patch("ascent-find-python.patch")
 
     ##########################################################################
     # package dependencies
