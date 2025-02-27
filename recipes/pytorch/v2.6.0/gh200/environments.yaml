@@ -15,6 +15,8 @@ pytorch:
   - aws-ofi-nccl@1.9.2
   - cmake
   - ninja
+  - osu-micro-benchmarks
+  - nccl-tests
   - fftw
   - fmt
   - hdf5 +direct-vfd
@@ -31,15 +33,18 @@ pytorch:
   - py-pip
   - py-cython
   - py-pybind11
-  - py-torch@2.6.0 +custom-protobuf +distributed +fbgemm ~mkldnn +numpy +openmp +qnnpack ~rocm +numa +cudnn +magma +nccl ~gloo +mpi +xnnpack +tensorpipe +caffe2 +kineto +valgrind  
+  - gloo +libuv
+  - py-torch@2.6.0 +custom-protobuf +distributed +fbgemm ~mkldnn +numpy +openmp +qnnpack ~rocm +numa +cudnn +magma +nccl +gloo +mpi +xnnpack +tensorpipe +caffe2 +kineto +valgrind  
   - py-torchvision +ffmpeg +nvjpeg +video_codec
   - py-torchaudio
   - py-torchmetrics
-  - py-transformer-engine@main +userbuffers
-  #- py-transformers
+  #- py-transformer-engine@main +userbuffers
+  - py-transformer-engine@main
+  - py-transformers
   #- py-tensorboard
   #- py-tensorstore@0.1.71
-  - py-triton@3.1.0
+  #- py-triton@3.1.0
+  - py-triton@3.2.0
   - py-einops
   - py-flask-restful
   - py-nltk
@@ -54,6 +59,7 @@ pytorch:
   - py-zarr
   - py-wandb
   - py-torch-nvidia-apex@25.02.14
+  - py-flash-attn
   variants:
   - +mpi
   - +cuda

@@ -274,7 +274,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@9:11.4", when="@:1.5+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
     # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
+    depends_on("cudnn@8.5:", when="@2.3:+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("cudnn@7", when="@:1.5+cudnn")
     depends_on("magma+cuda", when="+magma+cuda")
@@ -598,7 +598,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # Flash attention has very high memory requirements that may cause the build to fail
         # https://github.com/pytorch/pytorch/issues/111526
         # https://github.com/pytorch/pytorch/issues/124018
-        env.set("USE_FLASH_ATTENTION", "OFF")
+        #env.set("USE_FLASH_ATTENTION", "OFF")
+        env.set("USE_FLASH_ATTENTION", "ON")
+
+        env.set("USE_MEM_EFF_ATTENTION", "ON")
 
         enable_or_disable("fbgemm")
         enable_or_disable("kineto")
