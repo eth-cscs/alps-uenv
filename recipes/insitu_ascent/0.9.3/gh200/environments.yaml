@@ -10,6 +10,7 @@ ascent:
   - cuda@12.4
   - py-numpy
   - ascent +python
+  - ascent -cuda +python
   # - ascent ^cray-mpich +python +cuda cuda_arch=90
   variants:
   - +mpi
@@ -19,5 +20,8 @@ ascent:
     develop:
       link: roots
       exclude: ["ascent"]
-    ascent:
+    ascent_cpu:
+      link: roots
+      exclude: ["ascent+cuda"]
+    ascent_gpu:
       link: roots
