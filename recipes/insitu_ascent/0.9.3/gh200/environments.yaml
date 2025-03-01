@@ -12,8 +12,7 @@ ascent:
   - ascent +python
   # ascent@develop +python +cuda cuda_arch=90 +vtkh ^raja+cuda ^cray-mpich+cuda ^hdf5@1.14.5 ^vtk-m +cuda cuda_arch=90  
   # no cuda:
-  - ascent@develop -cuda +python
-  
+  # - ascent@develop -cuda +python  
   - py-numpy@1.26.4
   - hdf5 +cxx +hl +fortran
   # - ascent ^cray-mpich +python +cuda cuda_arch=90
