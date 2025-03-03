@@ -9,12 +9,12 @@ ascent:
   specs:
   - cuda@12.4
   # cuda:
-  - ascent +python
-  # ascent@develop +python +cuda cuda_arch=90 +vtkh ^raja+cuda ^cray-mpich+cuda ^hdf5@1.14.5 ^vtk-m +cuda cuda_arch=90  
+  # - ascent@develop +python ^cray-mpich+cuda ^hdf5@1.14.5+cxx+hl+fortran
+  - ascent@develop +python +cuda cuda_arch=90 +vtkh ^raja+cuda ^cray-mpich+cuda ^hdf5@1.14.5+cxx+hl+fortran ^vtk-m +cuda cuda_arch=90  
   # no cuda:
   # - ascent@develop -cuda +python  
   - py-numpy@1.26.4
-  - hdf5 +cxx +hl +fortran
+  # - hdf5 +cxx +hl +fortran
   # - ascent ^cray-mpich +python +cuda cuda_arch=90
   variants:
   - +mpi
