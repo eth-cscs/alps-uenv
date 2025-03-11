@@ -108,6 +108,7 @@ class QuantumEspresso(CMakePackage, Package):
     # NVTX variant for profiling
     # requires linking to CUDA runtime APIs , handled by CMake
     variant("nvtx", default=False, description="Enables NVTX markers for profiling")
+    variant("trace", default=False, description="enable execution tracing output")
     with when("+nvtx~cuda"):
         depends_on("cuda")
 
@@ -454,6 +455,7 @@ class CMakeBuilder(spack.build_systems.cmake.CMakeBuilder):
             self.define_from_variant("QE_ENABLE_LIBXC", "libxc"),
             self.define_from_variant("QE_ENABLE_CUDA", "cuda"),
             self.define_from_variant("QE_ENABLE_PROFILE_NVTX", "nvtx"),
+            self.define_from_variant("QE_ENABLE_TRACE", "trace"),
             self.define_from_variant("QE_CLOCK_SECONDS", "clock"),
             self.define_from_variant("QE_ENABLE_MPI_GPU_AWARE", "mpigpu"),
         ]
