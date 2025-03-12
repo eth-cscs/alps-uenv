@@ -4,7 +4,7 @@ stages:
 
 pipeline-configure:
   stage: configure
-  tags: [rosa-k8s-lightweight]
+  tags: [languard-k8s-lightweight]
   image: docker.io/python:latest
   script:
     - git clone https://github.com/eth-cscs/uenv-pipeline.git
