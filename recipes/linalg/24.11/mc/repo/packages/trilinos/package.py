@@ -582,13 +582,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         url = "https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-{0}.tar.gz"
         return url.format(version.dashed)
 
-    def setup_dependent_run_environment(self, env, dependent_spec):
-        if "+cuda" in self.spec:
-            # currently Trilinos doesn't perform the memory fence so
-            # it relies on blocking CUDA kernel launch. This is needed
-            # in case the dependent app also run a CUDA backend via Trilinos
-            env.set("CUDA_LAUNCH_BLOCKING", "1")
-
     def setup_dependent_package(self, module, dependent_spec):
         if "+wrapper" in self.spec:
             self.spec.kokkos_cxx = self.spec["kokkos-nvcc-wrapper"].kokkos_cxx
@@ -1083,8 +1076,3 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     def setup_run_environment(self, env):
         if "+exodus" in self.spec:
             env.prepend_path("PYTHONPATH", self.prefix.lib)
-
-        if "+cuda" in self.spec:
-            # currently Trilinos doesn't perform the memory fence so
-            # it relies on blocking CUDA kernel launch.
-            env.set("CUDA_LAUNCH_BLOCKING", "1")
