@@ -1,4 +1,5 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -75,7 +76,7 @@ class PyTriton(PythonPackage):
 
 # override pip install to use python subdirectory from parent directory
 class PythonPipBuilder(build_systems.python.PythonPipBuilder):
-    def install(self, pkg: PythonPackage, spec: Spec, prefix: Prefix) -> None:
+    def install(self, pkg: PythonPackage, spec: Spec, prefix) -> None:
         pip = spec["python"].command
         pip.add_default_arg("-m", "pip")
         args = build_systems.python.PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]

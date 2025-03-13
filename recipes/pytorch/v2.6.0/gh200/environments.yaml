@@ -38,12 +38,10 @@ pytorch:
   - py-torchvision +ffmpeg +nvjpeg +video_codec
   - py-torchaudio
   - py-torchmetrics
-  #- py-transformer-engine@main +userbuffers
   - py-transformer-engine@main
   - py-transformers
   #- py-tensorboard
-  #- py-tensorstore@0.1.71
-  #- py-triton@3.1.0
+  #- py-tensorstore
   - py-triton@3.2.0
   - py-einops
   - py-flask-restful

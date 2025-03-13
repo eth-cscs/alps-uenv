@@ -17,7 +17,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version("25.02.14", commit="b216eeee7dd91478745496919e9c0167cc4c41e3")
+    version("25.02.14", commit="b216eeee7dd91478745496919e9c0167cc4c41e3", submodules=True)
     version(
         "24.04.01",
         sha256="065bc5c0146ee579d5db2b38ca3949da4dc799b871961a2c9eb19e18892166ce",
