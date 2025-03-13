@@ -32,13 +32,11 @@ upstreamed (yet).
 
 ### py-cython
 - pulled from `develop` to support `python@13`
-- see
-  https://github.com/spack/spack/blob/f635337af89498c973489a3fa9726fc417e19c36/var/spack/repos/builtin/packages/py-cython/package.py
+- see https://github.com/spack/spack/pull/47714
 
 ### py-sympy
 - upgraded to version 1.13.1
-- needed for `py-torch`, see
-  https://github.com/spack/spack/commit/b79c01077dc020e9a0325651c14a18bd93d71b8a
+- needed for `py-torch`, see https://github.com/spack/spack/pull/48951
 
 ### py-torch
 - upgraded to 2.6.0 using https://github.com/spack/spack/pull/48794
