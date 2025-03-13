@@ -441,6 +441,8 @@ class QuantumEspresso(CMakePackage, Package):
 
     # gipaw.x will only be installed with cmake if the qe-gipaw version is >= 5c4a4ce.
     patch("gipaw-eccee44.patch", when="@7.2+gipaw build_system=cmake")
+
+    # blas libraries have been removed from qe_lapack target in 7.4.1
     patch("0001-add-blas-libraries-to-target.patch", when="@7.4.1 build_system=cmake")
 
 class CMakeBuilder(spack.build_systems.cmake.CMakeBuilder):
