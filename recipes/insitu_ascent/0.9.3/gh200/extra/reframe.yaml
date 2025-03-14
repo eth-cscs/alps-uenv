@@ -1,0 +1,21 @@
+develop:
+  features:
+    - ascent-dev
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop
+
+ascent:
+  features:
+    - ascent
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - ascent
