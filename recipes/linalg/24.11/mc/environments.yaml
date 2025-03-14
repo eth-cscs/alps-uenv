@@ -42,7 +42,6 @@ gcc-env:
   - parmetis
   - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - pika malloc=system +mpi +stdexec
-  - mimalloc # TODO
   - python@3.12
   - slepc
   - spdlog
