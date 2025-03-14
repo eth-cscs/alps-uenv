@@ -3,9 +3,12 @@ clusters:
     targets:
       -
         uarch: 'a100'
-        partition: 'normal'
+        # ~use postproc for building, because it is usually less busy~
+        # use normal for building, because postproc does not give enough resources
+        partition: 'postproc'
         variables:
           F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          SLURM_CPUS_PER_TASK: '128'
       -
         uarch: 'zen3'
         partition: 'postproc'
@@ -20,6 +23,15 @@ clusters:
         variables:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
           SLURM_ACCOUNT: ''
+    runner: f7t
+  clariden:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+        variables:
+          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          SLURM_ACCOUNT: 'a-csstaff'
     runner: f7t
   daint:
     targets:
@@ -36,6 +48,7 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
   pilatus:
     targets:
@@ -44,34 +57,17 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
-          F7T_URL: 'https://firecrest-dev.cscs.ch'
+          F7T_URL: 'https://api.tds.cscs.ch/stp/firecrest/v1'
     runner: f7t
   santis:
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  santis-spack-stack-builder
-      baremetal-tag: santis-login-baremetal
-  todi:
-    targets:
-      -
-        uarch: 'gh200'
-        partition: 'normal'
         variables:
-          SLURM_RESERVATION: 'icon'
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
     runner: f7t
 uenvs:
-  arbor:
-    "v0.9":
-      recipes:
-        zen2: v0.9/mc
-        gh200: v0.9/gh200
-      deploy:
-        eiger: [zen2]
-        todi: [gh200]
   climana:
     "24.7":
       recipes:
@@ -125,7 +121,6 @@ uenvs:
         gh200: 2024.1/gh200
         zen2: 2024.1/mc
       deploy:
-        todi: [gh200]
         eiger: [zen2]
       develop: False
     "2024.2":
@@ -138,7 +133,14 @@ uenvs:
         zen2: 2024.3/mc
       deploy:
         daint: [gh200]
-        todi: [gh200]
+        eiger: [zen2]
+      develop: False
+    "2025.1":
+      recipes:
+        gh200: 2025.1/gh200
+        zen2: 2025.1/mc
+      deploy:
+        daint: [gh200]
         eiger: [zen2]
       develop: False
   icon-wcp:
@@ -196,6 +198,17 @@ uenvs:
         todi: [gh200]
       develop: False
   linaro-forge:
+    "24.1.1":
+      recipes:
+        zen2: "24.1.1"
+        gh200: "24.1.1"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        # clariden ?
+      develop: False
+      mount: "/user-tools"
     "24.1":
       recipes:
         zen2: "24.1"
@@ -204,24 +217,18 @@ uenvs:
         eiger: [zen2]
         santis: [gh200]
         daint: [gh200]
-        todi: [gh200]
-      develop: False
-      mount: "/user-tools"
-    "24.0.2":
-      recipes:
-        zen2: "24.0.2"
-        gh200: "24.0.2"
-      deploy:
-        eiger: [zen2]
-        santis: [gh200]
-        daint: [gh200]
-        todi: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
     "v7":
       recipes:
         a100: v7
+      deploy:
+        balfrin: [a100]
+      develop: False
+    "v8":
+      recipes:
+        a100: v8
       deploy:
         balfrin: [a100]
       develop: False
@@ -322,6 +329,13 @@ uenvs:
     "v6.4.3":
       recipes:
         gh200: v6.4.3/gh200
+      deploy:
+        todi: [gh200]
+        daint: [gh200]
+      develop: False
+    "v6.5.0":
+      recipes:
+        gh200: v6.5.0/gh200
       deploy:
         todi: [gh200]
         daint: [gh200]

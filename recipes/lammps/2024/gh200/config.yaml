@@ -3,5 +3,5 @@ store: /user-environment
 description: lammps build targetting GH200
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v0.22.0
-modules: true
+  commit: v0.23.0
+modules: false
