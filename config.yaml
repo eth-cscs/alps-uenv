@@ -48,7 +48,7 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
-          F7T_URL: 'https://firecrest-dev.cscs.ch'
+          F7T_URL: 'https://api.tds.cscs.ch/stp/firecrest/v1'
     runner: f7t
   santis:
     targets:
