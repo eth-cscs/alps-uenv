@@ -30,8 +30,8 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          SLURM_RESERVATION: 'normal'
           F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          SLURM_ACCOUNT: ''
     runner: f7t
   daint:
     targets:
