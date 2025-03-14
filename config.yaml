@@ -55,9 +55,9 @@ clusters:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  santis-spack-stack-builder
-      baremetal-tag: santis-login-baremetal
+        variables:
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
+    runner: f7t
   todi:
     targets:
       -
