@@ -19,7 +19,7 @@ cp2k:
   - libint
   - eigen@3
   # pika
-  - pika@0.30.1 malloc=mimalloc
+  - pika malloc=mimalloc
   - mimalloc
   - boost
   - fmt
@@ -31,7 +31,7 @@ cp2k:
   - blt
   - camp
   # DLA-Future
-  - dla-future@0.7.3 +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps
+  - dla-future +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps
   - blaspp
   - lapackpp
   - dla-future-fortran
