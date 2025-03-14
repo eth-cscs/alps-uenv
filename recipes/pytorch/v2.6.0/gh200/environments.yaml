@@ -55,7 +55,7 @@ pytorch:
   - py-tiktoken
   - py-wrapt
   - py-zarr
-  - py-wandb
+  #- py-wandb
   - py-torch-nvidia-apex@25.02.14
   - py-flash-attn
   variants:
