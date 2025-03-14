@@ -1,11 +1,11 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import os
+import os.path
 
 import llnl.util.lang as lang
 
-import spack.build_systems.cmake
 from spack.package import *
 
 
@@ -28,8 +28,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     version("master", branch="master")
     version("develop", branch="develop")
 
-    version("4.5.01", sha256="52d003ffbbe05f30c89966e4009c017efb1662b02b2b73190670d3418719564c")
-    version("4.5.00", sha256="cbfb742feeb9e649db9eca0394e6ca9a22aa017a1e6aab8576990772a0e3135b")
     version("4.4.01", sha256="3413f0cb39912128d91424ebd92e8832009e7eeaf6fa8da58e99b0d37860d972")
     version("4.4.00", sha256="0b46372f38c48aa088411ac1b7c173a5c90f0fdb69ab40271827688fc134f58b")
 
@@ -144,7 +142,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         url="https://github.com/kokkos/kokkos/archive/3.0.00.tar.gz",
     )
 
-    depends_on("c", type="build")
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
     depends_on("cmake@3.16:", type="build")
@@ -185,7 +182,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "cuda_lambda": [False, "Activate experimental lambda features"],
         "cuda_ldg_intrinsic": [False, "Use CUDA LDG intrinsics"],
         "cuda_relocatable_device_code": [False, "Enable RDC for CUDA"],
-        "hip_relocatable_device_code": [False, "Enable RDC for HIP"],
         "cuda_uvm": [False, "Enable unified virtual memory (UVM) for CUDA"],
         "debug": [False, "Activate extra debug features - may increase compiletimes"],
         "debug_bounds_check": [False, "Use bounds checking - will increase runtime"],
@@ -408,12 +404,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             if option:
                 spack_options.append(option)
 
-    @property
-    def kokkos_cxx(self) -> str:
-        if self.spec.satisfies("+wrapper"):
-            return self["kokkos-nvcc-wrapper"].kokkos_cxx
-        # Assumes build-time globals have been set already
-        return spack_cxx
+    def setup_dependent_package(self, module, dependent_spec):
+        try:
+            self.spec.kokkos_cxx = self.spec["kokkos-nvcc-wrapper"].kokkos_cxx
+        except Exception:
+            self.spec.kokkos_cxx = spack_cxx
 
     def cmake_args(self):
         spec = self.spec
@@ -475,7 +470,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 options.append(self.define(tpl + "_DIR", spec[tpl].prefix))
 
         if self.spec.satisfies("+wrapper"):
-            options.append(self.define("CMAKE_CXX_COMPILER", self.kokkos_cxx))
+            options.append(
+                self.define("CMAKE_CXX_COMPILER", self.spec["kokkos-nvcc-wrapper"].kokkos_cxx)
+            )
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
                 options.append(
@@ -512,7 +509,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         cmake_source_path = join_path(self.stage.source_path, self.test_script_relative_path)
         if not os.path.exists(cmake_source_path):
             return
-        # Copy test
+        """Copy test."""
         cmake_out_path = join_path(self.test_script_relative_path, "out")
         cmake_args = [
             cmake_source_path,
