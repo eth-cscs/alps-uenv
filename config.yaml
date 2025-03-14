@@ -24,6 +24,15 @@ clusters:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
           SLURM_ACCOUNT: ''
     runner: f7t
+  clariden:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+        variables:
+          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          SLURM_ACCOUNT: 'a-csstaff'
+    runner: f7t
   daint:
     targets:
       -
@@ -40,6 +49,7 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
           SLURM_CONSTRAINT: 'mc'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
   pilatus:
     targets:
@@ -48,34 +58,17 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
-          F7T_URL: 'https://firecrest-dev.cscs.ch'
+          F7T_URL: 'https://api.tds.cscs.ch/stp/firecrest/v1'
     runner: f7t
   santis:
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  santis-spack-stack-builder
-      baremetal-tag: santis-login-baremetal
-  todi:
-    targets:
-      -
-        uarch: 'gh200'
-        partition: 'normal'
         variables:
-          SLURM_RESERVATION: 'icon'
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
     runner: f7t
 uenvs:
-  arbor:
-    "v0.9":
-      recipes:
-        zen2: v0.9/mc
-        gh200: v0.9/gh200
-      deploy:
-        eiger: [zen2]
-        todi: [gh200]
   climana:
     "24.7":
       recipes:
