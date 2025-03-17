@@ -340,3 +340,13 @@ uenvs:
         todi: [gh200]
         daint: [gh200]
       develop: False
+  jupyterlab:
+    "v4.1.8":
+      recipes:
+        zen2: v4.1.8/mc
+        gh200: v4.1.8/mc
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+      mount: "/user-tools"
