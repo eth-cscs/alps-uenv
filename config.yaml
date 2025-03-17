@@ -47,8 +47,8 @@ clusters:
         uarch: 'zen2'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
           SLURM_CONSTRAINT: 'mc'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
   pilatus:
     targets:
