@@ -1,6 +1,0 @@
-name: arbor
-spack:
-  commit: releases/v0.21
-  repo: https://github.com/spack/spack.git
-store: /user-environment
-description: The Arbor neuroscience simuluation package and its dependencies for Grace-Hopper.
