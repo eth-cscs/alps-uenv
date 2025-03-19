@@ -9,7 +9,7 @@ develop:
   views:
     - develop
 
-ascent:
+default:
   features:
     - ascent
     - cuda
@@ -18,4 +18,4 @@ ascent:
   cxx: mpic++
   ftn: mpifort
   views:
-    - ascent
+    - default

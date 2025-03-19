@@ -1,6 +1,6 @@
 name: insitu_ascent
 store: /user-environment
-description: ascent on GH200
+description: ascent on GH200 (+python +occa +mfem +silo +cuda +raja +umpire +vtk-m +cray-mpich)
 spack:
   repo: https://github.com/spack/spack.git
   commit: v0.23.1
