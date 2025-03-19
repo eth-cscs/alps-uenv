@@ -10,14 +10,13 @@ ascent:
   - cmake
   - cuda@12.4  # vtk-m will build with cuda/12.6 but will fail at runtime
   - py-numpy
-  - ascent +python +occa +mfem +silo +cuda cuda_arch=90
+  # TODO: conduit +silo ?
+  - ascent +python +occa +mfem +cuda cuda_arch=90
     ^raja +cuda cuda_arch=90
     ^umpire +cuda cuda_arch=90
     ^vtk-m +cuda cuda_arch=90
     ^cray-mpich +cuda
-
   # TODO: +mfem
-  # TODO: +silo for conduit ?
   # TODO: - ascent -cuda +python
   views:
     default:
