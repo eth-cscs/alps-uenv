@@ -4,7 +4,6 @@ scorep:
     spec: gcc@12
   unify: true
   specs:
-  - cmake
   - scorep@9.0.rc2 +mpi +papi +gotcha +unwind ^libunwind ^binutils +libiberty
   # uenv build scorep/9.0.rc2/mc score/9.0.rc2@eiger%zen2
 #del  ./configure --prefix=/capstor/store/cscs/cscs/csstaff/piccinal/SPACK/spack.git.eiger/DEL/install \
