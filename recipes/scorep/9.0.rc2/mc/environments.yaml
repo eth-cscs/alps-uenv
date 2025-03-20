@@ -2,7 +2,7 @@ scorep:
   compiler:
   - toolchain: gcc
     spec: gcc@12
-  unify: true
+  unify: when_possible
   specs:
   - scorep@9.0.rc2 +mpi +papi +gotcha +unwind ^libunwind ^binutils +libiberty
   # uenv build scorep/9.0.rc2/mc score/9.0.rc2@eiger%zen2
