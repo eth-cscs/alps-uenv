@@ -3,7 +3,7 @@ pytorch:
       - toolchain: gcc
         spec: gcc
   mpi:
-      spec: cray-mpich@8.1.30
+      spec: cray-mpich@8.1.32
       gpu: cuda
   unify: true
   specs:
@@ -12,7 +12,7 @@ pytorch:
   - gdb
   - xpmem
   - nccl
-  - aws-ofi-nccl@1.9.2
+  - aws-ofi-nccl
   - cmake
   - ninja
   - osu-micro-benchmarks

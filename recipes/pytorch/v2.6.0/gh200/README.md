@@ -19,6 +19,12 @@ Many of the changes are taken from the spack `develop` branch and will likely
 land in the next version. However, there are also some fixes with are not
 upstreamed (yet).
 
+### nccl
+- new versions
+
+### aws-ofi-nccl
+- new versions
+
 ### hdf5
 - added new variant `direct-vfd` to enable `O_DIRECT` virtual file driver
 
@@ -129,6 +135,44 @@ upstreamed (yet).
 
 ## Full Diff w.r.t. v0.23.1
 
+    diff --git i/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py w/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
+    index adb7474869..d4d2ea6dd0 100644
+    --- i/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
+    +++ w/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
+    @@ -18,6 +18,15 @@ class AwsOfiNccl(AutotoolsPackage):
+         maintainers("bvanessen")
+     
+         version("master", branch="master")
+    +    version("1.13.0", sha256="50dd231a0a99cec29300df46b8e828139ced15322a3c3c41b1d22dcc9a62ec02")
+    +    version("1.12.1", sha256="821f0929c016e5448785bbc6795af5096559ecfc6c9479eb3818cafa61424576")
+    +    version("1.12.0", sha256="93029207103b75f4dc15f023b3b8692851202b52b7e2824723dd5d328f0ea65b")
+    +    version("1.11.1", sha256="a300e620e03ba3cc0915f9d466232ff0bf6c84edf4e2cd93592d53cf2a62741b")
+    +    version("1.11.0", sha256="45d935133b183c945c16b70d8428d676a554faf5bd922b7909e9f1ec55ba6168")
+    +    version("1.10.0", sha256="ed63f627b42c7b0f7312ce2916a3c4dfeb5145f78b492c0d1e0d0a6828a0474c")
+    +    version("1.9.2", sha256="f763771e511ae3bc7bb708795f9802867a4a2bc4e4df6a265c7f6a033e9a8b9a")
+    +    version("1.9.1", sha256="3ee01258674e70d6966eb6d319461f9b882afae618e217e0ae7ec03d26169b35")
+    +    version("1.9.0", sha256="8d6d0469110a89b5431836d263860fb60fde7beccb26f553de41dca1feb61b51")
+         version("1.8.1", sha256="beb59959be0f60b891f9549f4df51b394e97e739416c88c3436e75516fe067c8")
+         version("1.8.0", sha256="a2f1750d4908924985335e513186353d0c4d9a5d27b1a759f6aa31a10e74c06d")
+         version("1.7.4", sha256="472bbc977ce37d0cf9239b8e366f4f247226a984eb8c487aadd884af53f00e13")
+    diff --git i/var/spack/repos/builtin/packages/nccl/package.py w/var/spack/repos/builtin/packages/nccl/package.py
+    index d70ee8180d..cc8ff49958 100644
+    --- i/var/spack/repos/builtin/packages/nccl/package.py
+    +++ w/var/spack/repos/builtin/packages/nccl/package.py
+    @@ -12,11 +12,12 @@ class Nccl(MakefilePackage, CudaPackage):
+         """Optimized primitives for collective multi-GPU communication."""
+     
+         homepage = "https://github.com/NVIDIA/nccl"
+    -    url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
+    +    url = "https://github.com/NVIDIA/nccl/archive/v2.26.2-1.tar.gz"
+     
+         maintainers("adamjstewart")
+         libraries = ["libnccl.so"]
+     
+    +    version("2.26.2-1", sha256="74c6ab40c864d79c2139508e9419de5970cb406ec85f001d5f834d5f5c0c4f3b")
+         version("2.22.3-1", sha256="45151629a9494460e73375281e8b0fe379141528879301899ece9b776faca024")
+         version("2.21.5-1", sha256="1923596984d85e310b5b6c52b2c72a1b93da57218f2bc5a5c7ac3d59297a3303")
+         version("2.20.3-1", sha256="19456bd63ca7d23a8319cbbdbaaf6c25949dd51161a9f8809f6b7453282983dd")
     diff --git i/var/spack/repos/builtin/packages/py-dockerpy-creds/package.py w/var/spack/repos/builtin/packages/py-dockerpy-creds/package.py
     index ed1788feea..0253c031f8 100644
     --- i/var/spack/repos/builtin/packages/py-dockerpy-creds/package.py
