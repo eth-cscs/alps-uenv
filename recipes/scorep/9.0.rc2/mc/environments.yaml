@@ -3,8 +3,11 @@ scorep:
   - toolchain: gcc
     spec: gcc@12
   unify: when_possible
+  mpi:
+    spec: cray-mpich@9.0.0
+    gpu: Null
   specs:
-  - scorep@9.0.rc2 +mpi +papi +gotcha +unwind ^libunwind ^binutils +libiberty
+  - scorep@9.0.rc2 +papi +gotcha +unwind ^libunwind ^binutils +libiberty
   # uenv build scorep/9.0.rc2/mc score/9.0.rc2@eiger%zen2
 #del  ./configure --prefix=/capstor/store/cscs/cscs/csstaff/piccinal/SPACK/spack.git.eiger/DEL/install \
 #del --with-otf2 \
@@ -17,16 +20,13 @@ scorep:
 #del --with-libbfd-lib=$P2/lib \
 #del --with-libgotcha=download
 #del 
-#del   variants:
-#del     - +mpi
+  variants:
+    - +mpi
+    - ~cuda
 #del     - +openmp
-#del     - ~cuda
 #del     - ~rocm
-  mpi:
-    spec: cray-mpich@9.0.0
-    gpu: Null
   views:
-    default:
+    scorep:
       link: roots
     develop:
       link: roots
