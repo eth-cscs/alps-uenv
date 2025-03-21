@@ -136,13 +136,14 @@ upstreamed (yet).
 ## Full Diff w.r.t. v0.23.1
 
     diff --git i/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py w/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
-    index adb7474869..d4d2ea6dd0 100644
+    index adb7474869..30f8b62e77 100644
     --- i/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
     +++ w/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
-    @@ -18,6 +18,15 @@ class AwsOfiNccl(AutotoolsPackage):
+    @@ -18,6 +18,16 @@ class AwsOfiNccl(AutotoolsPackage):
          maintainers("bvanessen")
      
          version("master", branch="master")
+    +    version("1.14.0", sha256="0420998e79a8ec0db0541bcc1f09f4a94c4c75fd1c096a4ef0507a0e8f2d540c")
     +    version("1.13.0", sha256="50dd231a0a99cec29300df46b8e828139ced15322a3c3c41b1d22dcc9a62ec02")
     +    version("1.12.1", sha256="821f0929c016e5448785bbc6795af5096559ecfc6c9479eb3818cafa61424576")
     +    version("1.12.0", sha256="93029207103b75f4dc15f023b3b8692851202b52b7e2824723dd5d328f0ea65b")

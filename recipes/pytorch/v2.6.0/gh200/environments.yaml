@@ -12,7 +12,7 @@ pytorch:
   - gdb
   - xpmem
   - nccl
-  - aws-ofi-nccl
+  - aws-ofi-nccl@1.14.0
   - cmake
   - ninja
   - osu-micro-benchmarks
