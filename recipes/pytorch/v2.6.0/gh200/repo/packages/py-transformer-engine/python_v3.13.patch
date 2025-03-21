@@ -1,0 +1,20 @@
+diff --git i/setup.py w/setup.py
+index 1d98184..6fcf0d5 100644
+--- i/setup.py
++++ w/setup.py
+@@ -184,13 +184,14 @@ if __name__ == "__main__":
+         long_description_content_type="text/x-rst",
+         ext_modules=ext_modules,
+         cmdclass={"build_ext": CMakeBuildExtension, "bdist_wheel": TimedBdist},
+-        python_requires=">=3.8, <3.13",
++        python_requires=">=3.8, <3.14",
+         classifiers=[
+             "Programming Language :: Python :: 3.8",
+             "Programming Language :: Python :: 3.9",
+             "Programming Language :: Python :: 3.10",
+             "Programming Language :: Python :: 3.11",
+             "Programming Language :: Python :: 3.12",
++            "Programming Language :: Python :: 3.13",
+         ],
+         setup_requires=setup_requires,
+         install_requires=install_requires,
