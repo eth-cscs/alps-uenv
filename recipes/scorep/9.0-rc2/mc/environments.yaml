@@ -7,7 +7,7 @@ scorep:
     spec: cray-mpich@9.0.0
     gpu: Null
   specs:
-  - scorep@9.0.rc2 +papi +gotcha +unwind ^libunwind ^binutils +libiberty
+  - scorep@9.0.rc2 ~cuda +mpi +papi +gotcha +unwind ^libunwind ^binutils +libiberty
   # uenv build scorep/9.0.rc2/mc score/9.0.rc2@eiger%zen2
 #del  ./configure --prefix=/capstor/store/cscs/cscs/csstaff/piccinal/SPACK/spack.git.eiger/DEL/install \
 #del --with-otf2 \
@@ -20,9 +20,9 @@ scorep:
 #del --with-libbfd-lib=$P2/lib \
 #del --with-libgotcha=download
 #del 
-  variants:
-    - +mpi
-    - ~cuda
+#del   variants:
+#del     - +mpi
+#del     - ~cuda
 #del     - +openmp
 #del     - ~rocm
   views:

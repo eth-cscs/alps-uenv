@@ -94,7 +94,7 @@ class Scorep(AutotoolsPackage):
     variant("unwind", default=False, description="Enable sampling via libunwind and lib wrapping")
     variant("cuda", default=False, description="Enable CUDA support")
     variant("hip", default=False, description="Enable ROCm/HIP support", when="@8.0:")
-    variant("gotcha", default=True, description="Enable GOTCHA support", when="@9.0:")
+    variant("gotcha", default=True, description="Enable GOTCHA support", when="@9:")
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.

@@ -10,7 +10,7 @@ modules:
   default:
     arch_folder: false
     roots:
-      tcl: /user-environment/modules
+      tcl: /user-tools/modules
     tcl:
       all:
         autoload: none
