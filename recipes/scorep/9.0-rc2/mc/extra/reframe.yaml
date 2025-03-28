@@ -1,0 +1,20 @@
+scorep:
+  features:
+    - scorep
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - scorep
+#
+develop:
+  features:
+    - scorep
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop
+
