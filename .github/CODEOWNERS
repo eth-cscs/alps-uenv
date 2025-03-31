@@ -1,0 +1,8 @@
+# Recipes owners
+recipes/cp2k/ @RMeli @abussy @mtaillefumier
+recipes/gromacs/ @kanduri @RMeli
+recipes/lammps/ @nickjbrowning @RMeli
+recipes/namd/ @RMeli
+recipes/quantumespresso/ @simonpintarelli @RMeli
+recipes/sirius/ @toxa81 @simonpintarelli
+recipes/vasp/ @AdhocMan @RMeli
