@@ -96,6 +96,15 @@ uenvs:
         eiger: [zen2]
         todi: [gh200]
       mount: "/user-tools"
+    "25.3":
+      recipes:
+        zen2: "25.3"
+        zen3: "25.3"
+        gh200: "25.3"
+      deploy:
+        eiger: [zen2]
+        todi: [gh200]
+      mount: "/user-tools"
   gromacs:
     "2023":
       recipes:
