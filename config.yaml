@@ -243,9 +243,10 @@ uenvs:
     "3.0":
       recipes:
         gh200: 3.0/gh200
+        zen2: 3.0/mc
       deploy:
         daint: [gh200]
-        todi: [gh200]
+        eiger: [zen2]
       develop: False
   netcdf-tools:
     "2024":
