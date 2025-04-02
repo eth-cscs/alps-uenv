@@ -55,7 +55,7 @@ pytorch:
   - py-tiktoken
   - py-wrapt
   - py-zarr
-  #- py-wandb # cannot build from source
+  - py-wandb
   - py-dockerpy-creds
   - py-torch-nvidia-apex@25.02.14
   - py-flash-attn
