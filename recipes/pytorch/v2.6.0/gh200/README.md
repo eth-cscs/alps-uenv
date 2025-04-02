@@ -141,6 +141,10 @@ upstreamed (yet).
 - includes more recently introduced classifiers
 - needed for building py-wandb (eventually)
 
+### py-psutil
+- version bump
+- needed for running py-wandb
+
 ## Full Diff w.r.t. v0.23.1
 
     diff --git c/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py i/var/spack/repos/builtin/packages/aws-ofi-nccl/package.py
@@ -2311,3 +2315,21 @@ upstreamed (yet).
     +            self.define_from_variant("SPM_NO_THREADLOCAL", "no-tl"),
     +        ]
     +        return args
+    diff --git c/var/spack/repos/builtin/packages/py-psutil/package.py i/var/spack/repos/builtin/packages/py-psutil/package.py
+    index 78f0e980..23501f5a 100644
+    --- c/var/spack/repos/builtin/packages/py-psutil/package.py
+    +++ i/var/spack/repos/builtin/packages/py-psutil/package.py
+    @@ -16,6 +16,13 @@ class PyPsutil(PythonPackage):
+     
+         license("BSD-3-Clause")
+     
+    +    version("7.0.0", sha256="7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456")
+    +    version("6.1.1", sha256="cf8496728c18f2d0b45198f06895be52f36611711746b7f30c464b422b50e2f5")
+    +    version("6.1.0", sha256="353815f59a7f64cdaca1c0307ee13558a0512f6db064e92fe833784f08539c7a")
+    +    version("6.0.0", sha256="8faae4f310b6d969fa26ca0545338b21f73c6b15db7c4a8d934a5482faa818f2")
+    +    version("5.9.8", sha256="6be126e3225486dff286a8fb9a06246a5253f4c7c53b475ea5f5ac934e64194c")
+    +    version("5.9.7", sha256="3f02134e82cfb5d089fddf20bb2e03fd5cd52395321d1c8458a9e58500ff417c")
+    +    version("5.9.6", sha256="e4b92ddcd7dd4cdd3f900180ea1e104932c7bce234fb88976e2a3b296441225a")
+         version("5.9.5", sha256="5410638e4df39c54d957fc51ce03048acd8e6d60abc0f5107af51e5fb566eb3c")
+         version("5.9.4", sha256="3d7f9739eb435d4b1338944abe23f49584bde5395f27487d2ee25ad9a8774a62")
+         version("5.9.2", sha256="feb861a10b6c3bb00701063b37e4afc754f8217f0f09c42280586bd6ac712b5c")

@@ -59,6 +59,7 @@ pytorch:
   - py-dockerpy-creds
   - py-torch-nvidia-apex@25.02.14
   - py-flash-attn
+  - py-psutil
   variants:
   - +mpi
   - +cuda
