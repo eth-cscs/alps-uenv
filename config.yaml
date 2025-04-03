@@ -290,6 +290,14 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+  pytorch:
+    "v2.6.0":
+      recipes:
+        gh200: v2.6.0/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
