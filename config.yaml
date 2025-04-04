@@ -341,9 +341,9 @@ uenvs:
         daint: [gh200]
       develop: False
   insitu_ascent:
-    "0.9.3":
+    "develop":
       recipes:
-        gh200: 0.9.3/gh200   
+        gh200: develop/gh200   
       deploy:  
         daint: [gh200]
         santis: [gh200]
