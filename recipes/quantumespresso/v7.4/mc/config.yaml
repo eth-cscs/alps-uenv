@@ -1,0 +1,6 @@
+name: quantumespresso
+store: /user-environment
+description: QuantumESPRESSO 7.4
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.23
