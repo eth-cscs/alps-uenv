@@ -10,7 +10,7 @@ ascent:
   - cmake
   - cuda@12.4  # vtk-m will build with cuda/12.6 but will fail at runtime
   - py-numpy
-  - ascent@git.4da1379602c44f72d587a1c7efa8856197ae87df@=develop +python +occa +mfem ^conduit@0.9.3
+  - ascent@git.4da1379602c44f72d587a1c7efa8856197ae87df=develop +python +occa +mfem ^conduit@0.9.3
   variants:
   - +mpi
   - +cuda
