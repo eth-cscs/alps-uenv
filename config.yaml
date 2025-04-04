@@ -246,6 +246,13 @@ uenvs:
         pilatus: [zen2]
         balfrin: [zen3]
       develop: False
+  # OpenFOAM Ltd
+  openfoam-ltd:
+    "2212":
+      recipes:
+        zen2: 2212/mc
+      deploy:
+        eiger: [zen2]
   # OpenFOAM Foundation
   openfoam-org:
     "8":
