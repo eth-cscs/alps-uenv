@@ -18,6 +18,3 @@ ascent:
   views:
     default:
       link: roots
-    develop:
-      link: roots
-      exclude: ["ascent"]
