@@ -3,26 +3,22 @@ ascent:
   - toolchain: gcc
     spec: gcc@12
   mpi:
-    spec: cray-mpich@8.1.30
+    spec: cray-mpich@9.0.0
     gpu: cuda
   unify: true
   specs:
   - cmake
   - cuda@12.4  # vtk-m will build with cuda/12.6 but will fail at runtime
   - py-numpy
-  # TODO: conduit +silo ?
-  - ascent +python +occa +mfem +cuda cuda_arch=90
+  - ascent@develop +python +occa +mfem +cuda cuda_arch=90
+    ^conduit@0.9.3
     ^raja +cuda cuda_arch=90
     ^umpire +cuda cuda_arch=90
     ^vtk-m +cuda cuda_arch=90
     ^cray-mpich +cuda
-  # TODO: +mfem
-  # TODO: - ascent -cuda +python
   views:
     default:
+      link: roots
     develop:
       link: roots
       exclude: ["ascent"]
-#    ascent_cpu:
-#      link: roots
-#      exclude: ["ascent+cuda"]
