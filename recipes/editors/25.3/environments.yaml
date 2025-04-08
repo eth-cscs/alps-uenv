@@ -6,7 +6,7 @@ editors:
   mpi: null
   specs:
   # the editors
-  - emacs +treesitter
+  - emacs +treesitter +native
   - nano
   - vim +python +lua
   - neovim
