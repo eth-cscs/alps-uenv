@@ -18,9 +18,8 @@ On ALPS, we provide pre-built user environments containing GROMACS alongside all
 uenv image find gromacs
 
 uenv image pull gromacs/2024:v1
-uenv start gromacs/2024:v1
+uenv start --view=gromacs gromacs/2024:v1 # start the uenv with the gromacs view
 
-uenv view gromacs     # load the gromacs view
 gmx_mpi --version     # check GROMACS version
 ```
 
