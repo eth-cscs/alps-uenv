@@ -29,6 +29,8 @@ editors:
   - py-ranger-fm
   - nnn
   - tmux
+  # cmdline fuzzy finder
+  - fzf
   packages:
   # libvterm does not build with libtool pulled from a build cache
   - libtool
