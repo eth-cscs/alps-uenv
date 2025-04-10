@@ -1,0 +1,18 @@
+lammps:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@11
+  mpi:
+      spec: cray-mpich
+  unify: true
+  specs:
+  - lammps
+  variants:
+  - +mpi
+  views:
+    default:
+      link: run
+  packages:
+   - perl
+  
+
