@@ -1,0 +1,29 @@
+lammps-kokkos:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  mpi:
+    spec: cray-mpich@8.1.30
+  unify: true
+  specs:
+  - python@3.11
+  - cmake
+  - kokkos@4.4.01
+  # lammps + kokkos package
+  - lammps@20240829.1 +kokkos +python +extra-dump +plumed +replica +extra-molecule
+  variants:
+  - +mpi
+  views:
+    develop-kokkos:
+      link: all
+      exclude: ["lammps"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    kokkos:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
