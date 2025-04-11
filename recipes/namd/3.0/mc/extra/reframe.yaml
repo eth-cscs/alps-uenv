@@ -1,13 +1,10 @@
 develop:
   features:
-    - cuda
-    - namd-single-node-dev
+    - namd
   views:
-    - develop-single-node
+    - develop
 run:
   features:
-    - cuda
-    - namd-single-node
+    - namd
   views:
-    - namd-single-node
-
+    - namd

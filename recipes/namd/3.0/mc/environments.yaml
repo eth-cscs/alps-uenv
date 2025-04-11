@@ -1,25 +1,3 @@
-namd-single-node:
-  compiler:
-  - toolchain: gcc
-    spec: gcc@13
-  unify: true
-  specs:
-  - fftw@3.3.10 +openmp ~mpi
-  - tcl@8.6
-  - charmpp@=8.0.0 backend=multicore +production +tracing
-  - namd@=3.0
-  views:
-    develop-single-node:
-      link: roots
-      exclude: ["namd"]
-      uenv:
-        prefix_paths:
-          LD_LIBRARY_PATH: [lib, lib64]
-    namd-single-node:
-      link: roots
-      uenv:
-        prefix_paths:
-          LD_LIBRARY_PATH: [lib, lib64]
 namd:
   compiler:
   - toolchain: gcc
