@@ -1,7 +1,7 @@
 build-kokkos-eiger:
   features:
     - mpi
-    - lammps-kokkos-dev-eiger
+    - lammps-kokkos-dev
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
@@ -11,7 +11,7 @@ build-kokkos-eiger:
 run-kokkos-eiger:
   features:
     - mpi
-    - lammps-kokkos-prod-eiger
+    - lammps-kokkos-prod
   cc: mpicc
   cxx: mpic++
   ftn: mpifort

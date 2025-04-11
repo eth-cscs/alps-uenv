@@ -1,7 +1,7 @@
 lammps-kokkos:
   compiler:
   - toolchain: gcc
-    spec: gcc@12.3
+    spec: gcc@13
   mpi:
     spec: cray-mpich@8.1.30
   unify: true
