@@ -1,3 +1,5 @@
+diff --git a/src/arch/ofi-crayshasta/conv-mach.h b/src/arch/ofi-crayshasta/conv-mach.h
+index 61d295df3..9e15fd2a9 100644
 --- a/src/arch/ofi-crayshasta/conv-mach.h
 +++ b/src/arch/ofi-crayshasta/conv-mach.h
 @@ -74,7 +74,7 @@
