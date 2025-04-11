@@ -24,6 +24,15 @@ clusters:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
           SLURM_ACCOUNT: ''
     runner: f7t
+  clariden:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+        variables:
+          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          SLURM_ACCOUNT: 'a-csstaff'
+    runner: f7t
   daint:
     targets:
       -
@@ -39,6 +48,7 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
     runner: f7t
   pilatus:
     targets:
@@ -47,34 +57,17 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
-          F7T_URL: 'https://firecrest-dev.cscs.ch'
+          F7T_URL: 'https://api.tds.cscs.ch/stp/firecrest/v1'
     runner: f7t
   santis:
     targets:
       -
         uarch: 'gh200'
         partition: 'normal'
-    runner:
-      slurm-tag:  santis-spack-stack-builder
-      baremetal-tag: santis-login-baremetal
-  todi:
-    targets:
-      -
-        uarch: 'gh200'
-        partition: 'normal'
         variables:
-          SLURM_RESERVATION: 'icon'
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
     runner: f7t
 uenvs:
-  arbor:
-    "v0.9":
-      recipes:
-        zen2: v0.9/mc
-        gh200: v0.9/gh200
-      deploy:
-        eiger: [zen2]
-        todi: [gh200]
   climana:
     "24.7":
       recipes:
@@ -101,7 +94,7 @@ uenvs:
         gh200: "24.7"
       deploy:
         eiger: [zen2]
-        todi: [gh200]
+        daint: [gh200]
       mount: "/user-tools"
   gromacs:
     "2023":
@@ -156,7 +149,6 @@ uenvs:
         a100:  wcp/icon/v1/a100
         gh200: wcp/icon/v1/gh200
       deploy:
-        todi: [gh200]
         santis: [gh200]
       develop: False
   julia:
@@ -179,8 +171,6 @@ uenvs:
         gh200: "2024/gh200"
       deploy:
         daint: [gh200]
-        todi: [gh200]
-        santis: [gh200]
       develop: False
   linalg:
     "24.11":
@@ -191,7 +181,6 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-        todi: [gh200]
       develop: False
   linalg-complex:
     "24.11":
@@ -202,7 +191,6 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-        todi: [gh200]
       develop: False
   linaro-forge:
     "24.1.1":
@@ -259,7 +247,6 @@ uenvs:
         eiger: [zen2]
         pilatus: [zen2]
         balfrin: [zen3]
-        todi: [gh200]
       develop: False
   # OpenFOAM Foundation
   openfoam-org:
@@ -274,7 +261,7 @@ uenvs:
         gh200: 24.2/gh200
       deploy:
         santis: [gh200]
-        todi: [gh200]
+        daint: [gh200]
     "24.7":
       recipes:
         # zen2 and zen3 targets use the same recipe
@@ -283,8 +270,8 @@ uenvs:
         gh200: 24.7/gh200
       deploy:
         daint: [gh200]
+        santis: [gh200]
         eiger: [zen2]
-        todi: [gh200]
     "24.11":
       recipes:
         # zen2 and zen3 targets use the same recipe
@@ -294,8 +281,8 @@ uenvs:
         a100: 24.11/a100
       deploy:
         daint: [gh200]
+        santis: [gh200]
         eiger: [zen2]
-        todi: [gh200]
         bristen: [a100]
       develop: True
   prgenv-nvfortran:
@@ -303,7 +290,16 @@ uenvs:
       recipes:
         gh200: 24.11/gh200
       deploy:
-        todi: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+  pytorch:
+    "v2.6.0":
+      recipes:
+        gh200: v2.6.0/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
@@ -318,8 +314,6 @@ uenvs:
         gh200: v7.3.1/gh200
         zen2: v7.3.1/mc
       deploy:
-        santis: [gh200]
-        todi: [gh200]
         daint: [gh200]
         eiger: [zen2]
   sirius:
@@ -332,19 +326,27 @@ uenvs:
       recipes:
         gh200: v6.4.2/gh200
       deploy:
-        todi: [gh200]
+        daint: [gh200]
       develop: False
     "v6.4.3":
       recipes:
         gh200: v6.4.3/gh200
       deploy:
-        todi: [gh200]
         daint: [gh200]
       develop: False
     "v6.5.0":
       recipes:
         gh200: v6.5.0/gh200
       deploy:
-        todi: [gh200]
         daint: [gh200]
       develop: False
+  jupyterlab:
+    "v4.1.8":
+      recipes:
+        zen2: v4.1.8/mc
+        gh200: v4.1.8/mc
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+      mount: "/user-tools"
