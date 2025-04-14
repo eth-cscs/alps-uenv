@@ -65,7 +65,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
 uenvs:
   climana:
