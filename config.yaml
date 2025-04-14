@@ -347,6 +347,13 @@ uenvs:
       deploy:
         daint: [gh200]
       develop: False
+  insitu_ascent:
+    "develop":
+      recipes:
+        gh200: develop/gh200   
+      deploy:  
+        daint: [gh200]
+        santis: [gh200]
   jupyterlab:
     "v4.1.8":
       recipes:
