@@ -9,13 +9,14 @@ nvhpc-env:
     gpu: cuda
   unify: true
   specs:
-  - quantum-espresso@7.3.1 %nvhpc +libxc +cuda +nvtx +scalapack +openmp +mpigpu hdf5=parallel
+  - quantum-espresso@7.4 %nvhpc +libxc +cuda +nvtx +scalapack +elpa +openmp +mpigpu hdf5=parallel
   - netlib-scalapack
   - fftw%nvhpc
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - libxc%nvhpc~cuda
   - cmake
+  - elpa%nvhpc +cuda
   - hdf5 %nvhpc
   - nvhpc@24.11 ~blas ~lapack ~mpi
   packages:

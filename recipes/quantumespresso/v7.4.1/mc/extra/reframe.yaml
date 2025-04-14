@@ -1,0 +1,22 @@
+develop:
+  features:
+    - mpi
+    - qe-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+   - module load cmake fftw openblas cray-mpich netlib-scalapack libxc
+modules:
+  features:
+    - mpi
+    - qe
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load quantum-espresso
