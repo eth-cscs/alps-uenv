@@ -1,0 +1,7 @@
+name: lammps
+store: /user-environment
+description: lammps build for Eiger
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.0
+modules: false
