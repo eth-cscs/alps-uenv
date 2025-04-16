@@ -11,7 +11,7 @@ gromacs:
   - fftw
   - python@3.12
   - gromacs@2024.3 +mpi +hwloc
-  - gromacs@2022.5 +plumed +mpi +hwloc
+  - gromacs@2023 +plumed +mpi +hwloc
   mpi:
     spec: cray-mpich
   variants:
