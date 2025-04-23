@@ -368,7 +368,7 @@ uenvs:
         zen2: v6.5.0/mc
       deploy:
         daint: [gh200]
-        eiger: [mc]
+        eiger: [zen2]
       develop: False
   jupyterlab:
     "v4.1.8":
