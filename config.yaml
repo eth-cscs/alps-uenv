@@ -365,8 +365,10 @@ uenvs:
     "v6.5.0":
       recipes:
         gh200: v6.5.0/gh200
+        zen2: v6.5.0/mc
       deploy:
         daint: [gh200]
+        eiger: [mc]
       develop: False
   jupyterlab:
     "v4.1.8":
