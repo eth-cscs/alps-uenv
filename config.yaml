@@ -297,6 +297,13 @@ uenvs:
         eiger: [zen2]
         bristen: [a100]
       develop: True
+    "25.4":
+      recipes:
+        # zen2 and zen3 targets use the same recipe
+        mi300: 25.04/mi300
+      deploy:
+        beverin: [mi300]
+      develop: True
   prgenv-nvfortran:
     "24.11":
       recipes:
