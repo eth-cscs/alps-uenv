@@ -1,6 +1,6 @@
 vasp:
   mpi:
-    spec: cray-mpich@9.0.0
+    spec: cray-mpich@8.1.32
     gpu: null
   compiler:
   - toolchain: gcc
