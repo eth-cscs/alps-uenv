@@ -1,6 +1,0 @@
-name: scorep
-store: /user-tools
-spack:
-  repo: https://github.com/spack/spack.git
-  commit: v0.23.1
-modules: True
