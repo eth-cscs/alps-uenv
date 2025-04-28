@@ -4,7 +4,7 @@ scorep:
     spec: gcc@12
   unify: when_possible
   mpi:
-    spec: cray-mpich@9.0.0
+    spec: cray-mpich@8.1.30
     gpu: cuda
   specs:
   - cmake
