@@ -73,6 +73,8 @@ clusters:
         uarch: 'mi300'
         partition: 'mi300'
         variables:
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
 uenvs:
