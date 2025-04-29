@@ -1,0 +1,73 @@
+pytorch:
+  compiler:
+      - toolchain: gcc
+        spec: gcc
+  mpi:
+      spec: cray-mpich@8.1.32
+      gpu: cuda
+  unify: true
+  specs:
+  - cray-mpich
+  - cuda
+  - gdb
+  - xpmem
+  - nccl
+  - aws-ofi-nccl@1.14.0
+  - cmake
+  - ninja
+  - osu-micro-benchmarks
+  - nccl-tests
+  - fftw
+  - fmt
+  - hdf5 +direct-vfd
+  - gperftools
+  - openblas threads=openmp
+  - cudnn
+  - cutensor
+  - hydra
+  - swig
+  - libaio
+  - faiss +python
+  - python@3.13
+  - python-venv
+  - py-pip
+  - py-cython
+  - py-pybind11
+  - gloo +libuv
+  - py-torch@2.6.0 +custom-protobuf +distributed +fbgemm ~mkldnn +numpy +openmp +qnnpack ~rocm +numa +cudnn +magma +nccl +gloo +mpi +xnnpack +tensorpipe +caffe2 +kineto +valgrind  
+  - py-torchvision +ffmpeg +nvjpeg +video_codec
+  - py-torchaudio
+  - py-torchmetrics
+  - py-transformer-engine@main
+  - py-transformers
+  #- py-tensorboard
+  #- py-tensorstore
+  - py-triton@3.2.0
+  - py-einops
+  - py-flask-restful
+  - py-nltk
+  - py-pytest
+  - py-pytest-asyncio
+  - py-pytest-cov
+  - py-pytest-mock
+  - py-pytest-random-order
+  - py-sentencepiece
+  - py-tiktoken
+  - py-wrapt
+  - py-zarr
+  - py-wandb
+  - py-dockerpy-creds
+  - py-torch-nvidia-apex@25.02.14
+  - py-flash-attn
+  - py-psutil
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: all
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
