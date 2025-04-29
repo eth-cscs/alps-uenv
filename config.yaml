@@ -110,11 +110,13 @@ uenvs:
       develop: False
     "2024":
       recipes:
+        zen2: 2024/mc
         gh200: 2024/gh200-mpi
       deploy:
         # deploy to both the production and test clusters
         santis: [gh200]
         daint: [gh200]
+        eiger: [zen2]
   cp2k:
     "2024.1":
       recipes:
