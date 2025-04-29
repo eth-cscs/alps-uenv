@@ -67,6 +67,14 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
+  beverin:
+    targets:
+      -
+        uarch: 'mi300'
+        partition: 'mi300'
+        variables:
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
+    runner: f7t
 uenvs:
   climana:
     "24.7":
