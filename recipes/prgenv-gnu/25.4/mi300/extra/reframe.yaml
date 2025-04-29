@@ -1,6 +1,6 @@
 default:
   features:
-    - cuda
+    - rocm
     - mpi
     - osu-micro-benchmarks
     - openmp
