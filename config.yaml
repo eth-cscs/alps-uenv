@@ -334,8 +334,7 @@ uenvs:
       develop: True
     "25.4":
       recipes:
-        # zen2 and zen3 targets use the same recipe
-        mi300: 25.04/mi300
+        mi300: 25.4/mi300
       deploy:
         beverin: [mi300]
       develop: True
