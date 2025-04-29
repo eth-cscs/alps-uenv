@@ -9,4 +9,4 @@ default:
   cxx: mpic++
   ftn: mpifort
   views:
-    - develop
+    - default
