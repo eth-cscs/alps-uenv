@@ -9,8 +9,9 @@ pipeline-configure:
   script:
     - echo "CI_PROJECT_DIR=$CI_PROJECT_DIR"
     - git clone https://github.com/eth-cscs/uenv-pipeline.git
+    - sed -i '2 a env | grep CI_' ./uenv-pipeline/stage-build
     - ./uenv-pipeline/configure-pipeline -c./config.yaml -r./recipes -s$system -u$uenv -a$uarch -o./pipeline.yml
-    - sed -i -e 's|./uenv-pipeline/stage-build|echo CI_PROJECT_DIR=$CI_PROJECT_DIR|' ./pipeline.yml
+    - sed -i -e 's%./uenv-pipeline/stage-build%env | grep CI_ ; ./uenv-pipeline-stage-build%' ./pipeline.yml
   artifacts:
     paths:
       - pipeline.yml
