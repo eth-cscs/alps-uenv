@@ -38,7 +38,7 @@ class Scalasca(AutotoolsPackage):
     depends_on("scorep@9:", when="@2.6.2:", type=("run"))
     depends_on("otf2@3.1.1:", when="@2.6.2:")
     depends_on("cubew@4.9:", when="@2.6.2:")
-    patch("cscs.patch", when="@2.6.2:")
+    patch("cscs.patch", when="@2.6.2:")  # force uenv compilers
 
     # version 2.6.1+
     depends_on("scorep@8:", when="@2.6.1:", type=("run"))

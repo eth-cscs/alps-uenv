@@ -9,14 +9,4 @@ scorep:
   cxx: mpic++
   ftn: mpifort
   views:
-    - default
-#
-# develop:
-#   features:
-#     - scorep
-#     - mpi
-#   cc: mpicc
-#   cxx: mpic++
-#   ftn: mpifort
-#   views:
-#     - develop
+    - scorep

@@ -85,8 +85,8 @@ class Scorep(AutotoolsPackage):
             version
         )
 
-    # patch("gcc7.patch", when="@1.4:3")
-    # patch("gcc10.patch", when="@3.1:6.0")
+    patch("gcc7.patch", when="@1.4:3")
+    patch("gcc10.patch", when="@3.1:6.0")
 
     variant("mpi", default=True, description="Enable MPI support")
     variant("papi", default=True, description="Enable PAPI")
@@ -204,7 +204,6 @@ class Scorep(AutotoolsPackage):
             config_args.append("--with-pdt=%s" % spec["pdt"].prefix.bin)
 
         if "+unwind" in spec:
-            # config_args.append("--with-libunwind=%s" % spec["libunwind"].prefix)
             config_args.append("--with-libunwind-include=%s" % spec["libunwind"].prefix.include)
             config_args.append("--with-libunwind-lib=%s" % spec["libunwind"].prefix.lib)
 
