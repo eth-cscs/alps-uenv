@@ -1,0 +1,17 @@
+run:
+  features:
+    - gromacs 
+    - mpi
+  cc: gcc
+  cxx: g++
+  views:
+    - gromacs
+
+build:
+  features:
+    - gromacs-dev
+    - mpi
+  cc: gcc
+  cxx: g++
+  views:
+    - develop
