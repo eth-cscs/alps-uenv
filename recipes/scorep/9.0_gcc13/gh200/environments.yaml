@@ -1,15 +1,17 @@
 scorep:
   compiler:
   - toolchain: gcc
-    spec: gcc@12
+    spec: gcc@13
   unify: when_possible
   mpi:
     spec: cray-mpich@8.1.30
     gpu: cuda
   specs:
-  - cmake
-  - hdf5 +cxx +hl ~fortran
+  # keeping for reference:  
+  # - cmake  # cmake@3.30.5 fails to build because of ^openssl@3.4.0%gcc@13.3.0
+           # hdf5 depends on cmake, using my own recipe for cmake fails too
+  # - hdf5 +cxx +hl ~fortran
   - scalasca@2.6.2 ^scorep@9.0 +cuda +mpi ~papi +gotcha +unwind ^libunwind ^binutils +libiberty ^cuda@12
   views:
     default:
-      link: roots
+      link: all

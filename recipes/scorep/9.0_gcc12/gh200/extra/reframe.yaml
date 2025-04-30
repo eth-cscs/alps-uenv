@@ -1,12 +1,11 @@
-scorep:
+default:
   features:
     - scorep
     - scalasca
     - mpi
     - cuda
-    - hdf5
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
   views:
-    - scorep
+    - default

@@ -320,9 +320,9 @@ uenvs:
         a100: v7.5/a100
       develop: True
   scorep:
-    "9.0":
+    "9.0_gcc12":
       recipes:
-        gh200: 9.0/gh200
+        gh200: 9.0_gcc12/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
