@@ -1,6 +1,6 @@
 develop:
   features:
-    - namd
+    - namd-dev
   views:
     - develop
 run:
