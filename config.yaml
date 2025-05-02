@@ -327,7 +327,6 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
-  scorep:
     "9.0-gcc13":
       recipes:
         gh200: 9.0-gcc13/gh200
