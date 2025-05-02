@@ -2,8 +2,6 @@ default:
   features:
     - scorep
     - scalasca
-    - mpi
-    - cuda
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
