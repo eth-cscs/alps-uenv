@@ -1,0 +1,9 @@
+default:
+  features:
+    - scorep
+    - scalasca
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default
