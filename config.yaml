@@ -65,7 +65,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/cw/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
 uenvs:
   climana:
@@ -96,6 +96,15 @@ uenvs:
         eiger: [zen2]
         daint: [gh200]
       mount: "/user-tools"
+    "25.3":
+      recipes:
+        zen2: "25.3"
+        zen3: "25.3"
+        gh200: "25.3"
+      deploy:
+        eiger: [zen2]
+        todi: [gh200]
+      mount: "/user-tools"
   gromacs:
     "2023":
       recipes:
@@ -110,11 +119,13 @@ uenvs:
       develop: False
     "2024":
       recipes:
+        zen2: 2024/mc
         gh200: 2024/gh200-mpi
       deploy:
         # deploy to both the production and test clusters
         santis: [gh200]
         daint: [gh200]
+        eiger: [zen2]
   cp2k:
     "2024.1":
       recipes:
@@ -193,25 +204,30 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
+    "24.1.2":
+      recipes:
+        zen2: "24.1.2"
+        gh200: "24.1.2"
+      deploy:
+        eiger: [zen2]
+        pilatus: [zen2]
+        # bristen: [a100]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+      develop: False
+      mount: "/user-tools"
     "24.1.1":
       recipes:
         zen2: "24.1.1"
         gh200: "24.1.1"
       deploy:
         eiger: [zen2]
-        santis: [gh200]
+        pilatus: [zen2]
+        # bristen: [a100]
         daint: [gh200]
-        # clariden ?
-      develop: False
-      mount: "/user-tools"
-    "24.1":
-      recipes:
-        zen2: "24.1"
-        gh200: "24.1"
-      deploy:
-        eiger: [zen2]
         santis: [gh200]
-        daint: [gh200]
+        clariden: [gh200]
       develop: False
       mount: "/user-tools"
   mch:
@@ -231,8 +247,10 @@ uenvs:
     "3.0":
       recipes:
         gh200: 3.0/gh200
+        zen2: 3.0/mc
       deploy:
         daint: [gh200]
+        eiger: [zen2]
       develop: False
   netcdf-tools:
     "2024":
@@ -314,6 +332,22 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "v7.4":
+      recipes:
+        gh200: v7.4/gh200
+        zen2: v7.4/mc
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
+        eiger: [zen2]
+    "v7.4.1":
+      recipes:
+        gh200: v7.4.1/gh200
+        zen2: v7.4.1/mc
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
+        eiger: [zen2]
   sirius:
     "v7.5":
       recipes:
@@ -350,8 +384,10 @@ uenvs:
     "v6.5.0":
       recipes:
         gh200: v6.5.0/gh200
+        zen2: v6.5.0/mc
       deploy:
         daint: [gh200]
+        eiger: [zen2]
       develop: False
   jupyterlab:
     "v4.1.8":
