@@ -1,10 +1,10 @@
 namd-single-node:
   compiler:
   - toolchain: gcc
-    spec: gcc@12.3
+    spec: gcc@13
   unify: true
   specs:
-  - cuda@12.4
+  - cuda@12.8
   - fftw@3.3.10 +openmp ~mpi
   - tcl@8.6
   - charmpp@=8.0.0 backend=multicore +production +tracing
@@ -24,10 +24,10 @@ namd-single-node:
 namd:
   compiler:
   - toolchain: gcc
-    spec: gcc@12.3
+    spec: gcc@13
   unify: true
   specs:
-  - cuda@12.4
+  - cuda@12.8
   - fftw@3.3.10 +openmp
   - tcl@8.6
   - charmpp@=8.0.0 backend=mpi +production +tracing ^cray-mpich

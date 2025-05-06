@@ -1,0 +1,23 @@
+modules:
+  # Paths to check when creating modules for all module sets
+  prefix_inspections:
+    bin:
+      - PATH
+    lib:
+      - LD_LIBRARY_PATH
+    lib64:
+      - LD_LIBRARY_PATH
+
+  default:
+    arch_folder: false
+    roots:
+      tcl: /user-environment/modules
+    tcl:
+      all:
+        autoload: none
+      hash_length: 0
+      exclude_implicits: true
+      include: ['vasp', 'hdf5', 'openblas', 'fftw', 'libxc', 'wannier90', 'netlib-scalapack', 'cmake', 'ninja', 'gdb', 'fftw', 'gcc%gcc@13', 'cray-mpich']
+      exclude: ['%gcc']
+      projections:
+        all: '{name}/{version}'
