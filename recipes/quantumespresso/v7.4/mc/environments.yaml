@@ -6,7 +6,7 @@ nvhpc-env:
     spec: cray-mpich@8.1.30
   unify: true
   specs:
-  - quantum-espresso@7.4 +libxc +scalapack +openmp
+  - quantum-espresso@7.4 +libxc +scalapack +openmp hdf5=parallel
   - netlib-scalapack
   - cmake
   - libxc
