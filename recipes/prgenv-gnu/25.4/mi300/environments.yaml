@@ -41,7 +41,7 @@ gcc-env:
   - rocsolver
   - rocsparse
   - rocthrust
-  - rotracer-dev-api
+  - roctracer-dev-api
   #- rccl
   #- aw
   variants:
