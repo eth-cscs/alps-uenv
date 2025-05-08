@@ -28,15 +28,18 @@ gcc-env:
   - hdf5+mpi
   - hipcub
   # rocm packages
-  - rocthrust
-  - rocprim
   - rocblas
   - rocfft
+  - rocm-cmake
+  - rocm-core
+  - rocminfo
+  - rocprim
+  - rocprofiler-register
+  - rocrand
   - rocsolver
   - rocsparse
-  - rocrand
-  - rocm-core
-  - rocm-cmake
+  - rocthrust
+  - rotracer-dev-api
   #- rccl
   #- aw
   variants:
