@@ -34,7 +34,9 @@ gcc-env:
   - rocm-core
   - rocminfo
   - rocprim
+  - rocprofiler-compute
   - rocprofiler-register
+  - rocprofiler-systems
   - rocrand
   - rocsolver
   - rocsparse
