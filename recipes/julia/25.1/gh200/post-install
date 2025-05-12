@@ -3,7 +3,7 @@
 # Author: Samuel Omlin, CSCS (omlins)
 #
 # Description: Definition of site specific variables and call of JUHPC.
-# Site: ALPS:todi, Swiss National Supercomputing Centre (CSCS)
+# Site: ALPS:daint, Swiss National Supercomputing Centre (CSCS)
 # Base: uenv
 
 
@@ -26,9 +26,9 @@ export JUHPC_ADIOS2_HOME=$(spack -C $ENV_MOUNT/config location -i adios2)
 
 # Call JUHPC
 JUHPC_SETUP_INSTALLDIR=$ENV_MOUNT/juhpc_setup
-#JULIAUP_INSTALLDIR="\$SCRATCH/\${HOSTNAME%%-*}/juliaup"
-JULIAUP_INSTALLDIR="\$SCRATCH/gh200/juliaup"
-JUHPC_POST_INSTALL_JL=$ENV_EXTRA/uenv_view.jl
-VERSION="v0.2.0"
+UARCH=gh200
+JULIAUP_INSTALLDIR="\${SCRATCH}/$UARCH/juliaup"
+JUHPC_POST_INSTALL_JL=$ENV_EXTRA/uenv_view.jl   # This will convert environment variables of the form ${...} to ${@...@} as required by uenv
+VERSION="v0.4.0"
 wget https://raw.githubusercontent.com/JuliaParallel/JUHPC/$VERSION/juhpc -O /tmp/juhpc
-bash -l /tmp/juhpc $JUHPC_SETUP_INSTALLDIR $JULIAUP_INSTALLDIR $JUHPC_POST_INSTALL_JL
+bash -l /tmp/juhpc $JUHPC_SETUP_INSTALLDIR $JULIAUP_INSTALLDIR --postinstall=$JUHPC_POST_INSTALL_JL --verbose=1
