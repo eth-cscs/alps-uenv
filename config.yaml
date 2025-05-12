@@ -177,9 +177,12 @@ uenvs:
       develop: False
     "2024":
       recipes:
+        zen2: "2024/mc"
+        zen3: "2024/mc"
         gh200: "2024/gh200"
       deploy:
         daint: [gh200]
+        eiger: [zen2]
       develop: False
   linalg:
     "24.11":
