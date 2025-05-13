@@ -1,0 +1,7 @@
+name: gromacs-multicore
+store: /user-environment
+description: GPU-optimised GROMACS with and without PLUMED, and the toolchain to build your own GROMACS.
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.1
+modules: false

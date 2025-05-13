@@ -1,0 +1,33 @@
+vasp:
+  mpi:
+    spec: cray-mpich@8.1.32
+    gpu: null
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13
+  unify: true
+  specs:
+      - vasp@6.5.0 +collective +scalapack +avoidalloc +tbdyn +fock_dblbuf +openmp +hdf5 +wannier90 +libxc ~profiling ~inplace ~shmem ~shmem_bcast ~shmem_rproj ~sysv ~fftlib ~cuda
+      - openblas threads=openmp
+      - netlib-scalapack ~shared
+      - hdf5+fortran~mpi
+      - libxc~fhc
+      - wannier90
+      - fftw +openmp
+      - cmake
+      - ninja
+      - gdb
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
