@@ -1,3 +1,5 @@
+#!/bin/bash -e
+
 export PATH=/user-tools/env/jupyter/bin:$PATH
 pip install -r {{ env.mount }}/meta/recipe/requirements.txt
 
