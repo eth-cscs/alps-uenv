@@ -1,7 +1,7 @@
 cp2k:
   # NOTE: In the "cp2k" environment, DLA-Future is not used by CP2K
   # NOTE: However, DLA-Future is still included in the "cp2k" environment
-  # NOTE: This is to ensure dependencies are the same and mudule names do no clash
+  # NOTE: This is to ensure dependencies are the same and module names do not clash
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
