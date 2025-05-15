@@ -8,6 +8,17 @@ develop:
   ftn: mpifort
   views:
     - develop
+develop:
+  features:
+    - cp2k-dev
+    - cuda
+    - mpi
+    - dlaf
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-dlaf
 modules:
   features:
     - cp2k-dev
@@ -30,3 +41,14 @@ run:
   ftn: mpifort
   views:
     - cp2k
+run-dlaf:
+  features:
+    - cp2k
+    - cuda
+    - mpi
+    - dlaf
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - cp2k-dlaf
