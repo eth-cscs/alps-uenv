@@ -1,0 +1,39 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi:
+      spec: cray-mpich@8.1.30
+      gpu: Null
+  unify: true
+  specs:
+  - cmake@3.27
+  - fftw
+  - fmt
+  - hdf5+hl
+  - libtree
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - python
+  - bzip2
+  - zfp
+  - sz
+  - libpng
+  - c-blosc2
+  - libpressio@0.95.1
+  - mgard
+  - libcatalyst
+  - adios2@2.10+hdf5+python+fortran
+  - 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+mgard+libcatalyst'
+  # disable libpressio because it causes compilation errors when building adios2
+  #- 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+libpressio+mgard+libcatalyst'
+  variants:
+  - +mpi
+  views:
+    default:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
