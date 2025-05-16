@@ -1,0 +1,7 @@
+name: vasp-mc
+store: /user-environment
+description: VASP
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.21.3
+modules: true

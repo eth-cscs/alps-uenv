@@ -1,0 +1,10 @@
+develop:
+  features:
+    - namd-dev
+  views:
+    - develop
+run:
+  features:
+    - namd
+  views:
+    - namd

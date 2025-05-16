@@ -14,7 +14,7 @@ gcc-env:
   - cuda@12.6
   - fftw%nvhpc +openmp
   - fmt
-  - hdf5+hl+mpi
+  - hdf5%nvhpc+fortran+threadsafe+hl
   - libtree
   - lua
   - libtree
@@ -30,6 +30,9 @@ gcc-env:
   - osu-micro-benchmarks@5.9%nvhpc
   - python@3.12
   - zlib-ng
+  # added in v2
+  - netcdf-c
+  - netcdf-fortran%nvhpc
   variants:
   - +mpi
   - +cuda

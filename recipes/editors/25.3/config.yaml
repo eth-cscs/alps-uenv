@@ -1,0 +1,6 @@
+name: editors
+store: /user-tools
+spack:
+  commit: releases/v0.23
+  repo: https://github.com/spack/spack.git
+description: text editors and handy command line tools

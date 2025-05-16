@@ -68,11 +68,6 @@ There are three ways to access the software provided by prgenv-gnu, once it has 
     # set when starting the uenv
     uenv start --view=develop prgenv-gnu/24.7:v1
 
-    # set after starting
-    # NOTE: this method will be deprecated
-    uenv start prgenv-gnu/24.7:v1
-    uenv view develop
-
     # example: the python executable provided by the uenv will be available
     which python
     /user-environment/env/default/bin/python
@@ -101,6 +96,9 @@ There are three ways to access the software provided by prgenv-gnu, once it has 
     # method 2: enable modules after the uenv has started
     uenv start prgenv-gnu/24.7
     uenv view modules
+
+    # with v7 of uenv:
+    uenv start --view=modules prgenv-gnu/24.7
     ```
 
 === "spack"
