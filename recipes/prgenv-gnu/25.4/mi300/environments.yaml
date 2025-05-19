@@ -32,10 +32,14 @@ gcc-env:
   - rocfft
   - rocm-cmake
   - rocm-core
+  - rocm-openmp-extras
   - rocminfo
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register
+  - rocprofiler-compute
+  # papi+rocm doesn't work with GNU compiler and rocprofiler-systems doesn't compile with dyninst@13:
+  - rocprofiler-systems~papi ^dyninst@12
   - rocrand
   - rocsolver
   - rocsparse
