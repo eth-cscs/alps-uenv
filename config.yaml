@@ -401,5 +401,6 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+        clariden: [gh200]
         eiger: [zen2]
       mount: "/user-tools"
