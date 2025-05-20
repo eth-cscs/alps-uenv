@@ -86,7 +86,7 @@ paraview-gh200-egl-cuda:
   - libharu
   - libtiff
   - nlohmann-json
-  - libtheora@master
+  - libtheora@git.7180717276af1ebc7da15c83162d6c5d6203aabf=master
   - pugixml
   - pegtl
   - protobuf@:3.21
