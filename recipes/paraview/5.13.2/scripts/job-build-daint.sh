@@ -51,7 +51,7 @@ mkdir -p ${BUILD_DIR}/tmp
 
 # -----------------------------------------"
 debug_output "Execute stackinator"
-$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $RECIPE_DIR/cache-config.yaml --debug --develop
+$STACKI_DIR/bin/stack-config -s $SYSTEM_DIR -b ${BUILD_DIR} -r $RECIPE_DIR -c $HOME/src/uenv-cache-config.yaml --debug --develop
 
 # -----------------------------------------"
 debug_output "cd $BUILD_DIR"
