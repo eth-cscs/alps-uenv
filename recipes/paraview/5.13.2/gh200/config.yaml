@@ -3,5 +3,5 @@ store: /user-environment
 spack:
   commit: 195b869e1c5f0f850fe16ca1cc0c77fc71f5fcd6
   repo: https://github.com/spack/spack.git
-description: ParaView for grace-hopper using EGL
+description: ParaView for Grace-Hopper using EGL
 modules: false
