@@ -411,5 +411,7 @@ uenvs:
         zen2: 5.13.2/zen2
       deploy:
         daint: [gh200]
+        clariden: [gh200]
+        santis: [gh200]
         eiger: [zen2]
       develop: True
