@@ -209,6 +209,11 @@ chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
 
 # =====================================
+debug_output "Cleanup : wipe build/src dirs (keep when debugging)"
+rm -rf $SRC_ROOT
+rm -rf $BUILD_ROOT
+
+# =====================================
 debug_output "download nvindex license file"
 curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
@@ -235,7 +240,7 @@ cmake \
     -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
 
 # =====================================
-# this runs during postin install, but writes a new script that is run
+# this runs during post install, but writes a new script that is run
 # after the user has mounted the uenv, so here $HOME refers to the user's home
 debug_output "generate final user-init script to finalize paraview launch script for remote connection"
 
