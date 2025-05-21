@@ -40,7 +40,7 @@ source $SPACK_ROOT/share/spack/setup-env.sh
 # =====================================
 debug_output "declare the name we are using for spack environment"
 # this name must match the one we are using from environments.yaml
-SPACK_ENV_NAME="paraview-gh200-egl-cuda"
+SPACK_ENV_NAME="paraview-cuda"
 
 # =====================================
 debug_output "convert stackinator environment into a package"

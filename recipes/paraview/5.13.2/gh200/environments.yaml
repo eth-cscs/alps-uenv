@@ -1,4 +1,4 @@
-paraview-gh200-egl-cuda:
+paraview-cuda:
   compiler:
   - toolchain: gcc
     spec: gcc

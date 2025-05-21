@@ -1,4 +1,4 @@
-paraview-zen2-osmesa:
+paraview-osmesa:
   compiler:
   - toolchain: gcc
     spec: gcc
