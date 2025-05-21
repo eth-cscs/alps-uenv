@@ -1,3 +1,4 @@
+# NB. git sha for spack is required for some vtk external packages, but newer sha breaks other stuff
 name: ParaView
 store: /user-environment
 spack:
