@@ -33,7 +33,7 @@ paraview-cuda:
   - cuda@12.3
 
   # Build tools
-  - git-lfs
+  # - git-lfs
   - cmake
   - ninja
   - direnv
@@ -60,15 +60,15 @@ paraview-cuda:
   - adios2 +python +hdf5
 
   # memory management
-  - jemalloc
-  - mimalloc
+  # - jemalloc
+  # - mimalloc
 
-  # system
-  - numactl
+  # # system
+  # - numactl
 
-  # profiling/testing
-  - gperftools
-  - googletest
+  # # profiling/testing
+  # - gperftools
+  # - googletest
 
   # multithreading
   - tbb
