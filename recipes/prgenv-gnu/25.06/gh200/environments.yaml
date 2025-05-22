@@ -13,7 +13,7 @@ gcc-env:
   - fmt
   - gsl
   - hdf5+cxx+hl+fortran
-  - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
+  - kokkos +aggressive_vectorization ~alloc_async cuda_arch=90 +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
   - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
   - netlib-scalapack
@@ -21,7 +21,7 @@ gcc-env:
   - libtree
   - lz4
   - meson
-  - netcdf-c
+  - netcdf-c build_system=cmake
   - netcdf-cxx
   - netcdf-fortran
   - ninja
@@ -33,7 +33,7 @@ gcc-env:
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   - nccl-tests
-  - cuda@12.8
+  - cuda@12.9
   - aws-ofi-nccl
   - superlu
   variants:
