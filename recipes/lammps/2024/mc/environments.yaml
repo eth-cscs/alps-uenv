@@ -8,9 +8,9 @@ lammps-kokkos:
   specs:
   - python@3.11
   - cmake
-  - kokkos@4.4.01
+  - kokkos@4.4.01 +openmp
   # lammps + kokkos package
-  - lammps@20240829.1 +kokkos +python +extra-dump +plumed +replica +extra-molecule
+  - lammps@20240829.1 +kokkos +python +extra-dump +plumed +replica +extra-molecule +openmp
   variants:
   - +mpi
   views:
