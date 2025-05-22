@@ -1,4 +1,7 @@
 cp2k:
+  # NOTE: In the "cp2k" environment, DLA-Future is not used by CP2K
+  # NOTE: However, DLA-Future is still included in the "cp2k" environment
+  # NOTE: This is to ensure dependencies are the same and module names do not clash
   compiler:
   - toolchain: gcc
     spec: gcc@12.3
@@ -46,10 +49,10 @@ cp2k:
   # SIRIUS
   - hdf5
   - spfft
-  - sirius +dlaf +elpa +scalapack
+  - sirius +elpa ~dlaf +scalapack
   # CP2K
   - dbcsr@2.8.0
-  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 lmax=5 build_system=cmake
+  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +elpa ~dlaf +sirius +plumed +dftd4 lmax=5 build_system=cmake
   variants:
     - +mpi
     - +openmp
@@ -64,4 +67,71 @@ cp2k:
       link: roots
       exclude: ["cp2k"]
     cp2k:
+      link: roots
+cp2k-dlaf:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12.3
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - cuda@12.4 # Can't be newer than driver version, for DBCSR
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc@7 ~cuda build_system=cmake
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  # libint
+  - libint
+  - eigen@3
+  # pika
+  - pika@0.30.1 malloc=mimalloc
+  - mimalloc
+  - boost
+  - fmt
+  - spdlog
+  - hwloc
+  - whip
+  # Umpire
+  - umpire
+  - blt
+  - camp
+  # DLA-Future
+  - dla-future@0.7.3 +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps
+  - blaspp
+  - lapackpp
+  - dla-future-fortran
+  # DFTD4
+  - dftd4
+  - multicharge
+  - mctc-lib
+  # COSMA
+  - tiled-mm
+  - costa
+  - cosma +gpu_direct
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius ~elpa +dlaf +scalapack
+  # CP2K
+  - dbcsr@2.8.0
+  - cp2k@2025.1 +libxc +libint +spglib +cosma +spla +dlaf ~elpa +sirius +plumed +dftd4 lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - +cuda
+    - cuda_arch=90
+    - build_type=Release
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  views:
+    develop-dlaf:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k-dlaf:
       link: roots

@@ -1,4 +1,5 @@
 modules:
+  # Paths to check when creating modules for all module sets
   prefix_inspections:
     bin:
       - PATH
@@ -9,17 +10,15 @@ modules:
 
   default:
     arch_folder: false
+    # Where to install modules
     roots:
       tcl: /user-environment/modules
     tcl:
       all:
-        autoload: none
+        autoload: run
       hash_length: 0
       exclude_implicits: true
+      hide_implicits: true
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
         all: '{name}/{version}'
-        cp2k~dlaf: '{name}/{version}'
-        cp2k+dlaf: '{name}-dlaf/{version}'
-        sirius~dlaf: '{name}/{version}'
-        sirius+dlaf: '{name}-dlaf/{version}'
