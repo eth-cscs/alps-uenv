@@ -190,7 +190,7 @@ rm $BUILD_ENV_DEV
 sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD_ENV
 
 # remove /dev/shm paths from build-env that will not be available to the final user
-GCCLOC=$($SPACK_CMD location -i gcc@12)
+GCCLOC=$($SPACK_CMD location -i gcc@12 +bootstrap )
 sed -i "s|/dev/shm/biddisco/spack/lib/spack/env/gcc|$GCCLOC/bin|g"  $BUILD_ENV
 sed -i "s|/dev/shm/biddisco/spack/bin|\$PATH|"                      $BUILD_ENV
 

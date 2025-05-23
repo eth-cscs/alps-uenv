@@ -112,8 +112,8 @@ paraview-osmesa:
 
   # offscreen rendering
   - mesa         +osmesa
-  - osmesa ^mesa +osmesa
-  - glew ^[virtuals=gl] osmesa ^mesa +osmesa
+  - osmesa 
+  - glew 
 
   variants:
   - ~cuda
