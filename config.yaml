@@ -172,6 +172,12 @@ uenvs:
     "25.5":
       recipes:
         gh200: "25.5/gh200"
+        zen2: "25.5/mc"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        clariden: [gh200]
       develop: False
   lammps:
     "2023":
