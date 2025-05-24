@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # -------------------------------------
 # we output messages to stdout and also stderr to simplify debugging since logs are usually in
 # separate files and we want to see where errors are happening in the script
