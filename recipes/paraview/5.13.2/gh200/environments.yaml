@@ -1,0 +1,127 @@
+paraview-cuda:
+  compiler:
+  - toolchain: gcc
+    spec: gcc
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  unify: true
+  views:
+    develop:
+      exclude: []
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    paraview:
+      link: run
+      exclude: []
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    paraview-python:
+      link: run
+      exclude: []
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
+  specs:
+
+  # cuda
+  - cuda@12.3
+
+  # Build tools
+  # - git-lfs
+  - cmake
+  - ninja
+  - direnv
+  - ninja
+  - libtree
+  - llvm@18 ~gold ~cuda
+
+  # maths
+  - blaspp
+  - eigen
+  - fftw
+  - lapackpp
+  - openblas
+  - proj
+
+  # c++ helpers
+  - fmt@10
+  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
+
+  # IO and parallelism
+  - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
+  - netcdf-c +mpi
+  - lz4
+  - adios2 +python +hdf5
+
+  # memory management
+  # - jemalloc
+  # - mimalloc
+
+  # # system
+  # - numactl
+
+  # # profiling/testing
+  # - gperftools
+  # - googletest
+
+  # multithreading
+  - tbb
+
+  # in-situ support
+  - libcatalyst +mpi +python
+
+  # vtk external deps
+  - cgns@4.4.0
+  - double-conversion@3.3.0
+  - gl2ps
+  - glew
+  - jpeg
+  - jsoncpp
+  - libharu
+  - libtiff
+  - nlohmann-json
+  - libtheora@git.7180717276af1ebc7da15c83162d6c5d6203aabf=master
+  - pugixml
+  - pegtl
+  - protobuf@:3.21
+  - seacas ~fortran ~applications ~legacy ~tests ~x11
+  - utf8cpp
+
+  # climate/weather
+  - cdi
+
+  # python
+  - python@3.11
+  - py-numpy
+  - py-pandas
+  - py-matplotlib
+  - py-mpi4py
+  - py-cftime
+  - py-h5py
+
+  # raytracing in VTK/ParaView
+  - ospray@3.2 ~mpi +denoiser +volumes ~apps ~glm
+  - ispc@1.24
+  - openvkl
+  - embree
+  - rkcommon
+  - openimagedenoise
+
+  variants:
+  - +cuda
+  - cuda_arch=90
+  - ^[virtuals=gl] egl
+  - build_type=Release
+  - cxxstd=17
+  - +mpi
+  - ~fortran
+  - ~x11
+  - ~examples
+  - ~tests
+  - +cxx
