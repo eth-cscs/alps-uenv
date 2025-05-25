@@ -193,7 +193,7 @@ rm $BUILD_ENV_DEV
 sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD_ENV
 
 # remove /dev/shm paths from build-env that will not be available to the final user
-GCCLOC=$($SPACK_CMD location -i gcc@12)
+GCCLOC=$($SPACK_CMD location -i gcc@12 +bootstrap )
 sed -i "s|/dev/shm/biddisco/spack/lib/spack/env/gcc|$GCCLOC/bin|g"  $BUILD_ENV
 sed -i "s|/dev/shm/biddisco/spack/bin|\$PATH|"                      $BUILD_ENV
 
@@ -209,11 +209,6 @@ chmod -R a+r $SRC_ROOT
 chmod -R a+r $BUILD_ROOT
 chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
-
-# =====================================
-debug_output "Cleanup : wipe build/src dirs (keep when debugging)"
-rm -rf $SRC_ROOT
-rm -rf $BUILD_ROOT
 
 # =====================================
 debug_output "download nvindex license file"
@@ -267,6 +262,11 @@ cmake \
 
 EOF
 chmod +x $mount_path/init.sh
+
+# =====================================
+debug_output "Cleanup : wipe build/src dirs (keep when debugging)"
+rm -rf $SRC_ROOT
+rm -rf $BUILD_ROOT
 
 # =====================================
 debug_output "Done"

@@ -210,11 +210,6 @@ chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
 
 # =====================================
-debug_output "Cleanup : wipe build/src dirs (keep when debugging)"
-rm -rf $SRC_ROOT
-rm -rf $BUILD_ROOT
-
-# =====================================
 debug_output "download nvindex license file"
 curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
@@ -266,6 +261,11 @@ cmake \
 
 EOF
 chmod +x $mount_path/init.sh
+
+# =====================================
+debug_output "Cleanup : wipe build/src dirs (keep when debugging)"
+rm -rf $SRC_ROOT
+rm -rf $BUILD_ROOT
 
 # =====================================
 debug_output "Done"
