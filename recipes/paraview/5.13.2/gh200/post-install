@@ -107,10 +107,17 @@ fi
 
 # =====================================
 debug_output "download + extract nvidia index libs"
-NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux-aarch64
-NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-# curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+DOWNLOAD_NVINDEX_WGET=false
+NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux
+NVINDEX_ARCH=-aarch64
+NVINDEX_TARBALL=${NVINDEX_FILENAME}${NVINDEX_ARCH}.tar.bz2
+if [[ $DOWNLOAD_NVINDEX_WGET == "true" ]]; then
+    # get nvindex plugin from official paraview source
+    wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+else
+    # use local jfrog cache of file
+    curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+fi
 tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
 
 # =====================================
