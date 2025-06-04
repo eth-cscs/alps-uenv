@@ -1,7 +1,7 @@
 name: prgenv-gnu
 spack:
-  commit: 2f389f7578b4eba0ab278b8d79410b62dd5d69d5 # spack develop from 2025-05-22 + kokkos-kernels language dep
-  repo: https://github.com/msimberg/spack.git
+  commit: 922b2625bc1abc610571bc8e3026085bdf950281 # msimberg-prgenv-gnu-25.06
+  repo: https://github.com/spack/spack.git
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
 
