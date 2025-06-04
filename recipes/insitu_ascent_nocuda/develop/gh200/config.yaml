@@ -1,0 +1,7 @@
+name: insitu_ascent_nocuda
+store: /user-environment
+description: ascent@develop on GH200 (-cuda)
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v0.23.1
+modules: True
