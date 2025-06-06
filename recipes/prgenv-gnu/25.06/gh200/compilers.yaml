@@ -2,4 +2,4 @@ bootstrap:
   spec: gcc@12
 gcc:
   specs:
-  - gcc@14
+  - gcc@14.2
