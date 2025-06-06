@@ -26,14 +26,14 @@ gcc-env:
   - netcdf-fortran
   - ninja
   - openblas threads=openmp
-  - osu-micro-benchmarks@7.5
+  - osu-micro-benchmarks
   - papi ~cuda
-  - python@3.13
+  - python
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   - nccl-tests
-  - cuda@12.9
+  - cuda
   - aws-ofi-nccl
   - superlu
   variants:
