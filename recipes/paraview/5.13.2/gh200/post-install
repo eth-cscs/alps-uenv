@@ -108,9 +108,9 @@ fi
 # =====================================
 debug_output "download + extract nvidia index libs"
 DOWNLOAD_NVINDEX_WGET=false
-NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux
 NVINDEX_ARCH=-aarch64
-NVINDEX_TARBALL=${NVINDEX_FILENAME}${NVINDEX_ARCH}.tar.bz2
+NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux${NVINDEX_ARCH}
+NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
 if [[ $DOWNLOAD_NVINDEX_WGET == "true" ]]; then
     # get nvindex plugin from official paraview source
     wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
