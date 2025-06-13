@@ -1,6 +1,6 @@
 name: prgenv-gnu
 spack:
-  commit: 2ba04092f5239a301cd6b8edb52bf23913b26717 # msimberg-prgenv-gnu-25.06
+  commit: 639653040594f37e625afdeedf90ffc9cdced39d # msimberg-prgenv-gnu-25.06
   repo: https://github.com/spack/spack.git
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
