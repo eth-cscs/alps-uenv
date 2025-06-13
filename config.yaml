@@ -313,7 +313,6 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
         bristen: [a100]
-      develop: True
   prgenv-nvfortran:
     "24.11":
       recipes:
