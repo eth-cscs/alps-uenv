@@ -413,3 +413,14 @@ uenvs:
         clariden: [gh200]
         eiger: [zen2]
       mount: "/user-tools"
+  paraview:
+    "5.13.2":
+      recipes:
+        gh200: 5.13.2/gh200
+        zen2: 5.13.2/zen2
+      deploy:
+        daint: [gh200]
+        clariden: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+      develop: True
