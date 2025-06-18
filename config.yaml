@@ -75,7 +75,7 @@ clusters:
         variables:
           F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
           F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
-          F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
     runner: f7t
 uenvs:
   climana:
