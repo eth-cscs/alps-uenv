@@ -366,6 +366,14 @@ uenvs:
       recipes:
         a100: v7.5/a100
       develop: True
+  q-e-sirius:
+    "v1.0.1":
+      recipes:
+        gh200: v1.0.1/gh200
+        zen2: v1.0.1/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   scorep:
     "9.0-gcc12":
       recipes:
