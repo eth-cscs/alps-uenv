@@ -1,0 +1,6 @@
+name: q-e-sirius
+store: /user-environment
+description: sirius gpu direct in spfft/qe-sirius
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v0.23
