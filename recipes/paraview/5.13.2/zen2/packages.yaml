@@ -1,0 +1,6 @@
+packages:
+  all:
+    providers:
+      gl: [osmesa]
+  llvm:
+    require: llvm ~gold ~cuda
