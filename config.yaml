@@ -306,16 +306,10 @@ uenvs:
         bristen: [a100]
     "25.06":
       recipes:
-        # zen2 and zen3 targets use the same recipe
-        zen2: 25.06/mc
-        zen3: 25.06/mc
         gh200: 25.06/gh200
-        a100: 25.06/a100
       deploy:
         daint: [gh200]
         santis: [gh200]
-        eiger: [zen2]
-        bristen: [a100]
       develop: True
   prgenv-nvfortran:
     "24.11":
