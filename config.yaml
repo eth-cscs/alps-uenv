@@ -304,9 +304,9 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
         bristen: [a100]
-    "25.06":
+    "25.6":
       recipes:
-        gh200: 25.06/gh200
+        gh200: 25.6/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
