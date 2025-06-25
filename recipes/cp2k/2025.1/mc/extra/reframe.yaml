@@ -1,6 +1,6 @@
 develop:
   features:
-    - cp2k-dev
+    - cp2kdev
     - mpi
   cc: mpicc
   cxx: mpic++
@@ -9,7 +9,7 @@ develop:
     - develop
 modules:
   features:
-    - cp2k-dev
+    - cp2kdev
     - mpi
   cc: mpicc
   cxx: mpic++

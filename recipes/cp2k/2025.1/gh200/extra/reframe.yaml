@@ -1,6 +1,6 @@
 develop:
   features:
-    - cp2k-dev
+    - cp2kdev
     - cuda
     - mpi
   cc: mpicc
@@ -10,7 +10,7 @@ develop:
     - develop
 develop:
   features:
-    - cp2k-dev
+    - cp2kdev
     - cuda
     - mpi
     - dlaf
@@ -21,7 +21,7 @@ develop:
     - develop-dlaf
 modules:
   features:
-    - cp2k-dev
+    - cp2kdev
     - cuda
     - mpi
   cc: mpicc
