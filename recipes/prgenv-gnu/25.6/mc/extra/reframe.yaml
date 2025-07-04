@@ -1,0 +1,7 @@
+default:
+  features: [osu-micro-benchmarks, mpi, serial, openmp]
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default
