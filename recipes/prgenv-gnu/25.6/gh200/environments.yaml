@@ -31,11 +31,11 @@ gcc-env:
   - python
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - nccl
+  - nccl@2.26.2
   - nccl-tests
   - cuda
   - xcb-util-cursor
-  - aws-ofi-nccl
+  - aws-ofi-nccl@1.14.1
   - superlu
   variants:
   - +mpi
