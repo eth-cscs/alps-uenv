@@ -8,7 +8,7 @@ gcc-env:
   unify: true
   specs:
   - q-e-sirius@1.0.1 hdf5=parallel
-  - sirius@7.7.1
+  - sirius@7.7.1 +cuda
   - spfft+gpu_direct
   variants:
   - cuda_arch=90
