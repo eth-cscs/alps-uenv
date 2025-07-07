@@ -1,0 +1,9 @@
+name: prgenv-gnu
+spack:
+  #commit: releases/v0.23
+  # 0.24.0.dev0
+  # commit: 19734832eb4eeb6aa15f741846955c41fa82f045
+  commit: releases/v0.23
+  repo: https://github.com/spack/spack.git
+store: /user-environment
+description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for MI300A
