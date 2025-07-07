@@ -1,0 +1,11 @@
+modules:
+  features:
+    - mpi
+    - q-e-sirius
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load q-e-sirius
