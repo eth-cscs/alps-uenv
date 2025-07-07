@@ -1,7 +1,7 @@
 name: prgenv-gnu
 spack:
   repo: https://github.com/spack/spack.git
-  commit: develop-2025-07-06
+  commit: 1d625102473c8e17800c1d30b81f5b048410e286
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: 4509c3352addaee202b4a0bc69bc15bd85bce306
