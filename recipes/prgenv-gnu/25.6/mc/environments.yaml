@@ -1,7 +1,5 @@
 gcc-env:
-  compiler:
-      - toolchain: gcc
-        spec: gcc@14
+  compiler: [gcc]
   mpi:
       spec: cray-mpich@8.1.32
       gpu: Null

@@ -1,5 +1,2 @@
-bootstrap:
-  spec: gcc@12
 gcc:
-  specs:
-  - gcc@14.2
+  version: "14.2"
