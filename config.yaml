@@ -375,16 +375,16 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   scorep:
-    "9.0-gcc12":
+    "9.2-gcc12":
       recipes:
-        gh200: 9.0-gcc12/gh200
+        gh200: 9.2-gcc12/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
-    "9.0-gcc13":
+    "9.2-gcc13":
       recipes:
-        gh200: 9.0-gcc13/gh200
+        gh200: 9.2-gcc13/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
