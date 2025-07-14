@@ -1,0 +1,17 @@
+scorep:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@12
+  unify: when_possible
+  mpi:
+    spec: cray-mpich@8.1.30
+    # same cray-mpich as prgenv-gnu/24.11
+    gpu: cuda
+  specs:
+  - scalasca@2.6.2 ^scorep@9.2 +cuda +mpi ~papi +gotcha +unwind ^libunwind ^binutils +libiberty ^cuda@12
+  # keeping for reference:  
+  # - cmake
+  # - hdf5 +cxx +hl ~fortran
+  views:
+    default:
+      link: all
