@@ -1,0 +1,9 @@
+version: 2
+name: nvidia-mp
+description: NVIDIA libraries
+spack:
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+store: /user-environment
+modules: false
