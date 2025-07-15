@@ -1,0 +1,44 @@
+h5hut-env:
+    compiler: [gcc]
+    mpi:
+        spec: cray-mpich@8.1.30
+        gpu: cuda
+    specs:
+    - cmake
+    - hdf5+cxx+hl+mpi
+    - h5hut@3a9e6d8 +mpi
+    # add GPU-specific packages here, for easier comparison with mc version
+    - cuda@12.6
+    unify: true
+    variants:
+    - +mpi
+    - +cuda
+    - cuda_arch=90
+    views:
+      default:
+
+#
+#   compiler:
+#       - toolchain: gcc
+#         spec: gcc
+#   mpi:
+#       spec: cray-mpich@8.1.30
+#       gpu: cuda
+#   unify: true
+#   specs:
+#   - cmake
+#   # - hdf5+cxx+hl+fortran +mpi
+#   - h5hut@3a9e6d8 +mpi
+#   # add GPU-specific packages here, for easier comparison with mc version
+#   - cuda@12.6
+#   variants:
+#   - +mpi
+#   - +cuda
+#   - cuda_arch=90
+#   views:
+#     default:
+#       link: roots
+#       uenv:
+#         add_compilers: true
+#         prefix_paths:
+#           LD_LIBRARY_PATH: [lib, lib64]
