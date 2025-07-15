@@ -1,0 +1,8 @@
+default:
+  features:
+    - h5hut
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default

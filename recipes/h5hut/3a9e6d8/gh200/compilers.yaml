@@ -1,0 +1,7 @@
+#bootstrap:
+#  spec: gcc@12
+#gcc:
+#  specs:
+#  - gcc@13
+gcc:
+  version: "13"
