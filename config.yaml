@@ -169,6 +169,16 @@ uenvs:
         zen3:  "24.9/mc"
         gh200: "24.9/gh200"
       develop: False
+    "25.5":
+      recipes:
+        gh200: "25.5/gh200"
+        zen2: "25.5/mc"
+      deploy:
+        eiger: [zen2]
+        santis: [gh200]
+        daint: [gh200]
+        clariden: [gh200]
+      develop: False
   lammps:
     "2023":
       recipes:
@@ -179,9 +189,12 @@ uenvs:
       develop: False
     "2024":
       recipes:
+        zen2: "2024/mc"
+        zen3: "2024/mc"
         gh200: "2024/gh200"
       deploy:
         daint: [gh200]
+        eiger: [zen2]
       develop: False
   linalg:
     "24.11":
@@ -204,6 +217,17 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
+    "25.0":
+      recipes:
+        zen2: "25.0"
+        gh200: "25.0"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+      develop: False
+      mount: "/user-tools"
     "24.1.2":
       recipes:
         zen2: "24.1.2"
@@ -353,17 +377,25 @@ uenvs:
       recipes:
         a100: v7.5/a100
       develop: True
-  scorep:
-    "9.0-gcc12":
+  q-e-sirius:
+    "v1.0.1":
       recipes:
-        gh200: 9.0-gcc12/gh200
+        gh200: v1.0.1/gh200
+        zen2: v1.0.1/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+  scorep:
+    "9.2-gcc12":
+      recipes:
+        gh200: 9.2-gcc12/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
-    "9.0-gcc13":
+    "9.2-gcc13":
       recipes:
-        gh200: 9.0-gcc13/gh200
+        gh200: 9.2-gcc13/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
@@ -404,5 +436,17 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+        clariden: [gh200]
         eiger: [zen2]
       mount: "/user-tools"
+  paraview:
+    "5.13.2":
+      recipes:
+        gh200: 5.13.2/gh200
+        zen2: 5.13.2/zen2
+      deploy:
+        daint: [gh200]
+        clariden: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+      develop: True

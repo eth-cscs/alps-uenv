@@ -19,3 +19,7 @@ modules:
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
         all: '{name}/{version}'
+        cp2k~dlaf: '{name}/{version}'
+        cp2k+dlaf: '{name}-dlaf/{version}'
+        sirius~dlaf: '{name}/{version}'
+        sirius+dlaf: '{name}-dlaf/{version}'
