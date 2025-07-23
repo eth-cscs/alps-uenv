@@ -67,6 +67,17 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
+  beverin:
+    targets:
+      -
+        uarch: 'mi300'
+        partition: 'mi300'
+        variables:
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+    runner: f7t
 uenvs:
   climana:
     "24.7":
@@ -324,6 +335,12 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
         bristen: [a100]
+      develop: True
+    "25.4":
+      recipes:
+        mi300: 25.4/mi300
+      deploy:
+        beverin: [mi300]
       develop: True
   prgenv-nvfortran:
     "24.11":
