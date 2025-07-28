@@ -1,0 +1,10 @@
+name: h5hut
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: 1d625102473c8e17800c1d30b81f5b048410e286
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 4509c3352addaee202b4a0bc69bc15bd85bce306
+store: /user-environment
+description: H5hut + GNU Compiler toolchain with cray-mpich
+version: 2
