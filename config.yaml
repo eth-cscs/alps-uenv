@@ -277,6 +277,12 @@ uenvs:
         pilatus: [zen2]
         balfrin: [zen3]
       develop: False
+  nvidia-mp:
+    "0.0":
+      recipes:
+        gh200: 'gh200'
+      deploy:
+        daint: [gh200]
   # OpenFOAM Foundation
   openfoam-org:
     "8":
