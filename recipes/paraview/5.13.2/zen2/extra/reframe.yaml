@@ -1,0 +1,8 @@
+default:
+  features:
+    - paraview-python
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - paraview-python
