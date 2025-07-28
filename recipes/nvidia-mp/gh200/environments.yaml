@@ -1,7 +1,5 @@
 nvidia-mp:
-  compiler:
-    - toolchain: gcc
-      spec: gcc
+  compiler: [gcc]
   mpi:
     spec: cray-mpich
     gpu: cuda
