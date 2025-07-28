@@ -217,6 +217,17 @@ uenvs:
         eiger: [zen2]
       develop: False
   linaro-forge:
+    "25.0":
+      recipes:
+        zen2: "25.0"
+        gh200: "25.0"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+      develop: False
+      mount: "/user-tools"
     "24.1.2":
       recipes:
         zen2: "24.1.2"
@@ -385,16 +396,16 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   scorep:
-    "9.0-gcc12":
+    "9.2-gcc12":
       recipes:
-        gh200: 9.0-gcc12/gh200
+        gh200: 9.2-gcc12/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
-    "9.0-gcc13":
+    "9.2-gcc13":
       recipes:
-        gh200: 9.0-gcc13/gh200
+        gh200: 9.2-gcc13/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]

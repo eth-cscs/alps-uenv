@@ -1,9 +1,7 @@
 default:
   features:
-    - mpi
-    - osu-micro-benchmarks
-    - openmp
-    - serial
+    - scorep
+    - scalasca
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
