@@ -1,0 +1,23 @@
+nvidia-mp:
+  compiler: [gcc]
+  mpi:
+    spec: cray-mpich
+    gpu: cuda
+  unify: true
+  specs:
+  - cuda@12.6
+  - nccl
+  - aws-ofi-nccl
+  - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
+  - cublasmp
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
