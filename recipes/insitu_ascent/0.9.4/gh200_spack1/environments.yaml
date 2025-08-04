@@ -1,0 +1,37 @@
+ascent:
+  compiler: [gcc]
+  mpi:
+    spec: cray-mpich@8.1.30
+    gpu: cuda
+  unify: true
+  specs:
+  - cmake
+  # - cuda@12.4  # vtk-m will build with cuda/12.6 but will fail at runtime
+  - cuda@12.6  # vtk-m will build with cuda/12.6 but will fail at runtime
+  - py-numpy
+  - conduit@0.9.4
+  - vtk_m@2.3.0 +cuda
+  - raja@2025.03.1 +cuda
+  - umpire@2025.03.0 +cuda
+  - camp@2025.03.0 +cuda
+  - kokkos@4.4.01 +cuda
+  - mfem@4.8 +cuda
+  - ascent@0.9.4 +cuda +vtkh +python +occa +mfem ^conduit@0.9.4 
+    ^vtk_m@2.3.0 +cuda
+    ^raja@2025.03.1 +cuda
+    ^umpire@2025.03.0 +cuda
+    ^camp@2025.03.0 +cuda
+    ^kokkos@4.4.01 +cuda
+    ^mfem@4.8 +cuda
+  # - ascent@git.4da1379602c44f72d587a1c7efa8856197ae87df=develop +cuda +vtkh +python +occa +mfem ^conduit@0.9.3
+  - hdf5+cxx+hl~fortran
+  variants:
+  - +mpi
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]      
