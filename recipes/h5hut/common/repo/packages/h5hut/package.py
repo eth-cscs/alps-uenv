@@ -14,7 +14,8 @@ class H5hut(AutotoolsPackage):
 
     homepage = "https://amas.psi.ch/H5hut/"
     url = "https://amas.web.psi.ch/Downloads/H5hut/H5hut-0.0.0.tar.gz"
-    git = "https://gitlab.psi.ch/H5hut/src.git"
+    git = "https://github.com/eth-cscs/h5hut.git"
+
     maintainers("biddisco")
 
     version("3a9e6d8",
@@ -60,6 +61,7 @@ class H5hut(AutotoolsPackage):
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-shared"]
+        config_args.append(f"--with-hdf5={spec['hdf5'].prefix}")
 
         if spec.satisfies("+fortran"):
             config_args.append("--enable-fortran")
@@ -67,7 +69,6 @@ class H5hut(AutotoolsPackage):
         if spec.satisfies("+mpi"):
             config_args.extend(
                 [
-                    # "--with-hdf5=/user-environment/linux-neoverse_v2/hdf5-1.14.6-4bgcmduqbyjq2ntxzux2uuj6iwdbxvvm",
                     "--enable-large-indices",
                     "--enable-parallel",
                     "CC={0}".format(spec["mpi"].mpicc),
