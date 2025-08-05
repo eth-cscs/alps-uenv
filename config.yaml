@@ -154,6 +154,14 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
       develop: False
+  h5hut:
+    "3a9e6d8":
+      recipes:
+        gh200: "h5hut/3a9e6d8/gh200"
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
   icon-wcp:
     "v1":
       recipes:
