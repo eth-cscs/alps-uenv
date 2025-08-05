@@ -5,14 +5,13 @@ gromacs:
   unify: when_possible
   specs:
   - cmake
-  - cuda@12.4
+  - cuda@12.6.2
   - blas
   - lapack
   - hwloc
   - fftw
-  - python@3.10
-  - gromacs@2024.1 +cuda +mpi +hwloc
-  - gromacs@2022.5 +plumed +cuda +hwloc
+  - python@3.12
+  - gromacs@2024.3 +plumed +cuda +mpi +hwloc
   mpi:
     spec: cray-mpich
     gpu: cuda
@@ -24,10 +23,6 @@ gromacs:
     develop:
       exclude: ['gromacs']
     gromacs:
-      exclude: ['gromacs+plumed']
-      link: run
-    plumed:
-      exclude: ['gromacs@2024.1']
       link: run
   packages:
   - perl
