@@ -10,6 +10,7 @@ nvidia-mp:
   - aws-ofi-nccl
   - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
   - cublasmp
+  - cufftmp
   variants:
   - +mpi
   - +cuda
