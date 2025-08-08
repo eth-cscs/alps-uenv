@@ -1,11 +1,9 @@
 gcc-env:
-  compiler:
-      - toolchain: gcc
-        spec: gcc
+  compiler: [gcc]
   mpi:
       spec: cray-mpich@8.1.32
       gpu: rocm
-  unify: true
+  unify: when_possible
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
@@ -24,16 +22,20 @@ gcc-env:
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - hip ^mesa@23.3.6 ^llvm@18
+  - hip@6.3.3 ^mesa@23.3.6
   - hdf5+mpi
   - hipcub
+  - llvm-amdgpu
+  - llvm@18 +libomptarget +libomptarget_debug
   # rocm packages
   - rocblas
   - rocfft
   - rocm-cmake
+  - rocm-openmp-extras
   - rocm-core
   - rocminfo
   - rocprim
+  #- rocprofiler-systems
   - rocprofiler-dev
   - rocprofiler-register
   - rocrand
