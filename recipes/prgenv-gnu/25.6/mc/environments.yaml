@@ -1,8 +1,7 @@
 gcc-env:
   compiler: [gcc]
-  mpi:
-      spec: cray-mpich@8.1.32
-      gpu: Null
+  network:
+      mpi: cray-mpich@8.1.32
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
