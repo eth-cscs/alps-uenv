@@ -3,8 +3,8 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
   packages:
-    repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2025.07
+    repo: https://github.com/msimberg/spack-packages.git
+    commit: bump-nccl-aws-ofi-nccl
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
 version: 2
