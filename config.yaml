@@ -332,6 +332,13 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+  prgenv-nvfortran:
+    "25.7":
+      recipes:
+        gh200: 25.7/gh200
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
   pytorch:
     "v2.6.0":
       recipes:
