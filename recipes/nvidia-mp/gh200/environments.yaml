@@ -10,6 +10,7 @@ nvidia-mp:
   - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
   - cublasmp
   - cufftmp
+  - cusolvermp
   variants:
   - +mpi
   - +cuda
