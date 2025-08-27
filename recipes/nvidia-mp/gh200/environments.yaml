@@ -1,8 +1,7 @@
 nvidia-mp:
   compiler: [gcc]
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
+  network:
+    mpi: cray-mpich
   unify: true
   specs:
   - cuda@12.6
