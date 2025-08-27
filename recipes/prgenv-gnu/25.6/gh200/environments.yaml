@@ -20,7 +20,7 @@ gcc-env:
   - libtree
   - lz4
   - meson
-  - netcdf-c@4.9.2 build_system=cmake
+  - netcdf-c
   - netcdf-cxx
   - netcdf-fortran
   - ninja
