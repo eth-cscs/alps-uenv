@@ -332,7 +332,6 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
-  prgenv-nvfortran:
     "25.7":
       recipes:
         gh200: 25.7/gh200
