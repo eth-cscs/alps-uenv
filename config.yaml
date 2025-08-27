@@ -103,7 +103,6 @@ uenvs:
         gh200: "25.3"
       deploy:
         eiger: [zen2]
-        todi: [gh200]
       mount: "/user-tools"
   gromacs:
     "2023":
