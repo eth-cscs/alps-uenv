@@ -1,0 +1,13 @@
+default:
+  features:
+    - cuda
+    - mpi
+    - osu-micro-benchmarks
+    - openmp
+    - serial
+    - nvhpc
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - nvfort
