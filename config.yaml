@@ -335,9 +335,9 @@ uenvs:
         eiger: [zen2]
         bristen: [a100]
       develop: True
-    "25.4":
+    "25.7":
       recipes:
-        mi300: 25.4/mi300
+        mi300: 25.7/mi300
       deploy:
         beverin: [mi300]
       develop: True
