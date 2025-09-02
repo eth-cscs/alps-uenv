@@ -8,4 +8,4 @@ default:
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
-  activation: uenv view develop
+  activation: uenv view default-llvm-amdgpu
