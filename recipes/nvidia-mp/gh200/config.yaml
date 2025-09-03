@@ -5,6 +5,5 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: alby/cusolvermp-new-package
 store: /user-environment
 modules: false
