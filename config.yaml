@@ -21,7 +21,7 @@ clusters:
         uarch: 'a100'
         partition: 'normal'
         variables:
-          F7T_URL: 'https://api.cscs.ch/ml/firecrest/v1'
+          F7T_URL: 'https://api.cscs.ch/ml/firecrest/v2'
           SLURM_ACCOUNT: ''
     runner: f7t
   clariden:
@@ -30,7 +30,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/ml/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/ml/firecrest/v2"
           SLURM_ACCOUNT: 'a-csstaff'
     runner: f7t
   daint:
@@ -39,7 +39,7 @@ clusters:
         uarch: 'gh200'
         partition: 'normal'
         variables:
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
     runner: f7t
   eiger:
     targets:
@@ -48,16 +48,7 @@ clusters:
         partition: 'normal'
         variables:
           SLURM_CONSTRAINT: 'mc'
-          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v1"
-    runner: f7t
-  pilatus:
-    targets:
-      -
-        uarch: 'zen2'
-        partition: 'normal'
-        variables:
-          SLURM_CONSTRAINT: 'mc'
-          F7T_URL: 'https://api.tds.cscs.ch/stp/firecrest/v1'
+          F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
     runner: f7t
   santis:
     targets:
@@ -233,7 +224,6 @@ uenvs:
         gh200: "24.1.2"
       deploy:
         eiger: [zen2]
-        pilatus: [zen2]
         # bristen: [a100]
         daint: [gh200]
         santis: [gh200]
@@ -246,7 +236,6 @@ uenvs:
         gh200: "24.1.1"
       deploy:
         eiger: [zen2]
-        pilatus: [zen2]
         # bristen: [a100]
         daint: [gh200]
         santis: [gh200]
@@ -284,7 +273,6 @@ uenvs:
         gh200: '2024/arm64'
       deploy:
         eiger: [zen2]
-        pilatus: [zen2]
         balfrin: [zen3]
       develop: False
   # OpenFOAM Foundation
