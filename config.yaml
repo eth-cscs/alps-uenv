@@ -334,6 +334,17 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
       develop: True
+    "next":
+      recipes:
+        zen2: next/mc
+        zen3: next/mc
+        gh200: next/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+      develop: True
   prgenv-nvfortran:
     "24.11":
       recipes:
