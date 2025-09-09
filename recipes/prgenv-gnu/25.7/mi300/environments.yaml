@@ -47,8 +47,8 @@ gcc-env:
   variants:
   - +mpi
   - +rocm
-  - amdgpu_target=gfx942
-  - amdgpu_target_sram_ecc=gfx942
+  - amdgpu_target=gfx942,gfx90a
+  - amdgpu_target_sram_ecc=gfx942,gfx90a
   views:
     default-llvm:
       link: roots
