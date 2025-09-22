@@ -1,0 +1,65 @@
+cp2k:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - cuda@12.4 # Can't be newer than driver version, for DBCSR
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc ~cuda
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  - libvori
+  # libint
+  - libint
+  - eigen@3
+  # pika
+  - pika@0.34.0 malloc=mimalloc ~stdexec
+  - mimalloc
+  - boost
+  - fmt
+  - spdlog
+  - hwloc
+  - whip
+  # Umpire
+  - umpire
+  - blt
+  - camp
+  # DLA-Future
+  - dla-future@0.10.0 +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps +hdf5
+  - blaspp
+  - lapackpp
+  - dla-future-fortran@0.5.0
+  # DFTD4
+  - dftd4
+  - multicharge
+  - mctc-lib~openmp
+  # COSMA
+  - tiled-mm
+  - costa
+  - cosma +gpu_direct
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius +dlaf +elpa +scalapack
+  # CP2K
+  - dbcsr
+  - cp2k@2025.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - +cuda
+    - cuda_arch=90
+    - build_type=Release
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots
