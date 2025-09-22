@@ -2,11 +2,13 @@ default:
   features:
     - cuda
     - mpi
-    - osu-micro-benchmarks
+    - nccl-tests
     - openmp
+    - osu-micro-benchmarks
+    - prgenv
     - serial
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
   views:
-    - nvfort  
+    - default
