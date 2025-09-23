@@ -37,6 +37,7 @@ gcc-env:
   #- rocprofiler-systems
   - rocprofiler-dev
   - rocprofiler-register
+  - rocprofiler-systems@6.3.3+internal-dyninst
   - rocrand
   - rocsolver
   - rocsparse

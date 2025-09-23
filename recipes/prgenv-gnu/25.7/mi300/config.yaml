@@ -5,6 +5,6 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 43bfc49ab9d32bdfdd1984848b15793b4072ece2 
+    commit: ae7c5eaecab7dcfef7460a2b82e71c8b0a27741e
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for MI300A
