@@ -1,6 +1,6 @@
 #!/bin/bash
 
-vasp_version=6.5.0
+vasp_version=6.5.1
 
 vasp_file=vasp-${vasp_version}.tar.bz2
 
