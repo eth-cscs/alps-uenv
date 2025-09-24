@@ -1,0 +1,30 @@
+lammps-kokkos:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  unify: true
+  specs:
+  - python@3.12
+  - cmake
+  - ninja
+  - cuda@12
+  - kokkos +wrapper 
+  - lammps@git.metatomic=develop fft_kokkos=cufft +kokkos +python +extra-dump +plumed +replica +extra-molecule
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop:
+      link: all
+      exclude: ["lammps"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    lammps:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
