@@ -8,6 +8,7 @@ nvidia-mp:
   specs:
   - cuda@12.6
   - nccl
+  - nccl-tests
   - aws-ofi-nccl
   - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
   - cublasmp
