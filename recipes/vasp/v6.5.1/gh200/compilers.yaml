@@ -1,0 +1,4 @@
+gcc:
+  version: "14.2"
+nvhpc:
+  version: "25.7"

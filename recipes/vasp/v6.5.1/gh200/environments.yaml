@@ -1,0 +1,34 @@
+vasp:
+  compiler: [gcc, nvhpc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda %c,cxx,fortran=nvhpc
+  unify: when_possible
+  specs:
+      - vasp@6.5.1 +cuda +openmp +hdf5 +wannier90 %c,cxx,fortran=nvhpc
+      - cuda@12.9 ^libxml2 %c=gcc
+      - wannier90 %c,fortran=nvhpc
+      - fftw +openmp %c,fortran=nvhpc
+      - nvpl-blas threads=openmp
+      - nvpl-lapack threads=openmp
+      - netlib-scalapack ~shared  %c,fortran=nvhpc ^cmake %c,cxx=gcc
+      - hdf5 +fortran +mpi %c,fortran=nvhpc
+      - cmake %c,cxx=gcc
+      - ninja %c,cxx=gcc
+      - aws-ofi-nccl %c,cxx=gcc
+  variants:
+      - cuda_arch=90
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
