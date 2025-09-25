@@ -9,7 +9,8 @@ lammps-kokkos:
   - ninja
   - cuda@12
   - kokkos +wrapper 
-  - lammps@git.metatomic=develop fft_kokkos=cufft +kokkos +python +extra-dump +plumed +replica +extra-molecule
+  - py-torch@2.8.0 ~distributed ~nccl
+  - lammps@git.metatomic=develop fft_kokkos=cufft +kokkos +python +extra-dump +plumed +replica +extra-molecule +metatomic
   variants:
   - +mpi
   - +cuda
