@@ -692,6 +692,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
 
         if spec.satisfies("+metatomic"):
             args += [
+                self.define("DOWNLOAD_METATENSOR", False),
                 self.define("DOWNLOAD_METATOMIC", False),
                 self.define_from_variant("PKG_ML-METATOMIC", "metatomic"),
             ]
