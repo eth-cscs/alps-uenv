@@ -5,7 +5,7 @@ spack:
     commit: v1.0.2
     packages:
         repo: https://github.com/spack/spack-packages.git
-        commit: b6639d23bab5e27189e6223c14dc0d4f6309f714
+        commit: releases/v2025.07
 modules: false
 description: "VASP GH200"
 version: 2
