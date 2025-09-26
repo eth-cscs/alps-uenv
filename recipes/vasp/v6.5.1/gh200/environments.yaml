@@ -14,7 +14,8 @@ vasp:
       - hdf5 +fortran +mpi %c,fortran=nvhpc
       - cmake %c,cxx=gcc
       - ninja %c,cxx=gcc
-      - aws-ofi-nccl %c,cxx=gcc
+      # aws-ofi plugin 1.14.0 was found to be working well with libfabric 1.22
+      - aws-ofi-nccl@1.14.0 %c,cxx=gcc ^cray-mpich %c,cxx,fortran=nvhpc
   variants:
       - cuda_arch=90
   views:

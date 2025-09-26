@@ -53,7 +53,12 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("mpi", type=("build", "link", "run"))
     # fortran oddness requires the below
     depends_on("scalapack")
+
+    # Use the bundled NCCL library of NVHPC instead.
+    # The spack build nccl library leads to linking errors.
     #depends_on("nccl", when="+cuda")
+
+
     depends_on("hdf5+fortran+mpi", when="+hdf5")
     depends_on("wannier90", when="+wannier90")
 
