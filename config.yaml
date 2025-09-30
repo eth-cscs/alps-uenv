@@ -407,6 +407,7 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
+      mount: "/user-tools"
   jupyterlab:
     "v4.1.8":
       recipes:
