@@ -12,7 +12,7 @@ modules:
     arch_folder: false
     # Where to install modules
     roots:
-      tcl: /user-environment/modules
+      tcl: /user-tools/modules
     tcl:
       all:
         autoload: none
