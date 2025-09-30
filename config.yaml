@@ -422,12 +422,13 @@ uenvs:
         eiger: [zen2]
       develop: False
   insitu_ascent:
-    "develop":
+    "0.9.5":
       recipes:
-        gh200: develop/gh200   
+        gh200: 0.9.5/gh200   
       deploy:  
         daint: [gh200]
         santis: [gh200]
+        clariden: [gh200]
   jupyterlab:
     "v4.1.8":
       recipes:
