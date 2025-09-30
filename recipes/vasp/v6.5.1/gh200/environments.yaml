@@ -1,21 +1,25 @@
 vasp:
-  compiler: [gcc, nvhpc]
-  network:
-      mpi: cray-mpich@8.1.32 +cuda %c,cxx,fortran=nvhpc
-  unify: when_possible
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13.2
+  - toolchain: llvm
+    spec: nvhpc@25.7
+  unify: true
+  mpi:
+    spec: cray-mpich@8.1.32%nvhpc
+    gpu: cuda
   specs:
-      - vasp@6.5.1 +cuda +openmp +hdf5 +wannier90 %c,cxx,fortran=nvhpc
-      - cuda@12.9 ^libxml2 %c=gcc
-      - wannier90 %c,fortran=nvhpc
-      - fftw +openmp %c,fortran=nvhpc
+      - vasp@6.5.1%nvhpc +cuda +openmp +hdf5 +wannier90
+      - cuda@12.9%nvhpc
+      - wannier90%nvhpc
+      - fftw%nvhpc +openmp
       - nvpl-blas threads=openmp
       - nvpl-lapack threads=openmp
-      - netlib-scalapack ~shared  %c,fortran=nvhpc ^cmake %c,cxx=gcc
-      - hdf5 +fortran +mpi %c,fortran=nvhpc
-      - cmake %c,cxx=gcc
-      - ninja %c,cxx=gcc
-      # aws-ofi plugin 1.14.0 was found to be working well with libfabric 1.22
-      - aws-ofi-nccl@1.14.0 %c,cxx=gcc ^cray-mpich %c,cxx,fortran=nvhpc
+      - netlib-scalapack%nvhpc ~shared
+      - hdf5%nvhpc +fortran
+      # aws plugin 1.14.0 was found to work well with libfabric 1.22
+      - aws-ofi-nccl@1.14.0
+      - cmake
   variants:
       - cuda_arch=90
   views:
@@ -32,4 +36,3 @@ vasp:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
-

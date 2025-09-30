@@ -1,11 +1,7 @@
 name: vasp
 store: /user-environment
+description: VASP
 spack:
-    repo: https://github.com/spack/spack.git
-    commit: v1.0.2
-    packages:
-        repo: https://github.com/spack/spack-packages.git
-        commit: releases/v2025.07
-modules: false
-description: "VASP GH200"
-version: 2
+  repo: https://github.com/spack/spack.git
+  commit: v0.22.5
+modules: true

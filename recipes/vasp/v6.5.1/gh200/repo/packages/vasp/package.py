@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from pathlib import Path
 
 from spack.package import *
 
@@ -37,10 +35,6 @@ class Vasp(MakefilePackage, CudaPackage):
     variant("cuda", default=False, description="Enables running on Nvidia GPUs")
     variant("hdf5", default=False, description="Enabled HDF5 support")
     variant("wannier90", default=False, description="Enabled Wannier90 support")
-
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
 
     #depends_on("rsync", type="build")
     depends_on("blas")
@@ -91,8 +85,9 @@ class Vasp(MakefilePackage, CudaPackage):
             make_include = join_path("arch", include_string)
         # nvhpc
         elif spec.satisfies("%nvhpc"):
+
             qd_root = join_path(
-                spec["nvhpc"].prefix,
+                Path(self.compiler.fc).parent.parent.absolute(),
                 "extras",
                 "qd",
             )
@@ -164,9 +159,10 @@ class Vasp(MakefilePackage, CudaPackage):
 
         os.rename(make_include, "makefile.include")
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("+cuda %nvhpc"):
-            env.set("NVHPC_CUDA_HOME", self.spec["cuda"].prefix)
+
+    def setup_build_environment(self, spack_env):
+        if self.spec.satisfies("%nvhpc +cuda"):
+            spack_env.set("NVHPC_CUDA_HOME", self.spec["cuda"].prefix)
 
     def build(self, spec, prefix):
         make("DEPS=1, all, -j1")
