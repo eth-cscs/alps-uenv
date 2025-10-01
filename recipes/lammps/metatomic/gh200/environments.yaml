@@ -11,7 +11,7 @@ lammps-kokkos:
   - py-torch@2.8.0 ~distributed ~nccl
   - kokkos +wrapper
   - plumed
-  - libmetatensor-torch
+  - libmetatensor-torch@0.8.1
   - libmetatomic-torch
   - lammps@git.da995e94a6f62b99fa4d2be9342990fe433b7ce4=develop +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +metatomic +qtb +reaction +shock +spin +extra-pair +extra-fix
   variants:
