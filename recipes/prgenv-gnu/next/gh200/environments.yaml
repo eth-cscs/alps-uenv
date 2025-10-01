@@ -3,7 +3,7 @@ gcc-env:
   network:
       mpi: cray-mpich@8.1.32 +cuda
       specs:
-      - libfabric@2.2
+      - libfabric@2.3
       - xpmem@master ~kernel-module
   unify: true
   specs:
