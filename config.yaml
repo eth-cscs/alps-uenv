@@ -70,8 +70,8 @@ clusters:
   beverin:
     targets:
       -
-        uarch: 'mi300'
-        partition: 'mi300'
+        uarch: 'mi200'
+        partition: 'mi200'
         variables:
           F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
           F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
