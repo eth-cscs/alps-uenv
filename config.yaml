@@ -337,9 +337,10 @@ uenvs:
       develop: True
     "25.7":
       recipes:
-        mi300: 25.7/mi300
+        mi300: 25.7/amdgpu
+        mi200: 25.7/amdgpu
       deploy:
-        beverin: [mi300]
+        beverin: [mi200, mi300]
       develop: True
   prgenv-nvfortran:
     "24.11":
