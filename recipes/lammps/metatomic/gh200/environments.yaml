@@ -13,7 +13,10 @@ lammps-kokkos:
   - plumed
   - libmetatensor-torch@0.8.1
   - libmetatomic-torch
-  - lammps@git.da995e94a6f62b99fa4d2be9342990fe433b7ce4=develop +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +metatomic +qtb +reaction +shock +spin +extra-pair +extra-fix
+  - py-metatensor
+  - py-metatensor-torch
+  - py-metatomic-torch
+  - lammps@git.d2bac82a7242d74b3ab0665b582b0ae61ba3cfd6=develop +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +metatomic +qtb +reaction +shock +spin +extra-pair +extra-fix build_type=RelWithDebInfo
   variants:
   - +mpi
   - +cuda
@@ -21,7 +24,8 @@ lammps-kokkos:
   views:
     develop:
       link: all
-      exclude: ["lammps"]
+      # Exclude gcc-runtime to avoid adding a copy of libgomp.so to the view
+      exclude: ["lammps", "gcc-runtime"]
       uenv:
         add_compilers: true
         prefix_paths:
