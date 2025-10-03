@@ -399,6 +399,11 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "v6.5.1":
+      recipes:
+        gh200: v6.5.1/gh200
+      deploy:
+        daint: [gh200]
   insitu_ascent:
     "0.9.5":
       recipes:
