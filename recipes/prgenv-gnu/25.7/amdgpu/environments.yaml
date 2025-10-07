@@ -58,7 +58,7 @@ gcc-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
-    default-llvm-amdgpu:
+    default:
       link: roots
       exclude: ["llvm"]
       uenv:
