@@ -13,8 +13,8 @@ vasp:
       - cuda@12.9%nvhpc
       - wannier90%nvhpc
       - fftw%nvhpc +openmp
-      - nvpl-blas threads=openmp
-      - nvpl-lapack threads=openmp
+      - nvpl-blas%nvhpc threads=openmp
+      - nvpl-lapack%nvhpc threads=openmp
       - netlib-scalapack%nvhpc ~shared
       - hdf5%nvhpc +fortran
       # aws plugin 1.14.0 was found to work well with libfabric 1.22
