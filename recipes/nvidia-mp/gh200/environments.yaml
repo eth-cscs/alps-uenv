@@ -17,7 +17,7 @@ nvidia-mp:
   variants:
   - +mpi
   - +cuda
-  - cuda_arch=90
+  - cuda_arch=90a
   views:
     default:
       link: roots
