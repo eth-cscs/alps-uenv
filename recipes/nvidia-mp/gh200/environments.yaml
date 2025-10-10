@@ -3,7 +3,7 @@ nvidia-mp:
   network:
     mpi: cray-mpich
     specs:
-    - libfabric@2.2.0
+    - libfabric@2.3.0
   unify: true
   specs:
   - cuda@12.6
