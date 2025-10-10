@@ -7,7 +7,7 @@ nvidia-mp:
   unify: true
   specs:
   - cuda@12.6
-  - nccl
+  - nccl@2.27
   - nccl-tests
   - aws-ofi-nccl
   - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
