@@ -1,5 +1,5 @@
 bootstrap:
-  spec: gcc@12
+  spec: gcc@13
 gcc:
   specs:
-  - gcc@12.3
+  - gcc@13

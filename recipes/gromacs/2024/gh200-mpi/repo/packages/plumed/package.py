@@ -244,7 +244,7 @@ class Plumed(AutotoolsPackage):
 
     def setup_dependent_package(self, module, dependent_spec):
         # Make plumed visible from dependent packages
-        module.plumed = self.command
+        module.plumed = dependent_spec["plumed"].command
 
     @property
     def plumed_inc(self):
@@ -292,9 +292,10 @@ class Plumed(AutotoolsPackage):
         if "+mpi" in spec:
             configure_opts.extend(["--enable-mpi", "CXX={0}".format(spec["mpi"].mpicxx)])
 
-            # If the MPI dependency is provided by the intel-oneapi-mpi package then the following
-            # additional argument is required to allow it to build.
-            if spec.satisfies("^[virtuals=mpi] intel-oneapi-mpi"):
+            # If the MPI dependency is provided by the intel-mpi package then
+            # the following additional argument is required to allow it to
+            # build.
+            if "intel-mpi" in spec:
                 configure_opts.extend(["STATIC_LIBS=-mt_mpi"])
 
         extra_libs = []

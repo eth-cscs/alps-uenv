@@ -1,7 +1,7 @@
 gromacs:
   compiler:
   - toolchain: gcc
-    spec: gcc@12.3
+    spec: gcc@13
   unify: when_possible
   specs:
   - cmake
