@@ -49,7 +49,7 @@ gcc-env:
   - superlu
   - superlu-dist@git.master=9.1.1 # TODO
   - swig
-  # TODO
+  # https://github.com/spack/spack-packages/issues/1961
   - trilinos@16.0 +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - umpire
   - zlib-ng
