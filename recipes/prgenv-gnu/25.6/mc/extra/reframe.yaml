@@ -1,8 +1,6 @@
 default:
   features:
-    - cuda
     - mpi
-    - nvhpc
     - openmp
     - osu-micro-benchmarks
     - prgenv
@@ -11,4 +9,4 @@ default:
   cxx: mpic++
   ftn: mpifort
   views:
-    - nvfort
+    - default

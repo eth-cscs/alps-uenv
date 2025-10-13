@@ -1,1 +1,1 @@
-This software stack uses spack v0.21, to macth the spack-c2sm distribution
+This software stack uses spack v0.22, to match the spack-c2sm distribution
