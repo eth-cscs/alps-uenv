@@ -2,8 +2,8 @@ default:
   features:
     - rocm
     - mpi
-    - osu-micro-benchmarks
     - openmp
+    - prgenv
     - serial
   cc: mpicc
   cxx: mpic++
