@@ -12,7 +12,7 @@ gromacs:
   - fftw
   - python@3.12
   - gromacs@2025.3 +cuda +mpi +hwloc
-  - gromacs@2023.5 +plumed +cuda +hwloc
+  - gromacs@2025.3 +plumed +cuda +hwloc
   variants:
   - +mpi
   - +cuda
