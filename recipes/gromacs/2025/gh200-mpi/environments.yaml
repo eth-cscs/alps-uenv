@@ -13,9 +13,6 @@ gromacs:
   - python@3.12
   - gromacs@2025.3 +cuda +mpi +hwloc
   - gromacs@2023.5 +plumed +cuda +hwloc
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
   variants:
   - +mpi
   - +cuda
