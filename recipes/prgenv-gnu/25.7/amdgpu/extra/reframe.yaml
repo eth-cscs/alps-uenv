@@ -9,4 +9,4 @@ default:
   cxx: mpic++
   ftn: mpifort
   views:
-    - default-llvm-amdgpu
+    - default
