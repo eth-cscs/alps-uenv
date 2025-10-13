@@ -1,0 +1,11 @@
+name: ascent
+store: /user-tools
+description: "Ascent in-situ visualization library"
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.0
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2025.07
+modules: true
+version: 2
