@@ -1,7 +1,7 @@
 gromacs:
-  compiler:
-  - toolchain: gcc
-    spec: gcc@14.2
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
   unify: when_possible
   specs:
   - cmake
