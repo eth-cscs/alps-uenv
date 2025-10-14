@@ -309,7 +309,6 @@ uenvs:
         zen2: 25.6/mc
         zen3: 25.6/mc
         gh200: 25.6/gh200
-      develop: True
       deploy:
         clariden: [gh200]
         daint: [gh200]
