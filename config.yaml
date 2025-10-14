@@ -303,7 +303,7 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
         bristen: [a100]
-    "25.7":
+    "25.6":
       recipes:
         zen2: 25.6/mc
         zen3: 25.6/mc
@@ -313,7 +313,7 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         eiger: [zen2]
-    "25.6":
+    "25.7":
       recipes:
         mi200: 25.7/amdgpu
       deploy:
