@@ -3,9 +3,9 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
   packages:
-    # TODO: Change to same as gh200 recipe
+    # Includes superlu-dist patch: https://github.com/spack/spack-packages/pull/1968
     repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2025.07
+    commit: 5ece166daa3065a1b212fb93fe587fcb138e9004
 store: /user-environment
 description: Linear algebra libraries, PETSc, Trilinos
 version: 2
