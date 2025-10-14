@@ -3,8 +3,9 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
   packages:
-    repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2025.07
+    # TODO: Change to upstream spack-packages once merged
+    repo: https://github.com/msimberg/spack-packages.git
+    commit: superlu-dist-9.1-cuda-patch
 store: /user-environment
 description: Linear algebra libraries, PETSc (complex), Trilinos
 version: 2

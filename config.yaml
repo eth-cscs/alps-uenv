@@ -184,11 +184,11 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-    "25.8":
+    "25.10":
       recipes:
-        zen2: "25.8/mc"
-        zen3: "25.8/mc"
-        gh200: "25.8/gh200"
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
       deploy:
         daint: [gh200]
         eiger: [zen2]
@@ -201,11 +201,11 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-    "25.8":
+    "25.10":
       recipes:
-        zen2: "25.8/mc"
-        zen3: "25.8/mc"
-        gh200: "25.8/gh200"
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
       deploy:
         daint: [gh200]
         eiger: [zen2]

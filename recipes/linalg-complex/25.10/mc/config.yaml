@@ -3,6 +3,7 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
   packages:
+    # TODO: Change to same as gh200 recipe
     repo: https://github.com/spack/spack-packages.git
     commit: releases/v2025.07
 store: /user-environment

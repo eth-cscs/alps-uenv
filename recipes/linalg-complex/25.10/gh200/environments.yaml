@@ -35,7 +35,7 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks
-  - p4est +mpi
+  - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
   - papi ~cuda
   - parmetis
   - petsc +batch +complex +hwloc ~hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse

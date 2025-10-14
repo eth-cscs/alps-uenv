@@ -3,6 +3,7 @@ spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
   packages:
+    # TODO: Change to upstream spack-packages once merged
     repo: https://github.com/msimberg/spack-packages.git
     commit: superlu-dist-9.1-cuda-patch
 store: /user-environment
