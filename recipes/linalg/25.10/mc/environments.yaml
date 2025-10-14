@@ -43,7 +43,7 @@ gcc-env:
   - python
   - slepc
   - spdlog
-  - stdexec
+  - stdexec@25.03.rc1 # https://github.com/pika-org/pika/issues/1448
   - suite-sparse
   - superlu
   - superlu-dist
