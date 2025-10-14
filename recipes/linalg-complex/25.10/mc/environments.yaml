@@ -18,7 +18,7 @@ gcc-env:
   - gsl
   - hdf5 +fortran +hl
   - hwloc
-  - hypre +superlu-dist
+  - hypre +superlu-dist cflags="-Wno-incompatible-pointer-types" # https://github.com/spack-spack-packages/issues/1975
   - kokkos +aggressive_vectorization cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
