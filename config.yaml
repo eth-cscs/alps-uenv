@@ -303,7 +303,6 @@ uenvs:
         santis: [gh200]
         eiger: [zen2]
         bristen: [a100]
-      develop: True
     "25.7":
       recipes:
         zen2: 25.6/mc
@@ -317,7 +316,6 @@ uenvs:
     "25.6":
       recipes:
         mi200: 25.7/amdgpu
-      develop: True
       deploy:
         beverin: [mi200]
   prgenv-nvfortran:
