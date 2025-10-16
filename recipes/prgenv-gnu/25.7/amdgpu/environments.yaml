@@ -34,7 +34,6 @@ gcc-env:
   - rocm-core
   - rocminfo
   - rocprim
-  #- rocprofiler-systems
   - rocprofiler-dev
   - rocprofiler-register
   - rocprofiler-systems@6.3.3+internal-dyninst
@@ -43,6 +42,12 @@ gcc-env:
   - rocsparse
   - rocthrust
   - roctracer-dev-api
+  # hip packages
+  - hipblas
+  - hipblaslt
+  - hiprand
+  - hipsparse
+  - hipfft
   #- rccl
   #- aw
   variants:
