@@ -184,12 +184,28 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "25.10":
+      recipes:
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   linalg-complex:
     "24.11":
       recipes:
         zen2: "24.11/mc"
         zen3: "24.11/mc"
         gh200: "24.11/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+    "25.10":
+      recipes:
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
       deploy:
         daint: [gh200]
         eiger: [zen2]
