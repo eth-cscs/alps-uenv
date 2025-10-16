@@ -14,7 +14,7 @@ pytorch-env:
   - gsl
   - hdf5+cxx+hl+fortran
   - kokkos +aggressive_vectorization ~alloc_async cuda_arch=90 +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
-  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +     superlu
   - kokkos-tools +mpi +papi
   - netlib-scalapack
   - lua
@@ -29,12 +29,12 @@ pytorch-env:
   - osu-micro-benchmarks
   - papi
   - zlib-ng
-  # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   #- nccl-tests
   - cuda
   - cudnn
   - cutensor
+  - cutlass +ipo
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu
@@ -48,8 +48,20 @@ pytorch-env:
   - py-pip
   - py-cython
   - py-pybind11
-  - gloo +libuv
+  - py-numpy
   - py-torch@2.8.0 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
+  - py-torchaudio
+  - py-torchvision
+  - py-torchmetrics
+  - py-triton +build-custom-llvm
+  - py-transformers
+  - py-einops
+  - xtensor ~tbb +ipo
+  - xtensor-python
+  #- py-transformer-engine@main
+  #- py-tensorboard
+  #- py-tensorstore
+  - py-vllm
   variants:
   - +mpi
   - +cuda
