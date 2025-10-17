@@ -144,19 +144,25 @@ class CMakeBuilder(cmake.CMakeBuilder):
         config.append(self.define("NVSHMEM_GPU_COLL_USE_LDST", "0"))
         config.append(self.define("NVSHMEM_MPI_IS_OMPI", "0"))
         config.append(self.define("NVSHMEM_NVTX", "1"))
-
+        
         config.append(self.define("NVSHMEM_TEST_STATIC_LIB", "0"))
         config.append(self.define("NVSHMEM_TIMEOUT_DEVICE_POLLING", "0"))
         config.append(self.define("NVSHMEM_TRACE", "0"))
         config.append(self.define("NVSHMEM_USE_DLMALLOC", "0"))
-
+        
         config.append(self.define("NVSHMEM_VERBOSE", "0"))
         config.append(self.define("NVSHMEM_DEFAULT_UCX", "0"))
-
+        
         config.append(self.define("NVSHMEM_IBGDA_SUPPORT", "0"))
         config.append(self.define("NVSHMEM_IBGDA_SUPPORT_GPUMEM_ONLY", "0"))
         config.append(self.define("NVSHMEM_IBDEVX_SUPPORT", "0"))
         config.append(self.define("NVSHMEM_IBRC_SUPPORT", "0"))
+
+        #if "+cuda" in self.spec:
+        #    # Tell CMake to compile CUDA sources with C++17
+        #    #config.append(self.define("CMAKE_CUDA_STANDARD", "17"))
+        #    #config.append(self.define("CMAKE_CUDA_STANDARD_REQUIRED", True))
+        #    config.append(self.define("CMAKE_CUDA_FLAGS", "-std=c++17"))
 
         return config
 

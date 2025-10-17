@@ -4,6 +4,7 @@ pytorch-env:
       mpi: cray-mpich@8.1.32 +cuda
       specs:
       - libfabric@2.3 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      #- xpmem@master ~kernel-module
       - xpmem@2.9.6 ~kernel-module
   unify: true
   specs:
@@ -14,7 +15,7 @@ pytorch-env:
   - gsl
   - hdf5+cxx+hl+fortran
   - kokkos +aggressive_vectorization ~alloc_async cuda_arch=90 +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
-  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +     superlu
+  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
   - netlib-scalapack
   - lua
@@ -46,18 +47,23 @@ pytorch-env:
   - python@3.12
   - python-venv
   - py-pip
+  - py-uenv-venv
   - py-cython
   - py-pybind11
+  #- libuv build_system=cmake
+  #- gloo +libuv
+  #- gloo
   - py-numpy
   - py-torch@2.8.0 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
   - py-torchaudio
   - py-torchvision
   - py-torchmetrics
   - py-triton +build-custom-llvm
-  - py-transformers
-  - py-einops
-  - xtensor ~tbb +ipo
-  - xtensor-python
+  #- py-transformers
+  #- py-einops
+  #- xtensor ~tbb +ipo
+  #- xtensor-python
+  #- py-triton@3.4.0 +build-custom-llvm %c,cxx=llvm
   #- py-transformer-engine@main
   #- py-tensorboard
   #- py-tensorstore
