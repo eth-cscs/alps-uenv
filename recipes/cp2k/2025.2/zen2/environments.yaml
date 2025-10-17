@@ -1,0 +1,63 @@
+cp2k:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  - libvori
+  # libint
+  - libint
+  - eigen@3
+  # pika
+  - pika@0.34.0 malloc=mimalloc ~stdexec
+  - mimalloc
+  - boost
+  - fmt
+  - spdlog
+  - hwloc
+  - whip
+  # Umpire
+  - umpire
+  - blt
+  - camp
+  # DLA-Future
+  - dla-future@0.10.0 +scalapack +miniapps +hdf5
+  - blaspp
+  - lapackpp
+  - dla-future-fortran@0.5.0
+  # DFTD4
+  - dftd4
+  - multicharge
+  - mctc-lib~openmp
+  # COSMA
+  - tiled-mm
+  - costa
+  - cosma
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius@git.928121e036ff1240db05b8f5c6a493e8f45b8a52=develop +dlaf +elpa +scalapack
+  # CP2K
+  - dbcsr
+  - cp2k@2025.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - ~cuda
+    - build_type=Release
+  network:
+    mpi: cray-mpich@8.1.32
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots
