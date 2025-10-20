@@ -16,7 +16,7 @@ modules:
     tcl:
       all:
         autoload: none
-      hash_length: 0
+      hash_length: 7
       exclude_implicits: true
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
