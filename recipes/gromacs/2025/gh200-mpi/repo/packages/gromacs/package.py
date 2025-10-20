@@ -258,6 +258,7 @@ class Gromacs(CMakePackage, CudaPackage):
     # see https://github.com/spack/spack/releases/tag/v0.20.0
 
     plumed_patches = {
+        "=2025": "2.10.0",
         "=2023": "2.9.1",
         "2022.5": "2.8.2:2.9.1",
         "2022.3": "2.8.1",
