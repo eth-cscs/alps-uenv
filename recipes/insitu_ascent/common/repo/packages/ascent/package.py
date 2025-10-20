@@ -225,7 +225,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2024.02.99", when="@0.9.3:")
+        #cscs depends_on("raja@2024.02.1:2024.02.99", when="@0.9.3:")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
@@ -235,7 +235,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire")
         depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
-        depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("umpire@2024.02.1:", when="@0.9.3:")
 
     #######################
     # BabelFlow
@@ -691,6 +691,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("+cuda"):
                 cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "ON"))
                 cfg.write(cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"]))
+                cfg.write(cmake_cache_entry("BLT_CLANG_CUDA_ARCH", "sm_90")) # CSCS
+                cfg.write(cmake_cache_entry("CUDA_ARCH", "90")) # CSCS
+                cfg.write(cmake_cache_entry("CMAKE_CUDA_ARCHITECTURES", "90")) # CSCS
             else:
                 cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "OFF"))
 

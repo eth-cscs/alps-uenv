@@ -439,8 +439,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     conflicts("+strumpack", when="mfem@4.0.0:4.1 ^hypre@2.16.0:")
     conflicts("+strumpack ^strumpack+cuda", when="~cuda")
 
-    depends_on("occa@1.0.8:", when="@:4.1+occa")
-    depends_on("occa@1.1.0", when="@4.2.0:+occa")
+    #cscs depends_on("occa@1.0.8:", when="@:4.1+occa")
+    #cscs depends_on("occa@1.1.0", when="@4.2.0:+occa")
+    depends_on("occa@2.0", when="@4.8.0:+occa")
     depends_on("occa+cuda", when="+occa+cuda")
     # TODO: propagate "+rocm" variant to occa when it is supported
 
