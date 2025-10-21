@@ -3,7 +3,7 @@ pytorch-env:
   network:
       mpi: cray-mpich@8.1.32 +cuda
       specs:
-      - libfabric@2.3 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      - libfabric@2.2 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
       #- xpmem@master ~kernel-module
       - xpmem@2.9.6 ~kernel-module
   unify: true
@@ -82,3 +82,19 @@ pytorch-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - CUDA_CACHE_DISABLE: "1"
+          - NCCL_NET: "AWS Libfabric"
+          - NCCL_CROSS_NIC: "0"
+          - NCCL_P2P_LEVEL: "NVL"
+          - NCCL_NET_GDR_LEVEL: "PHB"
+          - NCCL_NET_GDR_C2C: "1"
+          - NCCL_NET_GDR_READ: "1"
+          - NCCL_PROTO: "^LL128"
+          - FI_CXI_DEFAULT_CQ_SIZE: "131072"
+          - FI_CXI_DEFAULT_TX_SIZE: "32768"
+          - FI_CXI_DISABLE_HOST_REGISTER: "1"
+          - FI_CXI_RX_MATCH_MODE: "software"
+          - FI_MR_CACHE_MONITOR: "userfaultfd"
+          - PYTHONPATH: null
