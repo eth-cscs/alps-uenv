@@ -37,9 +37,9 @@ pytorch-env:
   - cutensor
   - cutlass +ipo
   - xcb-util-cursor
-  - aws-ofi-nccl
+  - aws-ofi-nccl@1.14.2
   - superlu
-  - nvshmem ~ucx +nccl +gdrcopy +libfabric
+  - nvshmem ~ucx +nccl +gdrcopy +libfabric +mpi +python
   - hydra
   - swig
   - libaio
@@ -47,9 +47,12 @@ pytorch-env:
   - python@3.12
   - python-venv
   - py-pip
+  - py-pytest
   - py-uenv-venv
   - py-cython
   - py-pybind11
+  - py-cuda-bindings
+  - py-cuda-core
   #- libuv build_system=cmake
   #- gloo +libuv
   #- gloo

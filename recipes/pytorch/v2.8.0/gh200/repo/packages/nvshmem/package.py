@@ -8,7 +8,8 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage, conflicts
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-
+from os.path import join as pjoin
+import os, glob
 
 class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     """NVSHMEM is a parallel programming interface based on OpenSHMEM that
@@ -55,9 +56,18 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     )
     variant("libfabric", default=False, description="Build with Libfabric support")
 
+    variant("python", default=False, description="Build/install nvshmem4py (Python bindings)")
+    variant("mpi4py", default=True, when="+python+mpi", description="Install mpi4py runtime dep")
+    variant("cupy",   default=True, when="+python",     description="Install CuPy interop dep")
+    variant("pytorch", default=True, when="+python",    description="Install PyTorch interop dep")
+
     generator("ninja")
 
     conflicts("~cuda", msg="NVSHMEM requires CUDA")
+    conflicts("+python", when="@:3.2", msg="Python bindings require NVSHMEM >= 3.3")
+
+    extendable = True
+    extends("python", when="+python")
 
     def url_for_version(self, version):
         ver_str = "{0}".format(version)
@@ -92,6 +102,18 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     depends_on("libfabric", when="+libfabric")
     depends_on("libfabric@1.15:", when="@3: +libfabric")
 
+    with when("+python"):
+        depends_on("python@3.9:", type=("build", "link", "run"))
+        depends_on("py-pip",      type="build")
+        depends_on("py-wheel",    type="build")
+        depends_on("py-setuptools", type="build")
+        depends_on("py-cython@0.29.24:", type=("build", "link"))
+        depends_on("py-numpy@1.26:",     type=("build", "link", "run"))
+        depends_on("py-cuda-bindings",     type="run")
+        depends_on("py-mpi4py", when="+mpi4py",  type="run")
+        depends_on("py-cupy",   when="+cupy",    type="run")
+        depends_on("py-pytorch@2.6:", when="+pytorch", type="run")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("NVSHMEM_REMOTE_TRANSPORT", "libfabric")
         env.set("NVSHMEM_LIBFABRIC_PROVIDER", "cxi")
@@ -109,7 +131,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("NVSHMEM_USE_GDRCOPY", "gdrcopy"),
             self.define_from_variant("NVSHMEM_SHMEM_SUPPORT", "shmem"),
             self.define("NVSHMEM_IBRC_SUPPORT", False),
-            self.define("NVSHMEM_BUILD_PYTHON_LIB", False),
+            #self.define("NVSHMEM_BUILD_PYTHON_LIB", False),
+            self.define_from_variant("NVSHMEM_BUILD_PYTHON_LIB", "python"),
+            #self.define("Python3_EXECUTABLE", self.spec["python"].command.path if "+python" in self.spec else ""),
             self.define("NVSHMEM_BUILD_EXAMPLES", False),
             self.define("NVSHMEM_BUILD_HYDRA_LAUNCHER", False),
             self.define("NVSHMEM_BUILD_TESTS", False),
@@ -133,6 +157,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if "+shmem" in self.spec:
             config.append(self.define("SHMEM_HOME", self.spec["shmem"].prefix))
+
+        if "+python" in self.spec:
+            py = self.spec["python"]
+            # Python interpreter for CMake’s FindPython3
+            config.append(self.define("Python3_EXECUTABLE", py.command.path))
+            # Explicit include dir for Python.h (avoids CMake guessing wrong)
+            inc_dirs = py.headers.directories
+            if inc_dirs:
+                config.append(self.define("Python3_INCLUDE_DIR", inc_dirs[0]))
 
         config.append(self.define("NVSHMEM_DEFAULT_PMI2", "1"))
         config.append(self.define("NVSHMEM_DEFAULT_PMIX", "0"))
@@ -165,6 +198,69 @@ class CMakeBuilder(cmake.CMakeBuilder):
         #    config.append(self.define("CMAKE_CUDA_FLAGS", "-std=c++17"))
 
         return config
+
+    @run_before("cmake")
+    def pin_wheel_build_inputs(self):
+        """Limit nvshmem4py wheel build to Spack's Python and Spack's CUDA."""
+        if "+python" not in self.pkg.spec:
+            return
+
+        src = self.pkg.stage.source_path
+        py = self.pkg.spec["python"]
+        py_ver = str(py.version.up_to(2))  # e.g. "3.12"
+        py_exec = py.command.path
+
+        # 1) Force the python version list to only our interpreter
+        script = pjoin(src, "nvshmem4py", "scripts", "find_python_versions.sh")
+        with open(script, "w") as f:
+            f.write(f'#!/bin/sh\n# Spack override\n'
+                    f'echo "{py_ver}|{py_exec}"\n')
+        os.chmod(script, 0o755)
+
+        # 2) Restrict CUDA versions to just our major (11 or 12 or 13)
+        cuda_major = str(self.pkg.spec["cuda"].version.up_to(1)).split(".")[0]
+        cmakelists = pjoin(src, "nvshmem4py", "CMakeLists.txt")
+        # Replace: set(CUDA_VERSIONS "11" "12" "13")
+        filter_file(
+            r'set\(CUDA_VERSIONS\s+"11"\s+"12"\s+"13"\s*\)',
+            f'set(CUDA_VERSIONS "{cuda_major}")',
+            cmakelists
+        )
+
+    @run_after("install")
+    def install_python_wheel(self):
+        if "+python" not in self.pkg.spec:
+            return
+
+        dist_dir = os.path.join(self.pkg.stage.source_path, "build", "dist")
+        if not os.path.isdir(dist_dir):
+            raise InstallError(f"nvshmem4py dist directory not found: {dist_dir}")
+
+        cuda_major = str(self.pkg.spec["cuda"].version.up_to(1)).split(".")[0]  # e.g. '12'
+        base_pat   = f"nvshmem4py_cu{cuda_major}-*.whl"
+        many_pat   = f"nvshmem4py_cu{cuda_major}-*manylinux*.whl"
+        sdist_pat  = f"nvshmem4py_cu{cuda_major}-*.tar.gz"
+
+        # 1) Prefer plain linux wheel (system-specific)
+        wheels_plain = sorted([p for p in glob.glob(os.path.join(dist_dir, base_pat))
+                               if "manylinux" not in os.path.basename(p)])
+        # 2) Fallback: manylinux wheel (portable)
+        wheels_many  = sorted(glob.glob(os.path.join(dist_dir, many_pat)))
+        # 3) Last resort: sdist
+        sdists       = sorted(glob.glob(os.path.join(dist_dir, sdist_pat)))
+
+        artifact = (wheels_plain[-1] if wheels_plain
+                    else wheels_many[-1] if wheels_many
+                    else sdists[-1] if sdists
+                    else None)
+        if not artifact:
+            raise InstallError(f"No nvshmem4py artifacts found in {dist_dir}")
+
+        # Install exactly that artifact; pip will still validate tags vs current Python
+        python("-m", "pip", "install",
+               "--no-deps", "--no-build-isolation",
+               "--prefix", self.pkg.prefix,
+               "--no-index", artifact)
 
 
 class MakeBuilder(makefile.MakefileBuilder):
