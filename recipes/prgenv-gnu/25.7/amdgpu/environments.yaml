@@ -43,6 +43,7 @@ gcc-env:
   - rocthrust
   - roctracer-dev-api
   - rocm-gdb
+  - rocm-debug-agent
   # hip packages
   - hipblas
   - hipblaslt
