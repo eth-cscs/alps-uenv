@@ -11,8 +11,7 @@ gromacs:
   - hwloc
   - fftw
   - python@3.12
-  - gromacs@2025.3 +cuda +mpi +hwloc
-  - gromacs@2022.5 +plumed +cuda +hwloc
+  - gromacs@2025.0 +cuda +plumed +mpi +hwloc
   variants:
   - +mpi
   - +cuda
@@ -21,10 +20,6 @@ gromacs:
     develop:
       exclude: ['gromacs']
     gromacs:
-      exclude: ['gromacs+plumed']
-      link: run
-    plumed:
-      exclude: ['gromacs@2025.3']
       link: run
   packages:
   - perl
