@@ -1,0 +1,13 @@
+diff --git i/dynolog/src/CMakeLists.txt w/dynolog/src/CMakeLists.txt                                                                                          
+index 7404c1f..3103f8c 100644
+--- i/dynolog/src/CMakeLists.txt
++++ w/dynolog/src/CMakeLists.txt
+@@ -20,7 +20,7 @@ endif()
+ if(USE_PROMETHEUS)
+   find_package(prometheus-cpp CONFIG REQUIRED)
+   add_definitions(-DUSE_PROMETHEUS)
+-  target_link_libraries(dynolog_lib PRIVATE prometheus-cpp::pull)
++  target_link_libraries(dynolog_lib PUBLIC prometheus-cpp::pull)
+ endif()
+ 
+ target_link_libraries(dynolog_lib PUBLIC Monitor)

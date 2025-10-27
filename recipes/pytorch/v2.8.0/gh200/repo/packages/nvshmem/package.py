@@ -114,6 +114,8 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
         depends_on("py-cupy",   when="+cupy",    type="run")
         depends_on("py-pytorch@2.6:", when="+pytorch", type="run")
 
+    patch("v3.4.5-perftest-mpich.patch", when="@3.4.5 +mpi")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("NVSHMEM_REMOTE_TRANSPORT", "libfabric")
         env.set("NVSHMEM_LIBFABRIC_PROVIDER", "cxi")
@@ -136,7 +138,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             #self.define("Python3_EXECUTABLE", self.spec["python"].command.path if "+python" in self.spec else ""),
             self.define("NVSHMEM_BUILD_EXAMPLES", False),
             self.define("NVSHMEM_BUILD_HYDRA_LAUNCHER", False),
-            self.define("NVSHMEM_BUILD_TESTS", False),
+            self.define("NVSHMEM_BUILD_TESTS", True),
             self.define("NVSHMEM_BUILD_TXZ_PACKAGE", False),
         ]
 
@@ -167,6 +169,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
             if inc_dirs:
                 config.append(self.define("Python3_INCLUDE_DIR", inc_dirs[0]))
 
+        config.append(self.define("NVSHMEM_DEBUG","0"))
+        config.append(self.define("NVSHMEM_DEVEL","0"))
+
         config.append(self.define("NVSHMEM_DEFAULT_PMI2", "1"))
         config.append(self.define("NVSHMEM_DEFAULT_PMIX", "0"))
         config.append(self.define("NVSHMEM_PMI2_SUPPORT", "1"))
@@ -175,7 +180,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
         config.append(self.define("NVSHMEM_DISABLE_COLL_POLL", "1"))
         config.append(self.define("NVSHMEM_ENABLE_ALL_DEVICE_INLINING", "0"))
         config.append(self.define("NVSHMEM_GPU_COLL_USE_LDST", "0"))
-        config.append(self.define("NVSHMEM_MPI_IS_OMPI", "0"))
+        #config.append(self.define("NVSHMEM_MPI_IS_OMPI", "0"))
+        config.append(self.define("NVSHMEM_MPI_IS_OMPI", "1" if self.spec.satisfies("^openmpi") else "0"))
         config.append(self.define("NVSHMEM_NVTX", "1"))
         
         config.append(self.define("NVSHMEM_TEST_STATIC_LIB", "0"))
