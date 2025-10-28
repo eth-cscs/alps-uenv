@@ -262,15 +262,12 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   netcdf-tools:
-    "2024":
+    "2025":
       recipes:
-        zen2: '2024/x86'
-        zen3: '2024/x86'
-        a100: '2024/x86'
-        gh200: '2024/arm64'
-      deploy:
-        eiger: [zen2]
-        balfrin: [zen3]
+        zen2: '2025/mc'
+        zen3: '2025/mc'
+        a100: '2025/mc'
+        gh200: '2025/mc'
   # OpenFOAM Foundation
   openfoam-org:
     "8":
