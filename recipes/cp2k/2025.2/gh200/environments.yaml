@@ -45,7 +45,7 @@ cp2k:
   # SIRIUS
   - hdf5
   - spfft
-  - sirius@git.928121e036ff1240db05b8f5c6a493e8f45b8a52=develop +dlaf +elpa +scalapack
+  - sirius@7.9.0 +dlaf +elpa +scalapack
   # CP2K
   - dbcsr
   - cp2k@2025.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori lmax=5 build_system=cmake
