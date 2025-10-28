@@ -43,6 +43,7 @@ gcc-env:
   - rocsparse
   - rocthrust
   - roctracer-dev-api
+  - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
   # hip packages
@@ -51,6 +52,7 @@ gcc-env:
   - hiprand
   - hipsparse
   - hipfft
+  - hipblas-common
   #- rccl
   #- aw
   variants:
