@@ -1,9 +1,9 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@8.1.32 +cuda
+      mpi: openmpi@5
       specs:
-      - libfabric@2.3 +gdrcopy
+      - libfabric@2.3 +gdrcopy fabrics=lnx
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
@@ -41,7 +41,7 @@ gcc-env:
   - +cuda
   - cuda_arch=90a
   views:
-    default:
+    default-openmpi:
       link: roots
       uenv:
         add_compilers: true

@@ -310,6 +310,17 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
+  prgenv-gnu:
+    "25.11":
+      recipes:
+        zen2: 25.11/mc
+        zen3: 25.11/mc
+        gh200: 25.11/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
       recipes:
