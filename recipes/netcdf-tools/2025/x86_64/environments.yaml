@@ -10,9 +10,13 @@ netcdf:
   - netcdf-fortran
   - ncview
   - cdo
-  - nco
+  - eccodes
   - gdal
+  - geos
+  - nco
+  - python
   - ferret
+  - udunits
   views:
     netcdf:
       link: roots

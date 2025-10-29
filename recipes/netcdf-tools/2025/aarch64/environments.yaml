@@ -10,8 +10,12 @@ netcdf:
   - netcdf-fortran
   - ncview
   - cdo
-  - nco
+  - eccodes
   - gdal
+  - geos
+  - nco
+  - python
+  - udunits
   # ferret hard codes x86 flags in its build config
   #- ferret
   views:
