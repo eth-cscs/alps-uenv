@@ -1,7 +1,7 @@
 netcdf:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@8.1.32
+      mpi: cray-mpich@8.1.32 ~cuda~rocm
   unify: true
   specs:
   - hdf5 +szip +hl
