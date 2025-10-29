@@ -41,7 +41,7 @@ gcc-env:
   - +cuda
   - cuda_arch=90a
   views:
-    default-openmpi:
+    default:
       link: roots
       uenv:
         add_compilers: true
