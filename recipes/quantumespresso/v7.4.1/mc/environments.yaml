@@ -1,0 +1,25 @@
+nvhpc-env:
+  compiler:
+    - toolchain: gcc
+      spec: gcc@13
+  mpi:
+    spec: cray-mpich@8.1.32
+  unify: true
+  specs:
+  - quantum-espresso@7.4.1 +libxc +scalapack +openmp hdf5=parallel
+  - netlib-scalapack
+  - cmake
+  - libxc
+  - fftw
+  - hdf5
+  - openblas threads=openmp
+  packages:
+  - git
+  variants:
+  - +mpi
+  views:
+    default:
+      link: roots
+    develop:
+      exclude: ['quantum-espresso', 'patchelf', 'git']
+      link: roots

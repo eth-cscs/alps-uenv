@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+export PATH=/user-tools/env/jupyter/bin:$PATH
+pip install -r {{ env.mount }}/meta/recipe/requirements.txt
+
+git clone --filter=tree:0 https://github.com/eth-cscs/firecrestspawner.git
+git -C firecrestspawner checkout 0.1.2
+cd firecrestspawner
+pip install .

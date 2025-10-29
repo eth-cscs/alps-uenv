@@ -1,0 +1,29 @@
+run:
+  features:
+    - vasp
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - vasp
+develop:
+  features:
+    - vasp-dev
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop
+modules:
+  features:
+    - mpi
+    - vasp-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load cmake cray-mpich fftw gcc hdf5 netlib-scalapack ninja openblas wannier90 libxc

@@ -1,0 +1,22 @@
+diff --git a/src/openacc.F b/src/openacc.F
+index 5227f49..631e728 100644
+--- a/src/openacc.F
++++ b/src/openacc.F
+@@ -209,16 +209,11 @@
+        LOGICAL FUNCTION CUDA_AWARE_SUPPORT()
+        USE iso_c_binding
+ 
+-       INTERFACE
+-         INTEGER(c_int) FUNCTION MPIX_Query_cuda_support() BIND(C, name="MPIX_Query_cuda_support")
+-         END FUNCTION
+-       END INTERFACE
+-
+        CHARACTER(LEN=1) :: ENVVAR_VALUE
+        INTEGER :: ENVVAR_STAT
+ 
+        ! This should tell us if MPI is CUDA-aware
+-       CUDA_AWARE_SUPPORT = MPIX_Query_cuda_support() == 1
++       CUDA_AWARE_SUPPORT = .TRUE.
+        ! However, for OpenMPI some env variables can still deactivate it even though the previous
+        ! check was positive
+        CALL GET_ENVIRONMENT_VARIABLE("OMPI_MCA_mpi_cuda_support", ENVVAR_VALUE, STATUS=ENVVAR_STAT)

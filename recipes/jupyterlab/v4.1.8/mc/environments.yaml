@@ -1,0 +1,16 @@
+gcc-env:
+  compiler:
+      - toolchain: gcc
+        spec: gcc@13
+  mpi: null
+  unify: true
+  specs:
+  - python@3.12
+  - py-pip
+  views:
+    jupyter:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
