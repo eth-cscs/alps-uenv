@@ -310,7 +310,7 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
-  prgenv-gnu:
+  prgenv-gnu-openmpi:
     "25.11":
       recipes:
         zen2: 25.11/mc
