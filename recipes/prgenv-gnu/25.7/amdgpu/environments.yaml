@@ -61,13 +61,6 @@ gcc-env:
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
   views:
-    default-llvm:
-      link: roots
-      exclude: ["llvm-amdgpu"]
-      uenv:
-        add_compilers: true
-        prefix_paths:
-          LD_LIBRARY_PATH: [lib, lib64]
     default:
       link: roots
       exclude: ["llvm"]
