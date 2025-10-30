@@ -93,8 +93,8 @@ gcc-env:
   variants:
   - +mpi
   - +rocm
-  - amdgpu_target=gfx942 # ,gfx90a # TODO: Must only use gfx942 for kokkos +apu. Compile for both somehow?
-  - amdgpu_target_sram_ecc=gfx942 # ,gfx90a
+  - amdgpu_target=gfx942,gfx90a # TODO: Must only use gfx942 for kokkos +apu. Compile for both somehow?
+  - amdgpu_target_sram_ecc=gfx942,gfx90a
   views:
     default:
       link: roots
