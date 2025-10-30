@@ -59,7 +59,7 @@ gcc-env:
   - whip
   - rccl
   # - nccl-tests # TODO
-  - aws-ofi-nccl@cxi # TODO
+  # - aws-ofi-rccl@cxi # TODO
   # primary hip packages
   - hip@6.3 ^mesa ~llvm
   - llvm-amdgpu
