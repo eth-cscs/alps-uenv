@@ -10,8 +10,8 @@ gcc-env:
   - spfft+gpu_direct
   - hip@6.3.3 ^mesa@23.3.6
   variants:
-  - amdgpu_target=gfx942,gfx90a
-  - amdgpu_target_sram_ecc=gfx942,gfx90a
+  - amdgpu_target=gfx942
+  - amdgpu_target_sram_ecc=gfx942
   views:
     sirius:
       link: roots
