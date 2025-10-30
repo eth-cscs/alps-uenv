@@ -22,7 +22,7 @@ gcc-env:
   - hwloc
   - hypre +superlu-dist
   - kokkos +aggressive_vectorization ~alloc_async +apu cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
-  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  # - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
   - lapackpp
   - libtree
