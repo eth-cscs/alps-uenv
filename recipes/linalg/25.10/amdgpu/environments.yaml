@@ -39,7 +39,7 @@ gcc-env:
   - openblas threads=openmp
   - osu-micro-benchmarks
   - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
-  - papi ~cuda
+  - papi ~rocm
   - parmetis
   - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - pika malloc=mimalloc +mpi +stdexec
@@ -47,7 +47,7 @@ gcc-env:
   - slepc
   - spdlog
   - stdexec@25.03.rc1 # https://github.com/pika-org/pika/issues/1448
-  - suite-sparse ~cuda
+  - suite-sparse
   - superlu
   - superlu-dist
   - swig
