@@ -65,7 +65,7 @@ gcc-env:
   - llvm-amdgpu
   # rocm packages
   - rocblas
-  - rocfft
+  # - rocfft
   - rocm-cmake
   - rocm-openmp-extras
   - rocm-core
