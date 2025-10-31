@@ -1,6 +1,7 @@
 default:
   features:
     - mpi
+    - cray-mpich
     - openmp
     - osu-micro-benchmarks
     - prgenv

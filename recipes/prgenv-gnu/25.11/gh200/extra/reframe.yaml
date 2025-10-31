@@ -2,6 +2,7 @@ default:
   features:
     - cuda
     - mpi
+    - cray-mpich
     - nccl-tests
     - openmp
     - osu-micro-benchmarks
