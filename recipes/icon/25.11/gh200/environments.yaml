@@ -18,6 +18,7 @@ icon:
   - netcdf-c@4.9.2 %nvhpc
   - netcdf-cxx4@4.3.1 %nvhpc
   - netcdf-fortran@4.6.1 %nvhpc
+  - nvhpc
   - osu-micro-benchmarks
   - openblas
   # for validation
