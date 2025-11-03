@@ -45,6 +45,8 @@ pytorch-env:
   - hydra
   - swig
   - libaio
+  - ucx +cma +dm ~examples +gdrcopy +thread_multiple +xpmem
+  - ucc +nccl
   - faiss +python
   - python@3.12
   - python-venv
