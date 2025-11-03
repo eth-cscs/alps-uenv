@@ -5,8 +5,6 @@ icon:
     specs:
     - libfabric@2.3 +gdrcopy
   unify: true
-  duplicates:
-    strategy: full
   specs:
   - boost ~mpi +thread %gcc
   - serialbox@2.6.2 +fortran %nvhpc
