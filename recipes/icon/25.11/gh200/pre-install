@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# packages=("cosmo-eccodes-definitions")
+# SPACK_C2SM_TAG="v0.22.2.1"
+# 
+# git clone -b ${SPACK_C2SM_TAG} https://github.com/C2SM/spack-c2sm.git
+# 
+# for package in "${packages[@]}"; do
+#     cp -r spack-c2sm/repos/c2sm/packages/"${package}" store/repo/packages
+# done
+# 
+# rm -rf spack-c2sm

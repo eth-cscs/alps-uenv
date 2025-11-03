@@ -1,0 +1,44 @@
+icon:
+  compiler: [gcc, nvhpc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+    specs:
+    - libfabric@2.3 +gdrcopy
+  unify: true
+  duplicates:
+    strategy: full
+  specs:
+  - boost ~mpi +thread %gcc
+  - serialbox@2.6.2 +fortran %nvhpc
+  - python@3.11 +optimizations %gcc
+  - cuda@12
+  - eccodes@2.36.4 +tools +fortran +aec +openmp jp2k=jasper %nvhpc
+  - cosmo-eccodes-definitions@2.36.0.3
+  - hdf5 +szip +hl +fortran +mpi %nvhpc
+  - netcdf-c@4.9.2 %nvhpc
+  - netcdf-cxx4@4.3.1 %nvhpc
+  - netcdf-fortran@4.6.1 %nvhpc
+  - osu-micro-benchmarks
+  - openblas
+  # for validation
+  # - cdo
+  # everything needed for nccl on SS11
+  - aws-ofi-nccl
+  - nccl
+  - nccl-tests
+  # extras
+  - libfyaml
+  - zlib-ng
+  - cmake
+  # for icon-exclaim
+  - libxml2
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    default:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

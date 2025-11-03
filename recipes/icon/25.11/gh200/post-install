@@ -1,0 +1,5 @@
+#!/bin/bash
+
+curl -LsSf https://astral.sh/uv/install.sh > uv-installer.sh
+UV_INSTALL_DIR="store/env/default/bin" sh uv-installer.sh
+rm uv-installer.sh
