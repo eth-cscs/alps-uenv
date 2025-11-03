@@ -138,6 +138,12 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+  icon:
+    "25.11":
+      recipes:
+        gh200: 25.11/gh200
+      deploy:
+        santis: [gh200]
   icon-wcp:
     "v1":
       recipes:
