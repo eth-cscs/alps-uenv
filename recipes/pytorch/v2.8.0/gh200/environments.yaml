@@ -65,6 +65,16 @@ pytorch-env:
   - py-triton +build-custom-llvm
   - py-torch-nvidia-apex
   - py-transformer-engine
+  - py-einops
+  - py-safetensors
+  - py-tokenizers
+  - py-transformers
+  - py-ml-dtypes
+  - py-onnx
+  - py-onnx-ir
+  - py-onnxscript
+  - py-regex
+  - py-tensorboard
   - py-vllm
   - dynolog +use-prometheus +with-unwind +with-gflags
   variants:
@@ -94,3 +104,4 @@ pytorch-env:
           - FI_CXI_RX_MATCH_MODE: "software"
           - FI_MR_CACHE_MONITOR: "userfaultfd"
           - PYTHONPATH: null
+          - PYTHONUSERBASE: "/user-environment/env/default"
