@@ -394,11 +394,12 @@ uenvs:
       recipes:
         gh200: v1.0.1/gh200
         zen2: v1.0.1/mc
-        mi200: v1.0.1/amdgpu
+        mi200: v1.0.1/mi200
+        mi300: v1.0.1/mi300
       deploy:
         daint: [gh200]
         eiger: [zen2]
-        beverin: [mi200]
+        beverin: [mi200,mi300]
   scorep:
     "9.2-gcc12":
       recipes:
