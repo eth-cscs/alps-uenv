@@ -52,7 +52,6 @@ pytorch-env:
   - python-venv
   - py-pip
   - py-pytest
-  - py-uenv-venv
   - py-cython
   - py-pybind11
   - py-cuda-bindings
