@@ -1,4 +1,3 @@
-
 message("CMAKE_CURRENT_LIST_DIR = ${CMAKE_CURRENT_LIST_DIR}")
 message("OUTPUT_DIR             = ${OUTPUT_DIR}")
 message("UENV_IMAGE             = ${UENV_IMAGE}")
