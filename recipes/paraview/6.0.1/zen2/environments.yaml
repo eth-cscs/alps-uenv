@@ -29,7 +29,7 @@ paraview-osmesa:
   # Build tools
   - cmake
   - ninja
-  - llvm@18 ~gold ~cuda
+  - llvm@18 ~gold ~cuda targets=x86
 
   # c++ helpers
   - fmt@11
