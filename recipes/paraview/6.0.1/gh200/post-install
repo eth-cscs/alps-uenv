@@ -28,11 +28,7 @@ printenv
 # =====================================
 debug_output "set vars we need frequently"
 HOME=$(pwd)
-SPACK_CMD="spack -C $config_path --debug"
-
-# =====================================
-debug_output "list all spack packages"
-$SPACK_CMD find -flv
+SPACK_CMD="spack -C $config_path"
 
 # =====================================
 debug_output "source spack environment setup"
@@ -47,13 +43,11 @@ SPACK_ENV_NAME="paraview-cuda"
 # =====================================
 debug_output "convert stackinator environment into a package"
 python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/recipe/environments.yaml -p $SPACK_ENV_NAME --add
-python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/recipe/environments.yaml -p $SPACK_ENV_NAME
 
 # =====================================
 debug_output "create build-env"
 BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
-SPEC="$SPACK_ENV_NAME %gcc@12 ^[virtuals=gl] egl"
-$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ env activate --sh
+SPEC="$SPACK_ENV_NAME ^[virtuals=gl] egl"
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV "$SPEC"
@@ -66,11 +60,10 @@ source $BUILD_ENV_DEV
 debug_output "checkout paraview/vtk/vtkm branches"
 SRC_ROOT=$mount_path/temp/src
 BUILD_ROOT=$mount_path/temp/build
-SCRATCH=/capstor/scratch/cscs/biddisco
 
 # setup paths for src/build/install
-PARAVIEW_VERSION_MAIN=5.13
-PARAVIEW_VERSION_FULL=5.13.2
+PARAVIEW_VERSION_MAIN=6.0
+PARAVIEW_VERSION_FULL=6.0.1
 PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
 PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
 PARAVIEW_INSTALL_DIR=$mount_path/ParaView-$PARAVIEW_VERSION_MAIN
@@ -101,7 +94,6 @@ if [[ $CLONE_PARAVIEW == "true" ]]; then
     git checkout v2.1.0
 else
     wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
-    # cp $SCRATCH/uenv-data/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz .
     tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 fi
 
@@ -128,45 +120,37 @@ cmake -G Ninja \
     -DCMAKE_INSTALL_PREFIX=$PARAVIEW_INSTALL_DIR            \
     -DCMAKE_BUILD_TYPE=Release                              \
     -DPARAVIEW_BUILD_EDITION=CANONICAL                      \
-    -DPARAVIEW_USE_QT=OFF                                   \
-    -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
-    -DPARAVIEW_USE_MPI=ON                                   \
-    -DVTK_USE_X=OFF                                         \
-    -DVTK_OPENGL_HAS_EGL=ON                                 \
-    -DPARAVIEW_USE_PYTHON=ON                                \
-    -DPARAVIEW_ENABLE_CATALYST=ON                           \
     -DPARAVIEW_BUILD_TESTING=OFF                            \
-    -DPARAVIEW_ENABLE_WEB:BOOL=OFF                          \
-    `# Multithreading options`                              \
-    -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
-    `# CUDA related options`                                \
+    -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
     -DPARAVIEW_USE_CUDA=ON                                  \
-    -DCMAKE_CUDA_ARCHITECTURES=90                           \
-    `# VTM-m`                                               \
-    -DPARAVIEW_USE_VTKM=ON                                  \
-    `# NVidia index`                                        \
-    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
-    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
+    -DCMAKE_CUDA_ARCHITECTURES=90a                          \
+    -DPARAVIEW_USE_MPI=ON                                   \
+    -DPARAVIEW_USE_PYTHON=ON                                \
+    -DPARAVIEW_USE_QT=OFF                                   \
+    -DPARAVIEW_USE_VISKORES=ON                              \
+    -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
+    -DPARAVIEW_ENABLE_CATALYST=ON                           \
+    -DPARAVIEW_ENABLE_WEB:BOOL=OFF                          \
     `# Plugin related options`                              \
     -DPARAVIEW_ENABLE_ADIOS2=ON                             \
-    -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
-    -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
     -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
+    -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
+    -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
+    -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
+    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     `# use external libraries wherever possible`            \
-    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
-    `# These externals had compilation problems`            \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_fast_float=OFF            \
+    -DPARAVIEW_BUILD_WITH_EXTERNAL=OFF                      \
+    `# VTK options`                                         \
+    -DVTK_USE_X=OFF                                         \
+    -DVTK_OPENGL_HAS_EGL=ON                                 \
+    `# Multithreading options`                              \
+    -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
+    -DVTK_USE_EXTERNAL=ON                                   \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_scn=OFF                   \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_verdict=OFF               \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_libharu=OFF               \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_cli11=OFF                 \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_cgns=OFF                  \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_pegtl=OFF                 \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_ioss=OFF                  \
-    `# raytracing `                                         \
-    -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=OFF           \
     -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
     $PARAVIEW_SRC_DIR/
 
@@ -192,6 +176,7 @@ ninja clean
 
 # =====================================
 debug_output "cleanup user build environemnt"
+
 # make a copy of the dev build-env and remove the /dev/shm version
 BUILD_ENV=$PARAVIEW_INSTALL_DIR/buildenv.rc
 cp $BUILD_ENV_DEV $BUILD_ENV
@@ -200,14 +185,12 @@ rm $BUILD_ENV_DEV
 sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD_ENV
 
 # remove /dev/shm paths from build-env that will not be available to the final user
-GCCLOC=$($SPACK_CMD location -i gcc@12 +bootstrap )
-sed -i "s|/dev/shm/biddisco/spack/lib/spack/env/gcc|$GCCLOC/bin|g"  $BUILD_ENV
-sed -i "s|/dev/shm/biddisco/spack/bin|\$PATH|"                      $BUILD_ENV
-
-sed -i "/^HOME=/d"                                                  $BUILD_ENV
-sed -i "/^SPACK_ROOT=/d"                                            $BUILD_ENV
-sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"                              $BUILD_ENV
-sed -i "/^SPACK_USER_CACHE_PATH=/d"                                 $BUILD_ENV
+sed -i "s|${mount_path}/spack/lib/spack/env/gcc||g" $BUILD_ENV
+sed -i "s|${mount_path}/spack/bin||g"               $BUILD_ENV
+sed -i "/^HOME=/d"                                  $BUILD_ENV
+sed -i "/^SPACK_ROOT=/d"                            $BUILD_ENV
+sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"              $BUILD_ENV
+sed -i "/^SPACK_USER_CACHE_PATH=/d"                 $BUILD_ENV
 
 # =====================================
 debug_output "set permissions"
@@ -227,11 +210,11 @@ debug_output "generate paraview proto-launch script for remote connection"
 cmake \
     -DINPUT_FILE_NAME="${HOME}/store/meta/recipe/scripts/rc-submit-pvserver.sh.cmake" \
     -DOUTPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"                \
-    -DPARAVIEW_VERSION=${PARAVIEW_VERSION_MAIN}                       \
-    -DPARAVIEW_INSTALL_DIR=${PARAVIEW_INSTALL_DIR}                    \
-    -DPARAVIEW_PLUGINS_DIR=${PARAVIEW_PLUGINS_DIR}                    \
-    -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib \
-    -DUENV_IMAGE="@UENV_IMAGE@"                                       \
+    -DPARAVIEW_VERSION=${PARAVIEW_VERSION_MAIN}                                       \
+    -DPARAVIEW_INSTALL_DIR=${PARAVIEW_INSTALL_DIR}                                    \
+    -DPARAVIEW_PLUGINS_DIR=${PARAVIEW_PLUGINS_DIR}                                    \
+    -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib                 \
+    -DUENV_IMAGE="@UENV_IMAGE@"                                                       \
     -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
 
 # =====================================
@@ -262,11 +245,10 @@ fi
 # each alps cluster has its own CLUSTER_NAME environment variable
 # UENV_MOUNT_FILE is set by the uenv image/engine when loaded
 cmake \
-    -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"    \
+    -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"     \
     -DOUTPUT_FILE_NAME="\${PVSERVER_LAUNCH_SCRIPT}"                       \
     -DUENV_IMAGE="\${UENV_MOUNT_FILE}"                                    \
     -P ${mount_path}/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
-
 EOF
 chmod +x $mount_path/init.sh
 
