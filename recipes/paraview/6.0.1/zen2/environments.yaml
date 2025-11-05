@@ -71,7 +71,7 @@ paraview-osmesa:
   - proj
 
   # climate/weather
-  - cdi
+  - cdi@2.5.0 # problem with cmake module starting from cdi@2.5.1 onward
 
   # python
   - python@3.12
