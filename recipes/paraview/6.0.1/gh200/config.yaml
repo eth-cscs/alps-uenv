@@ -1,8 +1,11 @@
-# NB. git sha for spack is required for some vtk external packages, but newer sha breaks other stuff
+version: 2
 name: ParaView
 store: /user-environment
 spack:
-  commit: 195b869e1c5f0f850fe16ca1cc0c77fc71f5fcd6
   repo: https://github.com/spack/spack.git
-description: ParaView for Grace-Hopper using EGL
+  commit: 88f3dd435f6ef0ca575a629c446142a8befcf54e # last known working version
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: develop
+description: ParaView for Alps Grace-Hopper clusters using EGL
 modules: false

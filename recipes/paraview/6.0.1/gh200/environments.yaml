@@ -1,10 +1,7 @@
 paraview-cuda:
-  compiler:
-  - toolchain: gcc
-    spec: gcc
-  mpi:
-    spec: cray-mpich
-    gpu: cuda
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich
   unify: true
   views:
     develop:
@@ -30,27 +27,15 @@ paraview-cuda:
   specs:
 
   # cuda
-  - cuda@12.3
+  - cuda@12
 
   # Build tools
-  # - git-lfs
   - cmake
   - ninja
-  - direnv
-  - ninja
-  - libtree
-  - llvm@18 ~gold ~cuda
-
-  # maths
-  - blaspp
-  - eigen
-  - fftw
-  - lapackpp
-  - openblas
-  - proj
+  - llvm@18 ~gold ~cuda targets=x86
 
   # c++ helpers
-  - fmt@10
+  - fmt@11
   - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
 
   # IO and parallelism
@@ -59,17 +44,6 @@ paraview-cuda:
   - lz4
   - adios2 +python +hdf5
 
-  # memory management
-  # - jemalloc
-  # - mimalloc
-
-  # # system
-  # - numactl
-
-  # # profiling/testing
-  # - gperftools
-  # - googletest
-
   # multithreading
   - tbb
 
@@ -77,8 +51,11 @@ paraview-cuda:
   - libcatalyst +mpi +python
 
   # vtk external deps
-  - cgns@4.4.0
-  - double-conversion@3.3.0
+  - cgns #@4.4.0
+  - double-conversion #@3.3.0
+  - cli11
+  - fast-float@7
+  - fmt@11
   - gl2ps
   - glew
   - jpeg
@@ -86,18 +63,21 @@ paraview-cuda:
   - libharu
   - libtiff
   - nlohmann-json
-  - libtheora@git.7180717276af1ebc7da15c83162d6c5d6203aabf=master
+  - libtheora #@git.7180717276af1ebc7da15c83162d6c5d6203aabf=master
   - pugixml
   - pegtl
-  - protobuf@:3.21
-  - seacas ~fortran ~applications ~legacy ~tests ~x11
+  - protobuf #@:3.21
+  - seacas@2025-02-27 ~legacy
   - utf8cpp
+  - verdict
+  # - scnlib # incompatible with fast-float@7
+  - proj
 
   # climate/weather
-  - cdi
+  - cdi@2.5.0 # problem with cmake module starting from cdi@2.5.1 onward
 
   # python
-  - python@3.11
+  - python@3.12
   - py-numpy
   - py-pandas
   - py-matplotlib
@@ -114,14 +94,15 @@ paraview-cuda:
   - openimagedenoise
 
   variants:
-  - +cuda
-  - cuda_arch=90
+  - +cxx
+  - +mpi
   - ^[virtuals=gl] egl
   - build_type=Release
   - cxxstd=17
-  - +mpi
-  - ~fortran
-  - ~x11
+  - ~applications
+  - +cuda cuda_arch=90a
   - ~examples
+  - ~fortran
+  - ~rocm
   - ~tests
-  - +cxx
+  - ~x11
