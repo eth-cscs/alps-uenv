@@ -28,11 +28,7 @@ printenv
 # =====================================
 debug_output "set vars we need frequently"
 HOME=$(pwd)
-SPACK_CMD="spack -C $config_path --debug"
-
-# =====================================
-debug_output "list all spack packages"
-$SPACK_CMD find -flv
+SPACK_CMD="spack -C $config_path"
 
 # =====================================
 debug_output "source spack environment setup"
@@ -47,13 +43,11 @@ SPACK_ENV_NAME="paraview-osmesa"
 # =====================================
 debug_output "convert stackinator environment into a package"
 python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/recipe/environments.yaml -p $SPACK_ENV_NAME --add
-python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/recipe/environments.yaml -p $SPACK_ENV_NAME
 
 # =====================================
 debug_output "create build-env"
 BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
 SPEC="$SPACK_ENV_NAME %gcc@13 ^[virtuals=gl] osmesa ^mesa +osmesa"
-$SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ env activate --sh
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV "$SPEC"
@@ -66,7 +60,6 @@ source $BUILD_ENV_DEV
 debug_output "checkout paraview/vtk/vtkm branches"
 SRC_ROOT=$mount_path/temp/src
 BUILD_ROOT=$mount_path/temp/build
-SCRATCH=/capstor/scratch/cscs/biddisco
 
 # setup paths for src/build/install
 PARAVIEW_VERSION_MAIN=6.0
@@ -101,7 +94,6 @@ if [[ $CLONE_PARAVIEW == "true" ]]; then
     git checkout v2.1.0
 else
     wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
-    # cp $SCRATCH/uenv-data/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz .
     tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 fi
 
@@ -194,13 +186,13 @@ sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD
 
 # remove /dev/shm paths from build-env that will not be available to the final user
 GCCLOC=$($SPACK_CMD location -i gcc@13 +bootstrap )
-sed -i "s|/dev/shm/biddisco/spack/lib/spack/env/gcc|$GCCLOC/bin|g"  $BUILD_ENV
-sed -i "s|/dev/shm/biddisco/spack/bin|\$PATH|"                      $BUILD_ENV
+sed -i "s|${mount_path}/spack/lib/spack/env/gcc|$GCCLOC/bin|g" $BUILD_ENV
+sed -i "s|${mount_path}/spack/bin|\$PATH|"                     $BUILD_ENV
 
-sed -i "/^HOME=/d"                                                  $BUILD_ENV
-sed -i "/^SPACK_ROOT=/d"                                            $BUILD_ENV
-sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"                              $BUILD_ENV
-sed -i "/^SPACK_USER_CACHE_PATH=/d"                                 $BUILD_ENV
+sed -i "/^HOME=/d"                                             $BUILD_ENV
+sed -i "/^SPACK_ROOT=/d"                                       $BUILD_ENV
+sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"                         $BUILD_ENV
+sed -i "/^SPACK_USER_CACHE_PATH=/d"                            $BUILD_ENV
 
 # =====================================
 debug_output "set permissions"
