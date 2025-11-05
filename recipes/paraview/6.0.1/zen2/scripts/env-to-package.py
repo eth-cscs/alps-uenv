@@ -22,27 +22,23 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# create a new directory called 'package'
-if not os.path.exists("packages"):
-    os.makedirs("packages")
-# remove any hyphens from the package name and capitalize the first letter of each word
-packagenameU = args.packagename.replace("-", " ").title().replace(" ", "")
-print(f"Package name: {packagenameU}")
+os.makedirs("packages", exist_ok=True)
+pkg_class = args.packagename.replace("-", " ").title().replace(" ", "")
+pkg_filename = args.packagename.replace(" ", "").replace("-", "_").lower()
+print(f"Package name: {pkg_class}")
 
 # read the yaml file
 with open(f"{args.filename}", "r") as stream:
-    try:
-        env = yaml.safe_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
+    env = yaml.safe_load(stream)
 
 # change the following generation of the file to a string with the same contents
 output = f"# This file was auto-generated from {args.filename}\n"
 output += "\n"
 output += "import itertools, os, sys\n"
 output += "from spack.package import *\n"
+output += "from spack_repo.builtin.build_systems.cmake import CMakePackage\n"
 output += "\n"
-output += f"class {packagenameU}(CMakePackage):\n"
+output += f"class {pkg_class}(CMakePackage):\n"
 output += '    homepage = "https://www.dummy.org/"\n'
 output += '    url      = "https://www.dummy.org/"\n'
 output += '    git      = "https://www.dummy.org/"\n'
@@ -50,7 +46,7 @@ output += "\n"
 output += '    version("develop", branch="main")\n'
 
 # extract the dependencies from the yaml specs section, assume 'spec' is one level down from top level key
-# doign this allows us to import an env from stackinator, or a regular env yaml file
+# doing this allows us to import an env from stackinator, or a regular env yaml file
 try:
     specs = env[list(env.keys())[0]]["specs"]
 except KeyError:
@@ -60,21 +56,16 @@ except KeyError:
 dependencies = []
 for spec in specs:
     output += f'    depends_on("{spec}")\n'
-    #
 print(output)
 
 if args.add:
-    spack_package_root = (
-        os.popen("spack location -r").read().strip()
-        + "/var/spack/repos/builtin/packages"
-    )
-    tempdir = os.path.join(spack_package_root, args.packagename)
+    spack_package_root = os.popen("spack location --repo").read().strip() + "/packages"
+    tempdir = os.path.join(spack_package_root, pkg_filename)
 else:
     # create a subdir named after the package if the subdir doesn't already exist
-    tempdir = os.path.join("./packages", args.packagename)
+    tempdir = os.path.join("./packages", pkg_filename)
 
-if not os.path.exists(tempdir):
-    os.makedirs(tempdir)
+os.makedirs(tempdir, exist_ok=True)
 print("Writing temp package to " + os.path.join(tempdir, "package.py"))
 
 # create a temp file in the directory
@@ -83,8 +74,6 @@ with open(tempfile, "w") as f:
     f.write(output)
     f.close()
     print(f"Temporary file {tempfile} has been created")
-
-print(f'spackgen {args.packagename} "{args.packagename} %gcc" --reuse')
 
 with open("./repo.yaml", "w") as f:
     f.write("repo:\n")
