@@ -103,6 +103,7 @@ pytorch-env:
           - NCCL_NET_GDR_C2C: "1"
           - NCCL_NET_GDR_READ: "1"
           - NCCL_PROTO: "^LL128"
+          - NCCL_NCHANNELS_PER_NET_PEER: "4"
           - FI_CXI_DEFAULT_CQ_SIZE: "131072"
           - FI_CXI_DEFAULT_TX_SIZE: "32768"
           - FI_CXI_DISABLE_HOST_REGISTER: "1"
