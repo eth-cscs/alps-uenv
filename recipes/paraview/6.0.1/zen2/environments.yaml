@@ -27,21 +27,9 @@ paraview-osmesa:
   specs:
 
   # Build tools
-  # - git-lfs
   - cmake
   - ninja
-  # - direnv
-  - ninja
-  # - libtree
   - llvm@18 ~gold ~cuda
-
-  # maths
-  - blaspp
-  - eigen
-  - fftw
-  - lapackpp
-  - openblas
-  - proj
 
   # c++ helpers
   - fmt@11
@@ -79,7 +67,8 @@ paraview-osmesa:
   - seacas@2025-02-27 ~legacy
   - utf8cpp
   - verdict
-  - scnlib
+  # - scnlib # incompatible with fast-float@7
+  - proj
 
   # climate/weather
   - cdi
