@@ -44,8 +44,8 @@ output += '    url      = "https://www.dummy.org/"\n'
 output += '    git      = "https://www.dummy.org/"\n'
 output += "\n"
 output += '    version("develop", branch="main")\n'
-output += '    depends_on("c")\n'
-output += '    depends_on("cxx")\n'
+output += '    depends_on("c", type="build")\n'
+output += '    depends_on("cxx", type="build")\n'
 
 # extract the dependencies from the yaml specs section, assume 'spec' is one level down from top level key
 # doing this allows us to import an env from stackinator, or a regular env yaml file
