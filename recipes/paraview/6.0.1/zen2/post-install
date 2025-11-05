@@ -155,6 +155,7 @@ cmake -G Ninja \
     `# Multithreading options`                              \
     -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
     -DVTK_USE_EXTERNAL=ON                                   \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_scn=OFF                   \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
     -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=OFF           \
@@ -183,6 +184,7 @@ ninja clean
 
 # =====================================
 debug_output "cleanup user build environemnt"
+
 # make a copy of the dev build-env and remove the /dev/shm version
 BUILD_ENV=$PARAVIEW_INSTALL_DIR/buildenv.rc
 cp $BUILD_ENV_DEV $BUILD_ENV
@@ -253,11 +255,10 @@ fi
 # each alps cluster has its own CLUSTER_NAME environment variable
 # UENV_MOUNT_FILE is set by the uenv image/engine when loaded
 cmake \
-    -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"    \
+    -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"     \
     -DOUTPUT_FILE_NAME="\${PVSERVER_LAUNCH_SCRIPT}"                       \
     -DUENV_IMAGE="\${UENV_MOUNT_FILE}"                                    \
     -P ${mount_path}/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
-
 EOF
 chmod +x $mount_path/init.sh
 
