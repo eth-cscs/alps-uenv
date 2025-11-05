@@ -102,7 +102,6 @@ echo "PATH=\$PATH:\$OLD_PATH"                                                   
 echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"                  >> $TEMP_FILE
 echo ""                                                                         >> $TEMP_FILE
 echo "# adding plugin paths"                                                    >> $TEMP_FILE
-echo "export NVINDEX_PVPLUGIN_HOME=${PARAVIEW_PLUGINS_DIR}"                     >> $TEMP_FILE
 echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:\$LD_LIBRARY_PATH"                >> $TEMP_FILE
 echo "export PV_PLUGIN_PATH=$PARAVIEW_PLUGINS_DIR:$PARAVIEW_PLUGINS_DIR/lib64"  >> $TEMP_FILE
 
