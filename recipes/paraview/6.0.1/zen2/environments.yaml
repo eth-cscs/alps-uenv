@@ -104,15 +104,7 @@ paraview-osmesa:
   - osmesa
 
   variants:
-  - +cxx
-  - +mpi
-  - ^[virtuals=gl] osmesa ^mesa +osmesa
   - build_type=Release
   - cxxstd=17
-  - ~applications
-  - ~cuda
-  - ~examples
-  - ~fortran
-  - ~rocm
-  - ~tests
-  - ~x11
+  - +cxx
+  - +mpi
