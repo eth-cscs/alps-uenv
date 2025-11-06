@@ -182,14 +182,12 @@ rm $BUILD_ENV_DEV
 sed -i "s|^CMAKE_PREFIX_PATH=|CMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR:|g" $BUILD_ENV
 
 # remove /dev/shm paths from build-env that will not be available to the final user
-GCCLOC=$($SPACK_CMD location -i gcc@13 +bootstrap )
-sed -i "s|${mount_path}/spack/lib/spack/env/gcc|$GCCLOC/bin|g" $BUILD_ENV
-sed -i "s|${mount_path}/spack/bin|\$PATH|"                     $BUILD_ENV
-
-sed -i "/^HOME=/d"                                             $BUILD_ENV
-sed -i "/^SPACK_ROOT=/d"                                       $BUILD_ENV
-sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"                         $BUILD_ENV
-sed -i "/^SPACK_USER_CACHE_PATH=/d"                            $BUILD_ENV
+sed -i "s|${mount_path}/spack/lib/spack/env/gcc||g" $BUILD_ENV
+sed -i "s|${mount_path}/spack/bin||g"               $BUILD_ENV
+sed -i "/^HOME=/d"                                  $BUILD_ENV
+sed -i "/^SPACK_ROOT=/d"                            $BUILD_ENV
+sed -i "/^SPACK_SYSTEM_CONFIG_PATH=/d"              $BUILD_ENV
+sed -i "/^SPACK_USER_CACHE_PATH=/d"                 $BUILD_ENV
 
 # =====================================
 debug_output "set permissions"
@@ -209,11 +207,11 @@ debug_output "generate paraview proto-launch script for remote connection"
 cmake \
     -DINPUT_FILE_NAME="${HOME}/store/meta/recipe/scripts/rc-submit-pvserver.sh.cmake" \
     -DOUTPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"                \
-    -DPARAVIEW_VERSION=${PARAVIEW_VERSION_MAIN}                             \
-    -DPARAVIEW_INSTALL_DIR=${PARAVIEW_INSTALL_DIR}                          \
-    -DPARAVIEW_PLUGINS_DIR=${PARAVIEW_PLUGINS_DIR}                          \
-    -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib       \
-    -DUENV_IMAGE="@UENV_IMAGE@"                                       \
+    -DPARAVIEW_VERSION=${PARAVIEW_VERSION_MAIN}                                       \
+    -DPARAVIEW_INSTALL_DIR=${PARAVIEW_INSTALL_DIR}                                    \
+    -DPARAVIEW_PLUGINS_DIR=${PARAVIEW_PLUGINS_DIR}                                    \
+    -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib                 \
+    -DUENV_IMAGE="@UENV_IMAGE@"                                                       \
     -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
 
 # # =====================================
