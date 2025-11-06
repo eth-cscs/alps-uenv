@@ -103,15 +103,7 @@ paraview-cuda:
   - openimagedenoise
 
   variants:
-  - +cxx
-  - +mpi
-  - ^[virtuals=gl] egl
   - build_type=Release
   - cxxstd=17
-  - ~applications
-  - +cuda cuda_arch=90a
-  - ~examples
-  - ~fortran
-  - ~rocm
-  - ~tests
-  - ~x11
+  - +cxx
+  - +mpi

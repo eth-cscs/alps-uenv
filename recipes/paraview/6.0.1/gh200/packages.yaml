@@ -1,0 +1,16 @@
+packages:
+  all:
+    require:
+      - +cuda cuda_arch=90a
+      - ~rocm
+      - ~x11
+      - ~fortran
+      - ~applications
+      - ~examples
+      - ~tests
+  gl:
+    require: egl
+  llvm:
+    require:
+      - ~gold
+      - ~cuda
