@@ -425,6 +425,11 @@ uenvs:
         eiger: [zen2]
       mount: "/user-tools"
   paraview:
+    "6.0.1":
+      recipes:
+        zen2: 6.0.1/zen2
+      deploy:
+        eiger: [zen2]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200
