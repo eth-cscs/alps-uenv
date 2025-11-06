@@ -45,8 +45,8 @@
         </Option>
         <Option name="VERSION" label="VERSION ?" save="true">
           <Enumeration default="osmesa">
-            <Entry value="osmesa" label="5.13 - osmesa"/>
-            <Entry value="nvidia" label="5.13 - nvidia"/>
+            <Entry value="osmesa" label="6.0 - osmesa"/>
+            <Entry value="nvidia" label="6.0 - nvidia"/>
           </Enumeration>
         </Option>
         <Option name="PV_SERVER_PORT" label="pvserver port" save="true">
