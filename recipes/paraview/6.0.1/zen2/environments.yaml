@@ -48,6 +48,7 @@ paraview-osmesa:
   - libcatalyst +mpi +python
 
   # vtk external deps
+  - abseil-cpp
   - cgns #@4.4.0
   - cli11
   - double-conversion #@3.3.0
@@ -68,6 +69,7 @@ paraview-osmesa:
   - libtiff
   - libxml2
   - nlohmann-json
+  - parallel-netcdf
   - pegtl@2
   - proj
   - protobuf #@:3.21 # problem about crc arm vs crc aarch64 -- give a try to 33.0, it failed with 32.1
