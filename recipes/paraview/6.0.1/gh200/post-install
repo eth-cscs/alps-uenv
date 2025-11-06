@@ -140,14 +140,12 @@ cmake -G Ninja \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
     -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     `# use external libraries wherever possible`            \
-    -DPARAVIEW_BUILD_WITH_EXTERNAL=OFF                      \
+    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
     `# VTK options`                                         \
     -DVTK_USE_X=OFF                                         \
     -DVTK_OPENGL_HAS_EGL=ON                                 \
     `# Multithreading options`                              \
     -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
-    -DVTK_USE_EXTERNAL=ON                                   \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_scn=OFF                   \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
     -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=OFF           \
