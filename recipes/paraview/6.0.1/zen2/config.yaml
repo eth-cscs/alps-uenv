@@ -6,6 +6,5 @@ spack:
   commit: 88f3dd435f6ef0ca575a629c446142a8befcf54e # last known working version
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: develop
-description: ParaView for Alps Eiger using OSMesa (Off Screen Mesa)
+description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
 modules: false
