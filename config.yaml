@@ -471,9 +471,11 @@ uenvs:
     "6.0.1":
       recipes:
         gh200: 6.0.1/gh200
+        zen2: 6.0.1/zen2
       deploy:
         daint: [gh200]
         santis: [gh200]
+        eiger: [zen2]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200
