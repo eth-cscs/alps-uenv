@@ -47,7 +47,7 @@ python3 $HOME/store/meta/recipe/scripts/env-to-package.py -f $HOME/store/meta/re
 # =====================================
 debug_output "create build-env"
 BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
-SPEC="$SPACK_ENV_NAME ^[virtuals=gl] osmesa ^mesa +osmesa"
+SPEC="$SPACK_ENV_NAME"
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ concretize
 $SPACK_CMD -e $HOME/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV "$SPEC"
