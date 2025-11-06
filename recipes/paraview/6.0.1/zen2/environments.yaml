@@ -77,7 +77,7 @@ paraview-osmesa:
   - seacas@2025-02-27 ~legacy
   - sqlite
   - utf8cpp
-  - verdict
+  - verdict +shared
   - xz
   - zlib-ng
 
