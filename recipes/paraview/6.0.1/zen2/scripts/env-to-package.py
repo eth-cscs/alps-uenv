@@ -76,9 +76,3 @@ with open(tempfile, "w") as f:
     f.write(output)
     f.close()
     print(f"Temporary file {tempfile} has been created")
-
-with open("./repo.yaml", "w") as f:
-    f.write("repo:\n")
-    f.write("  namespace: 'userenv'\n")
-    f.close()
-    print("Repo file has been created")
