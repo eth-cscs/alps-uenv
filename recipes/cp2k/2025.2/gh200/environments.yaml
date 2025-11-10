@@ -57,6 +57,8 @@ cp2k:
     - build_type=Release
   network:
     mpi: cray-mpich@8.1.32 +cuda
+    specs:
+      - libfabric@2.3 +gdrcopy
   views:
     develop:
       link: roots
