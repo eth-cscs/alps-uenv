@@ -15,11 +15,6 @@ function debug_output() {
 }
 
 # =====================================
-debug_output "post install hook"
-mount_path={{ env.mount }}
-echo RUNNING IN $mount_path
-
-# =====================================
 debug_output "environment variables"
 printenv
 
@@ -27,6 +22,7 @@ printenv
 debug_output "set vars we need frequently"
 RECIPE_BUILD={{ env.build }}
 RECIPE=${RECIPE_BUILD}/store/meta/recipe
+UENV_STORE={{ env.mount }}
 SPACK_CMD="spack -C {{ env.config }}"
 
 # =====================================
@@ -46,7 +42,7 @@ SPEC=$SPACK_ENV_NAME
 
 # =====================================
 debug_output "create and activate build-env"
-BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
+BUILD_ENV_DEV=$UENV_STORE/paraview-buildenv-dev.rc
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ concretize
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV $SPEC
@@ -55,16 +51,16 @@ rm $BUILD_ENV_DEV
 
 # =====================================
 debug_output "download paraview sources..."
-SRC_ROOT=$mount_path/temp/src
-BUILD_ROOT=$mount_path/temp/build
+SRC_ROOT=$UENV_STORE/temp/src
+BUILD_ROOT=$UENV_STORE/temp/build
 
-# setup paths for src/build/install
 PARAVIEW_VERSION_MAIN=6.0
 PARAVIEW_VERSION_FULL=6.0.1
+
 PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
 PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
-PARAVIEW_INSTALL_DIR=$mount_path/paraview
-PARAVIEW_PLUGINS_DIR=$mount_path/paraview-plugins
+PARAVIEW_INSTALL_DIR=$UENV_STORE/paraview
+PARAVIEW_PLUGINS_DIR=$UENV_STORE/paraview-plugins
 
 mkdir -p $SRC_ROOT
 mkdir -p $BUILD_ROOT
@@ -77,6 +73,7 @@ tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
 # =====================================
 debug_output "download + extract nvidia index libs"
+# TODO why should we prefer the jfrog cache?
 DOWNLOAD_NVINDEX_WGET=false
 NVINDEX_ARCH=-aarch64
 NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux${NVINDEX_ARCH}
@@ -149,6 +146,7 @@ chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
 
 # =====================================
+# TODO check if we can avoid this and every user have to setup their own license
 debug_output "download nvindex license file"
 curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
@@ -158,7 +156,7 @@ cp ${RECIPE}/scripts/gpu_wrapper.sh           ${PARAVIEW_INSTALL_DIR}/gpu_wrappe
 
 # =====================================
 debug_output "Cleanup"
-rm -rf ${mount_path}/temp
+rm -rf ${UENV_STORE}/temp
 
 # =====================================
 debug_output "Done"
