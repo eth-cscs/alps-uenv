@@ -73,19 +73,17 @@ tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
 # =====================================
 debug_output "download + extract nvidia index libs"
-# TODO why should we prefer the jfrog cache?
-DOWNLOAD_NVINDEX_WGET=false
+DOWNLOAD_NVINDEX_WGET=true
 NVINDEX_ARCH=-aarch64
-NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux${NVINDEX_ARCH}
+NVINDEX_FILENAME=nvidia-index-libs-6.0.0.20250604-linux${NVINDEX_ARCH}
 NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
 if [[ $DOWNLOAD_NVINDEX_WGET == "true" ]]; then
-    # get nvindex plugin from official paraview source
-    wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+  wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $BUILD_ROOT/$NVINDEX_TARBALL
 else
-    # use local jfrog cache of file
-    curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+  # TODO why should we prefer the jfrog cache?
+  curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $BUILD_ROOT/$NVINDEX_TARBALL
 fi
-tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+tar --directory $PARAVIEW_PLUGINS_DIR -xf $BUILD_ROOT/$NVINDEX_TARBALL
 
 # =====================================
 debug_output "configure paraview build..."
