@@ -138,7 +138,6 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-      develop: False
     "2025.2":
       recipes:
         gh200: 2025.2/gh200
@@ -146,7 +145,6 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-      develop: False
   icon-wcp:
     "v1":
       recipes:
