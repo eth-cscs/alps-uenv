@@ -109,7 +109,7 @@ paraview-osmesa:
   - openimagedenoise
 
   # offscreen rendering
-  - mesa +osmesa
+  - mesa +osmesa ~glx ~llvm
   - osmesa
 
   variants:
