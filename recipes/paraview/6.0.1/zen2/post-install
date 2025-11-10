@@ -99,6 +99,7 @@ cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release                              \
     -DPARAVIEW_BUILD_EDITION=CANONICAL                      \
     -DPARAVIEW_BUILD_TESTING=OFF                            \
+    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
     -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
     -DPARAVIEW_USE_CUDA=OFF                                 \
     -DPARAVIEW_USE_MPI=ON                                   \
@@ -108,7 +109,6 @@ cmake -G Ninja \
     -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
     -DPARAVIEW_ENABLE_CATALYST=ON                           \
     -DPARAVIEW_ENABLE_WEB:BOOL=OFF                          \
-    `# Plugin related options`                              \
     -DPARAVIEW_ENABLE_ADIOS2=ON                             \
     -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
@@ -116,12 +116,9 @@ cmake -G Ninja \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=OFF              \
     -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
-    `# use external libraries wherever possible`            \
-    -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
     `# VTK options`                                         \
     -DVTK_USE_X=OFF                                         \
     -DVTK_OPENGL_HAS_OSMESA=ON                              \
-    `# Multithreading options`                              \
     -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
