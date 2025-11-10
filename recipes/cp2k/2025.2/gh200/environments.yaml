@@ -4,6 +4,7 @@ cp2k:
   specs:
   - cmake
   - ninja
+  - libtool@2.4.6
   - cuda@12.4 # Can't be newer than driver version, for DBCSR
   - openblas threads=openmp
   - netlib-scalapack

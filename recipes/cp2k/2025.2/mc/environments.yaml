@@ -4,6 +4,7 @@ cp2k:
   specs:
   - cmake
   - ninja
+  - libtool@2.4.6
   - openblas threads=openmp
   - netlib-scalapack
   - fftw
