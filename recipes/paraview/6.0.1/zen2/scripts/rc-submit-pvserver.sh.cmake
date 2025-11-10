@@ -69,6 +69,7 @@ echo "#SBATCH --partition=$8"                      >> $TEMP_FILE
 echo "#SBATCH --account=${10}"                     >> $TEMP_FILE
 echo "#SBATCH --constraint=${CONSTRAINT}"          >> $TEMP_FILE
 echo "#SBATCH --uenv=${SQUASH_IMG}"                >> $TEMP_FILE
+echo "#SBATCH --view=${SQUASH_IMG}:default         >> $TEMP_FILE
 echo "#SBATCH --cpus-per-task=$cpus_task"          >> $TEMP_FILE
 
 # TODO: check these and replace with something generic
@@ -93,17 +94,21 @@ fi
 # ------------------------------------
 # setup environment needed by paraview server
 # ------------------------------------
-echo ""                                                                         >> $TEMP_FILE
-echo "# setting up python environment"                                          >> $TEMP_FILE
-echo "OLD_PATH=\$PATH"                                                          >> $TEMP_FILE
-echo "OLD_LD_LIBRARY_PATH=\$LD_LIBRARY_PATH"                                    >> $TEMP_FILE
-echo "source /user-environment/env/paraview-python/activate.sh"                 >> $TEMP_FILE
-echo "PATH=\$PATH:\$OLD_PATH"                                                   >> $TEMP_FILE
-echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"                  >> $TEMP_FILE
-echo ""                                                                         >> $TEMP_FILE
-echo "# adding plugin paths"                                                    >> $TEMP_FILE
-echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:\$LD_LIBRARY_PATH"                >> $TEMP_FILE
-echo "export PV_PLUGIN_PATH=$PARAVIEW_PLUGINS_DIR:$PARAVIEW_PLUGINS_DIR/lib64"  >> $TEMP_FILE
+# echo ""                                                                         >> $TEMP_FILE
+# echo "# setting up python environment"                                          >> $TEMP_FILE
+# echo "OLD_PATH=\$PATH"                                                          >> $TEMP_FILE
+# echo "OLD_LD_LIBRARY_PATH=\$LD_LIBRARY_PATH"                                    >> $TEMP_FILE
+# TODO not needed if using --view
+# echo "source /user-environment/env/default/activate.sh"                         >> $TEMP_FILE
+# TODO check why this wants to discard the PATH/LD_LIBRARY_PATH added by the python env
+# echo "PATH=\$PATH:\$OLD_PATH"                                                   >> $TEMP_FILE
+# echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$OLD_LD_LIBRARY_PATH"                  >> $TEMP_FILE
+# echo ""                                                                         >> $TEMP_FILE
+# echo "# adding plugin paths"                                                    >> $TEMP_FILE
+# TODO why PV_LIBRARY_PATH is used before getting changed
+# TODO PV_LIBRARAY_PATH seems a variable for OpenFOAM
+# echo "export LD_LIBRARY_PATH=$PV_LIBRARY_PATH:\$LD_LIBRARY_PATH"                >> $TEMP_FILE
+# echo "export PV_PLUGIN_PATH=$PARAVIEW_PLUGINS_DIR:$PARAVIEW_PLUGINS_DIR/lib64"  >> $TEMP_FILE
 
 echo "" >> $TEMP_FILE
 echo "srun -n $nservers -N $3 --cpu_bind=sockets $GPU_WRAPPER $PV_SERVER --reverse-connection --client-host=$HOST_NAME --server-port=$5" >> $TEMP_FILE
@@ -113,7 +118,4 @@ echo "srun -n $nservers -N $3 --cpu_bind=sockets $GPU_WRAPPER $PV_SERVER --rever
 # ------------------------------------
 cat $TEMP_FILE
 sbatch $TEMP_FILE
-
-# ------------------------------------
-# wipe the temp file
 rm $TEMP_FILE
