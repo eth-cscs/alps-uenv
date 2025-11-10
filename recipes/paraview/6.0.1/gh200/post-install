@@ -2,36 +2,31 @@
 
 set -e
 
-# -------------------------------------
-# we output messages to stdout and also stderr to simplify debugging since logs are usually in
-# separate files and we want to see where errors are happening in the script
-function debug_output() {
-    {
-        echo ""
-        echo "-------------------------------------"
-        echo "-- $1"
-        echo "-------------------------------------"
-    } | tee >(cat >&2)
+function SECTION() {
+  echo ""
+  echo "-------------------------------------"
+  echo "-- $1"
+  echo "-------------------------------------"
 }
 
 # =====================================
-debug_output "environment variables"
+SECTION "environment variables"
 printenv
 
 # =====================================
-debug_output "set vars we need frequently"
+SECTION "set vars we need frequently"
 RECIPE_BUILD={{ env.build }}
 RECIPE=${RECIPE_BUILD}/store/meta/recipe
 UENV_STORE={{ env.mount }}
 SPACK_CMD="spack -C {{ env.config }}"
 
 # =====================================
-debug_output "source spack environment setup"
+SECTION "source spack environment setup"
 SPACK_ROOT=$( $SPACK_CMD location -r )
 source $SPACK_ROOT/share/spack/setup-env.sh
 
 # =====================================
-debug_output "convert stackinator environment into a package"
+SECTION "convert stackinator environment into a package"
 
 # SPACK_ENV_NAME should match the name of the uenv environment, because it maps to the underlying spack environment
 SPACK_ENV_NAME="paraview-cuda"
@@ -41,7 +36,7 @@ python3 $RECIPE/scripts/env-to-package.py -f $RECIPE/environments.yaml -p $SPACK
 SPEC=$SPACK_ENV_NAME
 
 # =====================================
-debug_output "create and activate build-env"
+SECTION "create and activate build-env"
 BUILD_ENV_DEV=$UENV_STORE/paraview-buildenv-dev.rc
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ concretize
@@ -50,7 +45,7 @@ source $BUILD_ENV_DEV
 rm $BUILD_ENV_DEV
 
 # =====================================
-debug_output "download paraview sources..."
+SECTION "download paraview sources..."
 SRC_ROOT=$UENV_STORE/temp/src
 BUILD_ROOT=$UENV_STORE/temp/build
 
@@ -72,7 +67,7 @@ wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVI
 tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
 # =====================================
-debug_output "download + extract nvidia index libs"
+SECTION "download + extract nvidia index libs"
 DOWNLOAD_NVINDEX_WGET=true
 NVINDEX_ARCH=-aarch64
 NVINDEX_FILENAME=nvidia-index-libs-6.0.0.20250604-linux${NVINDEX_ARCH}
@@ -86,7 +81,7 @@ fi
 tar --directory $PARAVIEW_PLUGINS_DIR -xf $BUILD_ROOT/$NVINDEX_TARBALL
 
 # =====================================
-debug_output "configure paraview build..."
+SECTION "configure paraview build..."
 mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR
 
 cmake -G Ninja \
@@ -123,11 +118,11 @@ cmake -G Ninja \
     $PARAVIEW_SRC_DIR/
 
 # =====================================
-debug_output "build and install paraview"
+SECTION "build and install paraview"
 ninja install
 
 # =====================================
-debug_output "build gadget plugin"
+SECTION "build gadget plugin"
 git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
 mkdir $BUILD_ROOT/ParaViewGadgetPlugin
 cd    $BUILD_ROOT/ParaViewGadgetPlugin
@@ -139,13 +134,13 @@ cmake -G Ninja \
 ninja install
 
 # =====================================
-debug_output "set permissions"
+SECTION "set permissions"
 chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
 
 # =====================================
 # TODO check if we can avoid this and every user have to setup their own license
-debug_output "download nvindex license file"
+SECTION "download nvindex license file"
 curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
 # =====================================
@@ -153,8 +148,8 @@ cp ${RECIPE}/scripts/rc-submit-pvserver.sh    ${PARAVIEW_INSTALL_DIR}/rc-submit-
 cp ${RECIPE}/scripts/gpu_wrapper.sh           ${PARAVIEW_INSTALL_DIR}/gpu_wrapper.sh
 
 # =====================================
-debug_output "Cleanup"
+SECTION "Cleanup"
 rm -rf ${UENV_STORE}/temp
 
 # =====================================
-debug_output "Done"
+SECTION "Done"
