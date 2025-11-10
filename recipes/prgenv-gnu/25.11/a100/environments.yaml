@@ -1,0 +1,50 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+      specs:
+      - libfabric@2.3 +gdrcopy
+  unify: true
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - fftw
+  - fmt
+  - gmp
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - kokkos +aggressive_vectorization ~alloc_async cuda_arch=90 +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
+  - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-fortran
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - papi
+  - python
+  - zlib-ng
+  # add GPU-specific packages here, for easier comparison with mc version
+  - nccl
+  - nccl-tests
+  - cuda
+  - xcb-util-cursor
+  - aws-ofi-nccl
+  - superlu
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=80
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

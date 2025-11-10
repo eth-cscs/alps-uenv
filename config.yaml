@@ -306,10 +306,12 @@ uenvs:
         zen2: 25.11/mc
         zen3: 25.11/mc
         gh200: 25.11/gh200
+        a100: 25.11/a100
       deploy:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
+        bristen: [a100]
         eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
