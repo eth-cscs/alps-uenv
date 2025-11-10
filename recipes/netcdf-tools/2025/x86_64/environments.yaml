@@ -1,0 +1,27 @@
+netcdf:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 ~cuda~rocm
+  unify: true
+  specs:
+  - hdf5 +szip +hl
+  - netcdf-c
+  - netcdf-cxx4
+  - netcdf-fortran
+  - ncview
+  - cdo
+  - eccodes
+  - gdal
+  - geos
+  - nco
+  - python
+  - ferret
+  - udunits
+  views:
+    netcdf:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
