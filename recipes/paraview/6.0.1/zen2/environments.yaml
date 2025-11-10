@@ -111,7 +111,8 @@ paraview-osmesa:
   - openimagedenoise
 
   # offscreen rendering
-  - mesa +osmesa ~glx
+  # note: +llvm is needed for llvmpipe, which is the software renderer
+  - mesa +osmesa ~glx ++llvm
   - osmesa
 
   variants:
