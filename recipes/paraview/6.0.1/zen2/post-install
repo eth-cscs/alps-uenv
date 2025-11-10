@@ -193,5 +193,7 @@ cp ${RECIPE}/scripts/rc-submit-pvserver.sh.cmake ${PARAVIEW_INSTALL_DIR}/rc-subm
 # EOF
 # chmod +x $mount_path/init.sh
 
+rm -rf ${mount_path}/temp
+
 # =====================================
 debug_output "Done"
