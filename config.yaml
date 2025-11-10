@@ -22,7 +22,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v2'
-          SLURM_ACCOUNT: ''
+          SLURM_ACCOUNT: 'a-csstaff'
     runner: f7t
   clariden:
     targets:
