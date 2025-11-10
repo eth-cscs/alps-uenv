@@ -44,7 +44,7 @@ output += '    homepage = "https://www.dummy.org/"\n'
 output += '    url      = "https://www.dummy.org/"\n'
 output += '    git      = "https://www.dummy.org/"\n'
 output += "\n"
-output += '    version("develop", branch="main")\n'
+output += '    version("1.0")\n'
 output += '    depends_on("c", type="build")\n'
 output += '    depends_on("cxx", type="build")\n'
 
