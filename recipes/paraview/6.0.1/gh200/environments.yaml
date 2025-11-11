@@ -25,7 +25,6 @@ paraview-cuda:
             # TODO are openfoam related vars needed?
             # PV_PLUGIN_PATH: ${@PARAVIEW_PLUGINS_DIR@}:${@PARAVIEW_PLUGINS_DIR@}/lib64
             # PV_LIBRARY_PATH: ${@PARAVIEW_PLUGINS_DIR@}/NVIDIA-IndeX/lib
-          prepend_path:
             - PATH: /user-environment/paraview/bin
     develop:
       exclude: ["paraview-cuda"]
