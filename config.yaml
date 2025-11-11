@@ -162,6 +162,7 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        beverin: [mi300]
   icon-wcp:
     "v1":
       recipes:
