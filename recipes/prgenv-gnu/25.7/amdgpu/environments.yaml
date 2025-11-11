@@ -18,7 +18,7 @@ gcc-env:
   - meson
   - ninja
   - openblas threads=openmp
-  - osu-micro-benchmarks@5.9
+  - osu-micro-benchmarks
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version

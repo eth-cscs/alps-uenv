@@ -6,6 +6,7 @@ default:
     - prgenv
     - serial
     - cray-mpich
+    - osu-micro-benchmarks
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
