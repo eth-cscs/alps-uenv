@@ -53,8 +53,6 @@ gcc-env:
   - hipsparse
   - hipfft
   - hipblas-common
-  #- rccl
-  #- aw
   variants:
   - +mpi
   - +rocm
