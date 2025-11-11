@@ -3,6 +3,7 @@ default:
     - cuda
     - mpi
     - openmpi
+    - nccl
     - nccl-tests
     - openmp
     - osu-micro-benchmarks
