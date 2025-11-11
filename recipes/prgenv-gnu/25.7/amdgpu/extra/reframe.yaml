@@ -5,6 +5,7 @@ default:
     - openmp
     - prgenv
     - serial
+    - cray-mpich
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
