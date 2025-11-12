@@ -9,6 +9,7 @@ gcc-env:
   - hip@6.3.3 ^mesa@23.3.6
   - cosma +gpu_direct ^netlib-scalapack
   - dbcsr@develop #develop branch for mi300 support
+  - spla
   - cp2k@2025.2 +cosma +spla #+sirius
   variants:
   - amdgpu_target=gfx942
