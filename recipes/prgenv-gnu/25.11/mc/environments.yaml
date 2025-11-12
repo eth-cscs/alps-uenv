@@ -22,6 +22,7 @@ gcc-env:
   - lz4
   - meson
   - netcdf-c build_system=cmake
+  - netcdf-cxx
   - netcdf-cxx4
   - netcdf-fortran
   - ninja
