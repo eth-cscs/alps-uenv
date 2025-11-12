@@ -17,6 +17,7 @@ paraview-osmesa:
             - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
           prepend_path:
             # note: these are needed because paraview is not installed by spack
+            - PATH: /user-environment/paraview/bin
             - LD_LIBRARY_PATH: /user-environment/paraview/lib
             - LD_LIBRARY_PATH: /user-environment/paraview/lib64
             # note: these are needed because paraview plugins are not installed by spack
@@ -25,8 +26,6 @@ paraview-osmesa:
             # TODO are openfoam related vars needed?
             # PV_PLUGIN_PATH: ${@PARAVIEW_PLUGINS_DIR@}:${@PARAVIEW_PLUGINS_DIR@}/lib64
             # PV_LIBRARY_PATH: ${@PARAVIEW_PLUGINS_DIR@}/NVIDIA-IndeX/lib
-          prepend_path:
-            - PATH: /user-environment/paraview/bin
     develop:
       exclude: ["paraview-osmesa"]
       uenv:
