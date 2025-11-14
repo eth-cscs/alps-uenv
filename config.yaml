@@ -222,35 +222,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-  linaro-forge:
-    "25.0":
+  linaro_forge:
+    "25.1":
       recipes:
-        zen2: "25.0"
-        gh200: "25.0"
+        zen2: "25.1"
+        gh200: "25.1"
       deploy:
         eiger: [zen2]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.2":
-      recipes:
-        zen2: "24.1.2"
-        gh200: "24.1.2"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.1":
-      recipes:
-        zen2: "24.1.1"
-        gh200: "24.1.1"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]

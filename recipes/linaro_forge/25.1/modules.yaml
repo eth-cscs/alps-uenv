@@ -12,12 +12,12 @@ modules:
     arch_folder: false
     # Where to install modules
     roots:
-      tcl: /user-tools/modules
+      tcl: /user-environment/modules
     tcl:
       all:
         autoload: none
       hash_length: 0
       exclude_implicits: true
-      exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
+      exclude: []
       projections:
         all: '{name}/{version}'
