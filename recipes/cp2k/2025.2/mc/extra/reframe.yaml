@@ -17,7 +17,7 @@ modules:
   views:
     - modules
   activation:
-    - module load cmake cosma costa cray-mpich dbcsr elpa fftw gcc hdf5 libint libxc netlib-scalapack ninja openblas plumed sirius spfft spglib spla dla-future-fortran
+    - module load blaspp blt boost camp cmake cosma costa cp2k cray-mpich dbcsr dftd4 dla-future-fortran dla-future eigen elpa fftw fmt gcc hdf5 hwloc lapackpp libfabric libint libtool libvori libxc mctc-lib mimalloc multicharge netlib-scalapack openblas pika plumed sirius spdlog spfft spglib spla umpire whip
 run:
   features:
     - cp2k
