@@ -1,9 +1,11 @@
 gcc-env:
-  compiler: [gcc]
+  compiler: [gcc, llvm-amdgpu]
   network:
       mpi: cray-mpich@8.1.32+rocm
       specs: [ 'libfabric@2.3 +rocm' ]
   unify: when_possible
+  duplicates:
+    strategy: full
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
@@ -27,21 +29,21 @@ gcc-env:
   - hipcub
   - llvm-amdgpu
   # rocm packages
-  - rocblas
+  - rocblas ^py-msgpack %cxx=gcc
   - rocfft
-  - rocm-cmake
+  - rocm-cmake %cxx=gcc
   - rocm-openmp-extras
-  - rocm-core
+  - rocm-core %cxx=gcc
   - rocminfo
   - rocprim
   - rocprofiler-dev
-  - rocprofiler-register
+  - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
   - rocprofiler-systems@6.3.3+internal-dyninst
   - rocrand
   - rocsolver
   - rocsparse
   - rocthrust
-  - roctracer-dev-api
+  - roctracer-dev-api %cxx=gcc
   - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
@@ -52,6 +54,11 @@ gcc-env:
   - hipsparse
   - hipfft
   - hipblas-common
+  # networking
+  - rccl
+  # commits pinned for reproducibility, not bugs; update when updating recipe
+  - aws-ofi-rccl@git.6dae1b0d588c27689ba6daa32710359ea96de78c=cxi
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu
   variants:
   - +mpi
   - +rocm
