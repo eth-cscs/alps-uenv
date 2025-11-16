@@ -40,6 +40,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
     version(
+        "2025.03.2",
+        tag="v2025.03.2",
+        commit="6e36a94380adbe88fed11a3213fc08461428ece0",
+        submodules=submodules,
+    )
+    version(
         "2025.03.0",
         tag="v2025.03.0",
         commit="1d70abf171474d331f1409908bdf1b1c3fe19222",
@@ -398,6 +404,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         # C++17
         if spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
+
+        #cscs:
+        #if spec.satisfies("@develop"):
+        #    entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
         # C++14
         elif spec.satisfies("@0.14.0:"):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
