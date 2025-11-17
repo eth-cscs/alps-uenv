@@ -14,82 +14,78 @@ gcc-env:
   - cmake
   - dla-future +miniapps +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack
   - dla-future-fortran
-  # - eigen
-  # - fftw
+  - eigen
+  - fftw
   - fmt
-  # - gsl
-  - hdf5 +fortran +hl
+  - gsl
+  - hdf5 +cxx +fortran +hl
   - hwloc
-  # - hypre +superlu-dist
+  - hypre +superlu-dist
   # - kokkos +aggressive_vectorization ~alloc_async +apu cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   # - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
-  # - kokkos-tools +mpi +papi
+  - kokkos-tools +mpi +papi
   - lapackpp
   - libtree
   - lua
   - lz4
-  # - meson
-  # - metis
+  - meson
+  - metis
   - mimalloc
-  # - mumps +parmetis +ptscotch
-  # - nco
+  - mumps +parmetis +ptscotch
+  - nco
   - netcdf-c
   - netlib-scalapack
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks
-  # - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
-  # - papi ~rocm
-  # - parmetis
-  # - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
+  - papi ~rocm
+  - parmetis
+  - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - pika malloc=mimalloc +mpi +stdexec
-  # - python
-  # - slepc
+  - python
+  - slepc
   - spdlog
   - stdexec@25.03.rc1 # https://github.com/pika-org/pika/issues/1448
-  # - suite-sparse
-  # - superlu
-  # - superlu-dist
-  # - swig
+  - suite-sparse
+  - superlu
+  - superlu-dist
+  - swig
   # https://github.com/spack/spack-packages/issues/1961
   # - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - umpire
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - whip
-  - rccl
-  # - nccl-tests # TODO
-  # - aws-ofi-rccl@cxi # TODO
-  # primary hip packages
-  - hip@6.3 ^mesa@23.3.6 ~llvm
+  - hip@6.3.3 ^mesa@23.3.6
   - llvm-amdgpu
   # rocm packages
-  # - rocblas
-  # - rocfft
-  # - rocm-cmake
-  # - rocm-openmp-extras
-  # - rocm-core
-  # - rocminfo
-  # - rocprim
-  # - rocprofiler-dev
-  # - rocprofiler-register
-  # - rocprofiler-systems@6.3.3+internal-dyninst
-  # - rocrand
-  # - rocsolver
-  # - rocsparse
-  # - rocthrust
-  # - roctracer-dev-api
-  # - roctracer-dev
-  # - rocm-gdb
-  # - rocm-debug-agent
+  - rocblas
+  - rocfft
+  - rocm-cmake
+  - rocm-openmp-extras
+  - rocm-core
+  - rocminfo
+  - rocprim
+  - rocprofiler-dev
+  - rocprofiler-register
+  - rocprofiler-systems@6.3.3+internal-dyninst
+  - rocrand
+  - rocsolver
+  - rocsparse
+  - rocthrust
+  - roctracer-dev-api
+  - roctracer-dev
+  - rocm-gdb
+  - rocm-debug-agent
   # hip packages
-  # - hipblas
-  # - hipblaslt
-  # - hipcub
-  # - hiprand
-  # - hipsparse
-  # - hipfft
-  # - hipblas-common
+  - hipblas
+  - hipblaslt
+  - hipcub
+  - hiprand
+  - hipsparse
+  - hipfft
+  - hipblas-common
   variants:
   - +mpi
   - +rocm
