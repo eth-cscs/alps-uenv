@@ -21,9 +21,10 @@ gcc-env:
   - hdf5 +cxx +fortran +hl
   - hwloc
   - hypre +superlu-dist
+  # Kokkos currently disabled because it can only be compiled for one GPU arch at a time
   # - kokkos +aggressive_vectorization ~alloc_async +apu cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   # - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
-  - kokkos-tools +mpi +papi
+  # - kokkos-tools +mpi +papi
   - lapackpp
   - libtree
   - lua
@@ -51,7 +52,7 @@ gcc-env:
   - superlu
   - superlu-dist
   - swig
-  # https://github.com/spack/spack-packages/issues/1961
+  # Trilinos disabled because Kokkos disabled
   # - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - umpire
   - zlib-ng
@@ -89,7 +90,7 @@ gcc-env:
   variants:
   - +mpi
   - +rocm
-  - amdgpu_target=gfx942,gfx90a # TODO: Must only use gfx942 for kokkos +apu. Compile for both somehow?
+  - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
   views:
     default:
