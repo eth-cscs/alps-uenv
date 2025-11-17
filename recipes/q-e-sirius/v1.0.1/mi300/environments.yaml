@@ -2,6 +2,7 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: cray-mpich@8.1.32+rocm
+      specs: [ 'libfabric@2.3 +rocm' ]
   unify: when_possible
   specs:
   - q-e-sirius@1.0.1 hdf5=parallel
