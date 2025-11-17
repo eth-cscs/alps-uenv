@@ -20,7 +20,8 @@ gcc-env:
   - gsl
   - hdf5 +cxx +fortran +hl
   - hwloc
-  - hypre +superlu-dist
+  # hypre disabled as it fails to build
+  # - hypre +superlu-dist
   # Kokkos currently disabled because it can only be compiled for one GPU arch at a time
   # - kokkos +aggressive_vectorization ~alloc_async +apu cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   # - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
@@ -42,7 +43,8 @@ gcc-env:
   - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
   - papi ~rocm
   - parmetis
-  - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  # ~kokkos and ~hypre since both disabled
+  - petsc +batch +hwloc ~hypre ~kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - pika malloc=mimalloc +mpi +stdexec
   - python
   - slepc
