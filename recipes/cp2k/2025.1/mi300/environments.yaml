@@ -10,7 +10,7 @@ gcc-env:
   - cosma +gpu_direct ^netlib-scalapack
   - dbcsr@develop #develop branch for mi300 support
   - spla +fortran
-  - cp2k@2025.2 +cosma +spla #+sirius
+  - cp2k@master +cosma +spla #+sirius
   variants:
   - amdgpu_target=gfx942
   - amdgpu_target_sram_ecc=gfx942
