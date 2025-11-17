@@ -2,7 +2,7 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: cray-mpich@8.1.32+rocm
-  unify: when_possible
+  unify: true
   specs:
   #- sirius@7.8 +fortran +pugixml +magma
   - libunwind@1.7-stable
