@@ -7,4 +7,5 @@ spack:
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: f5e96586306f35c10c473b9fc2f33e561f711373
+modules: false
 version: 2
