@@ -1,0 +1,35 @@
+gromacs:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  unify: when_possible
+  specs:
+  - cmake
+  - cuda@12.9
+  - blas
+  - lapack
+  - hwloc
+  - fftw
+  - python@3.12
+  - py-torch@2.8.0 ~nccl ~distributed
+  - plumed@2.10 +pytorch +mpi
+  - gromacs@2025.0 +cuda +plumed +mpi +hwloc
+  packages:
+  - perl
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    develop:
+      exclude: ['gromacs']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    gromacs:
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
