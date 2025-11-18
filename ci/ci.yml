@@ -7,7 +7,7 @@ pipeline-configure:
   tags: [languard-k8s-lightweight]
   image: docker.io/python:latest
   script:
-    - git clone --signle-branch --branch cp2k-2025.2 https://github.com/RMeli/uenv-pipeline.git
+    - git clone --single-branch --branch cp2k-2025.2 https://github.com/RMeli/uenv-pipeline.git
     - ./uenv-pipeline/configure-pipeline -c./config.yaml -r./recipes -s$system -u$uenv -a$uarch -o./pipeline.yml
   artifacts:
     paths:
