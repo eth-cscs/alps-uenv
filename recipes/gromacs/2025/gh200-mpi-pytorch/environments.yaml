@@ -1,4 +1,4 @@
-gromacs:
+gromacs-pytorch:
   compiler: [gcc]
   network:
     mpi: cray-mpich@8.1.32 +cuda
