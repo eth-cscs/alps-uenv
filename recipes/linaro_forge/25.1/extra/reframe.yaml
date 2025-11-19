@@ -5,4 +5,5 @@ default:
    cc: gcc
    cxx: g++
    ftn: gfortran
-   activation: /user-tools/activate
+   views:
+     - default
