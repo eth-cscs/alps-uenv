@@ -202,9 +202,11 @@ uenvs:
         zen2: "25.10/mc"
         zen3: "25.10/mc"
         gh200: "25.10/gh200"
+        mi200: "25.10/amdgpu"
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        beverin: [mi200]
   linalg-complex:
     "24.11":
       recipes:
