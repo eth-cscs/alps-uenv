@@ -10,3 +10,8 @@ linaro-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+            set:
+            - UENV_DDT_VERSION: "25.1"
+            prepend_path:
+            - PATH: "/user-tools/env/forge/bin"
