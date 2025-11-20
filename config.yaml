@@ -334,6 +334,11 @@ uenvs:
         mi200: 25.7/amdgpu
       deploy:
         beverin: [mi200]
+    "25.12":
+      recipes:
+        mi200: 25.12/amdgpu
+      deploy:
+        beverin: [mi200]
   prgenv-nvfortran:
     "24.11":
       recipes:

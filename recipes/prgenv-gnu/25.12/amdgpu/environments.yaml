@@ -24,7 +24,7 @@ gcc-env:
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - hip@6.3.3 ^mesa@23.3.6
+  - hip@7.0.2 ^mesa@23.3.6
   - hdf5+mpi
   - hipcub
   - llvm-amdgpu
@@ -38,7 +38,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
-  - rocprofiler-systems@6.3.3+internal-dyninst
+  - rocprofiler-systems@7.0.2 +internal-dyninst
   - rocrand
   - rocsolver
   - rocsparse
