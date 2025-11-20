@@ -1,0 +1,67 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32+rocm
+      specs: [ 'libfabric@2.3 +rocm' ]
+  unify: when_possible
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - python@3
+  - zlib-ng
+  # add GPU-specific packages here, for easier comparison with mc version
+  - hip@6.3.3 ^mesa@23.3.6
+  - hdf5+mpi
+  - hipcub
+  - llvm-amdgpu
+  # rocm packages
+  - rocblas
+  - rocfft
+  - rocm-cmake
+  - rocm-openmp-extras
+  - rocm-core
+  - rocminfo
+  - rocprim
+  - rocprofiler-dev
+  - rocprofiler-register
+  - rocprofiler-systems@6.3.3+internal-dyninst
+  - rocrand
+  - rocsolver
+  - rocsparse
+  - rocthrust
+  - roctracer-dev-api
+  - roctracer-dev
+  - rocm-gdb
+  - rocm-debug-agent
+  # hip packages
+  - hipblas
+  - hipblaslt
+  - hiprand
+  - hipsparse
+  - hipfft
+  - hipblas-common
+  variants:
+  - +mpi
+  - +rocm
+  - amdgpu_target=gfx942,gfx90a
+  - amdgpu_target_sram_ecc=gfx942,gfx90a
+  views:
+    default:
+      link: roots
+      exclude: ["llvm"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
