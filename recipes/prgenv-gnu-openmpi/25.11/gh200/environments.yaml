@@ -3,7 +3,7 @@ gcc-env:
   network:
       mpi: openmpi@5
       specs:
-      - libfabric@2.3 +gdrcopy fabrics=lnx,shm,cxi # TODO: Add to/update alps-cluster-config
+      - libfabric@2.3 +gdrcopy fabrics=lnx,shm,cxi,xpmem # TODO: Add to/update alps-cluster-config
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
