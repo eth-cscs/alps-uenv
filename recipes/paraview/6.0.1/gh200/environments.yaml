@@ -40,9 +40,6 @@ paraview-cuda:
   # Build tools
   - cmake
   - ninja
-  # llvm@18 is required by ispc
-  # llvm@20 conflicts with cuda@12
-  - llvm@18 targets=aarch64
 
   # c++ helpers
   - fmt@11

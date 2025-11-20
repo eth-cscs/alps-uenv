@@ -12,5 +12,10 @@ packages:
     require: egl
   llvm:
     require:
+      - targets=aarch64
+      # note:
+      # - llvm@18 is required by ispc
+      # - llvm@20 conflicts with cuda@12
+      - "@18"
       - ~gold
       - ~cuda
