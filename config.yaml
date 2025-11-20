@@ -430,6 +430,7 @@ uenvs:
         gh200: 6.0.1/gh200
       deploy:
         daint: [gh200]
+        santis: [gh200]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200
