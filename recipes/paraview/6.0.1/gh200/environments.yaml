@@ -12,6 +12,7 @@ paraview-cuda:
           LD_LIBRARY_PATH: [lib, lib64]
         env_vars:
           set:
+            - CUDAARCHS: "90a"
             # note: these are needed for the launch script, but it might change
             - PARAVIEW_INSTALL_DIR: /user-environment/paraview
             - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
