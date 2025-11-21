@@ -34,7 +34,7 @@ gcc-env:
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   - nccl-tests
-  - cuda
+  - cuda@12
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu
