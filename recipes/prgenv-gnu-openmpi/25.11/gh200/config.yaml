@@ -6,5 +6,5 @@ spack:
     repo: https://github.com/spack/spack-packages.git
     commit: a896fdbe5d01981cbc6f9b5139a5d551ac2fe248 # develop on 2025-11-21
 store: /user-environment
-description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
+description: GNU Compiler toolchain with OpenMPI, Python, CMake and other development tools.
 version: 2
