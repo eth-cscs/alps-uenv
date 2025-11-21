@@ -15,4 +15,5 @@ class Libfabric(BuiltinLibfabric):
     # The patch may not apply for all versions (tested with 2.3.1), but there
     # is no version constraint as the patch is essential. Builds should fail if
     # the patch doesn't apply.
-    patch("issue-11231-cuda-sync.patch", when="fabrics=lnx")
+    # patch("issue-11231-cuda-sync.patch", when="fabrics=lnx")
+    pass
