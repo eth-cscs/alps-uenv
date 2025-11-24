@@ -26,6 +26,7 @@ paraview-cuda:
             # note: these are needed because paraview plugins are not installed by spack
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib64
+            - LD_LIBRARY_PATH: /user-environment/paraview-plugins/nvidia-index/lib
             # TODO are openfoam related vars needed?
             # PV_PLUGIN_PATH: ${@PARAVIEW_PLUGINS_DIR@}:${@PARAVIEW_PLUGINS_DIR@}/lib64
             # PV_LIBRARY_PATH: ${@PARAVIEW_PLUGINS_DIR@}/NVIDIA-IndeX/lib

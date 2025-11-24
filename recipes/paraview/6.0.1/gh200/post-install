@@ -67,20 +67,6 @@ wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVI
 tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
 # =====================================
-SECTION "download + extract nvidia index libs"
-DOWNLOAD_NVINDEX_WGET=true
-NVINDEX_ARCH=-aarch64
-NVINDEX_FILENAME=nvidia-index-libs-6.0.0.20250604-linux${NVINDEX_ARCH}
-NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-if [[ $DOWNLOAD_NVINDEX_WGET == "true" ]]; then
-  wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $BUILD_ROOT/$NVINDEX_TARBALL
-else
-  # TODO why should we prefer the jfrog cache?
-  curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $BUILD_ROOT/$NVINDEX_TARBALL
-fi
-tar --directory $PARAVIEW_PLUGINS_DIR -xf $BUILD_ROOT/$NVINDEX_TARBALL
-
-# =====================================
 SECTION "configure paraview build..."
 mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR
 
@@ -122,7 +108,7 @@ SECTION "build and install paraview"
 ninja install
 
 # =====================================
-SECTION "build gadget plugin"
+SECTION "Install ParaView Plugin: Gadget Reader"
 git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
 mkdir $BUILD_ROOT/ParaViewGadgetPlugin
 cd    $BUILD_ROOT/ParaViewGadgetPlugin
@@ -134,14 +120,21 @@ cmake -G Ninja \
 ninja install
 
 # =====================================
+SECTION "Install ParaView Plugin: NVIDIA IndeX"
+
+mkdir -p $PARAVIEW_PLUGINS_DIR/nvidia-index
+
+NVINDEX_FILENAME=nvidia-index-libs-6.0.0.20250604-linux-aarch64.tar.bz2
+wget https://www.paraview.org/files/dependencies/$NVINDEX_FILENAME -O $BUILD_ROOT/nvidia-index.tar.bz2
+tar --strip-components 1 --file $BUILD_ROOT/nvidia-index.tar.bz2 --directory $PARAVIEW_PLUGINS_DIR/nvidia-index --extract
+
+# clean up extended attributes not supported on linux (not needed, just cleanup)
+find $PARAVIEW_PLUGINS_DIR/nvidia-index -name "._*" -delete
+
+# =====================================
 SECTION "set permissions"
 chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
-
-# =====================================
-# TODO check if we can avoid this and every user have to setup their own license
-SECTION "download nvindex license file"
-curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
 
 # =====================================
 cp ${RECIPE}/scripts/rc-submit-pvserver.sh    ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh
