@@ -2,6 +2,8 @@ default:
   features:
     - rocm
     - mpi
+    - rccl
+    - rccl-tests
     - openmp
     - prgenv
     - serial
