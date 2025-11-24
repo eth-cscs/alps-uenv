@@ -1,0 +1,17 @@
+linaro-env:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - linaro-forge@25.1 +accept-eula
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+            set:
+            - UENV_DDT_VERSION: "25.1"
+            prepend_path:
+            - PATH: "/user-tools/env/forge/bin"
