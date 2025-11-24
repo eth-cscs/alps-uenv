@@ -522,6 +522,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="@=2025.1",
     )
 
+    # Ensure gcc is used as the linker (as opposed to clang)
+    patch("gcc_linker.patch")
+
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
