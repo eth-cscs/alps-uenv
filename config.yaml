@@ -163,6 +163,11 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         beverin: [mi300]
+    "2025.2":
+      recipes:
+        mi300: 2025.2/mi300
+      deploy:
+        beverin: [mi300]
   icon-wcp:
     "v1":
       recipes:
