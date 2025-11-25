@@ -22,7 +22,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v2'
-          SLURM_ACCOUNT: ''
+          SLURM_ACCOUNT: 'a-csstaff'
     runner: f7t
   clariden:
     targets:
@@ -202,9 +202,11 @@ uenvs:
         zen2: "25.10/mc"
         zen3: "25.10/mc"
         gh200: "25.10/gh200"
+        mi200: "25.10/amdgpu"
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        beverin: [mi200]
   linalg-complex:
     "24.11":
       recipes:
@@ -222,35 +224,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-  linaro-forge:
-    "25.0":
+  linaro_forge:
+    "25.1":
       recipes:
-        zen2: "25.0"
-        gh200: "25.0"
+        zen2: "25.1"
+        gh200: "25.1"
       deploy:
         eiger: [zen2]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.2":
-      recipes:
-        zen2: "24.1.2"
-        gh200: "24.1.2"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.1":
-      recipes:
-        zen2: "24.1.1"
-        gh200: "24.1.1"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
@@ -341,6 +321,18 @@ uenvs:
         mi200: 25.7/amdgpu
       deploy:
         beverin: [mi200]
+    "25.11":
+      recipes:
+        zen2: 25.11/mc
+        zen3: 25.11/mc
+        gh200: 25.11/gh200
+        a100: 25.11/a100
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        bristen: [a100]
+        eiger: [zen2]
   prgenv-gnu-openmpi:
     "25.11":
       recipes:
