@@ -224,7 +224,7 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
-  linaro_forge:
+  linaro-forge:
     "25.1":
       recipes:
         zen2: "25.1"
