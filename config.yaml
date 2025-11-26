@@ -345,6 +345,13 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
+    "v2.8.0":
+      recipes:
+        gh200: v2.8.0/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
   quantumespresso:
     "v7.1":
       recipes:
