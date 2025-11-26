@@ -29,7 +29,7 @@ gcc-env:
   - hipcub
   - llvm-amdgpu
   # rocm packages
-  - rocblas ^py-msgpack %cxx=gcc
+  - rocblas ~tensile ^py-msgpack %cxx=gcc # TODO: enable tensile
   - rocfft
   - rocm-cmake %cxx=gcc
   - rocm-openmp-extras
