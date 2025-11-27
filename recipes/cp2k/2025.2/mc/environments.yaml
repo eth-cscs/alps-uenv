@@ -18,7 +18,8 @@ cp2k:
   - libint
   - eigen@3
   # pika
-  - pika@0.34.0 malloc=mimalloc ~stdexec
+  - pika@0.34.0 malloc=mimalloc +stdexec
+  - stdexec@25.03.rc1
   - mimalloc
   - boost
   - fmt
