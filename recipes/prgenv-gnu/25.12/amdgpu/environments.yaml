@@ -38,6 +38,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
+  - rocprofiler-sdk
   # - rocprofiler-systems@7.0.2 +internal-dyninst # TODO: enable
   - rocrand
   - rocsolver
