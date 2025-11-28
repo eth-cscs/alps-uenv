@@ -66,6 +66,23 @@ cd $SRC_ROOT
 wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
+# Apply CDIReader patch to enable lazy loading of grids
+patch -p 1 -d $PARAVIEW_SRC_DIR <<-EOF
+		diff --git a/Plugins/CDIReader/Reader/vtkCDIReader.cxx b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		index 7d6e83d..cb191de 100644
+		--- a/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		+++ b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		@@ -222,6 +222,8 @@ vtkCDIReader::vtkCDIReader() : Internals(new Internal()) {
+		 
+		   vtkDebugMacro("MAX_VARS:" << MAX_VARS);
+		   vtkDebugMacro("Created vtkCDIReader");
+		+
+		+  cdiDefGlobal("NETCDF_LAZY_GRID_LOAD", true);
+		 }
+		 
+		 //----------------------------------------------------------------------------
+EOF
+
 # =====================================
 SECTION "configure paraview build..."
 mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR
