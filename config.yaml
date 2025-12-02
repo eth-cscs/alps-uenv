@@ -327,9 +327,9 @@ uenvs:
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
-        zen2: 25.11/mc
-        zen3: 25.11/mc
-        gh200: 25.11/gh200
+        zen2: 25.12/mc
+        zen3: 25.12/mc
+        gh200: 25.12/gh200
       deploy:
         clariden: [gh200]
         daint: [gh200]
