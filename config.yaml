@@ -324,6 +324,18 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "26.2":
+      recipes:
+        zen2: 26.2/mc
+        zen3: 26.2/mc
+        gh200: 26.2/gh200
+        a100: 26.2/a100
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        bristen: [a100]
+        eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
       recipes:
