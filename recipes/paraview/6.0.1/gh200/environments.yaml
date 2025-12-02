@@ -27,6 +27,8 @@ paraview-cuda:
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib64
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/nvidia-index/lib
+            # note: add helper scripts for launch
+            - PATH: /user-environment/paraview/helpers
             # TODO are openfoam related vars needed?
             # PV_PLUGIN_PATH: ${@PARAVIEW_PLUGINS_DIR@}:${@PARAVIEW_PLUGINS_DIR@}/lib64
             # PV_LIBRARY_PATH: ${@PARAVIEW_PLUGINS_DIR@}/NVIDIA-IndeX/lib

@@ -154,11 +154,11 @@ chmod -R a+r $PARAVIEW_INSTALL_DIR
 chmod -R a+r $PARAVIEW_PLUGINS_DIR
 
 # =====================================
-cp ${RECIPE}/scripts/rc-submit-pvserver.sh    ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh
-cp ${RECIPE}/scripts/gpu_wrapper.sh           ${PARAVIEW_INSTALL_DIR}/gpu_wrapper.sh
+SECTION "install helper scripts"
+cp -r ${RECIPE}/helpers ${PARAVIEW_INSTALL_DIR}/
 
 # =====================================
-SECTION "Cleanup"
+SECTION "cleanup"
 rm -rf ${UENV_STORE}/temp
 
 # =====================================

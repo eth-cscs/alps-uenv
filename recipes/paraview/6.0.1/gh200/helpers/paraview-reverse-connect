@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo "Usage: $0 <uenv-label> <server-port> [<srun-option>]*"
+  exit 1
+}
+
+if [ "$#" -lt 2 ]; then
+  usage
+fi
+
+UENV=$1
+PORT=$2
+
+shift 2
+
+# Note: check that uenv exists and it is uniquely identified
+UENV_LIST=`uenv image ls --no-header $UENV`
+case `echo "$UENV_LIST" | wc -l` in
+  1)
+    echo "Using uenv image: $UENV"
+    ;;
+  0)
+    echo "Error: uenv image '$UENV' not found."
+    exit 1
+    ;;
+  *)
+    echo "Error: uenv image '$UENV' does not uniquely identify a single uenv. Please use a more specific label."
+    echo "$UENV_LIST"
+    exit 1
+    ;;
+esac
+
+# Note: check if it is a valid port
+if ! [[ $PORT =~ ^[0-9]+$ ]]; then
+  echo "Error: server-port must be an integer (it cannot be '$PORT')."
+  usage
+fi
+
+GPU_WRAPPER="$(dirname `realpath $0`)/../gpu_wrapper.sh"
+CMD="$GPU_WRAPPER pvserver --reverse-connection --client-host=`hostname` --server-port=$PORT"
+
+srun --uenv $UENV --view default $* -- $CMD
