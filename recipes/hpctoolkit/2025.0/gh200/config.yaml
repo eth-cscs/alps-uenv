@@ -1,0 +1,12 @@
+name: hpctoolkit
+store: /user-tools
+description: "HPCToolkit performance tool"
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.0
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: d0b0e511376f74be2cd3a2878bed781d39a6066a
+    # commit: releases/v2025.07
+modules: true
+version: 2
