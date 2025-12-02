@@ -4,7 +4,7 @@ spack:
   commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: a896fdbe5d01981cbc6f9b5139a5d551ac2fe248 # develop on 2025-11-21
+    commit: f905a6d4eb32ba87eb7c98d4e6a82681d6f7e9a8 # develop on 2025-12-02
 store: /user-environment
 description: GNU Compiler toolchain with OpenMPI, Python, CMake and other development tools.
 version: 2
