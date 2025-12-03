@@ -5,6 +5,6 @@ spack:
   commit: v1.0.2
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: ef76b6e51ddbdd6e039b532b81ab7f6e7b72d34e # develop-25-11-27
+    commit: 3ca49ba10011b5f8a57d201c3a239e63922cf9bb # develop-25-10-28
 modules: True
 version: 2
