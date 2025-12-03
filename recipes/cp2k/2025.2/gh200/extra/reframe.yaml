@@ -26,5 +26,7 @@ run:
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
+  extras:
+    version: v2025.2
   views:
     - cp2k
