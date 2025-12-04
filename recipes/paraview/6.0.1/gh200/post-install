@@ -149,13 +149,8 @@ tar --strip-components 1 --file $BUILD_ROOT/nvidia-index.tar.bz2 --directory $PA
 find $PARAVIEW_PLUGINS_DIR/nvidia-index -name "._*" -delete
 
 # =====================================
-SECTION "set permissions"
-chmod -R a+r $PARAVIEW_INSTALL_DIR
-chmod -R a+r $PARAVIEW_PLUGINS_DIR
-
-# =====================================
 SECTION "install helper scripts"
-cp -r ${RECIPE}/helpers ${PARAVIEW_INSTALL_DIR}/
+cp -r ${RECIPE}/helpers ${UENV_STORE}/
 
 # =====================================
 SECTION "cleanup"
