@@ -22,7 +22,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v2'
-          SLURM_ACCOUNT: ''
+          SLURM_ACCOUNT: 'a-csstaff'
     runner: f7t
   clariden:
     targets:
@@ -57,6 +57,19 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
+    runner: f7t
+  beverin:
+    targets:
+      -
+        uarch: 'mi200'
+        partition: 'mi200'
+        variables:
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          SLURM_TIMELIMIT: '500'
+          SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
   climana:
@@ -184,6 +197,16 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "25.10":
+      recipes:
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
+        mi200: "25.10/amdgpu"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        beverin: [mi200]
   linalg-complex:
     "24.11":
       recipes:
@@ -193,35 +216,21 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "25.10":
+      recipes:
+        zen2: "25.10/mc"
+        zen3: "25.10/mc"
+        gh200: "25.10/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   linaro-forge:
-    "25.0":
+    "25.1":
       recipes:
-        zen2: "25.0"
-        gh200: "25.0"
+        zen2: "25.1"
+        gh200: "25.1"
       deploy:
         eiger: [zen2]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.2":
-      recipes:
-        zen2: "24.1.2"
-        gh200: "24.1.2"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
-    "24.1.1":
-      recipes:
-        zen2: "24.1.1"
-        gh200: "24.1.1"
-      deploy:
-        eiger: [zen2]
-        # bristen: [a100]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
@@ -246,15 +255,12 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   netcdf-tools:
-    "2024":
+    "2025":
       recipes:
-        zen2: '2024/x86'
-        zen3: '2024/x86'
-        a100: '2024/x86'
-        gh200: '2024/arm64'
-      deploy:
-        eiger: [zen2]
-        balfrin: [zen3]
+        zen2: '2025/x86_64'
+        zen3: '2025/x86_64'
+        a100: '2025/x86_64'
+        gh200: '2025/aarch64'
   # OpenFOAM Foundation
   openfoam-org:
     "8":
@@ -300,6 +306,23 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
+        eiger: [zen2]
+    "25.7":
+      recipes:
+        mi200: 25.7/amdgpu
+      deploy:
+        beverin: [mi200]
+    "25.11":
+      recipes:
+        zen2: 25.11/mc
+        zen3: 25.11/mc
+        gh200: 25.11/gh200
+        a100: 25.11/a100
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        bristen: [a100]
         eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
@@ -414,8 +437,8 @@ uenvs:
   insitu_ascent:
     "0.9.5":
       recipes:
-        gh200: 0.9.5/gh200   
-      deploy:  
+        gh200: 0.9.5/gh200
+      deploy:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]

@@ -9,7 +9,7 @@ nvfortran:
   - cuda@12.9
   - fftw +openmp
   - fmt
-  - hdf5 +fortran+threadsafe+hl
+  - hdf5 +cxx+fortran+threadsafe+hl
   - libtree
   - lua
   - libtree
