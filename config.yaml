@@ -324,6 +324,11 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "25.12":
+      recipes:
+        mi200: 25.12/amdgpu
+      deploy:
+        beverin: [mi200]
   prgenv-nvfortran:
     "24.11":
       recipes:
