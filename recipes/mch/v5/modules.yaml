@@ -11,12 +11,8 @@ modules:
       - PKG_CONFIG_PATH
     lib64/pkgconfig:
       - PKG_CONFIG_PATH
-
   default:
     arch_folder: false
-    # Where to install modules
-    roots:
-      tcl: /user-environment/modules
     tcl:
       all:
         autoload: none

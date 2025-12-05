@@ -6,11 +6,8 @@ modules:
       - LD_LIBRARY_PATH
     lib64:
       - LD_LIBRARY_PATH
-
   default:
     arch_folder: false
-    roots:
-      tcl: /user-tools/modules
     tcl:
       all:
         autoload: none
