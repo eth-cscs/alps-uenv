@@ -1,14 +1,14 @@
 default:
   features:
-    - rocm
+    - cuda
     - mpi
-    - rccl
-    - rccl-tests
+    - cray-mpich
+    - nccl
+    - nccl-tests
     - openmp
+    - osu-micro-benchmarks
     - prgenv
     - serial
-    - cray-mpich
-    - osu-micro-benchmarks
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
