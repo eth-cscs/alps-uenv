@@ -21,7 +21,7 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks
-  - python@3
+  - python@3.13.8
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - hip@6.3.3 ^mesa@23.3.6
