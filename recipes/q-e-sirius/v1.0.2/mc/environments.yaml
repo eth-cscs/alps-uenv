@@ -2,9 +2,10 @@ gcc-env:
   compiler:
       - toolchain: gcc
         spec: gcc
-  mpi:
-      spec: cray-mpich@8.1.32
-  unify: when_possible
+  network:
+      mpi: cray-mpich@8.1.32
+      specs: [ 'libfabric@2.3' ]
+  unify: true
   specs:
   - q-e-sirius@1.0.2 hdf5=parallel
   - sirius@7.10.0 +nlcglib
