@@ -27,7 +27,6 @@ gcc-env:
   - hip@6.3.3 ^mesa@23.3.6
   - hdf5+mpi
   - hipcub
-  - llvm-amdgpu
   # rocm packages
   - rocblas ^py-msgpack %cxx=gcc
   - rocfft
