@@ -1,7 +1,7 @@
 gcc-env:
   compiler:
       - toolchain: gcc
-        spec: gcc@14.2.0
+        spec: gcc@13
       - toolchain: llvm-amdgpu
         spec: 'llvm-amdgpu@6.3.3 ^python@3.13.8'
   network:
