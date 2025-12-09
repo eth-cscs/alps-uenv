@@ -37,7 +37,6 @@ if ! [[ $PORT =~ ^[0-9]+$ ]]; then
   usage
 fi
 
-GPU_WRAPPER="$(dirname `realpath $0`)/bind-gpu-vtk-egl"
-CMD="$GPU_WRAPPER pvserver --reverse-connection --disable-further-connections --client-host=`hostname` --server-port=$PORT"
+CMD="pvserver --reverse-connection --disable-further-connections --client-host=`hostname` --server-port=$PORT"
 
 srun --uenv $UENV --view default $* -- $CMD
