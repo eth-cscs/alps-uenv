@@ -1,7 +1,5 @@
 gcc-env:
-  compiler:
-      - toolchain: gcc
-        spec: gcc@13
+  compiler: [gcc]
   network:
       mpi: cray-mpich@8.1.32+cuda
       specs: [ 'libfabric@2.3 +cuda' ]
