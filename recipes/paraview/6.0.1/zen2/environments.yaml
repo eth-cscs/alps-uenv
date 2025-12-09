@@ -15,6 +15,8 @@ paraview-osmesa:
             # note: these are needed for the launch script, but it might change
             - PARAVIEW_INSTALL_DIR: /user-environment/paraview
             - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
+            # note: by default use paraview catalyst implementation
+            - CATALYST_IMPLEMENTATION_PATHS: /user-environment/paraview/lib64/catalyst
           prepend_path:
             # note: these are needed because paraview is not installed by spack
             - PATH: /user-environment/paraview/bin
@@ -23,9 +25,6 @@ paraview-osmesa:
             # note: these are needed because paraview plugins are not installed by spack
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib64
-            # TODO are openfoam related vars needed?
-            # PV_PLUGIN_PATH: ${@PARAVIEW_PLUGINS_DIR@}:${@PARAVIEW_PLUGINS_DIR@}/lib64
-            # PV_LIBRARY_PATH: ${@PARAVIEW_PLUGINS_DIR@}/NVIDIA-IndeX/lib
     develop:
       exclude: ["paraview-osmesa"]
       uenv:
@@ -36,8 +35,6 @@ paraview-osmesa:
   # Build tools
   - cmake
   - ninja
-  # note: llvm@18 is required by ispc
-  - llvm@18 targets=x86
 
   # c++ helpers
   - fmt@11

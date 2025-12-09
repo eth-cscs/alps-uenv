@@ -37,8 +37,9 @@ output += "\n"
 output += "import itertools, os, sys\n"
 output += "from spack.package import *\n"
 output += "from spack_repo.builtin.build_systems.cmake import CMakePackage\n"
+output += "from spack_repo.builtin.build_systems.cuda import CudaPackage\n"
 output += "\n"
-output += f"class {pkg_class}(CMakePackage):\n"
+output += f"class {pkg_class}(CMakePackage, CudaPackage):\n"
 output += '    homepage = "https://www.dummy.org/"\n'
 output += '    url      = "https://www.dummy.org/"\n'
 output += '    git      = "https://www.dummy.org/"\n'
