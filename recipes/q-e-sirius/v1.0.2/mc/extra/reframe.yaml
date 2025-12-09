@@ -9,3 +9,5 @@ modules:
     - modules
   activation:
     - module load q-e-sirius
+  extras:
+    version: v1.0.2
