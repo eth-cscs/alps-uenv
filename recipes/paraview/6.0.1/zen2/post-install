@@ -108,7 +108,6 @@ cmake -G Ninja \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=OFF              \
-    -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     `# VTK options`                                         \
     -DVTK_USE_X=OFF                                         \
     -DVTK_OPENGL_HAS_OSMESA=ON                              \
