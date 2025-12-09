@@ -2,9 +2,9 @@ gcc-env:
   compiler:
       - toolchain: gcc
         spec: gcc@13
-  mpi:
-      spec: cray-mpich@8.1.32%gcc
-      gpu: cuda
+  network:
+      mpi: cray-mpich@8.1.32+cuda
+      specs: [ 'libfabric@2.3 +cuda' ]
   unify: true
   specs:
   - q-e-sirius@1.0.2 hdf5=parallel
