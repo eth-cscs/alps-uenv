@@ -1,4 +1,4 @@
-modules:
+run:
   features:
     - mpi
     - q-e-sirius
@@ -6,8 +6,6 @@ modules:
   cxx: mpic++
   ftn: mpifort
   views:
-    - modules
-  activation:
-    - module load q-e-sirius
+    - sirius
   extras:
     version: v1.0.2
