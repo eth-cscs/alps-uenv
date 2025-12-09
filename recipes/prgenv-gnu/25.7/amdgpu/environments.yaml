@@ -1,9 +1,5 @@
 gcc-env:
-  compiler:
-      - toolchain: gcc
-        spec: gcc@13
-      - toolchain: llvm-amdgpu
-        spec: 'llvm-amdgpu@6.3.3 ^python@3.13.8'
+  compiler: [gcc, llvm-amdgpu]
   network:
       mpi: cray-mpich@8.1.32+rocm
       specs: [ 'libfabric@2.3 +rocm' ]
@@ -68,6 +64,7 @@ gcc-env:
   - +rocm
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
+  - ^python@3.13.8
   views:
     default:
       link: roots
