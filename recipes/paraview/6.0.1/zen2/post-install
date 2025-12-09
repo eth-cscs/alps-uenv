@@ -2,40 +2,31 @@
 
 set -e
 
-# -------------------------------------
-# we output messages to stdout and also stderr to simplify debugging since logs are usually in
-# separate files and we want to see where errors are happening in the script
-function debug_output() {
-    {
-        echo ""
-        echo "-------------------------------------"
-        echo "-- $1"
-        echo "-------------------------------------"
-    } | tee >(cat >&2)
+function SECTION() {
+  echo ""
+  echo "-------------------------------------"
+  echo "-- $1"
+  echo "-------------------------------------"
 }
 
 # =====================================
-debug_output "post install hook"
-mount_path={{ env.mount }}
-echo RUNNING IN $mount_path
-
-# =====================================
-debug_output "environment variables"
+SECTION "environment variables"
 printenv
 
 # =====================================
-debug_output "set vars we need frequently"
+SECTION "set vars we need frequently"
 RECIPE_BUILD={{ env.build }}
 RECIPE=${RECIPE_BUILD}/store/meta/recipe
+UENV_STORE={{ env.mount }}
 SPACK_CMD="spack -C {{ env.config }}"
 
 # =====================================
-debug_output "source spack environment setup"
+SECTION "source spack environment setup"
 SPACK_ROOT=$( $SPACK_CMD location -r )
 source $SPACK_ROOT/share/spack/setup-env.sh
 
 # =====================================
-debug_output "convert stackinator environment into a package"
+SECTION "convert stackinator environment into a package"
 
 # SPACK_ENV_NAME should match the name of the uenv environment, because it maps to the underlying spack environment
 SPACK_ENV_NAME="paraview-osmesa"
@@ -45,8 +36,8 @@ python3 $RECIPE/scripts/env-to-package.py -f $RECIPE/environments.yaml -p $SPACK
 SPEC=$SPACK_ENV_NAME
 
 # =====================================
-debug_output "create and activate build-env"
-BUILD_ENV_DEV=$mount_path/paraview-buildenv-dev.rc
+SECTION "create and activate build-env"
+BUILD_ENV_DEV=$UENV_STORE/paraview-buildenv-dev.rc
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ add $SPEC
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ concretize
 $SPACK_CMD -e ${RECIPE_BUILD}/environments/$SPACK_ENV_NAME/ build-env --dump $BUILD_ENV_DEV $SPEC
@@ -54,17 +45,17 @@ source $BUILD_ENV_DEV
 rm $BUILD_ENV_DEV
 
 # =====================================
-debug_output "download paraview sources..."
-SRC_ROOT=$mount_path/temp/src
-BUILD_ROOT=$mount_path/temp/build
+SECTION "download paraview sources..."
+SRC_ROOT=$UENV_STORE/temp/src
+BUILD_ROOT=$UENV_STORE/temp/build
 
-# setup paths for src/build/install
 PARAVIEW_VERSION_MAIN=6.0
 PARAVIEW_VERSION_FULL=6.0.1
+
 PARAVIEW_SRC_DIR=$SRC_ROOT/ParaView-v${PARAVIEW_VERSION_FULL}
 PARAVIEW_BINARY_DIR=$BUILD_ROOT/paraview
-PARAVIEW_INSTALL_DIR=$mount_path/paraview
-PARAVIEW_PLUGINS_DIR=$mount_path/paraview-plugins
+PARAVIEW_INSTALL_DIR=$UENV_STORE/paraview
+PARAVIEW_PLUGINS_DIR=$UENV_STORE/paraview-plugins
 
 mkdir -p $SRC_ROOT
 mkdir -p $BUILD_ROOT
@@ -75,23 +66,25 @@ cd $SRC_ROOT
 wget https://www.paraview.org/files/v${PARAVIEW_VERSION_MAIN}/ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 tar --directory $SRC_ROOT -xf ParaView-v${PARAVIEW_VERSION_FULL}.tar.xz
 
-# # =====================================
-# debug_output "download + extract nvidia index libs"
-# DOWNLOAD_NVINDEX_WGET=false
-# NVINDEX_ARCH=
-# NVINDEX_FILENAME=nvidia-index-libs-5.12.0.20231121-linux${NVINDEX_ARCH}
-# NVINDEX_TARBALL=${NVINDEX_FILENAME}.tar.bz2
-# if [[ $DOWNLOAD_NVINDEX_WGET == "true" ]]; then
-#     # get nvindex plugin from official paraview source
-#     wget https://www.paraview.org/files/dependencies/$NVINDEX_TARBALL -O $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-# else
-#     # use local jfrog cache of file
-#     curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/$NVINDEX_TARBALL" -o $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
-# fi
-# tar --directory $PARAVIEW_PLUGINS_DIR -xf $PARAVIEW_PLUGINS_DIR/$NVINDEX_TARBALL
+# Apply CDIReader patch to enable lazy loading of grids
+patch -p 1 -d $PARAVIEW_SRC_DIR <<-EOF
+		diff --git a/Plugins/CDIReader/Reader/vtkCDIReader.cxx b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		index 7d6e83d..cb191de 100644
+		--- a/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		+++ b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+		@@ -222,6 +222,8 @@ vtkCDIReader::vtkCDIReader() : Internals(new Internal()) {
+		 
+		   vtkDebugMacro("MAX_VARS:" << MAX_VARS);
+		   vtkDebugMacro("Created vtkCDIReader");
+		+
+		+  cdiDefGlobal("NETCDF_LAZY_GRID_LOAD", true);
+		 }
+		 
+		 //----------------------------------------------------------------------------
+EOF
 
 # =====================================
-debug_output "configure paraview build..."
+SECTION "configure paraview build..."
 mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR
 
 cmake -G Ninja \
@@ -127,11 +120,11 @@ cmake -G Ninja \
     $PARAVIEW_SRC_DIR/
 
 # =====================================
-debug_output "build and install paraview"
+SECTION "build and install paraview"
 ninja install
 
 # =====================================
-debug_output "build gadget plugin"
+SECTION "Install ParaView Plugin: Gadget Reader"
 git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
 mkdir $BUILD_ROOT/ParaViewGadgetPlugin
 cd    $BUILD_ROOT/ParaViewGadgetPlugin
@@ -143,54 +136,12 @@ cmake -G Ninja \
 ninja install
 
 # =====================================
-debug_output "set permissions"
-chmod -R a+r $PARAVIEW_INSTALL_DIR
-chmod -R a+r $PARAVIEW_PLUGINS_DIR
-
-# # =====================================
-# debug_output "download nvindex license file"
-# curl -L "https://jfrog.svc.cscs.ch/artifactory/paraview/nvindex_config.xml" -o $PARAVIEW_PLUGINS_DIR/nvindex_config.xml
+SECTION "install helper scripts"
+cp -r ${RECIPE}/helpers ${UENV_STORE}/
 
 # =====================================
-# this runs during post install so we use $HOME to refer to /dev/shm mount
-cp ${RECIPE}/scripts/rc-submit-pvserver.sh.cmake ${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh
-
-# # =====================================
-# # this runs during post install so we use $HOME to refer to /dev/shm mount
-# debug_output "Copy and substitute vars in gpu wrapper launch script helper"
-# cmake \
-#     -DINPUT_FILE_NAME="${HOME}/store/meta/recipe/scripts/gpu_wrapper.sh.cmake" \
-#     -DOUTPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/gpu_wrapper.sh"                \
-#     -DPV_LIBRARY_PATH=${PARAVIEW_PLUGINS_DIR}/${NVINDEX_FILENAME}/lib \
-#     -P ${HOME}/store/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
-
-# # =====================================
-# # this runs during post install, but writes a new script that is run
-# # after the user has mounted the uenv, so here $HOME refers to the user's home
-# debug_output "generate final user-init script to finalize paraview launch script for remote connection"
-# 
-# cat <<EOF > $mount_path/init.sh
-# #!/bin/bash
-# echo "Copying Remote-Connection pvserver launch script to users' home directory"
-# 
-# PVSERVER_LAUNCH_SCRIPT="\${HOME}/rc-pvserver-\${CLUSTER_NAME}.sh"
-# 
-# if [ -f "\${PVSERVER_LAUNCH_SCRIPT}" ]; then
-#     echo "Backing up existing \${PVSERVER_LAUNCH_SCRIPT}"
-#     mv "\${PVSERVER_LAUNCH_SCRIPT}" "\${PVSERVER_LAUNCH_SCRIPT}.\$(date +%Y-%m-%d)"
-# fi
-# 
-# # each alps cluster has its own CLUSTER_NAME environment variable
-# # UENV_MOUNT_FILE is set by the uenv image/engine when loaded
-# cmake \
-#     -DINPUT_FILE_NAME="${PARAVIEW_INSTALL_DIR}/rc-submit-pvserver.sh"     \
-#     -DOUTPUT_FILE_NAME="\${PVSERVER_LAUNCH_SCRIPT}"                       \
-#     -DUENV_IMAGE="\${UENV_MOUNT_FILE}"                                    \
-#     -P ${mount_path}/meta/recipe/scripts/cmake-copy-substitute-vars.cmake
-# EOF
-# chmod +x $mount_path/init.sh
-
-rm -rf ${mount_path}/temp
+SECTION "cleanup"
+rm -rf ${UENV_STORE}/temp
 
 # =====================================
-debug_output "Done"
+SECTION "Done"

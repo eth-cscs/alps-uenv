@@ -12,5 +12,9 @@ packages:
     require: osmesa
   llvm:
     require:
+      - targets=x86
+      # note:
+      # - llvm@18 is required by ispc
+      - "@18"
       - ~gold
       - ~cuda
