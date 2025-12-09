@@ -1,4 +1,4 @@
-modules:
+run:
   features:
     - cuda
     - mpi
@@ -7,8 +7,6 @@ modules:
   cxx: mpic++
   ftn: mpifort
   views:
-    - modules
-  activation:
-    - module load q-e-sirius cuda
+    - sirius
   extras:
     version: v1.0.2
