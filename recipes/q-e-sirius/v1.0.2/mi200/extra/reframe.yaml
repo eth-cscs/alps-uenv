@@ -9,3 +9,5 @@ modules:
   ftn: mpifort
   views:
     - sirius
+  extras:
+    version: v1.0.2
