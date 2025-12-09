@@ -1,5 +1,9 @@
 gcc-env:
-  compiler: [gcc, llvm-amdgpu]
+  compiler:
+      - toolchain: gcc
+        spec: gcc@14.2.0
+      - toolchain: llvm-amdgpu
+        spec: 'llvm-amdgpu@6.3.3 ^python@3.13.8'
   network:
       mpi: cray-mpich@8.1.32+rocm
       specs: [ 'libfabric@2.3 +rocm' ]
