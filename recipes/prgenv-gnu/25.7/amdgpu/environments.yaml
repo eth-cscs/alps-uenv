@@ -64,7 +64,6 @@ gcc-env:
   - +rocm
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
-  - ^python@3.13.8
   views:
     default:
       link: roots
