@@ -1,4 +1,2 @@
 gcc:
   version: "13"
-llvm-amdgpu:
-  version: "6.3.3"
