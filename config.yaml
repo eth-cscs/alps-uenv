@@ -188,6 +188,14 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "20250722":
+      recipes:
+        zen2: "20250722/mc"
+        zen3: "20250722/mc"
+        gh200: "20250722/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   linalg:
     "24.11":
       recipes:
