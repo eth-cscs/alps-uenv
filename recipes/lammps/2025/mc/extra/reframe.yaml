@@ -1,0 +1,23 @@
+build-kokkos:
+  features:
+    - mpi
+    - lammps-kokkos-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-kokkos
+  extras:
+    version: 20250722
+
+run-kokkos:
+  features:
+    - mpi
+    - lammps-kokkos-prod
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - kokkos
+  extras:
+    version: 20250722

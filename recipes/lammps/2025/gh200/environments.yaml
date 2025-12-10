@@ -1,0 +1,67 @@
+lammps-kokkos:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  unify: true
+  specs:
+  - python@3.11 # distutils was removed in 3.12 (needed by ml-iap)
+  - cmake
+  - ninja
+  - cuda@12
+  - py-torch@2.8.0 ~distributed ~nccl
+  - kokkos +wrapper
+  - plumed +pytorch
+  - lammps@20250722 +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  - build_type=Release
+  views:
+    develop-kokkos:
+      link: all
+      # Exclude gcc-runtime to avoid adding a copy of libgomp.so to the view
+      exclude: ["lammps", "gcc-runtime"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    kokkos:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+lammps-gpu:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  unify: true
+  specs:
+  - python@3.11 # distutils was removed in 3.12 (needed by ml-iap)
+  - cmake
+  - ninja
+  - cuda@12
+  - py-torch@2.8.0 ~distributed ~nccl
+  - plumed +pytorch
+  - lammps@20250722 ~kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  - build_type=Release
+  views:
+    develop-gpu:
+      link: all
+      # Exclude gcc-runtime to avoid adding a copy of libgomp.so to the view
+      exclude: ["lammps", "gcc-runtime"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    gpu:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
