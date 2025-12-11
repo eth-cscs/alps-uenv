@@ -14,6 +14,10 @@ cp2k:
   - elpa
   - plumed
   - libvori
+  # py-torch
+  - py-torch ~distributed +custom-protobuf
+  - protobuf
+  - py-protobuf
   # libint
   - libint
   - eigen@3
@@ -48,7 +52,7 @@ cp2k:
   - sirius@7.9.0 +dlaf +elpa +scalapack
   # CP2K
   - dbcsr
-  - cp2k@2025.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori lmax=5 build_system=cmake
+  - cp2k@2025.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori +pytorch lmax=5 build_system=cmake
   variants:
     - +mpi
     - +openmp
