@@ -91,7 +91,7 @@ paraview-cuda:
   - zlib-ng
 
   # climate/weather
-  - cdi@2.5.0 # problem with cmake module starting from cdi@2.5.1 onward
+  - cdi
 
   # python
   - python@3.12
