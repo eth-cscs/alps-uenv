@@ -1,0 +1,1995 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../tutorial-spack/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>CSCS user day 2024 - alps-uenv</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-uenv-to-build-and-run-applications-on-alps" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="alps-uenv" class="md-header__button md-logo" aria-label="alps-uenv" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            alps-uenv
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CSCS user day 2024
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/eth-cscs/alps-uenv" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../uenv-overview/" class="md-tabs__link">
+          
+  
+  
+  uenv
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../developers-overview/" class="md-tabs__link">
+          
+  
+  
+  developers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../tutorial-overview/" class="md-tabs__link">
+          
+  
+  
+  tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="alps-uenv" class="md-nav__button md-logo" aria-label="alps-uenv" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    alps-uenv
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/eth-cscs/alps-uenv" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    uenv
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    uenv
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    uenv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-cp2k/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    cp2k
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-editors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    editors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-gromacs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gromacs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-lammps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    lammps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-linaro-forge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    linaro-forge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-namd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    namd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-prgenv-gnu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    prgenv-gnu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-prgenv-nvfortran/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    prgenv-nvfortran
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-qe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    quantumespresso
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uenv-vasp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    vasp
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    developers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developers-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    developers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pkg-application-tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    recipe writing best practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pkg-reframe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    how to write reframe tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pkg-writing-docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    writing uenv documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial-spack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    uenv and Spack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CSCS user day 2024
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CSCS user day 2024
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#logging-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logging in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-for-the-first-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setting up for the first time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#finding-and-pulling-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finding and pulling images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspecting-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inspecting uenv
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using uenv
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="using uenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#starting-a-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        starting a uenv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uenv-views-modify-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        uenv views modify the environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-mix-and-use-multipe-uenv-at-the-same-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I mix and use multipe uenv at the same time?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#it-is-possible-to-use-more-than-one-uenv-simultaneously" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        It is possible to use more than one uenv simultaneously
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-are-there-both-uenv-run-and-uenv-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        why are there both uenv run and uenv start
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-software-using-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        building software using uenv
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="building software using uenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-simple-application-using-prgenv-gnu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        a simple application using prgenv-gnu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-more-complicated-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A more complicated example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-a-python-venv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setting up a Python venv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-using-spack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        building using Spack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#logging-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logging in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-for-the-first-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setting up for the first time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#finding-and-pulling-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finding and pulling images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspecting-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inspecting uenv
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using uenv
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="using uenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#starting-a-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        starting a uenv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uenv-views-modify-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        uenv views modify the environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-i-mix-and-use-multipe-uenv-at-the-same-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I mix and use multipe uenv at the same time?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#it-is-possible-to-use-more-than-one-uenv-simultaneously" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        It is possible to use more than one uenv simultaneously
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-are-there-both-uenv-run-and-uenv-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        why are there both uenv run and uenv start
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-software-using-uenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        building software using uenv
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="building software using uenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-simple-application-using-prgenv-gnu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        a simple application using prgenv-gnu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-more-complicated-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A more complicated example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-a-python-venv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setting up a Python venv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-using-spack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        building using Spack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="using-uenv-to-build-and-run-applications-on-alps">Using uenv to build and run applications on Alps<a class="headerlink" href="#using-uenv-to-build-and-run-applications-on-alps" title="Permanent link">&para;</a></h1>
+<h2 id="logging-in">logging in<a class="headerlink" href="#logging-in" title="Permanent link">&para;</a></h2>
+<p>Once you have set up your ssh token, an easy way to simplify login in is by updating your <code>~/.ssh/config</code>:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">&gt; cat ~/.ssh/config</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">Host ela</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="go">    HostName ela.cscs.ch</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="go">    ForwardAgent yes</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="go">    User bcumming</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="go">Host daint.alps</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="go">    HostName daint-ln001.cscs.ch</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="go">    ProxyJump ela</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="go">    User bcumming</span>
+</span></code></pre></div>
+<p>Then log into one of the systems using the alias defined in the config file:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">ssh todi</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="go">ssh daint.alps</span>
+</span></code></pre></div></p>
+<h2 id="setting-up-for-the-first-time">setting up for the first time<a class="headerlink" href="#setting-up-for-the-first-time" title="Permanent link">&para;</a></h2>
+<p>First, check that uenv has been installed on the system:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">uenv --version</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="go">uenv status</span>
+</span></code></pre></div></p>
+<p>Before using uenv, a repository (repo) for storing downloaded (pulled) needs to be created.</p>
+<p>e.g. try the following command that lists the downloaded uenv:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">uenv image ls</span>
+</span></code></pre></div></p>
+<p>Create a repo in the default location
+<div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp"># </span>get<span class="w"> </span><span class="nb">help</span><span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>repo<span class="w"> </span><span class="nb">command</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="go">uenv repo --help</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="gp"># </span>find<span class="w"> </span>the<span class="w"> </span>status<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>default<span class="w"> </span>repo
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="go">uenv repo status</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="gp"># </span>create<span class="w"> </span>the<span class="w"> </span>new<span class="w"> </span>repo
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="go">uenv repo create</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="go">find $SCRATCH/.uenv-images</span>
+</span></code></pre></div></p>
+<h2 id="finding-and-pulling-images">finding and pulling images<a class="headerlink" href="#finding-and-pulling-images" title="Permanent link">&para;</a></h2>
+<p>To search for the uenv that are provided by CSCS, use the <code>uenv image find</code> command when logged in:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">uenv image find                 # all uenv on the current system</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="go">uenv image find cp2k            # all cp2k images on the current system</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="go">uenv image find cp2k/2024.2     # refine the search</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="go">uenv image find cp2k/2024.2:v1  # refine the search</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="go">uenv image find --system=eiger  # choose the system</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="go">uenv iamge find --uarch=gh200   # choose the uarch</span>
+</span></code></pre></div>
+<p>To download an image, use the <code>uenv image pull</code> command
+<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">uenv image pull editors</span>
+</span></code></pre></div></p>
+<p>There might be more than one uenv that matches the description. If so, be more specific:</p>
+<ul>
+<li>use the full disambiguated name</li>
+<li>use the image hash or id</li>
+<li>specify the uarch</li>
+</ul>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="go">uenv image pull editors/24.7:v1</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="go">uenv image pull 95fc886e35a3b27f</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="go">uenv image pull editors --system=daint</span>
+</span></code></pre></div>
+<p>Look at the repository, to see what has been downloaded:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="go">find $SCRATCH/.uenv-images</span>
+</span></code></pre></div></p>
+<p>Let's also pull another couple of uenv</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">uenv image pull prgenv-gnu/24.7:v3</span>
+</span></code></pre></div>
+<h2 id="inspecting-uenv">inspecting uenv<a class="headerlink" href="#inspecting-uenv" title="Permanent link">&para;</a></h2>
+<p>Let's say we have pulled some some uenv, e.g.:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">&gt; uenv image ls</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="go">uenv/version:tag                        uarch date       id               size</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="go">prgenv-gnu/24.7:v3                      gh200 2024-08-23 b50ca0d101456970 3.8GB</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="go">editors/24.7:v1                         gh200 2024-09-01 95fc886e35a3b27f 1.2GB</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="go">arbor/v0.9:1435230711                   gh200 2024-09-01 41fbf21853e82969 3.6GB</span>
+</span></code></pre></div></p>
+<p>To get more information about a uenv, use the <code>uenv image inspect</code> command
+<div class="language-console highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="go">&gt; uenv image inspect prgenv-gnu</span>
+</span></code></pre></div></p>
+<p>The output can be formatted using Jinja2 templates, (useful for automated workflows):
+<div class="language-console highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="go">&gt; uenv image inspect prgenv-gnu --format={sqfs}</span>
+</span></code></pre></div>
+For example, print all uenv with their views:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="go">for id in $(uenv image ls --no-header | awk &#39;{print $4}&#39;);</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="go">do</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="go">    meta=$(uenv image inspect --format &#39;{meta}&#39; $id)/env.json;</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="go">    echo &quot;$id : $(jq -j &#39;.views | keys | join(&quot; &quot;)&#39; $meta)&quot;;</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="go">done;</span>
+</span></code></pre></div></p>
+<p>You can see a full list of format options:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="go">uenv image inspect --help</span>
+</span></code></pre></div></p>
+<h2 id="using-uenv">using uenv<a class="headerlink" href="#using-uenv" title="Permanent link">&para;</a></h2>
+<h3 id="starting-a-uenv">starting a uenv<a class="headerlink" href="#starting-a-uenv" title="Permanent link">&para;</a></h3>
+<p>start running a uenv</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="go">uenv start prgenv-gnu</span>
+</span></code></pre></div>
+<p>What happened? The squashfs image was mounted:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="go">findmnt --mountpoint /user-environment</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="go">ls /user-environmment</span>
+</span></code></pre></div>
+<p>uenv provides a command for checking whether a uenv is running:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="go">&gt; uenv status</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="go">/user-environment:prgenv-gnu</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="go">  GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="go">  views:</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="go">    default</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="go">    modules: activate modules</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="go">    spack: configure spack upstream</span>
+</span></code></pre></div></p>
+<details class="info" open="open">
+<summary>Info</summary>
+<p>The <code>uenv start</code> and <code>uenv run</code> commands (see below) create a new process and mount the image so that that process is the only one that can read the mounted image.
+This isolates different users and login sessions on the same compute/login node - different users can have their own uenv mounted at the same location without affecting one another.</p>
+</details>
+<p>The software has been mounted, but it is not yet available in the environment:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="go">gcc --version</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="go">which gcc</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="go">cmake --version</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="go">which cmake</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="go">python3 --version</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="go">which python3</span>
+</span></code></pre></div>
+Python 3.6 is the default provided by SLES - not good enough for the discerning HPC user!</p>
+<p>On HPC systems, software is usually "loaded" using modules. The software packages are installed in subdirectories, e.g. <code>netcdf</code> provided by CPE:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>/opt/cray/pe/netcdf/4.9.0.9/gnu/12.3
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>/opt/cray/pe/netcdf/4.9.0.9/crayclang/17.0
+</span></code></pre></div>
+Each of these contains a <code>bin</code>, <code>include</code>, and <code>lib</code> paths.</p>
+<p><code>module load netcdf</code> will set environment variables <code>PATH</code>, <code>LD_LIBRARY_PATH</code>, etc - making the software available.</p>
+<h3 id="uenv-views-modify-the-environment">uenv views modify the environment<a class="headerlink" href="#uenv-views-modify-the-environment" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a># leave the previous uenv session
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>exit
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a># start with a view activated
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>uenv start prgenv-gnu --view=default
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a># now the software is available
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>cmake --version
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>which cmake
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>python3 --version
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>which python3
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>gcc --version
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>which gcc
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>nvcc --version
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>which nvcc
+</span></code></pre></div>
+<p>Let's have a closer look at <code>/user-environment/env/default/</code></p>
+<h3 id="can-i-mix-and-use-multipe-uenv-at-the-same-time">Can I mix and use multipe uenv at the same time?<a class="headerlink" href="#can-i-mix-and-use-multipe-uenv-at-the-same-time" title="Permanent link">&para;</a></h3>
+<p>A difference between uenv and modules are that setting up the environment is more "declarative" than "imperative":</p>
+<ul>
+<li>the images to mount and views to start are specified at the start of a session</li>
+<li>after they are set, they can't change<ul>
+<li>if you use the <code>modules</code> view, it is possible to <code>load</code>, <code>swap</code>, <code>purge</code> etc as in the days of yore.</li>
+</ul>
+</li>
+</ul>
+<p>It is not possible to run "uenv inside uenv"</p>
+<ul>
+<li>the first reason is security</li>
+<li>each uenv has a fixed mount point - only one image can be mounted at a location</li>
+</ul>
+<p>This can be frustrating compared to using modules, when experimenting and testing on the command line:</p>
+<ul>
+<li>swapping uenv, views, etc requires going back to the start</li>
+<li>when using modules, one can continuously load, unload, swap, purge modules while interacting with the shell.</li>
+</ul>
+<p>We might also be used to putting code like this in <code>.bashrc</code> to set up a "default" environment:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="go">module swap PrgEnv-cray PrgEnv-gnu</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="go">module swap gcc/12.3.0 module load cudatoolkit</span>
+</span></code></pre></div></p>
+<p>An equivalent approach with <code>uenv</code> is not possible
+<div class="language-console highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="gp"># </span>the<span class="w"> </span>following<span class="w"> </span>starts<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>shell
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="gp"># </span>...<span class="w"> </span>and<span class="w"> </span>once<span class="w"> </span>loaded,<span class="w"> </span>we<span class="w"> </span>can<span class="err">&#39;</span>t<span class="w"> </span>load<span class="w"> </span>a<span class="w"> </span>different<span class="w"> </span>shell
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="go">uenv start my-default-environment --view=work</span>
+</span></code></pre></div></p>
+<p>The benefit of this approach is that reproducing a working environment is simpler:</p>
+<ul>
+<li><code>uenv start cp2k/2024.2,editors --view=cp2k:develop,ed</code> describes the environment</li>
+</ul>
+<p>This will hopefully reduce the frequency of one of the main challenges when reproducing issues affecting our users</p>
+<ul>
+<li>long-forgotten module commands in bashrc</li>
+<li>"this worked yesterday when this combination of modules was loaded in this order"</li>
+</ul>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>Please report pain points in your workflow.</p>
+</details>
+<h3 id="it-is-possible-to-use-more-than-one-uenv-simultaneously">It is possible to use more than one uenv simultaneously<a class="headerlink" href="#it-is-possible-to-use-more-than-one-uenv-simultaneously" title="Permanent link">&para;</a></h3>
+<p>It is possible to mount more than one uenv in the same session, so long as they are both configured "up front" when the session is started.</p>
+<p>Examples for this use case include:</p>
+<ul>
+<li>using a profiler or debugger uenv alongside a programming environment or application uenv</li>
+<li>mounting useful utilities (e.g. editors) alongside a programming environment.</li>
+</ul>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="gp"># </span>start<span class="w"> </span>two<span class="w"> </span>uenv<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>same<span class="w"> </span>session
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="go">uenv start prgenv-gnu editors</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="gp"># </span>provide<span class="w"> </span>custom<span class="w"> </span>mount<span class="w"> </span>points
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="go">uenv start prgenv-gnu:/user-tools editors:/user-environment</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="go">uenv status</span>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="gp"># </span>start<span class="w"> </span>two<span class="w"> </span>uenv<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>same<span class="w"> </span>session<span class="w"> </span>with<span class="w"> </span>views
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="go">uenv start prgenv-gnu editors --view=prgenv-gnu:modules,ed</span>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="gp"># </span>disambiguate<span class="w"> </span>the<span class="w"> </span>view<span class="w"> </span>name
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="go">uenv start prgenv-gnu editors --view=prgenv-gnu:modules,ed</span>
+</span></code></pre></div>
+<h3 id="why-are-there-both-uenv-run-and-uenv-start">why are there both <code>uenv run</code> and <code>uenv start</code><a class="headerlink" href="#why-are-there-both-uenv-run-and-uenv-start" title="Permanent link">&para;</a></h3>
+<p>The <code>run</code> command runs a single command in the configured environment, returning us to the unmodified calling shell.</p>
+<p>This is useful to use more than one uenv in a workflow - run each step with a different uenv:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="go">uenv run --view=default prgenv-gnu -- ./pre-process.sh</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="go">uenv run --view=cp2k cp2k -- ./cp2k-simulation.sh</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="go">uenv run --view=default prgenv-gnu -- ./post-process.sh</span>
+</span></code></pre></div>
+<p>Another, slightly irreverant, example is to make emacs available.
+<div class="language-console highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="go">which emacs</span>
+</span></code></pre></div></p>
+<p>Emacs is provided by the <code>editors</code> uenv (access through the <code>ed</code> view):
+<div class="language-console highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="go">uenv run --view=ed editors:/user-tools -- emacs</span>
+</span></code></pre></div></p>
+<p>The above command works, but is not very practical for regular use. Instead:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="go">alias emacs=&#39;uenv run --view=ed editors:/user-tools -- emacs&#39;</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="go">emacs test.cpp</span>
+</span></code></pre></div>
+<p>it seems odd, but by adding that alias to your <code>.bashrc</code>, you now have emacs available without installing any software, or modifying your environment (keep it simple).</p>
+<h2 id="building-software-using-uenv">building software using uenv<a class="headerlink" href="#building-software-using-uenv" title="Permanent link">&para;</a></h2>
+<h3 id="a-simple-application-using-prgenv-gnu">a simple application using prgenv-gnu<a class="headerlink" href="#a-simple-application-using-prgenv-gnu" title="Permanent link">&para;</a></h3>
+<p>Here we build <code>affinity</code>, a small MPI+CUDA aware application for reporting CPU+GPU affinity.</p>
+<p>A view provides all of the requirements (gcc, MPI, cuda, cmake, ninja)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>uenv start prgenv-gnu/24.7 --view=default
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>git clone git@github.com:bcumming/affinity.git
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>cd affinity
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>mkdir build
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>cd build
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>which cmake
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>which mpicc
+</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>nvcc --version
+</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>CC=mpicc CXX=mpicxx cmake .. -GNinja
+</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>ninja
+</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>
+</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>OMP_NUM_THREADS=4 srun -n4 -N1 --gpus-per-task=1 ./affinity.mpi
+</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a>srun -n4 -N1 --gpus-per-task=1 ./affinity.cuda
+</span></code></pre></div></p>
+<p>The uenv provides cray-mpich, with some key differences:</p>
+<ul>
+<li>the MPI compilers are <code>mpicc</code>, <code>mpicxx</code>, <code>mpifort</code><ul>
+<li>replacing the <code>CC</code>, <code>cc</code>, <code>ftn</code> compiler wrappers provided by CPE</li>
+</ul>
+</li>
+<li>dependencies required for GPU-aware MPI are hard coded (no need to load specific modules)</li>
+</ul>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="go">vim $(which mpicc)</span>
+</span></code></pre></div>
+<p>modules are also available in most uenv:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="go">uenv start prgenv-gnu/24.7 --view=modules</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="go">module avail</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="go">module load cray-mpich cmake cuda gcc ninja</span>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="gp"># </span><span class="k">then</span><span class="w"> </span>run<span class="w"> </span>cmake,<span class="w"> </span>ninja,<span class="w"> </span>as<span class="w"> </span>before
+</span></code></pre></div>
+<p>The <code>modules</code> view simply updates <code>MODULEPATH</code>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>{
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>  &quot;list&quot;: {
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>    &quot;MODULEPATH&quot;: [
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>      {
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>        &quot;op&quot;: &quot;prepend&quot;,
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>        &quot;value&quot;: [
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>          &quot;/user-environment/modules&quot;
+</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>        ]
+</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>      }
+</span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>    ]
+</span><span id="__span-31-11"><a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a>  },
+</span><span id="__span-31-12"><a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a>  &quot;scalar&quot;: {}
+</span><span id="__span-31-13"><a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a>}
+</span></code></pre></div></p>
+<h3 id="a-more-complicated-example">A more complicated example<a class="headerlink" href="#a-more-complicated-example" title="Permanent link">&para;</a></h3>
+<p>Use a view to build Arbor, a neuroscience application that can optionally use MPI, CUDA and Python.</p>
+<p>We use a uenv that was developed for Arbor <a href="https://github.com/eth-cscs/alps-uenv/blob/main/recipes/arbor/v0.9/gh200/environments.yaml">using a uenv recipe</a>.</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="go">git clone --depth=1 --branch=v0.9.0 git@github.com:arbor-sim/arbor.git</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="go">mkdir build</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="go">cd build</span>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="go">export CC=`which gcc`</span>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="go">export CXX=`which g++`</span>
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="go">cmake ../arbor -DARB_GPU=cuda -DARB_WITH_MPI=on -DARB_WITH_PYTHON=on -GNinja -DCMAKE_CUDA_ARCHITECTURES=90</span>
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="go">ninja examples pyarb unit</span>
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>
+</span><span id="__span-32-10"><a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a><span class="gp"># </span><span class="nb">test</span><span class="w"> </span>the<span class="w"> </span>build
+</span><span id="__span-32-11"><a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a><span class="go">./unit</span>
+</span><span id="__span-32-12"><a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a><span class="go">./bin/busyring</span>
+</span><span id="__span-32-13"><a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a><span class="go">export PYTHONPATH=$PWD/python:$PYTHONPATH</span>
+</span><span id="__span-32-14"><a id="__codelineno-32-14" name="__codelineno-32-14" href="#__codelineno-32-14"></a><span class="go">python -c &#39;import arbor; print(arbor.config)&#39;</span>
+</span></code></pre></div>
+<h3 id="setting-up-a-python-venv">setting up a Python venv<a class="headerlink" href="#setting-up-a-python-venv" title="Permanent link">&para;</a></h3>
+<p>Create a virtual environment that uses the software in a uenv as the starting point:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="go">uenv start arbor --view=develop</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="gp"># </span>check<span class="w"> </span>the<span class="w"> </span>version<span class="w"> </span>of<span class="w"> </span>python<span class="w"> </span>that<span class="w"> </span>is<span class="w"> </span>being<span class="w"> </span>used
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="go">which python</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="go">python --version</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="gp"># </span>create<span class="w"> </span>a<span class="w"> </span>venv
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="go">python -m venv --system-site-packages env</span>
+</span><span id="__span-33-9"><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="go">source env/bin/activate</span>
+</span><span id="__span-33-10"><a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="go">pip list</span>
+</span></code></pre></div></p>
+<h3 id="building-using-spack">building using Spack<a class="headerlink" href="#building-using-spack" title="Permanent link">&para;</a></h3>
+<p>Spack is a popular tool for installing scientific software:</p>
+<ul>
+<li>configure the software to install <code>arbor@v0.10.0+mpi+cuda+python</code></li>
+<li>Spack will build all missing dependencies</li>
+</ul>
+<p>Each uenv image provides a standard Spack configuration</p>
+<ul>
+<li>Can be used as the basis for your own spack environment</li>
+</ul>
+<p>The spack configuration can be accessed using the <code>spack</code> view:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="go">&gt;uenv start prgenv-gnu --view=spack</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="go">loading the view prgenv-gnu:spack</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="go">&gt; printenv | grep UENV_SPACK</span>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="go">UENV_SPACK_COMMIT=bd66dce2d668a6234504594661506cdd1eaca4adc</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="go">UENV_SPACK_CONFIG_PATH=/user-environment/config</span>
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="go">UENV_SPACK_URL=https://github.com/spack/spack.git</span>
+</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="go">&gt; git clone $UENV_SPACK_URL</span>
+</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="go">&gt; cd spack</span>
+</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="go">&gt; cat /user-environment/meta/recipe/config.yaml</span>
+</span><span id="__span-34-10"><a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a><span class="go">name: prgenv-gnu</span>
+</span><span id="__span-34-11"><a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="go">spack:</span>
+</span><span id="__span-34-12"><a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a><span class="go">  commit: releases/v0.22</span>
+</span><span id="__span-34-13"><a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a><span class="go">  repo: https://github.com/spack/spack.git</span>
+</span><span id="__span-34-14"><a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a><span class="go">store: /user-environment</span>
+</span><span id="__span-34-15"><a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a><span class="go">description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.</span>
+</span><span id="__span-34-16"><a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a><span class="go">&gt; git switch releases/v0.22</span>
+</span><span id="__span-34-17"><a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a><span class="go">&gt; ./bin/spack find</span>
+</span><span id="__span-34-18"><a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a><span class="go">&gt; ./bin/spack -C $UENV_SPACK_CONFIG_PATH find</span>
+</span></code></pre></div>
+<p>See uenv documentation for how to use the packages installed in a uenv with Spack to install your own software:</p>
+<p>https://eth-cscs.github.io/alps-uenv/uenv-compilation-spack/</p>
+<h1 id="applications-provided-by-uenv">Applications provided by uenv<a class="headerlink" href="#applications-provided-by-uenv" title="Permanent link">&para;</a></h1>
+<p>So far our examples have provided examples of using common CLI tools and compilers provided by uenv to work in the terminal and build scientific software.</p>
+<p>Uenv can also provide scientific software and tools like debuggers - no compilation necessary.</p>
+<p>There are application uenv provided by CSCS for common scientific codes:</p>
+<ul>
+<li>CP2K</li>
+<li>GROMACS</li>
+<li>NAMD</li>
+<li>LAMMPS</li>
+<li>ICON</li>
+<li>VASP</li>
+<li>quantumespresso</li>
+<li>and more ...</li>
+</ul>
+<p>Scientific software is diverse, so there is no hard and fast rule for which views will be provided.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>quantumespresso : default develop modules spack
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>namd            : namd namd-single-node develop develop-single-node modules spack
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>cp2k            : cp2k develop modules spack
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>arbor           : arbor develop modules spack
+</span></code></pre></div></p>
+<p>Typically, the uenv provide two types of view:</p>
+<ul>
+<li>an <code>application view</code> that provides the application<ul>
+<li>"ready to run"</li>
+<li>like <code>module load &lt;application&gt;</code></li>
+<li>use this to directly use the version of the software provided by CSCS</li>
+</ul>
+</li>
+<li>a <code>development view</code> that provides all of the application's dependencies<ul>
+<li>use this to build your own version of the software</li>
+<li>e.g. if you need a different version or configuration</li>
+</ul>
+</li>
+</ul>
+<h1 id="slurm">slurm<a class="headerlink" href="#slurm" title="Permanent link">&para;</a></h1>
+<p>So far we have looked at using <code>uenv start</code> and <code>uenv run</code> to interact with uenv.
+Both of these approaches load the uenv <em>on the node that the command is run on</em>.
+This is an important detail - the uenv is not mounted on compute nodes, and is only visible to the current process.</p>
+<p>We can test that:
+<div class="language-console highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="gp"># </span>by<span class="w"> </span>default,<span class="w"> </span>nothing<span class="w"> </span>mounted<span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>compute<span class="w"> </span>node
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="go">srun -n1 ls /user-environment</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="gp"># </span>start<span class="w"> </span>a<span class="w"> </span>uenv<span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>login<span class="w"> </span>node<span class="w"> </span>and<span class="w"> </span>try<span class="w"> </span>again
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="go">uenv start prgenv-gnu</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="go">srun -n1 ls /user-environment/</span>
+</span></code></pre></div></p>
+<p>The image was mounted on the compute node - what is going on?</p>
+<p>There is a uenv slurm plugin that will handle mounting uenv on compute nodes.
+By default, if</p>
+<ul>
+<li>no <code>--uenv</code> flag is passed</li>
+<li>a uenv was mounted on the login node when srun was called</li>
+</ul>
+<p>The plugin will mount the image automatically on the login node</p>
+<ul>
+<li>related: why are the modules loaded when calling sbatch on a login node loaded on all the compute nodes?</li>
+</ul>
+<p>Using <code>uenv start</code> and <code>uenv run</code> inside an sbatch job script has downsides:</p>
+<ul>
+<li>it increases the complexity of the job script</li>
+<li>it may be inefficient in some cases<ul>
+<li>e.g. 128 ranks on a single node all mount the same uenv image</li>
+</ul>
+</li>
+</ul>
+<p>The uenv Slurm plugin automates the process of starting uenv</p>
+<ul>
+<li>the uenv to load is provided using a <code>--uenv</code> option</li>
+<li>the plugin then:<ol>
+<li>validates the request on the login node (when srun or sbatch is called)</li>
+<li>mounts the uenv on each compute node before the individual MPI ranks are created</li>
+</ol>
+</li>
+<li>the uenv is automatically removed when each <code>srun</code> command finishes.</li>
+</ul>
+<p>From the perspective of the script running on the compute node, the uenv is always mounted.</p>
+<p>A simple example using <code>srun</code>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="gp"># </span>start<span class="w"> </span>a<span class="w"> </span>shell<span class="w"> </span>on<span class="w"> </span>a<span class="w"> </span>compute<span class="w"> </span>node<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>uenv<span class="w"> </span>mounted
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="go">srun -n1 --uenv=prgenv-gnu/24.7:v3 --pty bash</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="gp"># </span>run<span class="w"> </span>a<span class="w"> </span><span class="nb">command</span><span class="w"> </span>on<span class="w"> </span>a<span class="w"> </span>compute<span class="w"> </span>node<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>uenv<span class="w"> </span>mounted
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="go">srun -n1 --uenv=prgenv-gnu/24.7:v3 bash -c &#39;uenv view modules; module avail&#39;</span>
+</span></code></pre></div></p>
+<h2 id="using-uenv-in-sbatch-jobs">using uenv in sbatch jobs<a class="headerlink" href="#using-uenv-in-sbatch-jobs" title="Permanent link">&para;</a></h2>
+<p>The <code>--uenv</code> flag can also be used in slurm batch jobs:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1">#SBATCH --uenv=prgenv-gnu/24.7:v3</span>
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1">#SBATCH --nodes=1</span>
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a><span class="c1">#SBATCH --ntasks-per-node=4</span>
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a><span class="c1">#SBATCH --output=job%j.out</span>
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a><span class="c1">#SBATCH --error=job%j.out</span>
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>
+</span><span id="__span-38-8"><a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a><span class="c1"># load the view</span>
+</span><span id="__span-38-9"><a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a>uenv<span class="w"> </span>view<span class="w"> </span>default
+</span><span id="__span-38-10"><a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a><span class="nv">exe</span><span class="o">=</span>/capstor/scratch/cscs/bcumming/demo/affinity/build/affinity.cuda
+</span><span id="__span-38-11"><a id="__codelineno-38-11" name="__codelineno-38-11" href="#__codelineno-38-11"></a>
+</span><span id="__span-38-12"><a id="__codelineno-38-12" name="__codelineno-38-12" href="#__codelineno-38-12"></a><span class="c1"># the uenv is available inside the script</span>
+</span><span id="__span-38-13"><a id="__codelineno-38-13" name="__codelineno-38-13" href="#__codelineno-38-13"></a>which<span class="w"> </span>nvcc
+</span><span id="__span-38-14"><a id="__codelineno-38-14" name="__codelineno-38-14" href="#__codelineno-38-14"></a>uenv<span class="w"> </span>status
+</span><span id="__span-38-15"><a id="__codelineno-38-15" name="__codelineno-38-15" href="#__codelineno-38-15"></a>
+</span><span id="__span-38-16"><a id="__codelineno-38-16" name="__codelineno-38-16" href="#__codelineno-38-16"></a><span class="c1"># and also automatically mounted on the compute nodes:</span>
+</span><span id="__span-38-17"><a id="__codelineno-38-17" name="__codelineno-38-17" href="#__codelineno-38-17"></a>srun<span class="w"> </span>-n4<span class="w"> </span>-N1<span class="w"> </span><span class="nv">$exe</span>
+</span><span id="__span-38-18"><a id="__codelineno-38-18" name="__codelineno-38-18" href="#__codelineno-38-18"></a>
+</span><span id="__span-38-19"><a id="__codelineno-38-19" name="__codelineno-38-19" href="#__codelineno-38-19"></a><span class="c1"># note: within this week the following will be possible</span>
+</span><span id="__span-38-20"><a id="__codelineno-38-20" name="__codelineno-38-20" href="#__codelineno-38-20"></a>
+</span><span id="__span-38-21"><a id="__codelineno-38-21" name="__codelineno-38-21" href="#__codelineno-38-21"></a><span class="c1">#srun -n4 -N1 --uenv=prgenv-gnu --uenv-view=default affinity.gpu</span>
+</span></code></pre></div>
+<p>Sometimes a job will require multiple uenv, e.g. pre-processing and post-processing stages might use one uenv, and the simulation runs would use an application uenv.
+The uenv specified in the <code>#SBATCH --uenv=</code> comment can be overriden in individual calls to <code>srun</code> inside the script.
+For example, run a job that first uses the affinity application that we built earlier with <code>prgenv-gnu</code>, then run an arbor benchmark that was built with the <code>arbor</code> uenv.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1">#SBATCH --uenv=prgenv-gnu/24.7:v3</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="c1">#SBATCH --nodes=1</span>
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a><span class="c1">#SBATCH --ntasks-per-node=4</span>
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="c1">#SBATCH --output=job%j.out</span>
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a><span class="c1">#SBATCH --error=job%j.out</span>
+</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>
+</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a><span class="c1"># load the view</span>
+</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>uenv<span class="w"> </span>view<span class="w"> </span>default
+</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a><span class="nv">exe</span><span class="o">=</span>/capstor/scratch/cscs/bcumming/demo/affinity/build/affinity.cuda
+</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a>
+</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a>srun<span class="w"> </span>-n4<span class="w"> </span>-N1<span class="w"> </span><span class="nv">$exe</span>
+</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a>
+</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a><span class="nv">arbor</span><span class="o">=</span>/capstor/scratch/cscs/bcumming/demo/arbor/build/bin/busyring
+</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a>srun<span class="w"> </span>--uenv<span class="o">=</span>arbor/v0.9<span class="w"> </span>-n4<span class="w"> </span>-N1<span class="w"> </span>--gpus-per-task<span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">$arbor</span>
+</span></code></pre></div>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>The <code>--uenv</code> slurm flag is a little awkward to use at the moment because there is no corresponding <code>--view</code> flag.
+This forces us th use <code>uenv view</code> command separately, which is messy and can create significant complexity in scripts.</p>
+<p>A new version of the slurm plugin will be deployed on Daint and Todi very soon - hopefully this week - that will provide the <code>--uenv-view</code> flag.</p>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
