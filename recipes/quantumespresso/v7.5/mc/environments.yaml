@@ -1,0 +1,22 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32
+  unify: true
+  specs:
+  - quantum-espresso@7.5 +libxc +scalapack +openmp hdf5=parallel
+  - netlib-scalapack
+  - cmake
+  - libxc
+  - fftw
+  - hdf5
+  - openblas threads=openmp
+  variants:
+  - +mpi
+  views:
+    sirius:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
