@@ -31,7 +31,7 @@ cp2k:
   - hwloc
   - whip
   # Umpire
-  - umpire
+  - umpire +fortran
   - blt
   - camp
   # DLA-Future
