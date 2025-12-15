@@ -1,0 +1,7 @@
+packages:
+  all:
+    require:
+      - +cuda cuda_arch=90a
+    prefer:
+      - +openmp
+      - ~fortran
