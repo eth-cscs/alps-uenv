@@ -9,7 +9,7 @@ lammps-kokkos:
   - cmake
   - python@3.12
   - fftw
-  - py-torch@2.8.0 ~distributed ~nccl
+  - py-torch@2.8.0 ~distributed ~nccl ~cuda ~rocm
   - plumed +pytorch
   - gromacs@2025.0 +plumed +hwloc
   variants:
