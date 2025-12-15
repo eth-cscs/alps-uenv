@@ -8,7 +8,10 @@ import shutil
 import socket
 import sys
 
-from spack_repo.builtin.build_systems.cached_cmake import cmake_cache_path, cmake_cache_string
+from spack_repo.builtin.build_systems.cached_cmake import (
+    cmake_cache_path,
+    cmake_cache_string,
+)
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -72,39 +75,66 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     version(
-        "0.9.4", tag="v0.9.4", commit="02e7f79d53db77b6af923bfa105840f574195474", submodules=True
+        "0.9.4",
+        tag="v0.9.4",
+        commit="02e7f79d53db77b6af923bfa105840f574195474",
+        submodules=True,
     )
 
     version(
-        "0.9.3", tag="v0.9.3", commit="e69d6ec77938846caae8fea7ed988b1151ac9b81", submodules=True
+        "0.9.3",
+        tag="v0.9.3",
+        commit="e69d6ec77938846caae8fea7ed988b1151ac9b81",
+        submodules=True,
     )
 
     version(
-        "0.9.2", tag="v0.9.2", commit="b842516d12640e4a0d9433a18c7249440ef6fc3d", submodules=True
+        "0.9.2",
+        tag="v0.9.2",
+        commit="b842516d12640e4a0d9433a18c7249440ef6fc3d",
+        submodules=True,
     )
 
     version(
-        "0.9.1", tag="v0.9.1", commit="027a2fe184f65a4923817a8cdfed0b0c61c2c75a", submodules=True
+        "0.9.1",
+        tag="v0.9.1",
+        commit="027a2fe184f65a4923817a8cdfed0b0c61c2c75a",
+        submodules=True,
     )
 
     version(
-        "0.9.0", tag="v0.9.0", commit="a31c88c579c8d0026e0025de8bace0cf22f6305b", submodules=True
+        "0.9.0",
+        tag="v0.9.0",
+        commit="a31c88c579c8d0026e0025de8bace0cf22f6305b",
+        submodules=True,
     )
 
     version(
-        "0.8.0", tag="v0.8.0", commit="08504374908518e013d7fe8d8882cfb1c2378e3b", submodules=True
+        "0.8.0",
+        tag="v0.8.0",
+        commit="08504374908518e013d7fe8d8882cfb1c2378e3b",
+        submodules=True,
     )
 
     version(
-        "0.7.1", tag="v0.7.1", commit="79d35b2f48e92eb151313f0217e9bd7c15779582", submodules=True
+        "0.7.1",
+        tag="v0.7.1",
+        commit="79d35b2f48e92eb151313f0217e9bd7c15779582",
+        submodules=True,
     )
 
     version(
-        "0.7.0", tag="v0.7.0", commit="cfed1b0a469e4dcc970fd7e0bcd78b522d97ea53", submodules=True
+        "0.7.0",
+        tag="v0.7.0",
+        commit="cfed1b0a469e4dcc970fd7e0bcd78b522d97ea53",
+        submodules=True,
     )
 
     version(
-        "0.6.0", tag="v0.6.0", commit="9ade37b0a9ea495e45adb25cda7498c0bf9465c5", submodules=True
+        "0.6.0",
+        tag="v0.6.0",
+        commit="9ade37b0a9ea495e45adb25cda7498c0bf9465c5",
+        submodules=True,
     )
 
     ###########################################################################
@@ -124,13 +154,22 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("fortran", default=True, description="Build Ascent Fortran support")
 
     # variants for runtime features
-    variant("vtkh", default=True, description="Build VTK-h filter and rendering support")
+    variant(
+        "vtkh", default=True, description="Build VTK-h filter and rendering support"
+    )
 
-    variant("openmp", default=(sys.platform != "darwin"), description="build openmp support")
+    variant(
+        "openmp", default=(sys.platform != "darwin"), description="build openmp support"
+    )
     variant("raja", default=True, description="Build with RAJA support")
     variant("umpire", default=True, description="Build with Umpire support")
     variant("mfem", default=False, description="Build MFEM filter support")
-    variant("dray", default=False, when="@0.8.1:", description="Build with Devil Ray support")
+    variant(
+        "dray",
+        default=False,
+        when="@0.8.1:",
+        description="Build with Devil Ray support",
+    )
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
@@ -191,8 +230,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@0.8.6:", when="@0.9:")
     depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
     depends_on("conduit@0.9.4", when="@0.9.4")
-    depends_on("conduit+python", when="+python")
-    depends_on("conduit~python", when="~python")
+    depends_on("conduit@0.9.5", when="@0.9.5")
+    depends_on("conduit+python", when="+python", type=("build", "link", "run"))
     depends_on("conduit+mpi", when="+mpi")
     depends_on("conduit~mpi", when="~mpi")
 
@@ -203,6 +242,10 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
         depends_on("python+shared", type=("build", "link", "run"))
+
+        # https://github.com/Alpine-DAV/ascent/issues/1628
+        depends_on("python@:3.11", type=("build", "link", "run"))
+
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
         depends_on("py-pip", type="build")
@@ -225,7 +268,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
@@ -235,7 +278,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire")
         depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
-        depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("umpire@2024.02.1:2025.03.1", when="@0.9.3:")
 
     #######################
     # BabelFlow
@@ -328,10 +371,14 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # Conflicts
     ###########
     conflicts(
-        "+shared", when="@:0.7 +cuda", msg="Ascent needs to be built with ~shared for CUDA builds."
+        "+shared",
+        when="@:0.7 +cuda",
+        msg="Ascent needs to be built with ~shared for CUDA builds.",
     )
     conflicts(
-        "~fides", when="@0.9: +adios2", msg="Ascent >= 0.9 assumes FIDES when building ADIOS2"
+        "~fides",
+        when="@0.9: +adios2",
+        msg="Ascent >= 0.9 assumes FIDES when building ADIOS2",
     )
 
     conflicts("+fortran", when="+rocm")
@@ -373,7 +420,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         print("Checking Ascent installation...")
         spec = self.spec
         install_prefix = spec.prefix
-        example_src_dir = join_path(install_prefix, "examples", "ascent", "using-with-cmake")
+        example_src_dir = join_path(
+            install_prefix, "examples", "ascent", "using-with-cmake"
+        )
         print("Checking using-with-cmake example...")
         with working_dir("check-ascent-using-with-cmake-example", create=True):
             cmake_args = [
@@ -388,7 +437,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             example = Executable("./ascent_render_example")
             example()
         print("Checking using-with-make example...")
-        example_src_dir = join_path(install_prefix, "examples", "ascent", "using-with-make")
+        example_src_dir = join_path(
+            install_prefix, "examples", "ascent", "using-with-make"
+        )
         example_files = glob.glob(join_path(example_src_dir, "*"))
         with working_dir("check-ascent-using-with-make-example", create=True):
             for example_file in example_files:
@@ -403,9 +454,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         if "SYS_TYPE" in env:
             sys_type = env["SYS_TYPE"]
         compiler_str = f"{self['c'].name}-{self['c'].version}"
-        host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}-ascent-{spec.dag_hash()}.cmake"
-        )
+        host_config_path = f"{socket.gethostname()}-{sys_type}-{compiler_str}-ascent-{spec.dag_hash()}.cmake"
         host_config_path = os.path.abspath(join_path(self.stage.path, host_config_path))
         return host_config_path
 
@@ -549,7 +598,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("PYTHON_EXECUTABLE", python.path))
             try:
                 cfg.write("# python module install dir\n")
-                cfg.write(cmake_cache_entry("PYTHON_MODULE_INSTALL_PREFIX", python_platlib))
+                cfg.write(
+                    cmake_cache_entry("PYTHON_MODULE_INSTALL_PREFIX", python_platlib)
+                )
             except NameError:
                 # spack's  won't exist in a subclass
                 pass
@@ -616,7 +667,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("+babelflow"):
                 cfg.write(cmake_cache_entry("ENABLE_BABELFLOW", "ON"))
                 cfg.write(cmake_cache_entry("BabelFlow_DIR", spec["babelflow"].prefix))
-                cfg.write(cmake_cache_entry("PMT_DIR", spec["parallelmergetree"].prefix))
+                cfg.write(
+                    cmake_cache_entry("PMT_DIR", spec["parallelmergetree"].prefix)
+                )
         else:
             cfg.write(cmake_cache_entry("ENABLE_MPI", "OFF"))
 
@@ -628,6 +681,13 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+cuda"):
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "ON"))
+            cfg.write(
+                cmake_cache_entry(
+                    "CMAKE_CUDA_ARCHITECTURES",
+                    ";".join(spec.variants["cuda_arch"].values),
+                )
+            )
+
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
 
@@ -648,13 +708,21 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
             amdgpu_archs = ";".join(spec.variants["amdgpu_target"].value)
             cfg.write(cmake_cache_path("HIP_ROOT_DIR", f"{spec['hip'].prefix}"))
-            cfg.write(cmake_cache_path("HIP_CLANG_PATH", f"{spec['llvm-amdgpu'].prefix.bin}"))
+            cfg.write(
+                cmake_cache_path("HIP_CLANG_PATH", f"{spec['llvm-amdgpu'].prefix.bin}")
+            )
             cfg.write(cmake_cache_string("CMAKE_HIP_ARCHITECTURES", amdgpu_archs))
 
             clang_bindir = spec["llvm-amdgpu"].prefix.bin
-            cfg.write(cmake_cache_path("CMAKE_C_COMPILER", f"{clang_bindir}/clang", force=True))
             cfg.write(
-                cmake_cache_path("CMAKE_CXX_COMPILER", f"{clang_bindir}/clang++", force=True)
+                cmake_cache_path(
+                    "CMAKE_C_COMPILER", f"{clang_bindir}/clang", force=True
+                )
+            )
+            cfg.write(
+                cmake_cache_path(
+                    "CMAKE_CXX_COMPILER", f"{clang_bindir}/clang++", force=True
+                )
             )
 
             # This is needed for Kokkos
@@ -666,7 +734,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             # Newer ROCm > 5 versions do not autoinclude hip runtime headers.
             cfg.write(
                 cmake_cache_entry(
-                    "CMAKE_HIP_FLAGS", f"-include {spec['hip'].prefix.include}/hip/hip_runtime.h"
+                    "CMAKE_HIP_FLAGS",
+                    f"-include {spec['hip'].prefix.include}/hip/hip_runtime.h",
                 )
             )
 
@@ -690,7 +759,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+cuda"):
                 cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "ON"))
-                cfg.write(cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"]))
+                cfg.write(
+                    cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"])
+                )
             else:
                 cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "OFF"))
 
