@@ -96,21 +96,24 @@ uenvs:
   gromacs:
     "2023":
       recipes:
-        # zen2 and zen3 targets use the same recipe
         zen2: 2023/mc
         zen3: 2023/mc
         a100: 2023/a100
         gh200: 2023/gh200-mpi
       deploy:
-        # deploy to both the production and test clusters
         eiger: [zen2]
     "2024":
       recipes:
         zen2: 2024/mc
         gh200: 2024/gh200-mpi
       deploy:
-        # deploy to both the production and test clusters
-        santis: [gh200]
+        daint: [gh200]
+        eiger: [zen2]
+    "2025":
+      recipes:
+        zen2: 2025/mc
+        gh200: 2025/gh200
+      deploy:
         daint: [gh200]
         eiger: [zen2]
   cp2k:
