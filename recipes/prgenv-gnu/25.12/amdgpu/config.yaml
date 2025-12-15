@@ -5,6 +5,6 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 22ac32a6ee44ae66f5e30868a2474d1cd2f28f2c # develop on 2025-11-24, includes https://github.com/spack/spack-packages/pull/2532
+    commit: da6e6ab9bf8fdcaba76cf452fd7b87dbaa06e003 # Try https://github.com/spack/spack-packages/pull/2287
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)
