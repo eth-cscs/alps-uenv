@@ -11,7 +11,7 @@ lammps-kokkos:
   - fftw
   - py-torch@2.8.0 ~distributed ~nccl
   - plumed +pytorch
-  - gromacs@2025.0 +cuda +plumed +hwloc
+  - gromacs@2025.0 +plumed +hwloc
   variants:
   - +openmp
   - +mpi
