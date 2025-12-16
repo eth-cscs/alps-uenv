@@ -4,7 +4,7 @@ spack:
   commit: releases/v1.0
   repo: https://github.com/spack/spack.git
   packages:
-    repo: https://github.com/msimberg/spack-packages.git
-    commit: gcc-patch-fixincludes
+    repo: https://github.com/spack/spack-packages.git # develop on 2025-12-16
+    commit: 1a32c3379c9fa28549c68b7931712d81831304df
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx42 (MI300A, MI250X)
