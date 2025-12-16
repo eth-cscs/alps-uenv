@@ -172,7 +172,7 @@ class RocprofilerDev(CMakePackage):
             install_tree(self.prefix.lib, self.prefix.rocprofiler.lib)
             filter_file(
                 "BIN_DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))",
-                "BIN_DIR=$(dirname ${BASH_SOURCE[0]}))",
+                "BIN_DIR=$(dirname ${BASH_SOURCE[0]})",
                 join_path(self.prefix.bin, "rocprof"),
                 string=True,
             )
