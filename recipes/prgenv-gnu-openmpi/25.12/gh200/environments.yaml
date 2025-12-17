@@ -4,7 +4,7 @@ gcc-env:
       mpi: openmpi
   unify: true
   specs:
-  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
   - fmt
