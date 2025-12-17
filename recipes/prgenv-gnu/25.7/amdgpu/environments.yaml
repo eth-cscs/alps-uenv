@@ -7,7 +7,8 @@ gcc-env:
   duplicates:
     strategy: full
   specs:
-  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  # Pinned because of https://github.com/ROCm/rocm-systems/issues/2356
+  - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
   - fmt
