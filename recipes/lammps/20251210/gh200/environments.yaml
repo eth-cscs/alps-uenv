@@ -8,10 +8,9 @@ lammps-kokkos:
   - cmake
   - ninja
   - cuda@12
-  - py-torch@2.8.0 ~distributed ~nccl
   - kokkos +wrapper
-  - plumed +pytorch
-  - lammps@20250722 +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
+  - plumed
+  - lammps@20251210 +kokkos fft_kokkos=cufft +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
   variants:
   - +mpi
   - +cuda
@@ -42,9 +41,8 @@ lammps-gpu:
   - cmake
   - ninja
   - cuda@12
-  - py-torch@2.8.0 ~distributed ~nccl
-  - plumed +pytorch
-  - lammps@20250722 ~kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
+  - plumed
+  - lammps@20251210 ~kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule
   variants:
   - +mpi
   - +cuda
