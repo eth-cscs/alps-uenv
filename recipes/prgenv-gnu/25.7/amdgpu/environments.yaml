@@ -1,0 +1,74 @@
+gcc-env:
+  compiler: [gcc, llvm-amdgpu]
+  network:
+      mpi: cray-mpich@8.1.32+rocm
+      specs: [ 'libfabric@2.3 +rocm' ]
+  unify: when_possible
+  duplicates:
+    strategy: full
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - python@3
+  - zlib-ng
+  # add GPU-specific packages here, for easier comparison with mc version
+  - hip@6.3.3 ^mesa@23.3.6
+  - hdf5+mpi
+  - hipcub
+  - llvm-amdgpu
+  # rocm packages
+  - rocblas ^py-msgpack %cxx=gcc
+  - rocfft
+  - rocm-cmake %cxx=gcc
+  - rocm-openmp-extras
+  - rocm-core %cxx=gcc
+  - rocminfo
+  - rocprim
+  - rocprofiler-dev
+  - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
+  - rocprofiler-systems@6.3.3+internal-dyninst
+  - rocrand
+  - rocsolver
+  - rocsparse
+  - rocthrust
+  - roctracer-dev-api %cxx=gcc
+  - roctracer-dev
+  - rocm-gdb
+  - rocm-debug-agent
+  # hip packages
+  - hipblas
+  - hipblaslt
+  - hiprand
+  - hipsparse
+  - hipfft
+  - hipblas-common
+  # networking
+  - rccl
+  # commits pinned for reproducibility, not bugs; update when updating recipe
+  - aws-ofi-rccl@git.6dae1b0d588c27689ba6daa32710359ea96de78c=cxi
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu ^cray-mpich@8.1.32 +rocm %c,cxx,fortran=gcc
+  variants:
+  - +mpi
+  - +rocm
+  - amdgpu_target=gfx942,gfx90a
+  - amdgpu_target_sram_ecc=gfx942,gfx90a
+  views:
+    default:
+      link: roots
+      exclude: ["llvm"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

@@ -1,0 +1,8 @@
+version: 2
+name: paraview
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+description: ParaView for Alps Grace-Hopper clusters using EGL
