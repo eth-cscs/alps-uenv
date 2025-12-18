@@ -1,13 +1,14 @@
 lammps-kokkos:
   compiler: [gcc]
   network:
-    mpi: cray-mpich@8.1.32 +cuda
+    mpi: cray-mpich@8.1.32
+    specs:
+      - libfabric@2.3
   unify: true
   specs:
   - python@3.11 # distutils was removed in 3.12 (needed by ml-iap)
   - cmake
   - ninja
-  - cuda@12
   - kokkos +openmp
   - plumed
   - lammps@20250722 +kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule +openmp
