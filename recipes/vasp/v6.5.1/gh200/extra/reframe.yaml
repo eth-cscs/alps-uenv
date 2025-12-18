@@ -1,0 +1,32 @@
+run:
+  features:
+    - vasp
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - vasp
+develop:
+  features:
+    - vasp-dev
+    - cuda
+    - mpi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop
+modules:
+  features:
+    - cuda
+    - mpi
+    - vasp-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load cmake cray-mpich cuda fftw gcc hdf5 netlib-scalapack nvhpc nvpl-blas nvpl-lapack wannier90

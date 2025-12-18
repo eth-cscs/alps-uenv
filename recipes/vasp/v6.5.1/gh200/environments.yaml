@@ -1,0 +1,38 @@
+vasp:
+  compiler:
+  - toolchain: gcc
+    spec: gcc@13.2
+  - toolchain: llvm
+    spec: nvhpc@25.7
+  unify: true
+  mpi:
+    spec: cray-mpich@8.1.32%nvhpc
+    gpu: cuda
+  specs:
+      - vasp@6.5.1%nvhpc +cuda +openmp +hdf5 +wannier90
+      - cuda@12.9%nvhpc
+      - wannier90%nvhpc
+      - fftw%nvhpc +openmp
+      - nvpl-blas%nvhpc threads=openmp
+      - nvpl-lapack%nvhpc threads=openmp
+      - netlib-scalapack%nvhpc ~shared
+      - hdf5%nvhpc +fortran
+      # aws plugin 1.14.0 was found to work well with libfabric 1.22
+      - aws-ofi-nccl@1.14.0
+      - cmake
+  variants:
+      - cuda_arch=90
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
