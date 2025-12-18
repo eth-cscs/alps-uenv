@@ -1,9 +1,9 @@
 lammps-kokkos:
   compiler: [gcc]
   network:
-    mpi: cray-mpich@8.1.32 ~cuda
+    mpi: cray-mpich@8.1.32
     specs:
-    - libfabric@2.3 ~cuda
+    - libfabric@2.3
   unify: true
   specs:
   - cmake
@@ -16,6 +16,7 @@ lammps-kokkos:
   - +mpi
   - ~cuda
   - ~rocm
+  - build_type=Release
   views:
     develop:
       link: all

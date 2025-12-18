@@ -18,6 +18,7 @@ lammps-kokkos:
   - +mpi
   - +cuda
   - cuda_arch=90a
+  - build_type=Release
   views:
     develop:
       link: all
