@@ -8,7 +8,7 @@ build-kokkos:
   views:
     - develop-kokkos
   extras:
-    version: 20250722
+    version: 20251210
 
 run-kokkos:
   features:
