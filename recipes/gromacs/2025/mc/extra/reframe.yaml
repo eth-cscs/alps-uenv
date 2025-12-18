@@ -5,7 +5,7 @@ run:
   cxx: g++
   views:
     - gromacs
-  extra:
+  extras:
     version: 2025.0
 
 build:
@@ -15,6 +15,6 @@ build:
   cxx: g++
   views:
     - develop
-  extra:
+  extras:
     version: 2025.0
     cmake: -DREGRESSIONTEST_DOWNLOAD=OFF -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=OFF -DGMX_HWLOC=ON -DGMX_SIMD=ARM_NEON_ASIMD -DGMX_INSTALL_NBLIB_API=ON
