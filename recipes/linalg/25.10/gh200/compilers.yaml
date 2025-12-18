@@ -1,0 +1,4 @@
+gcc:
+  # GCC kept at 14.2 instead of the latest 14.3 to avoid potential compilation
+  # issues when compiling CUDA files with CUDA 12.9.
+  version: "14.2"
