@@ -4,16 +4,8 @@ ascent-env:
     mpi: cray-mpich
   unify: true
   specs:
-    - cmake
-    - python
-
     - ascent +python +occa ~adios2 ~mfem ~fides
-    - conduit +hdf5
-
-    - hdf5 +cxx+hl
-
-    # because of vtk-m issue
-    - cuda@12.8
+    - python
   views:
     default:
       link: run

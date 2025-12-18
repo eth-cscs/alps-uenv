@@ -5,3 +5,14 @@ packages:
     prefer:
       - +openmp
       - ~fortran
+  conduit:
+    require:
+      - +hdf5
+  cuda:
+    require:
+      # because of vtk-m issue
+      - "@12:12.8"
+  hdf5:
+    require:
+      - +cxx
+      - +hl
