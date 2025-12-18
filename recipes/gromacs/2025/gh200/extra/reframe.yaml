@@ -1,0 +1,20 @@
+run:
+  features:
+    - gromacs 
+  cc: gcc
+  cxx: g++
+  views:
+    - gromacs
+  extra:
+    version: 2025.0
+
+build:
+  features:
+    - gromacs-dev
+  cc: gcc
+  cxx: g++
+  views:
+    - develop
+  extra:
+    version: 2025.0
+    cmake: -DREGRESSIONTEST_DOWNLOAD=OFF -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=OFF -DGMX_HWLOC=ON -DGMX_SIMD=ARM_NEON_ASIMD -DGMX_INSTALL_NBLIB_API=ON -DGMX_GPU=CUDA
