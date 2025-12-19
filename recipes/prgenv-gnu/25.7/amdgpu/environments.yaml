@@ -7,7 +7,8 @@ gcc-env:
   duplicates:
     strategy: full
   specs:
-  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  # Pinned because of https://github.com/ROCm/rocm-systems/issues/2356
+  - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
   - fmt
@@ -20,7 +21,7 @@ gcc-env:
   - meson
   - ninja
   - openblas threads=openmp
-  - osu-micro-benchmarks
+  - osu-micro-benchmarks ~xccl
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
@@ -38,7 +39,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
-  - rocprofiler-systems@6.3.3+internal-dyninst
+  - rocprofiler-systems@6.3.3 +internal-dyninst
   - rocrand
   - rocsolver
   - rocsparse
