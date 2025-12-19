@@ -70,6 +70,16 @@ clusters:
           F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
           SLURM_TIMELIMIT: '500'
           SLURM_CPUS_PER_TASK: '64'
+      -
+        uarch: 'mi300'
+        partition: 'mi300'
+        variables:
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          SLURM_TIMELIMIT: '500'
+          SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
   climana:
@@ -401,9 +411,12 @@ uenvs:
       recipes:
         gh200: v1.0.1/gh200
         zen2: v1.0.1/mc
+        mi200: v1.0.1/mi200
+        mi300: v1.0.1/mi300
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        beverin: [mi200,mi300]
   scorep:
     "9.2-gcc12":
       recipes:
@@ -463,6 +476,12 @@ uenvs:
         eiger: [zen2]
       mount: "/user-tools"
   paraview:
+    "6.0.1":
+      recipes:
+        gh200: 6.0.1/gh200
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200
