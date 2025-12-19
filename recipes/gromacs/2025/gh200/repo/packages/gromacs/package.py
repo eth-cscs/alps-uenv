@@ -368,7 +368,7 @@ class Gromacs(CMakePackage, CudaPackage):
     # 2025.0 
     patch(
         "https://gitlab.com/gromacs/gromacs/-/merge_requests/4965.diff",
-        sha256="8653b5f1fdbf45d8f4298445453ad093ae0892a8ee12e491a6b3660bc94ca950",
+        sha256="99a5265efc18a84012f08b9d7acacb7f80e8f567ab15187f336633b22b204a77",
         when="@2025.0",
     )
 
