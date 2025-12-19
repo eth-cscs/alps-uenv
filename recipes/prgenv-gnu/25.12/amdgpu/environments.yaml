@@ -36,10 +36,11 @@ gcc-env:
   - rocm-core %cxx=gcc
   - rocminfo
   - rocprim
-  - rocprofiler-dev
-  - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
-  - rocprofiler-sdk
-  - rocprofiler-systems +internal-dyninst
+  #- rocprofiler-dev # TODO(iomaganaris): reenable
+  #- rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc # TODO(iomaganaris): reenable
+  #- rocprofiler-sdk # TODO(iomaganaris): reenable
+  #- rocprofiler-systems +internal-dyninst # TODO(iomaganaris): reenable
+  #- rocprofiler-compute # TODO(iomaganaris): reenable
   - rocrand
   - rocsolver
   - rocsparse
