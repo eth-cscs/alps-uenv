@@ -366,11 +366,7 @@ class Gromacs(CMakePackage, CudaPackage):
         when="@2025.0",
     )
     # 2025.0 
-    patch(
-        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4965.diff",
-        sha256="99a5265efc18a84012f08b9d7acacb7f80e8f567ab15187f336633b22b204a77",
-        when="@2025.0",
-    )
+    patch("pr4965-2025.0.patch", when="@2025.0")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
