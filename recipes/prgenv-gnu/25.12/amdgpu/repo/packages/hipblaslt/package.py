@@ -142,6 +142,7 @@ class Hipblaslt(CMakePackage):
     patch("0004-Set-rocm-smi-ld-path-7.0.patch", when="@7.0")
     # https://github.com/ROCm/rocm-libraries/pull/2115
     patch("005-add-roctracer-include-dir.patch", when="@7.1")
+    patch("offload_bundler_path.patch", when="@7.0:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:6.4"):
@@ -281,6 +282,11 @@ class Hipblaslt(CMakePackage):
             args.append(
                 self.define(
                     "Tensile_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
+                )
+            )
+            args.append(
+                self.define(
+                    "Tensile_OFFLOADBUNDLER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler"
                 )
             )
         if self.spec.satisfies("@7.1:"):

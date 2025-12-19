@@ -5,5 +5,5 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 801243d32ab734941b8e5e92f8809e2d3d16d8ed # `develop` branch with ROCm 7.1.0
+    commit: f941c2ba6edf03a7783138619aad104b6e8d543d # develop on 2025-12-19
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)
