@@ -1,7 +1,5 @@
 build-kokkos:
   features:
-    - cuda
-    - mpi
     - lammps-kokkos-dev
   cc: mpicc
   cxx: mpic++
@@ -14,8 +12,6 @@ build-kokkos:
 
 build-gpu:
   features:
-    - cuda
-    - mpi
     - lammps-gpu-dev
   cc: mpicc
   cxx: mpic++
@@ -27,8 +23,6 @@ build-gpu:
 
 run-kokkos:
   features:
-    - cuda
-    - mpi
     - lammps-kokkos-prod
   cc: mpicc
   cxx: mpic++
@@ -40,8 +34,6 @@ run-kokkos:
 
 run-gpu:
   features:
-    - cuda
-    - mpi
     - lammps-gpu-prod
   cc: mpicc
   cxx: mpic++

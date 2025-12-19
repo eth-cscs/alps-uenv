@@ -1,6 +1,5 @@
 build-kokkos:
   features:
-    - mpi
     - lammps-kokkos-dev
   cc: mpicc
   cxx: mpic++
@@ -12,7 +11,6 @@ build-kokkos:
 
 run-kokkos:
   features:
-    - mpi
     - lammps-kokkos-prod
   cc: mpicc
   cxx: mpic++
