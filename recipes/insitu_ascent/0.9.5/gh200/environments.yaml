@@ -7,13 +7,16 @@ ascent-env:
     - cmake
     - hdf5+cxx+hl~fortran
     - cuda@12.8.1
-    - vtk-m +cuda
-    - raja +cuda
-    - umpire +cuda
-    - camp +cuda
-    - ascent@0.9.5 +cuda
-  variants:
-    - cuda_arch=90
+    - ascent@0.9.5+occa~adios2~mfem~fides+cuda cuda_arch=90 build_type=Debug
+      ^cuda@12.8.1
+      ^occa@2.0+cuda+openmp
+      ^camp@2025.03.0+openmp+cuda cuda_arch=90
+      ^conduit@0.9.5+hdf5+shared+mpi
+      ^vtk-m@2.3.0+openmp+shared+cuda cuda_arch=90
+      ^umpire@2025.09.0+mpi+openmp+cuda cuda_arch=90
+      ^raja@2025.03.2+openmp+shared+cuda^camp@2025.03.0+openmp+cuda cuda_arch=90
+#  variants:
+#    - cuda_arch=90
   views:
     default:
       link: roots
