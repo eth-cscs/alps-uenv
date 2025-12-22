@@ -1,2 +1,4 @@
 gcc:
   version: "14.2.0"
+llvm:
+  version: "21.1.4"
