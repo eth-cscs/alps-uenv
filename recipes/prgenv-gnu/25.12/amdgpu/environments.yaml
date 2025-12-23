@@ -1,13 +1,12 @@
 gcc-env:
   compiler: [gcc, llvm-amdgpu]
   network:
-      mpi: cray-mpich@8.1.33+rocm
+      mpi: cray-mpich@8.1.32+rocm
       specs: [ 'libfabric@2.3 +rocm' ]
   unify: when_possible
   duplicates:
     strategy: full
   specs:
-  # Pinned because of https://github.com/ROCm/rocm-systems/issues/2356
   - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
@@ -25,7 +24,7 @@ gcc-env:
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - hip@6.3.3 ^mesa@23.3.6
+  - hip@7.1.0 ^mesa@23.3.6
   - hdf5+mpi
   - hipcub
   - llvm-amdgpu
@@ -37,9 +36,11 @@ gcc-env:
   - rocm-core %cxx=gcc
   - rocminfo
   - rocprim
-  - rocprofiler-dev
-  - rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc
-  - rocprofiler-systems@6.3.3 +internal-dyninst
+  #- rocprofiler-dev # TODO(iomaganaris): reenable
+  #- rocprofiler-register ^glog %cxx=gcc ^gflags %cxx=gcc # TODO(iomaganaris): reenable
+  #- rocprofiler-sdk # TODO(iomaganaris): reenable
+  #- rocprofiler-systems +internal-dyninst # TODO(iomaganaris): reenable
+  #- rocprofiler-compute # TODO(iomaganaris): reenable
   - rocrand
   - rocsolver
   - rocsparse
@@ -59,12 +60,13 @@ gcc-env:
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
   - aws-ofi-rccl@git.6dae1b0d588c27689ba6daa32710359ea96de78c=cxi
-  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu ^cray-mpich@8.1.33 +rocm %c,cxx,fortran=gcc
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu ^cray-mpich@8.1.32 +rocm %c,cxx,fortran=gcc
   variants:
   - +mpi
   - +rocm
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
+  - ^python@3.12.12
   views:
     default:
       link: roots
