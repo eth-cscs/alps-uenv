@@ -7,10 +7,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PyCudaBindings(PythonPackage):
-    """NVIDIA’s CUDA Python provides Cython bindings and Python wrappers for the
-    driver and runtime API for existing toolkits and libraries to simplify
-    GPU-based accelerated processing."""
+class PyCudaPython(PythonPackage):
+    """CUDA Python is the home for accessing NVIDIA’s CUDA platform from Python."""
 
     homepage = "https://github.com/NVIDIA/cuda-python"
     git = "https://github.com/NVIDIA/cuda-python"
@@ -33,7 +31,7 @@ class PyCudaBindings(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@77.0.0:", when="@12.9.0", type="build")
 
-    build_directory = "cuda_bindings"
+    build_directory = "cuda_python"
 
     def setup_build_environment(self, env):
         cuda_version = self.spec["cuda"].version

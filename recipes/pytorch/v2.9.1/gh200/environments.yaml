@@ -49,8 +49,10 @@ pytorch-env:
   - py-pytest
   - py-cython
   - py-pybind11
+  - py-cuda-python
   - py-cuda-bindings
-  - py-cuda-core
+  - py-cuda-core@0.2
+  - py-cuda-pathfinder@1.2.3
   - py-numpy
   - py-torch@2.9.1 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
   - py-torchaudio
@@ -106,3 +108,4 @@ pytorch-env:
           - FI_MR_CACHE_MONITOR: "userfaultfd"
           - PYTHONPATH: null
           - PYTHONUSERBASE: "/user-environment/env/default"
+          - CUDA_HOME: "/user-environment/env/default"

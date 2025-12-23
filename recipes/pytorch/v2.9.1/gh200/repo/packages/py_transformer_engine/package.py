@@ -20,6 +20,7 @@ class PyTransformerEngine(PythonPackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("2.10", tag="v2.10", submodules=True)
     version("2.9", tag="v2.9", submodules=True)
     version("2.8", tag="v2.8", submodules=True)
     #version("1.4", tag="v1.4", submodules=True)

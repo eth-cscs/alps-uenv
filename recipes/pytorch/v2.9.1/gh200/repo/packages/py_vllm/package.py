@@ -17,8 +17,8 @@ class PyVllm(PythonPackage):
     license("Apache")
 
     version("main", branch="main")
+    version("0.13.0", commit="72506c98349d6bcd32b4e33eec7b5513453c1502")
     version("0.12.0", commit="4fd9d6a85c00ac0186aa9abbeff73fc2ac6c721e")
-    #version("0.11.0", sha256="607fa2777029215b3b659f7d94390ead42e6aa67f234f8f3b6cd5c222afdc905")
     version("0.11.0", commit="b8b302cde434df8c9289a2b465406b47ebab1c2d")
 
     depends_on("c",   type="build")
