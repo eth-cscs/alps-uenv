@@ -71,7 +71,7 @@ pytorch-env:
   - py-onnxscript
   - py-regex
   - py-tensorboard
-  - py-vllm
+  #- py-vllm
   - dynolog +use-prometheus +with-unwind +with-gflags
   # packages which don't compile with +ipo
   - libjpeg-turbo ~ipo
