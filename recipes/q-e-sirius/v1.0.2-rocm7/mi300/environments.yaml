@@ -1,7 +1,7 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@8.1.33+rocm
+      mpi: openmpi+rocm
       specs: [ 'libfabric@2.3 +rocm' ]
   unify: true
   specs:
@@ -12,6 +12,7 @@ gcc-env:
   - spfft+gpu_direct
   - hip@7.1.0 ^mesa@23.3.6
   - llvm-amdgpu
+  - osu-micro-benchmarks+rocm
   variants:
   - amdgpu_target=gfx942
   - amdgpu_target_sram_ecc=gfx942
