@@ -14,7 +14,7 @@ gcc-env:
   - llvm-amdgpu
   - rccl
   - osu-micro-benchmarks+rocm
-  - rocprofiler-systems+internal_dyninst
+  - rocprofiler-systems+internal-dyninst
   variants:
   - amdgpu_target=gfx942
   - amdgpu_target_sram_ecc=gfx942
