@@ -12,6 +12,7 @@ gcc-env:
   - spfft+gpu_direct
   - hip@7.1.0 ^mesa@23.3.6
   - llvm-amdgpu
+  - rccl
   variants:
   - amdgpu_target=gfx942
   - amdgpu_target_sram_ecc=gfx942
