@@ -1,6 +1,6 @@
 name: lammps
 store: /user-environment
-description: LAMMPS with metatrain software stack support
+description: LAMMPS
 spack:
   repo: https://github.com/spack/spack.git
   commit: v1.0.1
