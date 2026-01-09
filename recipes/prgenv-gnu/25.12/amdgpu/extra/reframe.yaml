@@ -1,0 +1,16 @@
+default:
+  features:
+    - rocm
+    - mpi
+    - rccl
+    - rccl-tests
+    - openmp
+    - prgenv
+    - serial
+    - cray-mpich
+    - osu-micro-benchmarks
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default
