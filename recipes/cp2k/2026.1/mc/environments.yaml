@@ -11,7 +11,7 @@ cp2k:
   - libxc
   - spglib
   - spla
-  - elpa
+  - elpa@2024.05.001
   - plumed
   - libvori
   # py-torch
