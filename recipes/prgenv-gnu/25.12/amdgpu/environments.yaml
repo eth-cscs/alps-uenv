@@ -48,6 +48,7 @@ gcc-env:
   - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
+  - hsa-rocr-dev
   # hip packages
   - hipblas
   - hipblaslt
@@ -55,6 +56,7 @@ gcc-env:
   - hipsparse
   - hipfft
   - hipblas-common
+  - miopen-hip
   # networking
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
