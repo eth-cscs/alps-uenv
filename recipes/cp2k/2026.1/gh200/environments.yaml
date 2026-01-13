@@ -12,7 +12,7 @@ cp2k:
   - libxc ~cuda
   - spglib
   - spla
-  - elpa
+  - elpa@2024.03.001
   - plumed
   - libvori
   # py-torch
