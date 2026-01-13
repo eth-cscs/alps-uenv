@@ -89,7 +89,6 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             description="Activates GPU streams support",
         )
 
-    patch("fujitsu.patch", when="%fj")
     # wrong filename handling in elpa's custom preprocessor
     patch(
         "https://gitlab.mpcdf.mpg.de/elpa/elpa/-/commit/5a821b79dd2905c691fc0973c9f3044904ac2653.diff",
