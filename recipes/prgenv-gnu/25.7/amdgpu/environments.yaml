@@ -19,6 +19,10 @@ gcc-env:
   - libtree
   - lz4
   - meson
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-cxx4
+  - netcdf-fortran
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
