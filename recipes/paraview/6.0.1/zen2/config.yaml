@@ -3,6 +3,7 @@ name: paraview
 store: /user-environment
 spack:
   repo: https://github.com/spack/spack.git
+  commit: 099e65c3ef9cbccf618c4dc5de1fcd5a83c5858b # before PYTHONPATH removal from views
   packages:
     repo: https://github.com/spack/spack-packages.git
 description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
