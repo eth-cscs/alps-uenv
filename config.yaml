@@ -68,7 +68,7 @@ clusters:
           F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
           F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
           F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
-          SLURM_TIMELIMIT: '500'
+          SLURM_TIMELIMIT: '720'
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
