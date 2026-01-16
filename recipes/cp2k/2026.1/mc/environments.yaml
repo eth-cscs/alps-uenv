@@ -11,7 +11,7 @@ cp2k:
   - libxc
   - spglib
   - spla
-  - elpa@2024.03.001
+  - elpa
   - plumed
   - libvori
   # py-torch
@@ -23,7 +23,7 @@ cp2k:
   - eigen@3
   # pika
   - pika@0.34.0 malloc=mimalloc +stdexec
-  - stdexec@25.03.rc1
+  - stdexec@=25.03.rc1
   - mimalloc
   - boost
   - fmt
