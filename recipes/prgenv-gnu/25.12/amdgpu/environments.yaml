@@ -48,15 +48,15 @@ gcc-env:
   - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
-  - hsa-rocr-dev
+  # - hsa-rocr-dev # TODO(iomaganaris): enable for julia AMD gpu build
   # hip packages
   - hipblas
   - hipblaslt
   - hiprand
-  - hipsparse
+  - hipsparse~shared-libs
   - hipfft
   - hipblas-common
-  - miopen-hip
+  # - miopen-hip  # TODO(iomaganaris): enable for julia AMD gpu build
   # networking
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe

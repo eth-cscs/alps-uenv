@@ -59,6 +59,7 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
         .with_non_feature_values("auto", "none"),
         sticky=True,
     )
+    variant("shared-libs", default=True, description="Build shared libraries")
     variant("rocm", default=True, description="Enable ROCm support")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
@@ -133,6 +134,7 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
         ]
 
         args.append(self.define_from_variant("BUILD_CUDA", "cuda"))
+        args.append(self.define_from_variant("HIPSPARSE_BUILD_SHARED_LIBS", "shared-libs"))
 
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
