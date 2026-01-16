@@ -1,6 +1,6 @@
 name: ascent
 store: /user-tools
-description: "Ascent in-situ visualization library"
+description: "Ascent/0.9.5 in-situ visualization library v2"
 spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.0
