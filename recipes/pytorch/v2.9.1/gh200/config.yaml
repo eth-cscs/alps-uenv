@@ -6,7 +6,8 @@ spack:
   #commit: 88f3dd435f6ef0ca575a629c446142a8befcf54e
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 43541f495fda1933b66b783a56c4e3f0ee7cc4ae
+    commit: e79ba9fc76dd02568da737230bd5f570822fcbb9
+    #commit: 43541f495fda1933b66b783a56c4e3f0ee7cc4ae
     #commit: e6dbe840bfaecfee7e85f45f08d762b7c12f053d
     #commit: e7bc1e5ce28e7af95a893ac3a32529e6fc75c738
     #commit: 2d16d0632693a3ee1951d95c81fbda95fe0c3b57

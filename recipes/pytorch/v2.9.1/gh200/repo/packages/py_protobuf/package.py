@@ -74,13 +74,13 @@ class PyProtobuf(PythonPackage):
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-six@1.9:", when="@3.0:3.17", type=("build", "run"))
 
-    # Minor version must match protobuf
-    for ver in range(32, 34):
+    # https://protobuf.dev/support/version-support/#python
+    for ver in range(30, 34):
         depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
-    for ver in range(26, 29):
-        depends_on(f"protobuf@3.{ver}", when=f"@5.{ver}")
+    for ver in range(26, 30):
+        depends_on(f"protobuf@{ver}", when=f"@5.{ver}")
     for ver in range(21, 26):
-        depends_on(f"protobuf@3.{ver}", when=f"@4.{ver}")
+        depends_on(f"protobuf@{ver}", when=f"@4.{ver}")
     for ver in range(0, 21):
         depends_on(f"protobuf@3.{ver}", when=f"@3.{ver}")
 
