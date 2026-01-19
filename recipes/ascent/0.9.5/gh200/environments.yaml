@@ -6,6 +6,9 @@ ascent-env:
   specs:
     - ascent +python +occa ~adios2 ~mfem ~fides
     - python
+    - cuda
+    - hdf5
+    - cmake
   views:
     default:
       link: run
@@ -14,5 +17,8 @@ ascent-env:
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
         env_vars:
+          set:
+            - CUDAARCHS: "90a"
+            - CUDAHOSTCXX: "g++"
           prepend_path:
             - PATH: /user-tools/env/default/utilities/ascent
