@@ -1,8 +1,16 @@
 diff --git a/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py b/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
-index aa29be9e8c..0e3f4d042c 100644
+index aa29be9e8c..f10f927c11 100644
 --- a/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
 +++ b/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
-@@ -66,6 +66,10 @@ class rocprofiler_sdk_profiler(RocProfCompute_Base):
+@@ -25,6 +25,7 @@
+ 
+ import argparse
+ import shlex
++import os
+ from pathlib import Path
+ from typing import Union
+ 
+@@ -66,6 +67,10 @@ class rocprofiler_sdk_profiler(RocProfCompute_Base):
              args.rocprofiler_sdk_library_path,
              rocprofiler_attach_tool_path,
          ]
