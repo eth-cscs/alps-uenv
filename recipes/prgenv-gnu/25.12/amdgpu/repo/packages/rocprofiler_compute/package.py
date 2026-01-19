@@ -49,6 +49,8 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-textual-plotext", when="@7.0:", type=("build", "run"))
     depends_on("py-sqlalchemy@2.0.42:", when="@7.1:", type=("build", "run"))
 
+    patch("keep_ld_preload.patch", when="@7.1.0")
+
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]
         return args
