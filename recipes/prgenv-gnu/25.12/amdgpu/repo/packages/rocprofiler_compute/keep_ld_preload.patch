@@ -1,7 +1,7 @@
-diff --git a/projects/rocprofiler-compute/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py b/projects/rocprofiler-compute/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
+diff --git a/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py b/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
 index aa29be9e8c..0e3f4d042c 100644
---- a/projects/rocprofiler-compute/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
-+++ b/projects/rocprofiler-compute/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
+--- a/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
++++ b/src/rocprof_compute_profile/profiler_rocprofiler_sdk.py
 @@ -66,6 +66,10 @@ class rocprofiler_sdk_profiler(RocProfCompute_Base):
              args.rocprofiler_sdk_library_path,
              rocprofiler_attach_tool_path,
@@ -13,10 +13,10 @@ index aa29be9e8c..0e3f4d042c 100644
          options = {
              "ROCPROFILER_LIBRARY_CTOR": "1",
              "LD_PRELOAD": ":".join(ld_preload),
-diff --git a/projects/rocprofiler-compute/src/utils/utils.py b/projects/rocprofiler-compute/src/utils/utils.py
+diff --git a/src/utils/utils.py b/src/utils/utils.py
 index 2ae5020d7c..da6becbf15 100644
---- a/projects/rocprofiler-compute/src/utils/utils.py
-+++ b/projects/rocprofiler-compute/src/utils/utils.py
+--- a/src/utils/utils.py
++++ b/src/utils/utils.py
 @@ -962,6 +962,10 @@ def pc_sampling_prof(
              rocprofiler_sdk_tool_path,
              rocprofiler_sdk_library_path,
