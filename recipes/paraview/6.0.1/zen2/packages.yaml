@@ -13,8 +13,8 @@ packages:
   llvm:
     require:
       - targets=x86
-      # note:
-      # - llvm@18 is required by ispc
-      - "@18"
       - ~gold
       - ~cuda
+  libllvm:
+    # note: ~clang~flang are turned off otherwise we get CC/CXX set to clang/clang++
+    require: llvm ~clang~flang

@@ -2,7 +2,8 @@ paraview-osmesa:
   compiler: [gcc]
   network:
     mpi: cray-mpich
-  unify: true
+  # note: workaround for mesa and ispc dependency on llvm
+  unify: when_possible
   views:
     default:
       link: run
@@ -108,7 +109,7 @@ paraview-osmesa:
 
   # offscreen rendering
   # note: +llvm is needed for llvmpipe, which is the software renderer
-  - mesa +osmesa ~glx ++llvm
+  - mesa +osmesa ~glx +llvm
   - osmesa
 
   variants:
