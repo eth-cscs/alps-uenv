@@ -1,0 +1,8 @@
+default:
+  features:
+    - hpctoolkit
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default

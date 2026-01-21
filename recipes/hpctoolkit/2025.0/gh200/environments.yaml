@@ -1,0 +1,18 @@
+hpctoolkit-env:
+  compiler: [gcc]
+  mpi:
+    spec: cray-mpich@8.1.32
+    gpu: cuda
+  unify: when_possible
+  # unify: true
+  specs:
+  - hpctoolkit@2025.0.stable +mpi +papi +cuda ~viewer~docs~python
+  variants:
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
