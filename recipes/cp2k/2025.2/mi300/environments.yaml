@@ -1,0 +1,28 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32+rocm
+  unify: true
+  specs:
+  #- sirius@7.8 +fortran +pugixml +magma
+  - libunwind@1.7-stable
+  - hip@6.3.3 ^mesa@23.3.6
+  - llvm-amdgpu
+  - cosma +gpu_direct ^netlib-scalapack
+  - dbcsr@develop #develop branch for mi300 support
+  - spla +fortran
+  - cp2k@2025.2 +cosma +spla ~sirius ~dlaf #+sirius
+  variants:
+  - amdgpu_target=gfx942
+  - amdgpu_target_sram_ecc=gfx942
+  - +mpi
+  - +rocm
+  - +openmp
+  - build_type=Release
+  views:
+    cp2k:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
