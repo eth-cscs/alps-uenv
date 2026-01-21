@@ -466,7 +466,7 @@ uenvs:
         gh200: v6.5.1/gh200
       deploy:
         daint: [gh200]
-  insitu_ascent:
+  ascent:
     "0.9.5":
       recipes:
         gh200: 0.9.5/gh200
