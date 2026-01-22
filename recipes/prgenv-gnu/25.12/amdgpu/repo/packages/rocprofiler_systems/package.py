@@ -145,6 +145,7 @@ class RocprofilerSystems(CMakePackage):
     variant("internal-dyninst", default=False, description="build internal dyninst")
     variant("internal-boost", default=False, description="build internal boost")
     variant("internal-tbb", default=False, description="build internal tbb")
+    variant("trace-decoder", default=False, description="build trace-decoder tool")
 
     conflicts("%rocmcc", when="+internal-tbb")
     conflicts("%clang", when="+internal-tbb")
@@ -200,6 +201,7 @@ class RocprofilerSystems(CMakePackage):
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
         for ver in ["7.0.0", "7.0.2", "7.1.0"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+    depends_on("rocprof-trace-decoder", when="+trace-decoder", type="run")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
     patch(
