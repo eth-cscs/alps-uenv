@@ -6,6 +6,7 @@ ascent-env:
   specs:
     - ascent +fortran +python +occa ~adios2 ~mfem ~fides
     - python
+    - py-matplotlib
     - cuda
     - hdf5
     - cmake
