@@ -29,7 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
-    version("2.9.1", tag="v2.9.1", commit="d38164a545b4a4e4e0cf73ce67173f70574890b6")
+    version("2.9.1", tag="v2.9.1", commit="d38164a545b4a4e4e0cf73ce67173f70574890b6", submodules=True)
     version("2.9.0", tag="v2.9.0", commit="0fabc3ba44823f257e70ce397d989c8de5e362c1")
     version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
     version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
@@ -74,6 +74,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=not is_darwin, description="Use CUDA")
     variant("rocm", default=False, description="Use ROCm")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
+    variant("cudss", default=False, description="Use cuDSS library", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
     variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8:")
     variant("magma", default=not is_darwin, description="Use MAGMA", when="+cuda")
@@ -293,6 +294,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # https://github.com/pytorch/pytorch/issues/119400
     depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
+    depends_on("cudss", when="+cudss")
     depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
     depends_on("magma+rocm", when="+magma+rocm")
@@ -341,6 +343,15 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-astunparse", when="@1.13:2.8")
 
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
+
+    patch("cmake_config_5.patch", when="@2.9.1")
+
+    # https://github.com/pytorch/pytorch/pull/169214
+    patch(
+        "https://github.com/pytorch/pytorch/pull/169214.patch?full_index=1",
+        sha256="111e60465aacb7f31b353508f252d364551d29a441d63845a60b5bc396c0d454",
+        when="@2.8:",
+    )
 
     patch("gcc-14.2-aarch64.patch", when="@2.9.1 %gcc@14.2:")
 
@@ -691,6 +702,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             # cmake/Modules_CUDA_fix/FindCUDNN.cmake
             env.set("CUDNN_INCLUDE_DIR", self.spec["cudnn"].prefix.include)
             env.set("CUDNN_LIBRARY", self.spec["cudnn"].libs[0])
+        enable_or_disable("cudss")
 
         enable_or_disable("cusparselt")
         enable_or_disable("fbgemm")

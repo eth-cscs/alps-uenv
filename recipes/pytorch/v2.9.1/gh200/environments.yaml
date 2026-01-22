@@ -3,7 +3,8 @@ pytorch-env:
   network:
       mpi: cray-mpich@9.0.0 +cuda
       specs:
-      - libfabric@2.4.0 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      #- libfabric@2.4.0 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      - libfabric@2.4.0-dev +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
       - xpmem@2.9.6 ~kernel-module
   unify: true
   specs:
@@ -34,7 +35,7 @@ pytorch-env:
   - cublasmp
   - nvidia-mathdx
   - xcb-util-cursor
-  - aws-ofi-nccl
+  - aws-ofi-nccl@1.18
   - nvshmem ~ucx +nccl +gdrcopy +libfabric +mpi +python +gpu_initiated_support
   - libunwind@master +pic ~tests components=coredump,ptrace,setjmp +xz +zlib
   - hydra
@@ -42,7 +43,7 @@ pytorch-env:
   - libaio
   - ucx +cma +dm ~examples +gdrcopy +thread_multiple +xpmem
   - ucc +nccl
-  - rdma-core
+  - rdma-core-mock ~ipo
   - faiss +python
   - python@3.12
   - python-venv
@@ -55,7 +56,7 @@ pytorch-env:
   - py-cuda-core@0.2
   - py-cuda-pathfinder@1.2.3
   - py-numpy
-  - py-torch@2.9.1 +caffe2 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
+  - py-torch@2.9.1 +caffe2 +cudnn ~cudss +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
   - py-torchaudio
   - py-torchvision
   - py-torchmetrics
@@ -72,7 +73,7 @@ pytorch-env:
   - py-onnxscript
   - py-regex
   - py-tensorboard
-  - py-vllm
+  #- py-vllm
   - dynolog +use-prometheus +with-unwind +with-gflags
   # packages which don't compile with +ipo
   - libjpeg-turbo ~ipo
