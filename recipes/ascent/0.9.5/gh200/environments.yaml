@@ -21,4 +21,4 @@ ascent-env:
             - CUDAARCHS: "90a"
             - CUDAHOSTCXX: "g++"
           prepend_path:
-            - PATH: /user-tools/env/default/utilities/ascent
+            - PATH: $@view_path@/utilities/ascent
