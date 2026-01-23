@@ -1,0 +1,73 @@
+cp2k:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - cmake
+  - ninja
+  - libtool@2.4.6
+  - cuda@12.4 # Can't be newer than driver version, for DBCSR
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc ~cuda
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  - libvori
+  # py-torch
+  - py-torch ~nccl ~distributed +custom-protobuf
+  - protobuf
+  - py-protobuf
+  # libint
+  - libint
+  - eigen@3
+  # pika
+  - pika@0.34.0 malloc=mimalloc +stdexec
+  - stdexec@=25.03.rc1
+  - mimalloc
+  - boost
+  - fmt
+  - spdlog
+  - hwloc
+  - whip
+  # Umpire
+  - umpire +fortran
+  - blt
+  - camp
+  # DLA-Future
+  - dla-future@0.10.0 +mpi_gpu_aware +mpi_gpu_force_contiguous +scalapack +miniapps +hdf5
+  - blaspp
+  - lapackpp
+  - dla-future-fortran@0.5.0
+  # DFTD4
+  - dftd4
+  - multicharge
+  - mctc-lib~openmp
+  # COSMA
+  - tiled-mm
+  - costa
+  - cosma +gpu_direct
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius@7.10.0 +dlaf +elpa +scalapack
+  # CP2K
+  - dbcsr@2.9.1
+  - cp2k@2026.1 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori +pytorch lmax=5 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - +cuda
+    - cuda_arch=90
+    - build_type=Release
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+    specs:
+      - libfabric@2.4 +gdrcopy
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots

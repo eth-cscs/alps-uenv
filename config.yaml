@@ -161,6 +161,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "2026.1":
+      recipes:
+        gh200: 2026.1/gh200
+        zen2: 2026.1/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   icon-wcp:
     "v1":
       recipes:
@@ -195,6 +202,14 @@ uenvs:
         zen2: "2024/mc"
         zen3: "2024/mc"
         gh200: "2024/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+    "20251210":
+      recipes:
+        zen2: "20251210/mc"
+        zen3: "20251210/mc"
+        gh200: "20251210/gh200"
       deploy:
         daint: [gh200]
         eiger: [zen2]
@@ -334,6 +349,17 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+  prgenv-gnu-openmpi:
+    "25.12":
+      recipes:
+        zen2: 25.12/mc
+        zen3: 25.12/mc
+        gh200: 25.12/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
       recipes:
@@ -454,7 +480,7 @@ uenvs:
         gh200: v6.5.1/gh200
       deploy:
         daint: [gh200]
-  insitu_ascent:
+  ascent:
     "0.9.5":
       recipes:
         gh200: 0.9.5/gh200
@@ -475,6 +501,12 @@ uenvs:
         eiger: [zen2]
       mount: "/user-tools"
   paraview:
+    "6.0.1":
+      recipes:
+        gh200: 6.0.1/gh200
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200

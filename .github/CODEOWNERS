@@ -1,4 +1,5 @@
 # Recipes owners
+recipes/ascent/ @albestro
 recipes/cp2k/ @RMeli @abussy @mtaillefumier
 recipes/gromacs/ @kanduri @RMeli
 recipes/lammps/ @nickjbrowning @RMeli
