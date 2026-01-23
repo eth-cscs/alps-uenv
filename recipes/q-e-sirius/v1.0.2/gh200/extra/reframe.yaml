@@ -7,6 +7,6 @@ run:
   cxx: mpic++
   ftn: mpifort
   views:
-    - sirius
+    - default
   extras:
     version: v1.0.2
