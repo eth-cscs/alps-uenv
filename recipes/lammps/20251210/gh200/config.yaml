@@ -1,0 +1,11 @@
+name: lammps
+store: /user-environment
+description: LAMMPS
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.0.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 306dbb4990a9742e89fe87898aaa86555782f393 # PR 1990
+modules: false
+version: 2
