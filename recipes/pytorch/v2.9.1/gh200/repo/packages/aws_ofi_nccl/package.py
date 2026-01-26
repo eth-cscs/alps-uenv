@@ -19,7 +19,8 @@ class AwsOfiNccl(AutotoolsPackage):
     maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
-    version("1.18.0", commit="86ebeaf59a2348b22780023effdb682503747de7")
+    version("1.18.0-dev", commit="f4d964adb0be307987338078b0c978c721ad117f")
+    #version("1.18.0", commit="86ebeaf59a2348b22780023effdb682503747de7")
     version("1.17.3", sha256="0b3313e9ad48226cb143c8f1dead60bcd59a8083e582558ee44a438d58cc23c1")
     version("1.17.2", sha256="6676f49cdfbaa10e953f18aad55f25812e0a7e716692bc911a69fd55cab42181")
     version("1.17.1", sha256="15a3b5db51075d20b2cb255b99668a7161779fdf5455436e3bea02d59a04685a")
@@ -65,10 +66,15 @@ class AwsOfiNccl(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     patch(
-        "https://github.com/aws/aws-ofi-nccl/compare/86ebeaf59a2348b22780023effdb682503747de7...ryanhankins:endpoint_mr_for_rdma.patch?full_index_index=1",
-        sha256="6399681b4cea8e38963a76e728802cb332b443776afaca10e8b272087093a388",
-        when="@=1.18.0",
+        "endpoint_mr_for_rdma.patch",
+        sha256="5899f6f14c44c29c4623b8ad32cde1b0e0a9cc84e226957a9db2acc8d49a03eb",
+        when="@=1.18.0-dev",
     )
+    #patch(
+    #    "https://github.com/aws/aws-ofi-nccl/compare/86ebeaf59a2348b22780023effdb682503747de7...ryanhankins:endpoint_mr_for_rdma.patch?full_index_index=1",
+    #    sha256="6399681b4cea8e38963a76e728802cb332b443776afaca10e8b272087093a388",
+    #    when="@=1.18.0",
+    #)
 
     def url_for_version(self, version):
         if version < Version("1.7.0") or version >= Version("1.14.0"):

@@ -35,7 +35,7 @@ pytorch-env:
   - cublasmp
   - nvidia-mathdx
   - xcb-util-cursor
-  - aws-ofi-nccl@1.18
+  - aws-ofi-nccl@1.18.0-dev
   - nvshmem ~ucx +nccl +gdrcopy +libfabric +mpi +python +gpu_initiated_support
   - libunwind@master +pic ~tests components=coredump,ptrace,setjmp +xz +zlib
   - hydra
