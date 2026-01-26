@@ -19,7 +19,7 @@ gromacs:
   - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
   - cublasmp
   - cufftmp
-  - gromacs@2025.0 +cuda +plumed +mpi +hwloc
+  - gromacs@2025.0 +cuda +cufftmp +plumed +mpi +hwloc
   variants:
   - +mpi
   - +cuda
