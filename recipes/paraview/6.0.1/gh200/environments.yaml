@@ -55,7 +55,7 @@ paraview-cuda:
   - tbb
 
   # in-situ support
-  - libcatalyst +mpi +python ~conduit
+  - libcatalyst +mpi +python
 
   # vtk external deps
   - abseil-cpp
