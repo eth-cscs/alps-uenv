@@ -1,0 +1,30 @@
+vasp:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32
+  unify: true
+  specs:
+      - vasp@6.5.1 ~cuda +openmp +hdf5 +wannier90
+      - openblas threads=openmp
+      - netlib-scalapack ~shared
+      - hdf5+fortran~mpi
+      - libxc~fhc
+      - wannier90
+      - fftw +openmp
+      - cmake
+      - ninja
+      - gdb
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
