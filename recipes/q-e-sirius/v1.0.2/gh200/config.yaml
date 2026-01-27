@@ -1,10 +1,10 @@
 name: q-e-sirius
 version: 2
 spack:
-  commit: releases/v1.0
+  commit: releases/v1.1
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 4568e82f27a390c46b0fc710aa68e534ae54277b
+    commit: 4548708e60f7f219d8174e2383e36baae284ef6e
 store: /user-environment
 description: SIRIUS dependencies for SIRIUS CI
