@@ -38,6 +38,7 @@ class Vasp(MakefilePackage, CudaPackage):
     variant("cuda", default=False, description="Enables running on Nvidia GPUs")
     variant("hdf5", default=False, description="Enabled HDF5 support")
     variant("wannier90", default=False, description="Enabled Wannier90 support")
+    variant("libxc", default=False, description="Enabled LibXC support")
 
     # Language dependencies (required in Spack v1.0+)
     depends_on("c", type="build")
@@ -63,6 +64,7 @@ class Vasp(MakefilePackage, CudaPackage):
 
     depends_on("hdf5+fortran+mpi", when="+hdf5")
     depends_on("wannier90", when="+wannier90")
+    depends_on("libxc~fhc", when="+libxc")
 
     conflicts(
         "%gcc@:8", msg="GFortran before 9.x does not support all features needed to build VASP"
@@ -151,6 +153,11 @@ class Vasp(MakefilePackage, CudaPackage):
         if spec.satisfies("+wannier90"):
             cpp_options.append("-DVASP2WANNIER90")
             llibs.append(spec["wannier90"].libs.ld_flags)
+
+        if spec.satisfies("+libxc"):
+            cpp_options.append("-DUSELIBXC")
+            llibs.append(spec["libxc"].libs.ld_flags)
+            incs.append(spec["libxc"].headers.include_flags)
 
 
         filter_file(r"^VASP_TARGET_CPU[ ]{0,}\?=.*", "", make_include)
