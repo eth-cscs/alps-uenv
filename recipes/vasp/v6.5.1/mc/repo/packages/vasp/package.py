@@ -5,7 +5,10 @@
 import os
 from pathlib import Path
 
+import spack.util.environment
 from spack.package import *
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 
 class Vasp(MakefilePackage, CudaPackage):
