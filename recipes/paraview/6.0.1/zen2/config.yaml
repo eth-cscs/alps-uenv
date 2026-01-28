@@ -6,5 +6,5 @@ spack:
   commit: 099e65c3ef9cbccf618c4dc5de1fcd5a83c5858b # before PYTHONPATH removal from views
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: c7494aa99aea4ad1b1b149767eead1f89b272f06 # before libcatalyst drop of conduit variant
+    commit: a10680b086416c71eeecb15f130bfff36f38bb63
 description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
