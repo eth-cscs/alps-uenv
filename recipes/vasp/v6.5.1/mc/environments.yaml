@@ -2,12 +2,14 @@ vasp:
   compiler: [gcc]
   network:
     mpi: cray-mpich@8.1.32
+    specs:
+    - libfabric@2.3
   unify: true
   specs:
       - vasp@6.5.1 ~cuda +openmp +hdf5 +wannier90 +libxc
       - openblas threads=openmp
       - netlib-scalapack ~shared
-      - hdf5+fortran~mpi
+      - hdf5+fortran+mpi
       - libxc~fhc
       - wannier90
       - fftw +openmp

@@ -45,7 +45,6 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
-    #depends_on("rsync", type="build")
     depends_on("blas")
     depends_on("lapack")
     depends_on("fftw-api")
@@ -54,17 +53,15 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("amdblis threads=openmp", when="+openmp ^[virtuals=blas] amdblis")
     depends_on("openblas threads=openmp", when="+openmp ^[virtuals=blas] openblas")
     depends_on("mpi", type=("build", "link", "run"))
-    # fortran oddness requires the below
     depends_on("scalapack")
 
     # Use the bundled NCCL library of NVHPC instead.
     # The spack build nccl library leads to linking errors.
     #depends_on("nccl", when="+cuda")
 
-
     depends_on("hdf5+fortran+mpi", when="+hdf5")
     depends_on("wannier90", when="+wannier90")
-    depends_on("libxc~fhc", when="+libxc")
+    depends_on("libxc~fhc+fortran", when="+libxc")
 
     conflicts(
         "%gcc@:8", msg="GFortran before 9.x does not support all features needed to build VASP"
@@ -148,7 +145,7 @@ class Vasp(MakefilePackage, CudaPackage):
         if spec.satisfies("+hdf5"):
             cpp_options.append("-DVASP_HDF5")
             llibs.append(spec["hdf5:fortran"].libs.ld_flags)
-            incs.append(spec["hdf5"].headers.include_flags)
+            incs.append(spec["hdf5:fortran"].headers.include_flags)
 
         if spec.satisfies("+wannier90"):
             cpp_options.append("-DVASP2WANNIER90")
@@ -156,8 +153,8 @@ class Vasp(MakefilePackage, CudaPackage):
 
         if spec.satisfies("+libxc"):
             cpp_options.append("-DUSELIBXC")
-            llibs.append(spec["libxc"].libs.ld_flags)
-            incs.append(spec["libxc"].headers.include_flags)
+            llibs.append(spec["libxc:fortran"].libs.ld_flags)
+            incs.append(spec["libxc:fortran"].headers.include_flags)
 
 
         filter_file(r"^VASP_TARGET_CPU[ ]{0,}\?=.*", "", make_include)
