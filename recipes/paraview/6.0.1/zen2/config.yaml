@@ -7,4 +7,4 @@ spack:
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: a10680b086416c71eeecb15f130bfff36f38bb63
-description: ParaView for Alps Grace-Hopper clusters using EGL
+description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
