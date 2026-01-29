@@ -6,12 +6,13 @@ vasp:
     - libfabric@2.3
   unify: true
   specs:
-      - vasp@6.5.1 ~cuda +openmp +hdf5 +wannier90 +libxc
+      - vasp@6.5.1 ~cuda +openmp +hdf5 +wannier90 +libxc +dftd4
       - openblas threads=openmp
       - netlib-scalapack ~shared
       - hdf5+fortran+mpi
       - libxc~fhc
       - wannier90
+      - dftd4 build_system=cmake
       - fftw +openmp
       - cmake
       - ninja
