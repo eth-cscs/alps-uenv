@@ -5,6 +5,6 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 4548708e60f7f219d8174e2383e36baae284ef6e
+    commit: 5f20b9190596e0b875141e8cee03f0d3847ad65c
 store: /user-environment
 description: q-e-sirius uenv
