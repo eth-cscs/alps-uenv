@@ -26,4 +26,4 @@ modules:
   views:
     - modules
   activation:
-    - module load cmake cray-mpich fftw gcc hdf5 netlib-scalapack wannier90
+    - module load cmake cray-mpich fftw gcc hdf5 netlib-scalapack wannier90 dftd4
