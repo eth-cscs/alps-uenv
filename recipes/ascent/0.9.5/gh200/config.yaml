@@ -6,5 +6,5 @@ spack:
   commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: e2a989af46f57456c4a06f1e0a510ca232d86b6b
+    commit: 0f833a16999a012153c040c26c98256c14a1a4fd
 version: 2
