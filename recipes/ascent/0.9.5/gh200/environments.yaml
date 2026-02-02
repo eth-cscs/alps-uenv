@@ -7,6 +7,7 @@ ascent-env:
     - ascent +fortran +python +occa ~adios2 ~mfem ~fides
     - python
     - py-matplotlib
+    - py-pyyaml
     - cuda
     - hdf5
     - cmake
