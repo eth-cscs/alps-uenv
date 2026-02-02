@@ -19,7 +19,8 @@ class AwsOfiNccl(AutotoolsPackage):
     maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
-    version("1.18.0-dev", commit="f4d964adb0be307987338078b0c978c721ad117f")
+    version("1.18.0-dev", commit="eb9877e9cfecf725dba0794a5e0fc06f8fdf7f3f")
+    #version("1.18.0-dev", commit="f4d964adb0be307987338078b0c978c721ad117f")
     #version("1.18.0", commit="86ebeaf59a2348b22780023effdb682503747de7")
     version("1.17.3", sha256="0b3313e9ad48226cb143c8f1dead60bcd59a8083e582558ee44a438d58cc23c1")
     version("1.17.2", sha256="6676f49cdfbaa10e953f18aad55f25812e0a7e716692bc911a69fd55cab42181")
@@ -66,8 +67,8 @@ class AwsOfiNccl(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     patch(
-        "endpoint_mr_for_rdma.patch",
-        sha256="5899f6f14c44c29c4623b8ad32cde1b0e0a9cc84e226957a9db2acc8d49a03eb",
+        "endpoint_mr.eb9877e.patch",
+        sha256="7bfa48a1e7d3220d0033177cea46173b35ec2fcb7c6a786fddedcbca551ab6ab",
         when="@=1.18.0-dev",
     )
     #patch(

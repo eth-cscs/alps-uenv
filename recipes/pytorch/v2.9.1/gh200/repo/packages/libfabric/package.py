@@ -136,7 +136,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     patch(
-        "https://github.com/ofiwg/libfabric/compare/f8262817c337d615a1acceea6cd4ecb526ce548b...ryanhankins:fi_writemsg.patch?full_index=1",
+        "fi_writemsg.f826281.patch",
         sha256="2dfe9df38f4caf01d40f199a73f14a62cd5145d51ed7693989e51e3c58adc1f4",
         when="@2.4.0-dev",
     )
