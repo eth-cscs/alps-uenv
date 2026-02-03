@@ -1,8 +1,9 @@
-paraview-cuda:
+paraview-osmesa:
   compiler: [gcc]
   network:
     mpi: cray-mpich
-  unify: true
+  # note: workaround for mesa and ispc dependency on llvm
+  unify: when_possible
   views:
     default:
       link: run
@@ -12,7 +13,6 @@ paraview-cuda:
           LD_LIBRARY_PATH: [lib, lib64]
         env_vars:
           set:
-            - CUDAARCHS: "90a"
             # note: these are needed for the launch script, but it might change
             - PARAVIEW_INSTALL_DIR: /user-environment/paraview
             - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
@@ -27,16 +27,13 @@ paraview-cuda:
             # note: these are needed because paraview plugins are not installed by spack
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib
             - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib64
-            - LD_LIBRARY_PATH: /user-environment/paraview-plugins/nvidia-index/lib
     develop:
-      exclude: ["paraview-cuda"]
+      exclude: ["paraview-osmesa"]
       uenv:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
   specs:
-  - cuda@12
-
   # Build tools
   - cmake
   - ninja
@@ -110,6 +107,11 @@ paraview-cuda:
   - embree
   - rkcommon
   - openimagedenoise
+
+  # offscreen rendering
+  # note: +llvm is needed for llvmpipe, which is the software renderer
+  - mesa +osmesa ~glx +llvm
+  - osmesa
 
   variants:
   - build_type=Release
