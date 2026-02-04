@@ -11,7 +11,7 @@ gcc-env:
   variants:
   - +mpi
   views:
-    default:
+    sirius:
       link: roots
       uenv:
         add_compilers: true
