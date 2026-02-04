@@ -3,7 +3,6 @@ pytorch-env:
   network:
       mpi: cray-mpich@9.0.0 +cuda
       specs:
-      #- libfabric@2.4.0 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
       - libfabric@2.4.0-dev +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
       - xpmem@2.9.6 ~kernel-module
   unify: true
