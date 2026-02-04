@@ -1,0 +1,25 @@
+gromacs:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+  unify: when_possible
+  specs:
+  - cmake
+  - cuda@12.9
+  - blas
+  - lapack
+  - hwloc
+  - fftw
+  - python@3.12
+  - gromacs@2025.0 +cuda +plumed +mpi +hwloc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    develop:
+      exclude: ['gromacs']
+    gromacs:
+      link: run
+  packages:
+  - perl
