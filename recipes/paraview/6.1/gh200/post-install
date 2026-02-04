@@ -66,11 +66,28 @@ pushd ${PARAVIEW_SRC_DIR}
 git submodule update --init --recursive
 popd
 
-pushd
-cd $PARAVIEW_SRC_DIR/VTK
-curl -o 11388.patch https://gitlab.kitware.com/vtk/vtk/-/merge_requests/11388/diffs.patch
-patch -p 1 < 11388.patch
-popd
+echo "Patching VTK::hdf5 CMake target problem..."
+grep -lr "VTK::hdf5" $PARAVIEW_SRC_DIR | xargs sed -i "s/VTK::hdf5/VTK::hdf5-vtk/g"
+
+echo "Patching VTK with external Viskores CMake targets problem..."
+patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-EOF
+  diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
+  index 468932c21a..917aef03bf 100644
+  --- a/ThirdParty/viskores/CMakeLists.txt
+  +++ b/ThirdParty/viskores/CMakeLists.txt
+  @@ -30,4 +30,11 @@ vtk_module_third_party(
+  
+   if(VTK_MODULE_USE_EXTERNAL_vtkviskores)
+     viskores_setup_job_pool()
+  +
+  +  get_property(
+  +    _targets_list
+  +    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  +    PROPERTY IMPORTED_TARGETS)
+  +
+  +  set_target_properties(${_targets_list} PROPERTIES IMPORTED_GLOBAL TRUE)
+   endif()
+EOF
 
 # =====================================
 SECTION "configure paraview build..."
@@ -98,13 +115,14 @@ cmake                                                       \
     -DPARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX=ON               \
     -DPARAVIEW_PLUGIN_AUTOLOAD_pvNVIDIAIndeX=OFF            \
     -DVTK_USE_X=OFF                                         \
+    -DVTK_USE_Wayland=OFF                                   \
     -DVTK_OPENGL_HAS_EGL=ON                                 \
     -DVTK_SMP_IMPLEMENTATION_TYPE=TBB                       \
     -DVTK_MODULE_USE_EXTERNAL_VTK_scn=OFF                   \
     -DVTK_MODULE_USE_EXTERNAL_VTK_fast_float=OFF            \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
-    -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=OFF           \
+    -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=ON            \
     -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
     -S $PARAVIEW_SRC_DIR                                    \
     -B $PARAVIEW_BUILD_DIR                                  \
