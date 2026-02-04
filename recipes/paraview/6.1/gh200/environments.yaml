@@ -90,6 +90,7 @@ paraview-cuda:
   - verdict +shared
   - xz
   - zlib-ng
+  - viskores@1.1 +64bitids +tbb +vtktypes
 
   # climate/weather
   - cdi
