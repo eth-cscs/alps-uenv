@@ -19,3 +19,8 @@ packages:
       - "@18"
       - ~gold
       - ~cuda
+  # workarounds for libfuse problem
+  automake:
+    require: "@1.16.5"
+  gettext:
+    require: "@0.23"
