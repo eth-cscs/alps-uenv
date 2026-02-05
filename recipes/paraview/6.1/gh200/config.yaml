@@ -1,0 +1,10 @@
+version: 2
+name: paraview
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: 07e72a9fee3b8f5187a52cbbee16ac07657cb10c # after PYHTONPATH change has been reverted
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 82ee7a8b11550f25f16e1ee6cbbd2cc671bcf90d
+description: ParaView for Alps Grace-Hopper clusters using EGL
