@@ -70,7 +70,7 @@ echo "Patching VTK::hdf5 CMake target problem..."
 grep -lr "VTK::hdf5" $PARAVIEW_SRC_DIR | xargs sed -i "s/VTK::hdf5/VTK::hdf5-vtk/g"
 
 echo "Patching VTK with external Viskores CMake targets problem..."
-patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-EOF
+patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-'EOF'
   diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
   index 468932c21a..69eb8b3169 100644
   --- a/ThirdParty/viskores/CMakeLists.txt
