@@ -57,6 +57,8 @@ paraview-cuda:
   # in-situ support
   - libcatalyst +mpi +python
 
+  - fides@master
+
   # vtk external deps
   - abseil-cpp
   - cgns #@4.4.0
