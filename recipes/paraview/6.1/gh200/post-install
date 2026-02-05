@@ -134,7 +134,7 @@ cmake                                                       \
 
 # =====================================
 SECTION "build and install paraview"
-cmake --build $PARAVIEW_BUILD_DIR
+cmake --build $PARAVIEW_BUILD_DIR -j
 cmake --install $PARAVIEW_BUILD_DIR
 
 # =====================================
