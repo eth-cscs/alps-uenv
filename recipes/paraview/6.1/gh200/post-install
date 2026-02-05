@@ -72,12 +72,15 @@ grep -lr "VTK::hdf5" $PARAVIEW_SRC_DIR | xargs sed -i "s/VTK::hdf5/VTK::hdf5-vtk
 echo "Patching VTK with external Viskores CMake targets problem..."
 patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-EOF
   diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
-  index 468932c21a..917aef03bf 100644
+  index 468932c21a..69eb8b3169 100644
   --- a/ThirdParty/viskores/CMakeLists.txt
   +++ b/ThirdParty/viskores/CMakeLists.txt
-  @@ -30,4 +30,11 @@ vtk_module_third_party(
+  @@ -28,6 +28,13 @@ vtk_module_third_party(
+       VERSION       "1.1.0"
+       STANDARD_INCLUDE_DIRS)
   
-   if(VTK_MODULE_USE_EXTERNAL_vtkviskores)
+  -if(VTK_MODULE_USE_EXTERNAL_vtkviskores)
+  +if(VTK_MODULE_USE_EXTERNAL_vtkviskores OR VTK_MODULE_USE_EXTERNAL_VTK_vtkviskores)
      viskores_setup_job_pool()
   +
   +  get_property(
