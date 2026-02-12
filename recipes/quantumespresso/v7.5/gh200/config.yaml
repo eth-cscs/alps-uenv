@@ -1,0 +1,10 @@
+name: quantumespresso
+version: 2
+spack:
+  commit: releases/v1.1
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: acb7b6e3b0f3de8239152b9e3b497f9ab2334212
+store: /user-environment
+description: QuantumESPRESSO on GH200
