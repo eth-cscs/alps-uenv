@@ -4,7 +4,7 @@ gcc-env:
       mpi: cray-mpich@8.1.32
   unify: true
   specs:
-  - quantum-espresso@7.5 +libxc +scalapack +openmp hdf5=parallel
+  - quantum-espresso@7.5 +libxc +oscdft +gipaw +scalapack +openmp hdf5=parallel
   - netlib-scalapack
   - cmake
   - libxc
