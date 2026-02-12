@@ -420,6 +420,12 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
         eiger: [zen2]
+    "v7.5":
+      recipes:
+        gh200: v7.4.1/gh200
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
   sirius:
     "v7.5":
       recipes:
