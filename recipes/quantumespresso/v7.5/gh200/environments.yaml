@@ -1,0 +1,28 @@
+nvhpc-env:
+  compiler: [gcc, nvhpc]
+  network:
+      mpi: cray-mpich@8.1.32+cuda %c,cxx,fortran=nvhpc
+      specs: [ 'libfabric@2.3 +gdrcopy %c=gcc' ]
+  unify: when_possible
+  specs:
+  - quantum-espresso@7.5  +libxc +cuda +scalapack +elpa +openmp +mpigpu +gipaw +oscdft hdf5=parallel %c,cxx,fortran=nvhpc
+  - netlib-scalapack
+  - fftw%nvhpc
+  - nvpl-blas threads=openmp
+  - nvpl-lapack threads=openmp
+  - libxc~cuda %c,fortran=nvhpc
+  - cmake
+  - elpa +cuda %nvhpc
+  - hdf5 %nvhpc
+  packages:
+  - git
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    default:
+      link: roots
+    develop:
+      exclude: ['quantum-espresso', 'patchelf', 'git']
+      link: roots

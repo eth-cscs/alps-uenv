@@ -1,0 +1,33 @@
+From 09b351800268ad174d1ef388e5099324c1f862af Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Tue, 3 Feb 2026 22:32:25 +0100
+Subject: [PATCH] fix devxlib flags
+
+---
+ external/devxlib.cmake | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/external/devxlib.cmake b/external/devxlib.cmake
+index 28cb341ce..4088fa9f4 100644
+--- a/external/devxlib.cmake
++++ b/external/devxlib.cmake
+@@ -15,13 +15,13 @@ if(QE_DEVICEXLIB_INTERNAL)
+         devxlib/src/device_fbuff.f90
+         devxlib/src/device_fbuff_mod.f90
+         devxlib/src/timer_mod.f90
+-        devxlib/src/timer.c)
++        )
+     qe_enable_cuda_fortran("${src_devxlib}")
+ 
+-    qe_add_library(qe_devxlib ${src_devxlib})
++    qe_add_library(qe_devxlib ${src_devxlib};devxlib/src/timer.c)
+ 
+     target_include_directories(qe_devxlib PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/devxlib/src")
+-    target_include_directories(qe_devxlib PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/devxlib/include")   
++    target_include_directories(qe_devxlib PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/devxlib/include")
+ else()
+     add_library(qe_devxlib INTERFACE)
+     find_package(DeviceXlib REQUIRED)
+-- 
+2.52.0
+
