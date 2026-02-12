@@ -1,0 +1,10 @@
+name: quantum-espresso
+version: 2
+spack:
+  commit: releases/v1.0
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 19ab19246ef7ff41c03ce3e58eeba5dfa6df360d
+store: /user-environment
+description: QuantumESPRESSO
