@@ -452,9 +452,6 @@ class QuantumEspresso(CMakePackage, Package):
 
     # LAXlib check in QE 7.5 fails
     patch("0001-disable-cuda-check-in-laxlib.patch", when="@7.5+cuda %nvhpc")
-    # patch sockets.c for nvhpc
-    patch("0001-patch-sockets.c.patch", when="@7.5+cuda %nvhpc")
-    patch("0001-check-C-not-fortran-compiler-for-C-settings.patch", when="@7.5+cuda %nvhpc")
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
