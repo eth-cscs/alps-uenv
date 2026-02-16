@@ -49,7 +49,7 @@ SECTION "download paraview sources..."
 SRC_ROOT=$UENV_STORE/temp/src
 BUILD_ROOT=$UENV_STORE/temp/build
 
-PARAVIEW_TAG=master
+PARAVIEW_TAG="v6.1.0-RC1"
 
 PARAVIEW_SRC_DIR=$SRC_ROOT/paraview-src
 PARAVIEW_BUILD_DIR=$BUILD_ROOT/paraview
