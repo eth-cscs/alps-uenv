@@ -70,6 +70,16 @@ clusters:
           F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
           SLURM_TIMELIMIT: '720'
           SLURM_CPUS_PER_TASK: '64'
+      -
+        uarch: 'mi300'
+        partition: 'mi300'
+        variables:
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          SLURM_TIMELIMIT: '500'
+          SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
   climana:
@@ -151,6 +161,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "2026.1":
+      recipes:
+        gh200: 2026.1/gh200
+        zen2: 2026.1/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   icon-wcp:
     "v1":
       recipes:
@@ -185,6 +202,14 @@ uenvs:
         zen2: "2024/mc"
         zen3: "2024/mc"
         gh200: "2024/gh200"
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+    "20251210":
+      recipes:
+        zen2: "20251210/mc"
+        zen3: "20251210/mc"
+        gh200: "20251210/gh200"
       deploy:
         daint: [gh200]
         eiger: [zen2]
@@ -329,6 +354,17 @@ uenvs:
         mi200: 25.12/amdgpu
       deploy:
         beverin: [mi200]
+  prgenv-gnu-openmpi:
+    "25.12":
+      recipes:
+        zen2: 25.12/mc
+        zen3: 25.12/mc
+        gh200: 25.12/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
   prgenv-nvfortran:
     "24.11":
       recipes:
@@ -346,6 +382,13 @@ uenvs:
     "v2.6.0":
       recipes:
         gh200: v2.6.0/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+    "v2.8.0":
+      recipes:
+        gh200: v2.8.0/gh200
       deploy:
         clariden: [gh200]
         daint: [gh200]
@@ -391,9 +434,12 @@ uenvs:
       recipes:
         gh200: v1.0.1/gh200
         zen2: v1.0.1/mc
+        mi200: v1.0.1/mi200
+        mi300: v1.0.1/mi300
       deploy:
         daint: [gh200]
         eiger: [zen2]
+        beverin: [mi200,mi300]
   scorep:
     "9.2-gcc12":
       recipes:
@@ -432,7 +478,7 @@ uenvs:
         gh200: v6.5.1/gh200
       deploy:
         daint: [gh200]
-  insitu_ascent:
+  ascent:
     "0.9.5":
       recipes:
         gh200: 0.9.5/gh200
@@ -453,6 +499,14 @@ uenvs:
         eiger: [zen2]
       mount: "/user-tools"
   paraview:
+    "6.0.1":
+      recipes:
+        gh200: 6.0.1/gh200
+        zen2: 6.0.1/zen2
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
     "5.13.2":
       recipes:
         gh200: 5.13.2/gh200

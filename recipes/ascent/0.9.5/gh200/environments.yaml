@@ -1,0 +1,26 @@
+ascent-env:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich
+  unify: true
+  specs:
+    - ascent +fortran +python +occa ~adios2 ~mfem ~fides
+    - python
+    - py-matplotlib
+    - py-pyyaml
+    - cuda
+    - hdf5
+    - cmake
+  views:
+    default:
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+            - CUDAARCHS: "90a"
+            - CUDAHOSTCXX: "g++"
+          prepend_path:
+            - PATH: $@view_path@/utilities/ascent

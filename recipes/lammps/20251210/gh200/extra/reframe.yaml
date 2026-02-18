@@ -1,0 +1,44 @@
+build-kokkos:
+  features:
+    - lammps-kokkos-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-kokkos
+  extras:
+    version: 20251210
+    cmake: -DKokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC=OFF -DKokkos_ARCH_NATIVE=ON -DKokkos_ARCH_PASCAL60=OFF -DKokkos_ARCH_HOPPER90=ON
+
+build-gpu:
+  features:
+    - lammps-gpu-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - develop-gpu
+  extras:
+    version: 20250722
+
+run-kokkos:
+  features:
+    - lammps-kokkos-prod
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - kokkos
+  extras:
+    version: 20250722
+
+run-gpu:
+  features:
+    - lammps-gpu-prod
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - gpu
+  extras:
+    version: 20250722
