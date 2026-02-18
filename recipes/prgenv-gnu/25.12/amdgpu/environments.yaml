@@ -38,6 +38,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-sdk
+  - rocprof-trace-decoder
   - rocprofiler-systems +internal-dyninst+internal-boost+trace-decoder
   - rocprofiler-compute
   - rocrand
