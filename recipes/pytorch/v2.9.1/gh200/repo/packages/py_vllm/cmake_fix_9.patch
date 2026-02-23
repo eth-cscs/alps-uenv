@@ -1,0 +1,118 @@
+diff --git i/CMakeLists.txt w/CMakeLists.txt
+index e09972fe7..cb7710c3f 100644
+--- i/CMakeLists.txt
++++ w/CMakeLists.txt
+@@ -303,6 +303,35 @@ set(VLLM_EXT_SRC
+   "csrc/custom_all_reduce.cu"
+   "csrc/torch_bindings.cpp")
+ 
++# -------- CUTLASS source vs. system headers -------------------------------
++# By default vLLM fetches CUTLASS with FetchContent. Allow using a system-
++# installed headers-only CUTLASS by passing VLLM_CUTLASS_PREFIX.
++# This sets CUTLASS_INCLUDE_DIR and CUTLASS_TOOLS_UTIL_INCLUDE_DIR and skips
++# FetchContent_Declare/MakeAvailable.
++#
++# Usage:
++#   -DVLLM_CUTLASS_PREFIX=/path/to/cutlass/installation
++#   or environment VLLM_CUTLASS_PREFIX
++#
++set(_VLLM_CUTLASS_PREFIX "${VLLM_CUTLASS_PREFIX}")
++if(NOT _VLLM_CUTLASS_PREFIX AND DEFINED ENV{VLLM_CUTLASS_PREFIX})
++  set(_VLLM_CUTLASS_PREFIX "$ENV{VLLM_CUTLASS_PREFIX}")
++endif()
++
++if(_VLLM_CUTLASS_PREFIX)
++  file(TO_CMAKE_PATH "${_VLLM_CUTLASS_PREFIX}" _VLLM_CUTLASS_PREFIX)
++  set(CUTLASS_INCLUDE_DIR "${_VLLM_CUTLASS_PREFIX}/include")
++  if(EXISTS "${_VLLM_CUTLASS_PREFIX}/tools/util/include")
++    set(CUTLASS_TOOLS_UTIL_INCLUDE_DIR "${_VLLM_CUTLASS_PREFIX}/tools/util/include")
++  endif()
++  # If examples exist (rare in installs), expose CUTLASS_DIR so MLA extras can use them.
++  if(EXISTS "${_VLLM_CUTLASS_PREFIX}/examples")
++    set(CUTLASS_DIR "${_VLLM_CUTLASS_PREFIX}")
++  endif()
++  set(VLLM_USE_SYSTEM_CUTLASS_HEADERS ON)
++endif()
++# -------------------------------------------------------------------------
++
+ if(VLLM_GPU_LANG STREQUAL "CUDA")
+   SET(CUTLASS_ENABLE_HEADERS_ONLY ON CACHE BOOL "Enable only the header library")
+ 
+@@ -314,7 +343,9 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+     set(VLLM_CUTLASS_SRC_DIR $ENV{VLLM_CUTLASS_SRC_DIR})
+   endif()
+ 
+-  if(VLLM_CUTLASS_SRC_DIR)
++  if(VLLM_USE_SYSTEM_CUTLASS_HEADERS)
++    message(STATUS "Using system CUTLASS headers at: ${CUTLASS_INCLUDE_DIR}")
++  elseif(VLLM_CUTLASS_SRC_DIR)
+     if(NOT IS_ABSOLUTE VLLM_CUTLASS_SRC_DIR)
+       get_filename_component(VLLM_CUTLASS_SRC_DIR "${VLLM_CUTLASS_SRC_DIR}" ABSOLUTE)
+     endif()
+@@ -334,7 +365,14 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+         GIT_SHALLOW TRUE
+     )
+   endif()
+-  FetchContent_MakeAvailable(cutlass)
++  if(NOT VLLM_USE_SYSTEM_CUTLASS_HEADERS)
++    FetchContent_MakeAvailable(cutlass)
++  endif()
++
++  set(_CUTLASS_PY "${VLLM_CUTLASS_SRC_DIR}")
++  if(NOT _CUTLASS_PY)
++    set(_CUTLASS_PY "${cutlass_SOURCE_DIR}") 
++  endif()
+ 
+   list(APPEND VLLM_EXT_SRC
+     "csrc/quantization/awq/gemm_kernels.cu"
+@@ -384,7 +422,6 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+         OR NOT $CACHE{MARLIN_GEN_SCRIPT_HASH_AND_ARCH} STREQUAL ${MARLIN_GEN_SCRIPT_HASH_AND_ARCH})
+       execute_process(
+         COMMAND ${CMAKE_COMMAND} -E env
+-        PYTHONPATH=$PYTHONPATH
+           ${Python_EXECUTABLE} ${MARLIN_GEN_SCRIPT} ${CUDA_ARCHS_STR}
+         RESULT_VARIABLE marlin_generation_result
+         OUTPUT_VARIABLE marlin_generation_result
+@@ -692,11 +729,20 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+       SRCS "${SRCS}"
+       CUDA_ARCHS "${MLA_ARCHS}")
+     list(APPEND VLLM_EXT_SRC "${SRCS}")
+-    list(APPEND VLLM_GPU_FLAGS "-DENABLE_CUTLASS_MLA=1")
+-    # Add MLA-specific include directories only to MLA source files
+-    set_source_files_properties(${SRCS}
+-      PROPERTIES INCLUDE_DIRECTORIES "${CUTLASS_DIR}/examples/77_blackwell_fmha;${CUTLASS_DIR}/examples/common")
+-    message(STATUS "Building CUTLASS MLA for archs: ${MLA_ARCHS}")
++    if(CUTLASS_DIR AND EXISTS "${CUTLASS_DIR}/examples")
++      list(APPEND VLLM_GPU_FLAGS "-DENABLE_CUTLASS_MLA=1")
++      # Add MLA-specific include directories only to MLA source files
++      set_source_files_properties(${SRCS}
++        PROPERTIES INCLUDE_DIRECTORIES "${CUTLASS_DIR}/examples/77_blackwell_fmha;${CUTLASS_DIR}/examples/common")
++      message(STATUS "Building CUTLASS MLA for archs: ${MLA_ARCHS}")
++    else()
++      message(STATUS "CUTLASS_DIR/examples not found; disabling CUTLASS MLA.")
++      # Clear MLA sources so we don't reference non-existent example headers.
++      list(REMOVE_ITEM VLLM_EXT_SRC ${SRCS})
++      # Ensure MLA flags not set.
++      list(REMOVE_ITEM VLLM_GPU_FLAGS "-DENABLE_CUTLASS_MLA=1")
++      set(MLA_ARCHS)
++    endif()
+   else()
+     message(STATUS "Not building CUTLASS MLA as no compatible archs were found.")
+     # clear MLA_ARCHS
+@@ -822,7 +868,7 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+         OR NOT $CACHE{MACHETE_GEN_SCRIPT_HASH} STREQUAL ${MACHETE_GEN_SCRIPT_HASH})
+       execute_process(
+         COMMAND ${CMAKE_COMMAND} -E env
+-        PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/csrc/cutlass_extensions/:${CUTLASS_DIR}/python/:${VLLM_PYTHON_PATH}:$PYTHONPATH
++        PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/csrc/cutlass_extensions/:${_CUTLASS_PY}/python/:${VLLM_PYTHON_PATH}:$ENV{PYTHONPATH}
+           ${Python_EXECUTABLE} ${MACHETE_GEN_SCRIPT}
+         RESULT_VARIABLE machete_generation_result
+         OUTPUT_VARIABLE machete_generation_output
+@@ -1002,7 +1048,6 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+         OR NOT $CACHE{MOE_MARLIN_GEN_SCRIPT_HASH_AND_ARCH} STREQUAL ${MOE_MARLIN_GEN_SCRIPT_HASH_AND_ARCH})
+       execute_process(
+         COMMAND ${CMAKE_COMMAND} -E env
+-        PYTHONPATH=$PYTHONPATH
+           ${Python_EXECUTABLE} ${MOE_MARLIN_GEN_SCRIPT} ${CUDA_ARCHS_STR}
+         RESULT_VARIABLE moe_marlin_generation_result
+         OUTPUT_VARIABLE moe_marlin_generation_output
