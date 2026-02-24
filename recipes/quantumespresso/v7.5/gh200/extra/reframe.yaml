@@ -9,7 +9,7 @@ develop:
   views:
     - modules
   activation:
-   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc
+   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc cray-mpich
 modules:
   features:
     - cuda
