@@ -2,7 +2,6 @@ gcc-env:
   compiler: [gcc, llvm-amdgpu]
   network:
       mpi: cray-mpich@8.1.32+rocm
-      specs: [ 'libfabric@2.3 +rocm' ]
   unify: when_possible
   duplicates:
     strategy: full
