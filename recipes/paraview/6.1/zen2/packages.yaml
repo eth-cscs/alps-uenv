@@ -1,0 +1,20 @@
+packages:
+  all:
+    require:
+      - ~cuda
+      - ~rocm
+      - ~x11
+      - ~fortran
+      - ~applications
+      - ~examples
+      - ~tests
+  gl:
+    require: osmesa
+  llvm:
+    require:
+      - targets=x86
+      - ~gold
+      - ~cuda
+  libllvm:
+    # note: ~clang~flang are turned off otherwise we get CC/CXX set to clang/clang++
+    require: llvm ~clang~flang
