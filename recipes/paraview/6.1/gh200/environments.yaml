@@ -22,10 +22,8 @@ paraview-cuda:
           prepend_path:
             # note: these are needed because paraview is not installed by spack
             - PATH: $@mount@/paraview/bin
-            - LD_LIBRARY_PATH: $@mount@/paraview/lib
             - LD_LIBRARY_PATH: $@mount@/paraview/lib64
             # note: these are needed because paraview plugins are not installed by spack
-            - LD_LIBRARY_PATH: $@mount@/paraview-plugins/lib
             - LD_LIBRARY_PATH: $@mount@/paraview-plugins/lib64
             - LD_LIBRARY_PATH: $@mount@/paraview-plugins/nvidia-index/lib
     develop:
