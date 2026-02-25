@@ -1,0 +1,9 @@
+name: q-e-sirius
+version: 2
+spack:
+  commit: releases/v1.1
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: f941c2ba6edf03a7783138619aad104b6e8d543d # develop on 2025-12-19
+description: q-e-sirius

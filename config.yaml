@@ -442,6 +442,21 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
         beverin: [mi200,mi300]
+    "v1.0.2":
+      recipes:
+        gh200: v1.0.2/gh200
+        zen2: v1.0.2/mc
+        mi200: v1.0.2/mi200
+        mi300: v1.0.2/mi300
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
+        beverin: [mi200,mi300]
+    "v1.0.2-rocm7":
+      recipes:
+        mi300: v1.0.2-rocm7/mi300
+      deploy:
+        beverin: [mi300]
   scorep:
     "9.2-gcc12":
       recipes:
