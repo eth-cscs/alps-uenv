@@ -48,7 +48,8 @@ gcc-env:
   - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
-  # - hsa-rocr-dev # TODO(iomaganaris): enable for julia AMD gpu build
+  - hsa-rocr-dev
+  - comgr
   # hip packages
   - hipblas
   - hipblaslt
