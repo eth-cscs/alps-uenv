@@ -8,6 +8,9 @@ packages:
       - ~applications
       - ~examples
       - ~tests
+  conduit:
+    require:
+      - ~hdf5
   gl:
     require: osmesa
   llvm:
