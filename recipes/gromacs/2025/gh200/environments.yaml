@@ -1,0 +1,36 @@
+gromacs:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+    specs:
+    - libfabric@2.3 +cuda
+  unify: true
+  specs:
+  - cmake
+  - python@3.12
+  - cuda@12.9
+  - fftw
+  - py-torch@2.8.0 ~distributed ~nccl
+  - plumed +pytorch
+  - gromacs@2025.0 +cuda +plumed +hwloc
+  variants:
+  - +openmp
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  - build_type=Release
+  views:
+    develop:
+      link: all
+      # Exclude gcc-runtime to avoid adding a copy of libgomp.so to the view
+      exclude: ["gromacs", "gcc-runtime"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    gromacs:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
