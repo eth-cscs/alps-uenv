@@ -427,6 +427,11 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
         eiger: [zen2]
+    "v7.5":
+      recipes:
+        zen2: v7.5/mc
+      deploy:
+        eiger: [zen2]
   sirius:
     "v7.5":
       recipes:
