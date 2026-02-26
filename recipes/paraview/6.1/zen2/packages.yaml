@@ -10,7 +10,7 @@ packages:
       - ~tests
   conduit:
     require:
-      - ~hdf5
+      - +hdf5
   gl:
     require: osmesa
   llvm:

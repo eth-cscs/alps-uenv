@@ -66,6 +66,12 @@ pushd ${PARAVIEW_SRC_DIR}
 git submodule update --init --recursive
 popd
 
+# NOTE: a proper fix has been merged in master but it is not part of v6.1.0-RC1
+echo "Patching VTK::hdf5 CMake target problem..."
+pushd $PARAVIEW_SRC_DIR
+git grep -lr --recurse-submodules "VTK::hdf5" | xargs sed -i "s/VTK::hdf5/VTK::vtkhdf5/g"
+popd
+
 echo "Patching VTK with external Viskores CMake targets problem..."
 patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-'EOF'
   diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
