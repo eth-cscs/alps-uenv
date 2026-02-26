@@ -1,0 +1,33 @@
+gromacs:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@8.1.32 +cuda
+    specs:
+    - libfabric@2.3.0
+  unify: when_possible
+  specs:
+  - cmake
+  - cuda@12.9
+  - blas
+  - lapack
+  - hwloc
+  - fftw
+  - python@3.12
+  - nccl@2.27
+  - nccl-tests
+  - aws-ofi-nccl
+  - nvshmem +mpi +cuda +nccl +libfabric +gdrcopy ~ucx
+  - cublasmp
+  - cufftmp
+  - gromacs@2025.0 +cuda +cufftmp +plumed +mpi +hwloc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    develop:
+      exclude: ['gromacs']
+    gromacs:
+      link: run
+  packages:
+  - perl

@@ -1,0 +1,11 @@
+name: gromacs-gh200
+store: /user-environment
+description: GPU-optimised GROMACS with and without PLUMED, and the toolchain to build your own GROMACS.
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.0
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2025.07
+modules: false
+version: 2
