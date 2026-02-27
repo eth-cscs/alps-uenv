@@ -9,6 +9,7 @@ default:
     - osu-micro-benchmarks
     - serial
     - pytorch
+    - prgenv # TODO: Remove before merging.
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
