@@ -101,6 +101,8 @@ cmake                                                       \
     -DPARAVIEW_BUILD_TESTING=OFF                            \
     -DPARAVIEW_BUILD_WITH_EXTERNAL=ON                       \
     -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON                 \
+    -DPARAVIEW_RELOCATABLE_INSTALL=OFF                      \
+    -DPARAVIEW_VERSIONED_INSTALL=OFF                        \
     -DPARAVIEW_USE_CUDA=ON                                  \
     -DCMAKE_CUDA_ARCHITECTURES=90a                          \
     -DPARAVIEW_USE_MPI=ON                                   \
