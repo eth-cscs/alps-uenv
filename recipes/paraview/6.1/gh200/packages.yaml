@@ -1,0 +1,24 @@
+packages:
+  all:
+    require:
+      - +cuda cuda_arch=90a
+      - ~rocm
+      - ~x11
+      - ~fortran
+      - ~applications
+      - ~examples
+      - ~tests
+  conduit:
+    require:
+      - +hdf5
+  gl:
+    require: egl
+  llvm:
+    require:
+      - targets=aarch64
+      # note:
+      # - llvm@18 is required by ispc
+      # - llvm@20 conflicts with cuda@12
+      - "@18"
+      - ~gold
+      - ~cuda
