@@ -62,7 +62,7 @@ gcc-env:
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
   - aws-ofi-rccl@git.6dae1b0d588c27689ba6daa32710359ea96de78c=cxi
-  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu ^openmpi +rocm %c,cxx,fortran=gcc
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu
   variants:
   - +mpi
   - +rocm
