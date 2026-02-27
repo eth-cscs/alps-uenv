@@ -1,7 +1,7 @@
 gcc-env:
   compiler: [gcc, llvm-amdgpu]
   network:
-      mpi: openmpi+rocm
+      mpi: mpich+rocm
   unify: when_possible
   duplicates:
     strategy: full
