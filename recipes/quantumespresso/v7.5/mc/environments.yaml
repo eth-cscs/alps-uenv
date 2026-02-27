@@ -1,0 +1,21 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32
+  unify: true
+  specs:
+  - quantum-espresso@7.5 +libxc +oscdft +gipaw +scalapack +openmp hdf5=parallel
+  - netlib-scalapack
+  - cmake
+  - libxc
+  - fftw
+  - hdf5
+  - openblas threads=openmp
+  variants:
+  - +mpi
+  views:
+    default:
+      link: roots
+    develop:
+      exclude: ['quantum-espresso', 'patchelf', 'git']
+      link: roots
