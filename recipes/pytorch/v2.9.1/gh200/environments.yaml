@@ -72,6 +72,7 @@ pytorch-env:
   - py-onnxscript
   - py-regex
   - py-tensorboard
+  - py-psutil
   #- py-vllm
   - dynolog +use-prometheus +with-unwind +with-gflags
   # packages which don't compile with +ipo
