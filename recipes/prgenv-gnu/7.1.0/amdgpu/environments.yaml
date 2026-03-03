@@ -77,3 +77,7 @@ gcc-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - FI_PROVIDER: "cxi"
+          - MPIR_CVAR_CH4_OFI_ENABLE_HMEM: "1"
