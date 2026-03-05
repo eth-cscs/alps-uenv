@@ -7,7 +7,7 @@ default:
     - openmp
     - prgenv
     - serial
-    - cray-mpich
+    - mpich
     - osu-micro-benchmarks
   cc: mpicc
   cxx: mpic++
