@@ -11,7 +11,7 @@ gcc-env:
   - fftw
   - fmt
   - gsl
-  - hdf5+cxx+hl+fortran
+  - hdf5+cxx+hl+fortran+mpi
   - netlib-scalapack
   - lua
   - libtree
@@ -24,7 +24,6 @@ gcc-env:
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - hip@7.1.0 ^mesa@23.3.6
-  - hdf5+mpi
   - hipcub
   - llvm-amdgpu
   # rocm packages
