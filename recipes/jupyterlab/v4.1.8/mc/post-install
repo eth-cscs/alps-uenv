@@ -8,5 +8,5 @@ git -C firecrestspawner checkout 0.1.2
 cd firecrestspawner
 pip install .
 
-curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix={{ env.mount }}/env/jupyter --version=4.109.2
-export CODE_EXECUTABLE={{ env.mount }}/env/jupyter/bin/code-server
+curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/user-tools/env/jupyter --version=4.109.2
+export CODE_EXECUTABLE=/user-tools/env/jupyter/bin/code-server
