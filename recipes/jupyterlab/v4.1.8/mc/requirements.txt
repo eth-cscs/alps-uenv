@@ -109,3 +109,5 @@ webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
 jupyterlab-nvdashboard==0.13.0
+jupyter_server_proxy==4.4.0
+jupyter_vscode_proxy==0.7
