@@ -247,17 +247,6 @@ uenvs:
         santis: [gh200]
         clariden: [gh200]
       mount: "/user-tools"
-  mch:
-    "v7":
-      recipes:
-        a100: v7
-      deploy:
-        balfrin: [a100]
-    "v8":
-      recipes:
-        a100: v8
-      deploy:
-        balfrin: [a100]
   namd:
     "3.0":
       recipes:
