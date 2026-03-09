@@ -33,10 +33,10 @@ gcc-env:
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - hipsycl
-  - llvm # dependency of hipsycl
+  - llvm@18 # dependency of hipsycl
   - nccl
   - nccl-tests
-  - cuda
+  - cuda@12
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu
