@@ -1,7 +1,7 @@
 llvm-env:
   compiler: [llvm]
   network:
-      mpi: cray-mpich@8.1.32 +cuda
+      mpi: cray-mpich@8.1.32%llvm +cuda
   unify: when_possible
   duplicates:
     strategy: full
@@ -34,12 +34,13 @@ llvm-env:
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - hipsycl
-  - nccl
-  - nccl-tests
+  - nccl%gcc
+  - nccl-tests%gcc
+  - gdrcopy%gcc
   - cuda@12
   - xcb-util-cursor
   - aws-ofi-nccl
-  - superlu
+  - superlu%gcc
   variants:
   - +mpi
   - +cuda
