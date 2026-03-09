@@ -336,6 +336,14 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         eiger: [zen2]
+  prgenv-llvm:
+    "25.11":
+      recipes:
+        gh200: 25.11/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
   prgenv-nvfortran:
     "24.11":
       recipes:
