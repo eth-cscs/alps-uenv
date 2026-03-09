@@ -1,0 +1,4 @@
+gcc:
+  version: "14"
+llvm:
+  version: "18" # AdaptiveCPP/hipSYCL currently requires at most LLVM 18
