@@ -1,7 +1,7 @@
 llvm-env:
   compiler: [llvm]
   network:
-      mpi: cray-mpich@8.1.32%llvm +cuda
+      mpi: cray-mpich@8.1.32 +cuda %llvm
   unify: when_possible
   duplicates:
     strategy: full
