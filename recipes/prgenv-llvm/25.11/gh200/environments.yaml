@@ -3,6 +3,8 @@ llvm-env:
   network:
       mpi: cray-mpich@8.1.32 +cuda
   unify: true
+  duplicates:
+    strategy: full
   specs:
   - llvm@18
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
