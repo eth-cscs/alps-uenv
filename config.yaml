@@ -82,22 +82,6 @@ clusters:
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
-  climana:
-    "24.7":
-      recipes:
-        zen2: mch/climana/24.7
-        zen3: mch/climana/24.7
-        a100: mch/climana/24.7
-      deploy:
-        balfrin: [zen3, a100]
-  climana:
-    "24.10":
-      recipes:
-        zen2: mch/climana/24.10
-        zen3: mch/climana/24.10
-        a100: mch/climana/24.10
-      deploy:
-        balfrin: [zen3, a100]
   editors:
     "24.7":
       recipes:
@@ -263,17 +247,6 @@ uenvs:
         santis: [gh200]
         clariden: [gh200]
       mount: "/user-tools"
-  mch:
-    "v7":
-      recipes:
-        a100: v7
-      deploy:
-        balfrin: [a100]
-    "v8":
-      recipes:
-        a100: v8
-      deploy:
-        balfrin: [a100]
   namd:
     "3.0":
       recipes:
