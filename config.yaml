@@ -58,6 +58,17 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
     runner: f7t
+  starlex:
+    targets:
+      -
+        uarch: 'gh200'
+        partition: 'normal'
+        variables:
+          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+    runner: f7t
   beverin:
     targets:
       -
@@ -325,6 +336,11 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "26.3":
+      recipes:
+        gh200: 26.3/gh200
+      deploy:
+        starlex: [gh200]
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
