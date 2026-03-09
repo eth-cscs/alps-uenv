@@ -129,7 +129,8 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Avoid cupy import error due to missing rocsparse symbols
         if self.spec.satisfies("+rocm @6.4.1:"):
-            env.prepend_path("LD_PRELOAD", self.spec["rocsparse"].prefix.lib.join("librocsparse.so"))
+            ...
+            # env.prepend_path("LD_PRELOAD", self.spec["rocsparse"].prefix.lib.join("librocsparse.so"))
 
     def cmake_args(self):
         args = [
