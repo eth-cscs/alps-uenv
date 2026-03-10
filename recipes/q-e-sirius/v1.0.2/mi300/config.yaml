@@ -1,10 +1,9 @@
-name: q-e-sirius
+name: prgenv-gnu
 version: 2
 spack:
-  commit: releases/v1.1
+  commit: releases/v1.0
   repo: https://github.com/spack/spack.git
   packages:
-    repo: https://github.com/spack/spack-packages.git
-    commit: 5f20b9190596e0b875141e8cee03f0d3847ad65c
-store: /user-environment
-description: q-e-sirius uenv
+    repo: https://github.com/msimberg/spack-packages.git
+    commit: aws-ofi-nccl-with-rocm # develop on 2025-12-19 + https://github.com/spack/spack-packages/compare/develop...msimberg:spack-packages:aws-ofi-nccl-with-rocm
+description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)
