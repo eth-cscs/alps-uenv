@@ -34,7 +34,7 @@ gcc-env:
   - python
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - hipsycl@24
+  - hipsycl@24 ^cuda@12
   - llvm@18 # dependency of hipsycl
   - nccl
   - nccl-tests
