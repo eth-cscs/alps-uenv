@@ -39,7 +39,7 @@ llvm-env:
   - gdrcopy%gcc
   - cuda@12
   - xcb-util-cursor
-  - aws-ofi-nccl%gcc
+  - aws-ofi-nccl@1.17 %gcc
   - superlu%gcc
   variants:
   - +mpi
