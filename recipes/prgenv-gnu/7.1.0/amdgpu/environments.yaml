@@ -82,3 +82,4 @@ gcc-env:
           - FI_PROVIDER: "cxi"
           - MPIR_CVAR_CH4_OFI_ENABLE_HMEM: "1"
           - NCCL_NET_PLUGIN: "ofi"
+          - HSA_NO_SCRATCH_RECLAIM: "1"
