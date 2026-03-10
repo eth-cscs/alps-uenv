@@ -5,5 +5,5 @@ spack:
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/msimberg/spack-packages.git
-    commit: b49741c7c536246ca95762193100907befd06214 # develop on 2025-12-19 + https://github.com/spack/spack-packages/compare/develop...msimberg:spack-packages:aws-ofi-nccl-with-rocm
+    commit: aws-ofi-nccl-with-rocm # develop on 2025-12-19 + https://github.com/spack/spack-packages/compare/develop...msimberg:spack-packages:aws-ofi-nccl-with-rocm
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)
