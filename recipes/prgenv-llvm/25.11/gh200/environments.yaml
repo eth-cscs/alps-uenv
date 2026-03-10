@@ -8,7 +8,7 @@ llvm-env:
   specs:
   - llvm@18
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
-  - cmake
+  - cmake ^doxygen%gcc
   - fftw
   - fmt
   - gmp
