@@ -76,3 +76,7 @@ gcc-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - NCCL_NET_PLUGIN: "ofi"
+          - HSA_NO_SCRATCH_RECLAIM: "1"
