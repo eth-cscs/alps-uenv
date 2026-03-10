@@ -1,7 +1,7 @@
 llvm-env:
   compiler: [llvm]
   network:
-      mpi: cray-mpich@8.1.32 +cuda %llvm
+      mpi: cray-mpich@8.1.32 +cuda %llvm ^gdrcopy%gcc
   unify: when_possible
   duplicates:
     strategy: full
@@ -39,7 +39,7 @@ llvm-env:
   - gdrcopy%gcc
   - cuda@12
   - xcb-util-cursor
-  - aws-ofi-nccl
+  - aws-ofi-nccl%gcc
   - superlu%gcc
   variants:
   - +mpi
