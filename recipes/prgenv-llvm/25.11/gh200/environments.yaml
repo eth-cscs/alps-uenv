@@ -28,7 +28,7 @@ llvm-env:
   # - openblas threads=openmp
   # - osu-micro-benchmarks
   # - papi
-  - python%gcc
+  - python
   # - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   # - hipsycl
