@@ -1,0 +1,113 @@
+pytorch-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+      specs:
+      - libfabric@2.3.1 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      - xpmem@2.9.6 ~kernel-module
+  unify: true
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - fftw
+  - fmt
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - kokkos ~ipo +aggressive_vectorization ~alloc_async cuda_arch=90 +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +openmp +pic +serial +shared +tuning +wrapper
+  - kokkos-kernels ~ipo +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
+  - kokkos-tools +mpi +papi
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-fortran
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - papi
+  - zlib-ng
+  - nccl
+  - nccl-tests
+  - cuda
+  - cudnn
+  - cutensor
+  - cutlass
+  - cublasmp
+  - nvidia-mathdx
+  - xcb-util-cursor
+  - aws-ofi-nccl
+  - superlu
+  - nvshmem ~ucx +nccl +gdrcopy +libfabric +mpi +python
+  - libunwind@master +pic ~tests components=coredump,ptrace,setjmp +xz +zlib
+  - hydra
+  - swig
+  - libaio
+  - ucx +cma +dm ~examples +gdrcopy +thread_multiple +xpmem
+  - ucc +nccl
+  - faiss +python
+  - python@3.12
+  - python-venv
+  - py-pip
+  - py-pytest
+  - py-cython
+  - py-pybind11
+  - py-cuda-bindings
+  - py-cuda-core
+  - py-numpy
+  - py-torch@2.8.0 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
+  - py-torchaudio
+  - py-torchvision
+  - py-torchmetrics
+  - py-triton +build-custom-llvm
+  - py-torch-nvidia-apex
+  - py-transformer-engine
+  - py-einops
+  - py-safetensors
+  - py-tokenizers
+  - py-transformers
+  - py-ml-dtypes
+  - py-onnx
+  - py-onnx-ir
+  - py-onnxscript
+  - py-regex
+  - py-tensorboard
+  - py-vllm
+  - dynolog +use-prometheus +with-unwind +with-gflags
+  # packages which don't compile with +ipo
+  - libjpeg-turbo ~ipo
+  - libpng ~ipo
+  - protobuf ~ipo
+  - magma ~ipo
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  - +ipo
+  views:
+    default:
+      link: all
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - CUDA_CACHE_DISABLE: "1"
+          - NCCL_NET: "AWS Libfabric"
+          - NCCL_CROSS_NIC: "1"
+          - NCCL_P2P_LEVEL: "NVL"
+          - NCCL_NET_GDR_LEVEL: "PHB"
+          - NCCL_NET_GDR_C2C: "1"
+          - NCCL_NET_GDR_READ: "1"
+          - NCCL_PROTO: "^LL128"
+          - NCCL_NCHANNELS_PER_NET_PEER: "4"
+          - FI_CXI_DEFAULT_CQ_SIZE: "131072"
+          - FI_CXI_DEFAULT_TX_SIZE: "32768"
+          - FI_CXI_DISABLE_HOST_REGISTER: "1"
+          - FI_CXI_RX_MATCH_MODE: "software"
+          - FI_MR_CACHE_MONITOR: "userfaultfd"
+          - PYTHONPATH: null
+          - PYTHONUSERBASE: "/user-environment/env/default"
