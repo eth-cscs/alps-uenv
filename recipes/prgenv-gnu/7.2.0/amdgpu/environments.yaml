@@ -23,7 +23,7 @@ gcc-env:
   - python@3
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - hip@7.2.0 ^mesa@23.3.6
+  - hip@7.2.0 ^mesa
   - hdf5+mpi
   - hipcub
   - llvm-amdgpu
