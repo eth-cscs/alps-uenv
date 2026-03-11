@@ -10,8 +10,6 @@ default:
     - prgenv
     - serial
     - llvm
-    - hipsycl
-    - adaptivecpp
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
