@@ -7,17 +7,17 @@ gcc-env:
     strategy: full
   specs:
   - q-e-sirius@1.0.2 hdf5=parallel
-  - sirius@7.10.0 +nlcglib +rocm +magma +apps +dlaf +elpa amdgpu_target=gfx942
-  - nlcglib@1.3.0+gpu_direct~openmp amdgpu_target=gfx942
-  - kokkos amdgpu_target=gfx942
+  - sirius@7.10.0 +nlcglib +rocm +magma +apps +dlaf +elpa
+  - nlcglib@1.3.0+gpu_direct~openmp
+  - kokkos
   - elpa ~rocm
   - spfft+gpu_direct
   - hip@7.1.0 ^mesa@23.3.6
   variants:
   - +mpi
   - +rocm
-  - amdgpu_target=gfx942,gfx90a
-  - amdgpu_target_sram_ecc=gfx942,gfx90a
+  - amdgpu_target=gfx942
+  - amdgpu_target_sram_ecc=gfx942
   - ^python@3.12.12
   views:
     default:
