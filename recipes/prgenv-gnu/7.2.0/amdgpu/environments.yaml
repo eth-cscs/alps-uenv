@@ -53,7 +53,7 @@ gcc-env:
   - hipblas
   - hipblaslt
   - hiprand
-  - hipsparse~shared-libs
+  - hipsparse
   - hipfft
   - hipblas-common
   # - miopen-hip  # TODO(iomaganaris): enable for julia AMD gpu build
