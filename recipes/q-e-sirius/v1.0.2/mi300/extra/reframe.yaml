@@ -1,13 +1,16 @@
-run:
+default:
   features:
     - rocm
     - mpi
-    - q-e-sirius
-    - mi300
+    - rccl
+    - rccl-tests
+    - openmp
+    - prgenv
+    - serial
+    - mpich
+    - osu-micro-benchmarks
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
   views:
-    - sirius
-  extras:
-    version: v1.0.2
+    - default

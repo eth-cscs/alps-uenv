@@ -1,0 +1,44 @@
+diff --git a/projects/hipblaslt/device-library/CMakeLists.txt b/projects/hipblaslt/device-library/CMakeLists.txt
+index f92984b6cd..ba86cce066 100644
+--- a/projects/hipblaslt/device-library/CMakeLists.txt
++++ b/projects/hipblaslt/device-library/CMakeLists.txt
+@@ -17,6 +17,9 @@ list(JOIN GPU_TARGETS "$<SEMICOLON>" TENSILELITE_GPU_TARGETS_SEMI_ESCAPED)
+ 
+ set(TENSILELITE_BUILD_OPTS ${TENSILELITE_BUILD_OPTS} "--architecture=${TENSILELITE_GPU_TARGETS_SEMI_ESCAPED}")
+ set(TENSILELITE_BUILD_OPTS ${TENSILELITE_BUILD_OPTS} "--cxx-compiler=${CMAKE_CXX_COMPILER}")
++if(Tensile_OFFLOADBUNDLER)
++    set(TENSILELITE_BUILD_OPTS ${TENSILELITE_BUILD_OPTS} "--offload-bundler=${Tensile_OFFLOADBUNDLER}")
++endif()
+ if(HIPBLASLT_ENABLE_ASAN)
+     set(TENSILELITE_BUILD_OPTS ${TENSILELITE_BUILD_OPTS} "--address-sanitizer")
+ endif()
+diff --git a/projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake b/projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake
+index 15d89c5c6a..e079cb8682 100644
+--- a/projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake
++++ b/projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake
+@@ -177,6 +177,10 @@ function(TensileCreateLibraryFiles
+     set(Options ${Options} "--cxx-compiler=${Tensile_COMPILER}")
+   endif()
+ 
++  if(Tensile_OFFLOADBUNDLER)
++    set(Options ${Options} "--offload-bundler=${Tensile_OFFLOADBUNDLER}")
++  endif()
++
+   if(Tensile_COMPILER_PATH)
+     set(Options ${Options} "--cmake-cxx-compiler=${Tensile_COMPILER_PATH}")
+   endif()
+diff --git a/shared/tensile/Tensile/cmake/TensileConfig.cmake b/shared/tensile/Tensile/cmake/TensileConfig.cmake
+index 62682d74ec..9d52403a4b 100644
+--- a/shared/tensile/Tensile/cmake/TensileConfig.cmake
++++ b/shared/tensile/Tensile/cmake/TensileConfig.cmake
+@@ -194,6 +194,10 @@ function(TensileCreateLibraryFiles
+     set(Options ${Options} "--cxx-compiler=${Tensile_COMPILER}")
+   endif()
+ 
++  if(Tensile_OFFLOADBUNDLER)
++    set(Options ${Options} "--offload-bundler=${Tensile_OFFLOADBUNDLER}")
++  endif()
++
+   if(Tensile_COMPILER_PATH)
+     set(Options ${Options} "--cmake-cxx-compiler=${Tensile_COMPILER_PATH}")
+   endif()
