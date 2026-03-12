@@ -1,0 +1,53 @@
+From 3b29ced9a6d62176a125ca27a2246320b56f729f Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Mon, 1 Sep 2025 19:11:03 +0200
+Subject: [PATCH] disable cuda check in laxlib
+
+---
+ LAXlib/CMakeLists.txt | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/LAXlib/CMakeLists.txt b/LAXlib/CMakeLists.txt
+index 12e6da2bc..71bab5c0e 100644
+--- a/LAXlib/CMakeLists.txt
++++ b/LAXlib/CMakeLists.txt
+@@ -24,21 +24,21 @@ target_link_libraries(qe_lax
+         qe_utilx
+         qe_devxlib)
+ if(QE_ENABLE_CUDA)
+-    if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI" OR CMAKE_Fortran_COMPILER_ID MATCHES "NVHPC")
+-        set(CMAKE_REQUIRED_LINK_OPTIONS "${CUDA_FLAG}lib=cusolver;-fortranlibs")
+-        check_function_exists(cusolverDnZhegvdx cusolverDnZhegvdx_FOUND)
+-        if (NOT cusolverDnZhegvdx_FOUND)
+-            unset(cusolverDnZhegvdx_FOUND CACHE)
+-            message(FATAL_ERROR "The version of CUDAToolkit chosen by the PGI/NVHPC compiler internally"
+-                                " doesn't contain cusolverDnZhegvdx. cuSOLVER features used by LAXLib are"
+-                                " only supported since CUDAToolkit 10.1 release. Use a newer compiler"
+-                                " or select a newer CUDAToolkit internal to the PGI/NVHPC compiler.")
+-        endif()
+-    else()
+-        if(CUDAToolkit_VERSION VERSION_LESS 10.1)
+-            message(FATAL_ERROR "cuSOLVER for LAXLib is only supported from CUDA compiler 10.1")
+-        endif()
+-    endif()
++    # if(CMAKE_Fortran_COMPILER_ID MATCHES "PGI" OR CMAKE_Fortran_COMPILER_ID MATCHES "NVHPC")
++    #     set(CMAKE_REQUIRED_LINK_OPTIONS "${CUDA_FLAG}lib=cusolver;-fortranlibs")
++    #     check_function_exists(cusolverDnZhegvdx cusolverDnZhegvdx_FOUND)
++    #     if (NOT cusolverDnZhegvdx_FOUND)
++    #         unset(cusolverDnZhegvdx_FOUND CACHE)
++    #         message(FATAL_ERROR "The version of CUDAToolkit chosen by the PGI/NVHPC compiler internally"
++    #                             " doesn't contain cusolverDnZhegvdx. cuSOLVER features used by LAXLib are"
++    #                             " only supported since CUDAToolkit 10.1 release. Use a newer compiler"
++    #                             " or select a newer CUDAToolkit internal to the PGI/NVHPC compiler.")
++    #     endif()
++    # else()
++    #     if(CUDAToolkit_VERSION VERSION_LESS 10.1)
++    #         message(FATAL_ERROR "cuSOLVER for LAXLib is only supported from CUDA compiler 10.1")
++    #     endif()
++    # endif()
+     target_link_libraries(qe_lax
+         PRIVATE
+             CUDA::cusolver
+-- 
+2.51.0
+
