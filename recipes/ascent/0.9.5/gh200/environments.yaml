@@ -4,7 +4,9 @@ ascent-env:
     mpi: cray-mpich
   unify: true
   specs:
-    - ascent +fortran +python +occa ~adios2 ~mfem ~fides
+    - ascent +fortran +python +occa ~adios2 ~mfem ~fides +catalyst
+    - occa
+    - libcatalyst
     - python
     - py-matplotlib
     - py-pyyaml
@@ -22,5 +24,8 @@ ascent-env:
           set:
             - CUDAARCHS: "90a"
             - CUDAHOSTCXX: "g++"
+            # note: by default use paraview catalyst implementation
+            - CATALYST_IMPLEMENTATION_NAME: ascent
+            - CATALYST_IMPLEMENTATION_PATHS: $@view_path@/lib64
           prepend_path:
             - PATH: $@view_path@/utilities/ascent
