@@ -35,7 +35,7 @@ llvm-env:
   # - nccl%gcc
   # - nccl-tests%gcc
   # - gdrcopy%gcc
-  - cuda@12%gcc
+  - cuda@12
   # - xcb-util-cursor
   # - aws-ofi-nccl@1.17 %gcc
   # - superlu%gcc
