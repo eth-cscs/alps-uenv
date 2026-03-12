@@ -22,6 +22,10 @@ gcc-env:
   - osu-micro-benchmarks ~xccl
   - python@3
   - zlib-ng
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-cxx4
+  - netcdf-fortran
   # add GPU-specific packages here, for easier comparison with mc version
   - hip@7.1.0 ^mesa@23.3.6
   - hipcub
