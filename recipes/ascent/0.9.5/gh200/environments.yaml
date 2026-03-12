@@ -5,6 +5,7 @@ ascent-env:
   unify: true
   specs:
     - ascent +fortran +python +occa ~adios2 ~mfem ~fides +catalyst
+    - occa
     - libcatalyst
     - python
     - py-matplotlib
