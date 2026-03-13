@@ -2,6 +2,11 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: openmpi
+      specs:
+      # Keep libfabric at 2.3 for lnx provider due to:
+      # - https://github.com/open-mpi/ompi/pull/13582
+      # - https://github.com/ofiwg/libfabric/issues/11900
+      - 'libfabric@2.3 fabrics=lnx,shm,xpmem'
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
