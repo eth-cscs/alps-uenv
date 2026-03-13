@@ -2,6 +2,8 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: openmpi
+      specs:
+      - 'libfabric@2.3 fabrics=lnx,shm,xpmem'
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
