@@ -2,7 +2,7 @@ default:
   features:
     - cuda
     - mpi
-    - openmpi
+    - cray-mpich
     - nccl
     - nccl-tests
     - openmp
