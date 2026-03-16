@@ -1,9 +1,9 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@9.1.0
+      mpi: cray-mpich@9.1.0 +cuda
       specs:
-      - libfabric@2.3
+      - libfabric@2.3 +gdrcopy
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
