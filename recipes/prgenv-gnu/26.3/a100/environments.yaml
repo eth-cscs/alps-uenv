@@ -1,7 +1,7 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: openmpi +cuda
+      mpi: cray-mpich@9.1 +cuda
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
@@ -32,14 +32,14 @@ gcc-env:
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   - nccl-tests
-  - cuda@13
+  - cuda
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu
   variants:
   - +mpi
   - +cuda
-  - cuda_arch=90a
+  - cuda_arch=80
   views:
     default:
       link: roots

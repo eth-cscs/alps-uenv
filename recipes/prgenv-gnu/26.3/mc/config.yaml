@@ -4,7 +4,7 @@ spack:
   commit: v1.1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: afdf167333306c0a018739a1b27652b5f44d7304 # develop on 2026-03-11
+    commit: 107d3dbda28f475b2f0f241a407fc92787d821c7 # develop on 2026-03-12
 store: /user-environment
 description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
 version: 2
