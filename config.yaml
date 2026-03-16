@@ -341,9 +341,7 @@ uenvs:
         zen2: 26.3/mc
         gh200: 26.3/gh200
       deploy:
-        clariden: [gh200]
-        daint: [gh200]
-        santis: [gh200]
+        starlex: [gh200]
         eiger: [zen2]
   prgenv-gnu-openmpi:
     "25.12":
