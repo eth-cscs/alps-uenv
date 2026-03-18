@@ -41,6 +41,7 @@ class Vasp(MakefilePackage, CudaPackage):
     variant("wannier90", default=False, description="Enabled Wannier90 support")
     variant("libxc", default=False, description="Enabled LibXC support")
     variant("dftd4", default=False, description="Enabled DFTD4 support")
+    variant("simple_dftd3", default=False, description="Enabled simple dtd3 support")
 
     # Language dependencies (required in Spack v1.0+)
     depends_on("c", type="build")
@@ -68,6 +69,8 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("dftd4@4:", when="@6.6: +dftd4")
     depends_on("multicharge", when="+dftd4")
     depends_on("mctc-lib", when="+dftd4")
+
+    depends_on("simple-dftd3", when="+simple_dftd3")
 
     conflicts(
         "%gcc@:8", msg="GFortran before 9.x does not support all features needed to build VASP"
@@ -170,6 +173,15 @@ class Vasp(MakefilePackage, CudaPackage):
             llibs.append(spec["multicharge"].libs.ld_flags)
             incs.append(spec["dftd4"].headers.include_flags)
             module_dir = find(self.spec['dftd4'].prefix, 'dftd4.mod', recursive=True)
+            if module_dir:
+                module_path = os.path.dirname(module_dir[0])
+                incs.append(f"-I{module_path}")
+
+        if spec.satisfies("+simple_dftd3"):
+            cpp_options.append("-DSDFTD3")
+            llibs.append(spec["simple-dftd3"].libs.ld_flags)
+            incs.append(spec["simple-dftd3"].headers.include_flags)
+            module_dir = find(self.spec['simple-dftd3'].prefix, 'dftd3.mod', recursive=True)
             if module_dir:
                 module_path = os.path.dirname(module_dir[0])
                 incs.append(f"-I{module_path}")
