@@ -10,7 +10,7 @@ gcc-env:
   - nlcglib@1.3.0+gpu_direct~openmp
   - elpa +rocm
   - spfft+gpu_direct
-  - hip@7.1 ^mesa@23.3.6
+  - hip@7.1 ^mesa
   - llvm-amdgpu
   variants:
   - amdgpu_target=gfx942
