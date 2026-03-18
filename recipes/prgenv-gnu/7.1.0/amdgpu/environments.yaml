@@ -1,12 +1,12 @@
 gcc-env:
   compiler: [gcc, llvm-amdgpu]
   network:
-      mpi: cray-mpich+rocm
+      mpi: cray-mpich@9.1 +rocm
   unify: when_possible
   duplicates:
     strategy: full
   specs:
-  - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
   - fmt
