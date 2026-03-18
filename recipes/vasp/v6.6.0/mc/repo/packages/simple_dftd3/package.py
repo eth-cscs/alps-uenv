@@ -54,7 +54,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
 
     @property
     def libs(self):
-        return find_libraries("s-dftd3", root=self.prefix, shared=True, recursive=True)
+        return find_libraries("s-dftd3", root=self.prefix, recursive=True)
 
 
 class MesonBuilder(meson.MesonBuilder):
