@@ -13,6 +13,7 @@ vasp:
       - libxc~fhc
       - wannier90
       - dftd4 build_system=cmake
+      - simple-dftd3 +openmp
       - fftw +openmp
       - cmake
       - ninja

@@ -69,6 +69,7 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("dftd4@4:", when="@6.6: +dftd4")
     depends_on("multicharge", when="+dftd4")
     depends_on("mctc-lib", when="+dftd4")
+    depends_on("mctc-lib", when="+simple_dftd3")
 
     depends_on("simple-dftd3", when="+simple_dftd3")
 
@@ -169,7 +170,6 @@ class Vasp(MakefilePackage, CudaPackage):
             cpp_options.append("-DDFTD4")
             llibs.append(spec["dftd4"].libs.ld_flags)
             # dftd4 is usually a static library. We need to link to its dependencies.
-            llibs.append(spec["mctc-lib"].libs.ld_flags)
             llibs.append(spec["multicharge"].libs.ld_flags)
             incs.append(spec["dftd4"].headers.include_flags)
             module_dir = find(self.spec['dftd4'].prefix, 'dftd4.mod', recursive=True)
@@ -186,6 +186,12 @@ class Vasp(MakefilePackage, CudaPackage):
                 module_path = os.path.dirname(module_dir[0])
                 incs.append(f"-I{module_path}")
 
+        if spec.satisfies("+dftd4") or spec.satisfies("+simple_dftd3"):
+            llibs.append(spec["mctc-lib"].libs.ld_flags)
+            module_dir = find(self.spec['mctc-lib'].prefix, 'mctc_env.mod', recursive=True)
+            if module_dir:
+                module_path = os.path.dirname(module_dir[0])
+                incs.append(f"-I{module_path}")
 
         filter_file(r"^VASP_TARGET_CPU[ ]{0,}\?=.*", "", make_include)
 
