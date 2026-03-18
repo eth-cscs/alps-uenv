@@ -13,7 +13,7 @@ class Dftd4(MesonPackage, CMakePackage):
     """Generally Applicable Atomic-Charge Dependent London Dispersion Correction"""
 
     homepage = "https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dftd4"
-    url = "https://github.com/dftd4/dftd4/releases/download/v0.0.0/dftd4-0.0.0.tar.xz"
+    url = "https://github.com/dftd4/dftd4/releases/download/v0.0.0/dftd4-0.0.0-source.tar.xz"
     git = "https://github.com/dftd4/dftd4.git"
 
     maintainers("awvwgk")
@@ -64,9 +64,9 @@ class Dftd4(MesonPackage, CMakePackage):
     extends("python", when="+python")
 
     def url_for_version(self, version):
-        if version <= Version("3.6.0"):
+        if version >= Version("4.0.0"):
             return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}-source.tar.xz"
-        return super().url_for_version(version)
+        return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}.tar.xz"
 
 
 class MesonBuilder(meson.MesonBuilder):
