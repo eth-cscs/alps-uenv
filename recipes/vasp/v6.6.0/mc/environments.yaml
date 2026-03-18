@@ -12,8 +12,8 @@ vasp:
       - hdf5+fortran+mpi
       - libxc~fhc
       - wannier90
-      - dftd4 build_system=cmake
-      - simple-dftd3 +openmp
+      - dftd4
+      - simple-dftd3 +openmp build_system=meson
       - fftw +openmp
       - cmake
       - ninja
