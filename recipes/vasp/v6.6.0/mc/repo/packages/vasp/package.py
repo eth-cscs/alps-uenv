@@ -23,7 +23,7 @@ class Vasp(MakefilePackage, CudaPackage):
     url = "file://{0}/vasp-6.1.0.tar.bz2".format(os.getcwd())
     manual_download = True
 
-    version("6.6.0", sha256="3a070a135ceef7d34ec7b97741b4918967dc96e5a4ce5637d77001fe9ba3d5a0")
+    version("6.6.0", sha256="4ae0c0772b744d2d91d83ccc5e79553f6d026ca34ce71f9efdffd94178b9dc08")
     version("6.5.1", sha256="1db264b3deed97dec3a535e892f0b9215e51ae3e2870ec9d50c56b9f5c3ca2c2")
     version("6.5.0", sha256="805ea6fbc41e2eac32a941d36e4981691bc098bfa445f0386b3b06aaf1f0f566")
     version("6.4.3", sha256="348987f550541d40135c3b8a177db9e69b7477b9e2ad53a93022e8213890e2ec")
