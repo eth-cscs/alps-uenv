@@ -58,7 +58,7 @@ gcc-env:
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - whip
-  - hip@7 ^mesa@23.3.6
+  - hip@7
   - llvm-amdgpu
   # rocm packages
   - rocblas
@@ -70,7 +70,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register
-  - rocprofiler-systems@7+internal-dyninst
+  - rocprofiler-systems+internal-dyninst
   - rocrand
   - rocsolver
   - rocsparse
