@@ -64,7 +64,8 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("hdf5+fortran+mpi", when="+hdf5")
     depends_on("wannier90", when="+wannier90")
     depends_on("libxc~fhc+fortran", when="+libxc")
-    depends_on("dftd4", when="+dftd4")
+    depends_on("dftd4@:3.7", when="+dftd4")
+    depends_on("dftd4@4:", when="@6.6.0: +dftd4")
     depends_on("multicharge", when="+dftd4")
     depends_on("mctc-lib", when="+dftd4")
 
