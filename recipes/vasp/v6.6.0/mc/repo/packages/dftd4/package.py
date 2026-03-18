@@ -61,6 +61,7 @@ class Dftd4(MesonPackage, CMakePackage):
 
     depends_on("mctc-lib@0.3", when="@:3.8")
     depends_on("multicharge@0.3", when="@:3.8")
+    depends_on("multicharge@0.5:", when="@4:")
     extends("python", when="+python")
 
     def url_for_version(self, version):
