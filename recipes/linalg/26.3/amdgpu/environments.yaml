@@ -70,7 +70,7 @@ gcc-env:
   - rocprim
   # - rocprofiler-dev # TODO
   - rocprofiler-register
-  - rocprofiler-systems+internal-dyninst+internal-tbb
+  # - rocprofiler-systems+internal-dyninst+internal-tbb
   - rocrand
   - rocsolver
   - rocsparse
