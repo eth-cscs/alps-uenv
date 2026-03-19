@@ -37,7 +37,7 @@ gcc-env:
   - netlib-scalapack
   - ninja
   - openblas threads=openmp
-  - osu-micro-benchmarks
+  - osu-micro-benchmarks ~xccl
   - p4est +mpi
   - papi ~rocm
   - parmetis
@@ -70,7 +70,7 @@ gcc-env:
   - rocprim
   - rocprofiler-dev
   - rocprofiler-register
-  - rocprofiler-systems+internal-dyninst
+  - rocprofiler-systems+internal-dyninst+internal-tbb
   - rocrand
   - rocsolver
   - rocsparse
