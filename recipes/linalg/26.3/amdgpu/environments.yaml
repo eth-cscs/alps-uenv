@@ -81,7 +81,7 @@ gcc-env:
   - rocm-debug-agent
   # hip packages
   - hipblas
-  - hipblaslt
+  # - hipblaslt
   - hipcub
   - hiprand
   - hipsparse
