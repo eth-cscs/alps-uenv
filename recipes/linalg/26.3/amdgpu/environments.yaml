@@ -54,7 +54,7 @@ gcc-env:
   - swig
   # Trilinos disabled because Kokkos disabled
   # - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
-  - umpire
+  - umpire@develop # TODO
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - whip
