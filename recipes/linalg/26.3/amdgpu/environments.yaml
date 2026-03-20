@@ -43,7 +43,7 @@ gcc-env:
   - parmetis
   # ~kokkos and ~hypre since both disabled
   - petsc +batch +hwloc ~hypre ~kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
-  - pika malloc=mimalloc +mpi +stdexec
+  - pika malloc=mimalloc +mpi +stdexec cxxstd=20
   - python
   - slepc
   - spdlog
