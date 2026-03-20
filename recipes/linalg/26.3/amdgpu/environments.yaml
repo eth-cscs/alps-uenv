@@ -14,7 +14,7 @@ gcc-env:
   - dla-future-fortran
   - eigen
   - fftw
-  - fmt
+  - fmt@12 # TODO
   - gsl
   - hdf5 +cxx +fortran +hl
   - hwloc
