@@ -9,6 +9,7 @@ gcc-env:
   - sirius@7.10.0 +nlcglib +rocm +magma +apps +dlaf ~elpa
   - nlcglib@1.3.0+gpu_direct~openmp
   - spfft+gpu_direct
+  - kokkos@4 +serial
   - hip@7.2.0 ^mesa
   - llvm-amdgpu
   variants:
