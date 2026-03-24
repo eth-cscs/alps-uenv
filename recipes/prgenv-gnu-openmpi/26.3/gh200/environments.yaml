@@ -6,6 +6,8 @@ gcc-env:
       # Keep libfabric at 2.3 for lnx provider due to:
       # - https://github.com/open-mpi/ompi/pull/13582
       # - https://github.com/ofiwg/libfabric/issues/11900
+      # 2.5 should fix some of this, but can't be used because of:
+      # - https://github.com/ofiwg/libfabric/issues/12036
       - 'libfabric@2.3 fabrics=lnx,shm,xpmem'
   unify: true
   specs:
