@@ -10,9 +10,6 @@ modules:
 
   default:
     arch_folder: false
-    # Where to install modules
-    roots:
-      tcl: /user-environment/modules
     tcl:
       all:
         autoload: none
