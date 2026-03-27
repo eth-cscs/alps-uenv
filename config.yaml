@@ -7,13 +7,13 @@ clusters:
         # use normal for building, because postproc does not give enough resources
         partition: 'postproc'
         variables:
-          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
           SLURM_CPUS_PER_TASK: '128'
       -
         uarch: 'zen3'
         partition: 'postproc'
         variables:
-          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
     runner: f7t
   bristen:
     targets:
