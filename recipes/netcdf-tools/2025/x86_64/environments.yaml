@@ -12,6 +12,7 @@ netcdf:
   - cdo
   # +tools enables the eccodes CLI tools
   - eccodes +netcdf +tools +png
+  - py-eccodes
   - gdal
   - geos
   - nco
