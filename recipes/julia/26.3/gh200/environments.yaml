@@ -1,0 +1,44 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+      specs:
+      - libfabric@2.3 +gdrcopy
+  unify: true
+  specs:
+  - cmake@3.27
+  - fftw
+  - fmt
+  - hdf5+hl
+  - libtree
+  - meson
+  - nccl
+  - nccl-tests
+  - ninja
+  - openblas threads=openmp
+  - osu-micro-benchmarks@5.9
+  - python
+  - bzip2
+  - zfp
+  - sz
+  - libpng
+  - c-blosc2
+  - libpressio@0.95.1
+  - mgard
+  - libcatalyst
+  - adios2@2.10+hdf5+python+fortran
+  - 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+mgard+libcatalyst'
+  - cuda@12.9
+  - xcb-util-cursor
+  - aws-ofi-nccl
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
