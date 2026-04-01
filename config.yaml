@@ -40,7 +40,6 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
-          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   eiger:
     targets:
