@@ -29,6 +29,7 @@ gcc-env:
   - adios2@2.10+hdf5+python+fortran
   - 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+mgard+libcatalyst'
   - cuda@12.9
+  - cutensor
   - xcb-util-cursor
   - aws-ofi-nccl
   variants:
