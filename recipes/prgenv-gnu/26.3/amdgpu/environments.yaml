@@ -33,8 +33,7 @@ gcc-env:
   - hdf5+mpi
   - hipcub
   - llvm-amdgpu
-  - llvm@18
-  - hipsycl@24 +rocm
+  - intel-oneapi-compilers+amd
   # rocm packages
   - rocblas ^py-msgpack %cxx=gcc
   - rocfft
