@@ -10,9 +10,7 @@ netcdf:
   - netcdf-fortran
   - ncview
   - cdo
-  # +tools enables the eccodes CLI tools
-  - eccodes +netcdf +tools +png
-  - py-eccodes
+  - eccodes
   - gdal
   - geos
   - nco
