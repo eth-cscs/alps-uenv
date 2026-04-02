@@ -17,6 +17,7 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks@5.9
+  - papi
   - python
   - bzip2
   - zfp
