@@ -453,6 +453,9 @@ class QuantumEspresso(CMakePackage, Package):
     # LAXlib check in QE 7.5 fails
     patch("0001-disable-cuda-check-in-laxlib.patch", when="@7.5+cuda %nvhpc")
 
+    # set natx=100
+    patch("0001-natx-100.patch")
+
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
