@@ -36,6 +36,9 @@ gcc-env:
   - xcb-util-cursor
   - aws-ofi-nccl@1.17.3
   - superlu
+  - libcxi@git.release/shs-13.1.0=13.1.0
+  - cxi-driver@git.release/shs-13.1.0=13.1.0
+  - cassini-headers@git.release/shs-13.1.0=13.1.0
   variants:
   - +mpi
   - +cuda
