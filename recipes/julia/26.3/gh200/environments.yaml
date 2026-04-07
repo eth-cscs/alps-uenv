@@ -2,8 +2,6 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: cray-mpich@8.1.32 +cuda
-      specs:
-      - libfabric@2.3 +gdrcopy
   unify: true
   specs:
   - cmake@3.27
@@ -16,7 +14,7 @@ gcc-env:
   - nccl-tests
   - ninja
   - openblas threads=openmp
-  - osu-micro-benchmarks@5.9
+  - osu-micro-benchmarks
   - papi
   - python
   - bzip2

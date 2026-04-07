@@ -4,6 +4,8 @@ default:
     - mpi
     - cray-mpich
     - openmp
+    - nccl
+    - nccl-tests
     - osu-micro-benchmarks
     - serial
   cc: mpicc
