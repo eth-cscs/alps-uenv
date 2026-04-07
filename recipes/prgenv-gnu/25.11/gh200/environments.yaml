@@ -2,8 +2,6 @@ gcc-env:
   compiler: [gcc]
   network:
       mpi: cray-mpich@8.1.32 +cuda
-      specs:
-      - libfabric@2.3 +gdrcopy
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
@@ -32,11 +30,11 @@ gcc-env:
   - python
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - nccl
+  - nccl@2.28.7-1
   - nccl-tests
-  - cuda
+  - cuda@12
   - xcb-util-cursor
-  - aws-ofi-nccl
+  - aws-ofi-nccl@1.17.3
   - superlu
   variants:
   - +mpi
