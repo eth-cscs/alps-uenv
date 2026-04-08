@@ -66,10 +66,10 @@ pushd ${PARAVIEW_SRC_DIR}
 git submodule update --init --recursive
 popd
 
-# NOTE: a proper fix has been merged in master but it is not part of v6.1.0-RC2
+# NOTE: a proper fix has been merged in master but it is not part of v6.1.0
 echo "Patching VTK::hdf5 CMake target problem..."
 pushd $PARAVIEW_SRC_DIR
-git grep -lr --recurse-submodules "VTK::hdf5" | xargs sed -i "s/VTK::hdf5/VTK::vtkhdf5/g"
+git grep -lr --recurse-submodules "VTK::hdf5" | xargs sed -i "s/VTK::hdf5/VTK::hdf5vtk/g"
 popd
 
 echo "Patching VTK with external Viskores CMake targets problem..."
@@ -142,14 +142,39 @@ cmake --install $PARAVIEW_BUILD_DIR
 # =====================================
 SECTION "Install ParaView Plugin: Gadget Reader"
 git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
-mkdir $BUILD_ROOT/ParaViewGadgetPlugin
-cd    $BUILD_ROOT/ParaViewGadgetPlugin
 
-cmake -G Ninja \
-    -DCMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR \
-    -DCMAKE_INSTALL_PREFIX=$PARAVIEW_PLUGINS_DIR \
-    $SRC_ROOT/ParaViewGadgetPlugin
-ninja install
+SECTION "Patch Gadget for VTK::hdf5 workaround"
+patch -p 1 -d $SRC_ROOT/ParaViewGadgetPlugin <<-'EOF'
+  diff --git a/src/Reader/vtk.module b/src/Reader/vtk.module
+  index 46b504d..ed640bc 100644
+  --- a/src/Reader/vtk.module
+  +++ b/src/Reader/vtk.module
+  @@ -12,4 +12,4 @@ DEPENDS
+   PRIVATE_DEPENDS
+     VTK::vtksys
+     VTK::mpi
+  -  VTK::hdf5
+  +  VTK::hdf5vtk
+  diff --git a/src/paraview.plugin b/src/paraview.plugin
+  index 72850ae..85d1504 100644
+  --- a/src/paraview.plugin
+  +++ b/src/paraview.plugin
+  @@ -5,4 +5,4 @@ DESCRIPTION
+   REQUIRES_MODULES
+     VTK::CommonCore
+     VTK::CommonExecutionModel
+  -  VTK::hdf5
+  +  VTK::hdf5vtk
+EOF
+
+cmake                                         \
+  -G Ninja                                    \
+  -S $SRC_ROOT/ParaViewGadgetPlugin           \
+  -B $BUILD_ROOT/ParaViewGadgetPlugin         \
+  -DCMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR   \
+  --install-prefix=$PARAVIEW_PLUGINS_DIR
+cmake --build $BUILD_ROOT/ParaViewGadgetPlugin -j
+cmake --install $BUILD_ROOT/ParaViewGadgetPlugin
 
 # =====================================
 SECTION "Install ParaView Plugin: NVIDIA IndeX"
