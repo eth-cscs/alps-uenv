@@ -1,10 +1,10 @@
-name: netcdf-tools
-store: /user-tools
-description: utilities used for climate/weather analysis and file manipulation
+name: vasp
 spack:
   repo: https://github.com/spack/spack.git
   commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2025.11
+    commit: v2025.11.0
+store: /user-environment
+description: VASP
 version: 2
