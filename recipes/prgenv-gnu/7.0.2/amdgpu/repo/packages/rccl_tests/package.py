@@ -35,7 +35,7 @@ class RcclTests(CMakePackage):
 
     def cmake_args(self):
         return [
-            self.define("CMAKE_CXX_COMPILER",  f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+            self.define("CMAKE_CXX_COMPILER",  f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"),
             self.define("EXPLICIT_ROCM_VERSION", self.spec["hip"].version),
             self.define("ROCM_PATH", self.spec["hip"].prefix),
             self.define("RCCL_ROOT", self.spec["rccl"].prefix),
