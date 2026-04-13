@@ -1,7 +1,7 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich +cuda
+      mpi: cray-mpich@9.1 +cuda
   unify: true
   specs:
   - arpack-ng
