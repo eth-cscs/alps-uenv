@@ -28,7 +28,7 @@ gcc-env:
   - lz4
   - meson
   - metis
-  - mimalloc
+  - mimalloc@2
   - mumps +parmetis +ptscotch
   - nco
   - netcdf-c
