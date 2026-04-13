@@ -50,7 +50,7 @@ gcc-env:
   - superlu-dist
   - swig
   # https://github.com/spack/spack-packages/issues/1961
-  - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
+  # - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - umpire
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
