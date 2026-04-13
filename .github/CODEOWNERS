@@ -6,6 +6,7 @@ recipes/lammps/ @nickjbrowning @RMeli
 recipes/linalg-complex/ @finkandreas @msimberg
 recipes/linalg/ @finkandreas @msimberg
 recipes/namd/ @RMeli
+recipes/paraview/ @albestro
 recipes/quantumespresso/ @simonpintarelli @RMeli
 recipes/sirius/ @toxa81 @simonpintarelli
 recipes/vasp/ @AdhocMan @RMeli

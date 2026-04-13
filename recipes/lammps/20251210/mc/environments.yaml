@@ -11,7 +11,7 @@ lammps-kokkos:
   - ninja
   - kokkos +openmp
   - plumed
-  - lammps@20250722 +kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule +openmp
+  - lammps@20250722 +kokkos +python +replica +mc +misc +plumed +manifold +qtb +reaction +shock +spin +extra-pair +extra-fix +ml-iap +extra-dump +extra-molecule +openmp +ml-snap +extra-compute
   variants:
   - +openmp
   - +mpi

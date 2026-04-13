@@ -1,0 +1,120 @@
+paraview-osmesa:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich
+  # note: workaround for mesa and ispc dependency on llvm
+  unify: when_possible
+  views:
+    default:
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+            # note: these are needed for the launch script, but it might change
+            - PARAVIEW_INSTALL_DIR: /user-environment/paraview
+            - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
+            # note: by default use paraview catalyst implementation
+            - CATALYST_IMPLEMENTATION_NAME: paraview
+            - CATALYST_IMPLEMENTATION_PATHS: /user-environment/paraview/lib64/catalyst
+          prepend_path:
+            # note: these are needed because paraview is not installed by spack
+            - PATH: /user-environment/paraview/bin
+            - LD_LIBRARY_PATH: /user-environment/paraview/lib
+            - LD_LIBRARY_PATH: /user-environment/paraview/lib64
+            # note: these are needed because paraview plugins are not installed by spack
+            - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib
+            - LD_LIBRARY_PATH: /user-environment/paraview-plugins/lib64
+    develop:
+      exclude: ["paraview-osmesa"]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+  specs:
+  # Build tools
+  - cmake
+  - ninja
+
+  # c++ helpers
+  - fmt@11
+  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
+
+  # IO and parallelism
+  - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
+  - netcdf-c +mpi
+  - lz4
+  - adios2 +python +hdf5
+
+  # multithreading
+  - tbb
+
+  # in-situ support
+  - libcatalyst +mpi +python
+
+  # vtk external deps
+  - abseil-cpp
+  - cgns #@4.4.0
+  - cli11
+  - double-conversion #@3.3.0
+  - eigen
+  - expat
+  - fast-float@7
+  - fmt@11
+  - freetype
+  - git
+  - gl2ps
+  - glew
+  - jpeg
+  - jsoncpp
+  - libharu
+  - libogg
+  - libpng
+  - libtheora #@git.7180717276af1ebc7da15c83162d6c5d6203aabf=master
+  - libtiff
+  - libxml2
+  - nlohmann-json
+  - parallel-netcdf
+  - pegtl@2
+  - proj
+  - protobuf #@:3.21 # problem about crc arm vs crc aarch64 -- give a try to 33.0, it failed with 32.1
+  - pugixml
+  - seacas@2025-02-27 ~legacy
+  - sqlite
+  - utf8cpp
+  - verdict +shared
+  - xz
+  - zlib-ng
+
+  # climate/weather
+  - cdi
+
+  # python
+  - python@3.12
+  - py-numpy
+  - py-pandas
+  - py-matplotlib
+  - py-mpi4py
+  - py-cftime
+  - py-h5py
+
+  # raytracing in VTK/ParaView
+  - ospray@3.2 ~mpi +denoiser +volumes ~apps ~glm
+  - ispc@1.24
+  - openvkl
+  - embree
+  - rkcommon
+  - openimagedenoise
+
+  # offscreen rendering
+  # note: +llvm is needed for llvmpipe, which is the software renderer
+  - mesa +osmesa ~glx +llvm
+  - osmesa
+
+  variants:
+  - build_type=Release
+  - cxxstd=17
+  - +cxx
+  - +mpi

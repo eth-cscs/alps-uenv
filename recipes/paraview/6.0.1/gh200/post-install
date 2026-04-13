@@ -83,6 +83,10 @@ patch -p 1 -d $PARAVIEW_SRC_DIR <<-EOF
 		 //----------------------------------------------------------------------------
 EOF
 
+# https://gitlab.kitware.com/vtk/vtk/-/merge_requests/12857
+echo "Patching VTK::hdf5 CMake target problem..."
+grep -lr "VTK::hdf5" $PARAVIEW_SRC_DIR | xargs sed -i "s/VTK::hdf5/VTK::vtkhdf5/g"
+
 # =====================================
 SECTION "configure paraview build..."
 mkdir -p $PARAVIEW_BINARY_DIR && cd $PARAVIEW_BINARY_DIR

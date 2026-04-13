@@ -17,6 +17,7 @@ paraview-cuda:
             - PARAVIEW_INSTALL_DIR: /user-environment/paraview
             - PARAVIEW_PLUGINS_DIR: /user-environment/paraview-plugins
             # note: by default use paraview catalyst implementation
+            - CATALYST_IMPLEMENTATION_NAME: paraview
             - CATALYST_IMPLEMENTATION_PATHS: /user-environment/paraview/lib64/catalyst
           prepend_path:
             # note: these are needed because paraview is not installed by spack
