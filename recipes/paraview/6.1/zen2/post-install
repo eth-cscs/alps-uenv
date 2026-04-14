@@ -66,6 +66,12 @@ pushd ${PARAVIEW_SRC_DIR}
 git submodule update --init --recursive
 popd
 
+# NOTE: https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7763
+echo "Patching CDIReader for ICON Ocean data bug..."
+pushd $PARAVIEW_SRC_DIR
+wget -q -O - https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7763.patch | git apply -v
+popd
+
 # NOTE: a proper fix has been merged in master but it is not part of v6.1.0
 echo "Patching VTK::hdf5 CMake target problem..."
 pushd $PARAVIEW_SRC_DIR
