@@ -1,0 +1,9 @@
+name: prgenv-gnu
+version: 2
+spack:
+  commit: releases/v1.1
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit:  876d656ad17366f92e2233d843ba285d655150dd # develop on 2026-03-09
+description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)

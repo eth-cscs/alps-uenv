@@ -336,6 +336,11 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "7.0.2":
+      recipes:
+        mi200: 7.0.2/amdgpu
+      deploy:
+        beverin: [mi200]
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
