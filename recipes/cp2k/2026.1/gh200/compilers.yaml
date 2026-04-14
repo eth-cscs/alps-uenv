@@ -1,2 +1,2 @@
 gcc:
-  version: "12"
+  version: "12.5" # gcc@12.5 is not deprecated in Spack
