@@ -58,7 +58,7 @@ gcc-env:
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - whip
-  - hip@7
+  - hip@7.0
   - llvm-amdgpu
   # rocm packages
   - rocblas ~tensile # TODO
