@@ -1,0 +1,11 @@
+name: prgenv-gnu-dpcpp
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 7178c89f9bb9bb96f692325509e9348f243b9a0a # develop on 2026-03-09
+store: /user-environment
+description: GNU Compiler toolchain with Intel DPC++ SYCL, cray-mpich, Python, CMake and other development tools.
+default-view: default
+version: 2
