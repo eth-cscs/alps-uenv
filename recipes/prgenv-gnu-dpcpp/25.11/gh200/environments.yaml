@@ -1,12 +1,10 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@8.1.32 +cuda
-      specs:
-      - libfabric@2.3 +gdrcopy
+      mpi: cray-mpich@9 +cuda
   unify: when_possible
   specs:
-  - 'llvmdpcpp@sycl +clang +cuda cuda_arch=90'
+  - llvmdpcpp@sycl +clang +cuda cuda_arch=90
   - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
@@ -35,7 +33,7 @@ gcc-env:
   # add GPU-specific packages here, for easier comparison with mc version
   - nccl
   - nccl-tests
-  - cuda@12
+  - cuda
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu

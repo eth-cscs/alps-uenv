@@ -9,7 +9,7 @@ default:
     - osu-micro-benchmarks
     - prgenv
     - serial
-    - sycl
+    - sycl-dpcpp
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
