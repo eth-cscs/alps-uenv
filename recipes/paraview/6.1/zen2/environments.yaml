@@ -44,7 +44,7 @@ paraview-osmesa:
   - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
   - netcdf-c +mpi
   - lz4
-  - adios2 +python +hdf5
+  - adios2 +python +hdf5 +libcatalyst
 
   # multithreading
   - tbb
