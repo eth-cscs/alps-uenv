@@ -37,8 +37,7 @@ gcc-env:
   - python
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  # Pinned to older version due to https://jira.cscs.ch/browse/SD-69242
-  - nccl@2.28.7-1
+  - nccl
   - nccl-tests
   - cuda
   - xcb-util-cursor
