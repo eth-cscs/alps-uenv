@@ -38,7 +38,7 @@ paraview-osmesa:
 
   # c++ helpers
   - fmt@11
-  - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +test +thread
+  - boost +atomic +chrono +container +context +date_time +filesystem +graph +json +mpi +multithreaded +program_options +regex +serialization +shared +system +thread ~test
 
   # IO and parallelism
   - hdf5 +mpi +cxx +hl +threadsafe +shared ~java
