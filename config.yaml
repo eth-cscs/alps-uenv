@@ -363,8 +363,8 @@ uenvs:
   prgenv-intel:
     "2022.1":
       recipes:
-        zen2: 2022.1
-        zen3: 2022.1
+        zen2: "2022.1"
+        zen3: "2022.1"
       deploy:
         eiger: [zen2]
   pytorch:
