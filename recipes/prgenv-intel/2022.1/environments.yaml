@@ -1,0 +1,38 @@
+prgenv:
+  compiler: [intel-oneapi-compilers, gcc]
+  network:
+      mpi: cray-mpich@8.1.32 %oneapi
+      # use the system libfabric because BYO libfabric forces gcc to be used to build other packages
+      specs: ['libfabric@1.22']
+  unify: true
+  specs:
+  #
+  #  don't provide for now
+  #
+  #- boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  #- fmt
+  #- netlib-scalapack
+  #- meson
+  #- ninja
+  #
+  #  does not build because of -ffp-model=consistent flag
+  #
+  #- openblas threads=openmp
+  - python %gcc
+  - cmake %gcc
+  - fftw
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - netcdf-c build_system=cmake
+  - netcdf-cxx
+  - netcdf-fortran
+  - osu-micro-benchmarks
+  variants:
+  - +mpi
+  views:
+    oneapi:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
