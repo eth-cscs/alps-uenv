@@ -71,7 +71,7 @@ clusters:
           F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
           F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
           F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
-          SLURM_ACCOUNT: 'csstaff-1'
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   beverin:
     targets:
