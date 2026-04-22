@@ -33,6 +33,20 @@ function uenv_env(key::AbstractString)
     return s
 end
 
+function merge_env_lists(dicts...)
+    result = Dict{String, Any}()
+    for d in dicts
+        for (key, value) in d
+            if haskey(result, key)
+                result[key] = vcat(result[key], deepcopy(value))
+            else
+                result[key] = deepcopy(value)
+            end
+        end
+    end
+    return result
+end
+
 
 # Check if the required environment variables are set and not empty
 
@@ -50,7 +64,7 @@ default_view_env_values = views["default"]["env"]["values"]
 
 juliaup_view_env = Dict(
     "values" => Dict(
-        "list" => merge(
+        "list" => merge_env_lists(
             default_view_env_values["list"],
             Dict(
                 "PATH" => [
@@ -84,12 +98,17 @@ juliaup_view_env = Dict(
 # Define the environment variables part of the jupyter view
 
 jupyter_view_env = deepcopy(juliaup_view_env)
-jupyter_view_env["values"]["list"]["PATH"] = [
+jupyter_view_env["values"]["list"] = merge_env_lists(
+    default_view_env_values["list"],
     Dict(
-        "value" => [uenv_env("IJULIA_INSTALLER_BINDIR"), uenv_env("JULIA_WRAPPER_BINDIR"), uenv_env("JULIAUP_WRAPPER_BINDIR"), uenv_env("JULIAUP_BINDIR")], # The wrappers must be before the juliaup bindir
-        "op" => "prepend",
+        "PATH" => [
+            Dict(
+                "value" => [uenv_env("IJULIA_INSTALLER_BINDIR"), uenv_env("JULIA_WRAPPER_BINDIR"), uenv_env("JULIAUP_WRAPPER_BINDIR"), uenv_env("JULIAUP_BINDIR")], # The wrappers must be before the juliaup bindir
+                "op" => "prepend",
+            ),
+        ],
     ),
-]
+)
 
 
 # Define the juliaup view
