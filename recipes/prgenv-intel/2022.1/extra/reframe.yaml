@@ -5,6 +5,7 @@ default:
     - osu-micro-benchmarks
     - prgenv
     - serial
+    - oneapi
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
