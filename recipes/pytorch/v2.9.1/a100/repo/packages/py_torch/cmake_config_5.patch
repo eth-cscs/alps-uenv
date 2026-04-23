@@ -1,0 +1,36 @@
+diff --git i/cmake/Caffe2Config.cmake.in w/cmake/Caffe2Config.cmake.in
+index 3465e91..646550f 100644
+--- i/cmake/Caffe2Config.cmake.in
++++ w/cmake/Caffe2Config.cmake.in
+@@ -79,6 +79,10 @@ if(@USE_CUDA@)
+   # If Caffe2 was compiled with the libraries below, they must
+   # be found again when including the Caffe2 target.
+   set(CAFFE2_USE_CUDA @USE_CUDA@)
++  set(CAFFE2_USE_CUDNN @USE_CUDNN@)
++  set(CAFFE2_USE_CUSPARSELT @USE_CUSPARSELT@)
++  set(CAFFE2_USE_CUFILE @USE_CUFILE@)
++  set(CAFFE2_USE_NVRTC @USE_NVRTC@)
+ 
+   # Add current directory to module path so we pick up FindCUDAToolkit.cmake
+   set(old_CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
+diff --git i/cmake/Dependencies.cmake w/cmake/Dependencies.cmake
+index ef5c2fd..1b050e4 100644
+--- i/cmake/Dependencies.cmake
++++ w/cmake/Dependencies.cmake
+@@ -1687,6 +1687,16 @@ if(USE_KINETO)
+   if(NOT TARGET kineto)
+     add_subdirectory("${KINETO_SOURCE_DIR}")
+     set_property(TARGET kineto PROPERTY POSITION_INDEPENDENT_CODE ON)
++
++    #include(GNUInstallDirs)
++    ## Only install if it's an actual library target
++    #get_target_property(_kineto_type kineto TYPE)
++    #if(_kineto_type STREQUAL "STATIC_LIBRARY" OR _kineto_type STREQUAL "SHARED_LIBRARY")
++    #  install(TARGETS kineto EXPORT Caffe2Targets DESTINATION lib)
++    #else()
++    #    message(FATAL_ERROR "should be a library!!!")
++    #endif()
++    #unset(_kineto_type)
+   endif()
+   list(APPEND Caffe2_DEPENDENCY_LIBS kineto)
+   string(APPEND CMAKE_CXX_FLAGS " -DUSE_KINETO")
