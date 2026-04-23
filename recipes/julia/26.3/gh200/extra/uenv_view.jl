@@ -103,7 +103,7 @@ jupyter_view_env["values"]["list"] = merge_env_lists(
     Dict(
         "PATH" => [
             Dict(
-                "value" => [uenv_env("IJULIA_INSTALLER_BINDIR"), uenv_env("JULIA_WRAPPER_BINDIR"), uenv_env("JULIAUP_WRAPPER_BINDIR"), uenv_env("JULIAUP_BINDIR")], # The wrappers must be before the juliaup bindir
+                "value" => [uenv_env("IJULIA_INSTALLER_BINDIR"), uenv_env("JULIA_WRAPPER_BINDIR"), uenv_env("JULIAUP_WRAPPER_BINDIR"), uenv_env("JULIAUP_BINDIR")], # The wrappers must be before the juliaup bindir (prepended to the PATH defined in the default view, not in the juliaup view, so that juliaup view variables must be repeated here)
                 "op" => "prepend",
             ),
         ],
