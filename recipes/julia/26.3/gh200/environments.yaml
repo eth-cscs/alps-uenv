@@ -4,7 +4,7 @@ gcc-env:
       mpi: cray-mpich@8.1.32 +cuda
   unify: true
   specs:
-  - cmake@3.27
+  - cmake@3.27 # required for adios2 build
   - fftw
   - fmt
   - hdf5+hl
@@ -22,10 +22,9 @@ gcc-env:
   - sz
   - libpng
   - c-blosc2
-  - libpressio@0.95.1
+  - libpressio@0.95.1 # required for adios2 build
   - mgard
   - libcatalyst
-  - adios2@2.10+hdf5+python+fortran
   - 'adios2@2.10+hdf5+python+fortran+sst+pic+shared+bzip2+zfp+sz+png+blosc2+mgard+libcatalyst'
   - cuda@12.9
   - cutensor
