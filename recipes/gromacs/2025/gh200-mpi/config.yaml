@@ -3,9 +3,9 @@ store: /user-environment
 description: GPU-optimised GROMACS with and without PLUMED, and the toolchain to build your own GROMACS.
 spack:
   repo: https://github.com/spack/spack.git
-  commit: releases/v1.0
+  commit: releases/v1.1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2025.07
+    commit: releases/v2026.03
 modules: false
 version: 2
