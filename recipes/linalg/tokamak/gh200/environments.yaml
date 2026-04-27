@@ -1,10 +1,11 @@
 gcc-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@8.1.32 +cuda
+      mpi: cray-mpich@9.1 +cuda
   unify: true
   specs:
   - arpack-ng
+  - axom +cuda +mfem +mpi
   - blaspp
   - blt
   - boost +atomic +chrono +container +context +coroutine +date_time +filesystem +iostreams +json +log +mpi +multithreaded +program_options +python +random +regex +serialization +shared +system +test +thread +timer +url
@@ -18,6 +19,7 @@ gcc-env:
   - gsl
   - hdf5 +fortran +hl
   - hwloc
+  - hpddm
   - hypre +superlu-dist
   - kokkos +aggressive_vectorization ~alloc_async +cuda_constexpr +cuda_lambda ~cuda_relocatable_device_code ~cuda_uvm cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
   - kokkos-kernels +blas +cublas +cusparse +cusolver +execspace_cuda +execspace_openmp +execspace_serial +lapack +memspace_cudaspace +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
@@ -28,7 +30,9 @@ gcc-env:
   - lz4
   - meson
   - metis
-  - mimalloc
+  # - mimalloc@2
+  - jemalloc
+  - mfem +cuda +mpi +petsc +miniapps
   - mumps +parmetis +ptscotch
   - nco
   - netcdf-c
@@ -36,11 +40,11 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks
-  - p4est@=2.8 +mpi # https://github.com/spack/spack-packages/issues/1942
+  - p4est +mpi
   - papi ~cuda
   - parmetis
-  - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
-  - pika malloc=mimalloc +mpi +stdexec
+  - petsc +batch +hpddm +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
+  - pika malloc=jemalloc +mpi +stdexec
   - python
   - slepc
   - spdlog
@@ -50,7 +54,7 @@ gcc-env:
   - superlu-dist
   - swig
   # https://github.com/spack/spack-packages/issues/1961
-  - trilinos@16.0 +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
+  # - trilinos +adios2 ~amesos +amesos2 +belos +boost cxxstd=17 +cuda_constexpr ~epetra ~epetraext +explicit_template_instantiation +hdf5 +hypre ~ifpack +ifpack2 +intrepid2 +kokkos ~ml +mpi +muelu +mumps +nox +openmp +sacado +stk +stratimikos +suite-sparse +superlu-dist +tpetra +wrapper +zoltan2
   - umpire
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
