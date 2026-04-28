@@ -1,0 +1,17 @@
+default:
+  features:
+    - cuda
+    - mpi
+    - cray-mpich
+    - nccl
+    - nccl-tests
+    - openmp
+    - nccl
+    - nccl-tests
+    - osu-micro-benchmarks
+    - serial
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default
