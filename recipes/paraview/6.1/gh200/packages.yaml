@@ -8,6 +8,9 @@ packages:
       - ~applications
       - ~examples
       - ~tests
+  cuda:
+    require:
+      - "@13"
   conduit:
     require:
       - +hdf5

@@ -1,7 +1,7 @@
 paraview-cuda:
   compiler: [gcc]
   network:
-    mpi: cray-mpich
+    mpi: cray-mpich@9.1 +cuda
   unify: true
   views:
     default:
@@ -33,7 +33,7 @@ paraview-cuda:
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
   specs:
-  - cuda@12
+  - cuda
 
   # Build tools
   - cmake
