@@ -20,6 +20,3 @@ packages:
       - targets:=x86
       - ~gold
       - ~cuda
-  libllvm:
-    # note: ~clang~flang are turned off otherwise we get CC/CXX set to clang/clang++
-    require: llvm ~clang~flang

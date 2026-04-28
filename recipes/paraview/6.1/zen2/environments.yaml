@@ -111,7 +111,8 @@ paraview-osmesa:
 
   # offscreen rendering
   # note: +llvm is needed for llvmpipe, which is the software renderer
-  - mesa +osmesa ~glx +llvm
+  # note: ~clang~flang are turned off otherwise we get CC/CXX set to clang/clang++
+  - mesa +osmesa ~glx +llvm %libllvm=llvm ~clang~flang
   - osmesa
 
   variants:
