@@ -1,0 +1,13 @@
+default:
+  features:
+    - mpi
+    - openmp
+    - osu-micro-benchmarks
+    - prgenv
+    - serial
+    - oneapi
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - oneapi

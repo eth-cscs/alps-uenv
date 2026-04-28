@@ -1,0 +1,4 @@
+gcc:
+  version: "14"
+intel-oneapi-compilers:
+  version: "2022.1"
