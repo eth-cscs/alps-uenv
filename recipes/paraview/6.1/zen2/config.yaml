@@ -6,6 +6,6 @@ spack:
   commit: v1.1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 64ad2166487d094ae5f4a4e7f788a4cbdad89cb9 # libfuse fix
+    commit: 0ed7eaf328ee495dd4346d2b56e200692d432024
 description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
 default-view: default
