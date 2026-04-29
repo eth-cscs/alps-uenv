@@ -3,7 +3,7 @@ name: paraview
 store: /user-environment
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v1.1.1
+  commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: 0ed7eaf328ee495dd4346d2b56e200692d432024
