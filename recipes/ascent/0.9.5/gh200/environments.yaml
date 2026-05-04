@@ -4,7 +4,7 @@ ascent-env:
     mpi: cray-mpich
   unify: true
   specs:
-    - ascent +fortran +python +occa ~adios2 ~mfem ~fides +catalyst
+    - ascent +fortran +python +occa ~mfem +adios2 +fides +catalyst
     - occa
     - libcatalyst
     - python
