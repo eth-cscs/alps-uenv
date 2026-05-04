@@ -8,3 +8,4 @@ spack:
     repo: https://github.com/spack/spack-packages.git
     commit: 53f15337d68d9b1d7fa87eecfa393fe591d3496a # add ascent catalyst support
 version: 2
+default-view: default
