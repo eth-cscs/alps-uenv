@@ -24,7 +24,7 @@ ascent-env:
           set:
             - CUDAARCHS: "90a"
             - CUDAHOSTCXX: "g++"
-            # note: by default use paraview catalyst implementation
+            # note: by default use ascent catalyst implementation
             - CATALYST_IMPLEMENTATION_NAME: ascent
             - CATALYST_IMPLEMENTATION_PATHS: $@view_path@/lib
           prepend_path:
