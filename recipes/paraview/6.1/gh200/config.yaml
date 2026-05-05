@@ -6,6 +6,6 @@ spack:
   commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 9c604befac9c348ceccf16582fa532dab317958f
+    commit: 10ed348b9953cdfe791132cb4ced33dd21c8a5a4
 description: ParaView for Alps Grace-Hopper clusters using EGL
 default-view: default
