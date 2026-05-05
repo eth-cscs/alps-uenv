@@ -69,7 +69,7 @@ popd
 # NOTE: https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7763
 echo "Patching CDIReader for ICON Ocean data bug..."
 pushd $PARAVIEW_SRC_DIR
-wget -q -O - https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7763.patch | git apply -v
+wget -q -O - https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7763.diff | git apply -v
 popd
 
 # NOTE: a proper fix has been merged in master but it is not part of v6.1.0
@@ -78,6 +78,7 @@ pushd $PARAVIEW_SRC_DIR
 git grep -lr --recurse-submodules "VTK::hdf5" | xargs sed -i "s/VTK::hdf5/VTK::hdf5vtk/g"
 popd
 
+# NOTE: https://gitlab.kitware.com/vtk/vtk/-/work_items/19940
 echo "Patching VTK with external Viskores CMake targets problem..."
 patch -p 1 -d $PARAVIEW_SRC_DIR/VTK <<-'EOF'
   diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
