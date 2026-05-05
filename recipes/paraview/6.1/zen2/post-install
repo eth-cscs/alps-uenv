@@ -146,10 +146,19 @@ cmake --install $PARAVIEW_BUILD_DIR
 
 # =====================================
 SECTION "Install ParaView Plugin: Gadget Reader"
-git clone https://github.com/jfavre/ParaViewGadgetPlugin $SRC_ROOT/ParaViewGadgetPlugin
+PARAVIEW_GADGET_PLUGIN_REPO=$SRC_ROOT/ParaViewGadgetPlugin.git
+PARAVIEW_GADGET_PLUGIN_COMMIT="d9d12bde19454199b733b4e1285be3dcd1ac5595"
+
+mkdir $PARAVIEW_GADGET_PLUGIN_REPO
+pushd $PARAVIEW_GADGET_PLUGIN_REPO
+git init
+git remote add origin https://github.com/jfavre/ParaViewGadgetPlugin
+git fetch --depth 1 origin $PARAVIEW_GADGET_PLUGIN_COMMIT
+git reset --hard FETCH_HEAD
+popd
 
 SECTION "Patch Gadget for VTK::hdf5 workaround"
-patch -p 1 -d $SRC_ROOT/ParaViewGadgetPlugin <<-'EOF'
+patch -p 1 -d $PARAVIEW_GADGET_PLUGIN_REPO <<-'EOF'
   diff --git a/src/Reader/vtk.module b/src/Reader/vtk.module
   index 46b504d..ed640bc 100644
   --- a/src/Reader/vtk.module
@@ -164,7 +173,7 @@ EOF
 
 cmake                                         \
   -G Ninja                                    \
-  -S $SRC_ROOT/ParaViewGadgetPlugin           \
+  -S $PARAVIEW_GADGET_PLUGIN_REPO             \
   -B $BUILD_ROOT/ParaViewGadgetPlugin         \
   -DCMAKE_PREFIX_PATH=$PARAVIEW_INSTALL_DIR   \
   --install-prefix=$PARAVIEW_PLUGINS_DIR
