@@ -1,0 +1,11 @@
+version: 2
+name: paraview
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 10ed348b9953cdfe791132cb4ced33dd21c8a5a4
+description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
+default-view: default
