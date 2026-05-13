@@ -354,7 +354,7 @@ uenvs:
   prgenv-gnu-dpcpp:
     "25.11":
       recipes:
-        amdgpu: 25.11/amdgpu
+        mi200: 25.11/amdgpu
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
