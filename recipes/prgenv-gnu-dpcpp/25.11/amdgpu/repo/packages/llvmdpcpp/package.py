@@ -46,8 +46,15 @@ class Llvmdpcpp(CMakePackage):
     depends_on("zstd", type="link")
 
     # HIP/ROCm dependencies
-    # Unified Runtime HIP adapter needs HIP headers/lib and HSA headers
+    # Unified Runtime HIP adapter needs HIP headers/lib, COMGR headers/lib, and HSA headers.
+    # Note: the UR HIP CMakeLists.txt uses a single UR_HIP_INCLUDE_DIR for both
+    # hip and amd_comgr headers, and a single UR_HIP_LIB_DIR for both
+    # libamdhip64.so and libamd_comgr.so.  In a monolithic /opt/rocm install
+    # these all live together, but Spack splits them across separate prefixes.
+    # We create a symlink-farm staging directory at build time (see
+    # _create_rocm_staging_dirs below) to satisfy the UR adapter checks.
     depends_on("hip", when="+hip")
+    depends_on("comgr", when="+hip")
     depends_on("hsa-rocr-dev", when="+hip")
     depends_on("llvm-amdgpu", when="+hip")
 
@@ -55,6 +62,35 @@ class Llvmdpcpp(CMakePackage):
     conflicts("~clang", msg="DPC++ requires clang")
 
     generator("ninja")
+
+    def _create_rocm_staging_dirs(self):
+        """Create staging include/lib directories merging hip and comgr prefixes.
+
+        The UR HIP adapter (unified-runtime/source/adapters/hip/CMakeLists.txt)
+        uses a single UR_HIP_INCLUDE_DIR to look for both HIP headers and the
+        amd_comgr.h header, and a single UR_HIP_LIB_DIR for both libamdhip64.so
+        and libamd_comgr.so.  In a monolithic ROCm install these share the same
+        directory; in Spack they are in separate prefixes.  We create symlink
+        farms under the source staging path to satisfy both checks.
+        """
+        staging = os.path.join(self.stage.source_path, "spack-rocm-staging")
+        inc_staging = os.path.join(staging, "include")
+        lib_staging = os.path.join(staging, "lib")
+        os.makedirs(inc_staging, exist_ok=True)
+        os.makedirs(lib_staging, exist_ok=True)
+
+        for pkg_name in ["hip", "comgr"]:
+            pkg_spec = self.spec[pkg_name]
+            for subdir, staging_dir in [("include", inc_staging), ("lib", lib_staging)]:
+                src_dir = os.path.join(pkg_spec.prefix, subdir)
+                if os.path.isdir(src_dir):
+                    for entry in os.listdir(src_dir):
+                        src = os.path.join(src_dir, entry)
+                        dst = os.path.join(staging_dir, entry)
+                        if not os.path.exists(dst):
+                            os.symlink(src, dst)
+
+        return inc_staging, lib_staging
 
     @property
     def root_cmakelists_dir(self):
@@ -136,19 +172,16 @@ class Llvmdpcpp(CMakePackage):
                 )
 
         if spec.satisfies("+hip"):
-            # Unified Runtime HIP adapter variables (configure.py: UR_HIP_ROCM_DIR)
-            # Spack separates ROCm into individual packages, so provide each path:
-            hip_prefix = spec["hip"].prefix
+            # Create staging dirs that merge hip + comgr headers/libs into a
+            # single directory tree, as required by the UR HIP adapter.
+            inc_staging, lib_staging = self._create_rocm_staging_dirs()
             hsa_prefix = spec["hsa-rocr-dev"].prefix
             args.extend([
                 self.define("SYCL_BUILD_UR_HIP_PLATFORM", "AMD"),
-                # HIP include/lib directories for the UR HIP adapter
-                self.define("UR_HIP_INCLUDE_DIR",
-                            os.path.join(hip_prefix, "include")),
+                self.define("UR_HIP_INCLUDE_DIR", inc_staging),
                 self.define("UR_HIP_HSA_INCLUDE_DIR",
                             os.path.join(hsa_prefix, "include")),
-                self.define("UR_HIP_LIB_DIR",
-                            os.path.join(hip_prefix, "lib")),
+                self.define("UR_HIP_LIB_DIR", lib_staging),
             ])
 
         return args
