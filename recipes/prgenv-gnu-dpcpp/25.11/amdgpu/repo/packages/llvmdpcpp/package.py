@@ -159,6 +159,13 @@ class Llvmdpcpp(CMakePackage):
             self.define("BUG_REPORT_URL", "https://github.com/intel/llvm/issues"),
             # libclc runtime targets (mirrors configure.py libclc_enabled path)
             self.define("LLVM_RUNTIME_TARGETS", ";".join(runtime_targets)),
+            # Explicitly set the host compiler used to BUILD llvm/clang itself.
+            # Without this, CMake falls back to whatever /usr/bin/c++ resolves to
+            # (GCC 7.5 on SLES 15), which lacks the C++17 CTAD support required
+            # by recent intel/llvm sycl code (e.g. FactsGenerator.cpp uses
+            # `ArrayRef Args = {ptr, size}` deduction that needs GCC >= 9).
+            self.define("CMAKE_C_COMPILER", self.compiler.cc),
+            self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
         ]
 
         # Add per-runtime libclc enablement (configure.py pattern)
