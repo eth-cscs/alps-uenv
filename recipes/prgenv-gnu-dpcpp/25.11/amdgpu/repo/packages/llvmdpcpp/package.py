@@ -164,8 +164,8 @@ class Llvmdpcpp(CMakePackage):
             # (GCC 7.5 on SLES 15), which lacks the C++17 CTAD support required
             # by recent intel/llvm sycl code (e.g. FactsGenerator.cpp uses
             # `ArrayRef Args = {ptr, size}` deduction that needs GCC >= 9).
-            self.define("CMAKE_C_COMPILER", self.compiler.cc),
-            self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
+            self.define("CMAKE_C_COMPILER", spack_cc),
+            self.define("CMAKE_CXX_COMPILER", spack_cxx),
         ]
 
         # Add per-runtime libclc enablement (configure.py pattern)

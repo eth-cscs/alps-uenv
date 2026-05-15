@@ -65,7 +65,10 @@ gcc-env:
   - hipsparse
   - hipfft
   - hipblas-common
-  - hipdnn
+  # hipdnn excluded: MiopenLegacyPlugin.hpp uses #pragma once which is treated
+  # as an error by amdclang++ (-Werror=portability-avoid-pragma-once).
+  # miopen-hip is similarly excluded in prgenv-gnu/7.2.0/amdgpu.
+  # - hipdnn
   # networking
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
