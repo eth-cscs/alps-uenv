@@ -148,7 +148,10 @@ class Llvmdpcpp(CMakePackage):
             self.define("LLVM_ENABLE_PROJECTS", llvm_projects),
             self.define("LLVM_BUILD_TOOLS", True),
             self.define("LLVM_ENABLE_ZSTD", True),
-            self.define("LLVM_USE_STATIC_ZSTD", True),
+            # Use shared libzstd.so — the Spack-built libzstd.a is not compiled
+            # with -fPIC, so ld.lld rejects it when linking shared libraries
+            # (e.g. libur_loader.so) with R_X86_64_PC32 relocation errors.
+            self.define("LLVM_USE_STATIC_ZSTD", False),
             self.define("SYCL_ENABLE_WERROR", False),
             self.define("SYCL_INCLUDE_TESTS", False),
             self.define("BUILD_SHARED_LIBS", False),
