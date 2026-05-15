@@ -173,9 +173,9 @@ class Llvmdpcpp(CMakePackage):
         # -Wno-error=pragma-once-outside-header turns the promotion to error off
         # while keeping any warning visible; -Wno-pragma-once-outside-header
         # silences it entirely.
-        no_pragma_once_err = "-Wno-error=pragma-once-outside-header"
-        args.append(self.define("CMAKE_C_FLAGS", no_pragma_once_err))
-        args.append(self.define("CMAKE_CXX_FLAGS", no_pragma_once_err))
+        extra_flags = "-fPIC -Wno-error=pragma-once-outside-header"
+        args.append(self.define("CMAKE_C_FLAGS", extra_flags))
+        args.append(self.define("CMAKE_CXX_FLAGS", extra_flags))
 
         # Add per-runtime libclc enablement (configure.py pattern)
         for target in runtime_targets:
