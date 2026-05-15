@@ -159,14 +159,21 @@ class Llvmdpcpp(CMakePackage):
             self.define("BUG_REPORT_URL", "https://github.com/intel/llvm/issues"),
             # libclc runtime targets (mirrors configure.py libclc_enabled path)
             self.define("LLVM_RUNTIME_TARGETS", ";".join(runtime_targets)),
-            # Explicitly set the host compiler used to BUILD llvm/clang itself.
-            # Without this, CMake falls back to whatever /usr/bin/c++ resolves to
-            # (GCC 7.5 on SLES 15), which lacks the C++17 CTAD support required
-            # by recent intel/llvm sycl code (e.g. FactsGenerator.cpp uses
-            # `ArrayRef Args = {ptr, size}` deduction that needs GCC >= 9).
-            self.define("CMAKE_C_COMPILER", spack_cc),
-            self.define("CMAKE_CXX_COMPILER", spack_cxx),
         ]
+
+        # Explicitly set the host compiler used to BUILD llvm/clang itself.
+        # Without this, CMake falls back to whatever /usr/bin/c++ resolves to
+        # (GCC 7.5 on SLES 15), which lacks the C++17 CTAD support required
+        # by recent intel/llvm sycl code (e.g. FactsGenerator.cpp uses
+        # `ArrayRef Args = {ptr, size}` deduction that needs GCC >= 9).
+        # self.compiler is NOT accessible in the Spack 1.x builder context;
+        # Spack sets SPACK_CC/SPACK_CXX to actual compiler paths before cmake.
+        spack_cc = os.environ.get("SPACK_CC")
+        spack_cxx = os.environ.get("SPACK_CXX")
+        if spack_cc:
+            args.append(self.define("CMAKE_C_COMPILER", spack_cc))
+        if spack_cxx:
+            args.append(self.define("CMAKE_CXX_COMPILER", spack_cxx))
 
         # Add per-runtime libclc enablement (configure.py pattern)
         for target in runtime_targets:
