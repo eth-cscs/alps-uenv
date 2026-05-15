@@ -7,7 +7,7 @@ gcc-env:
     strategy: full
   specs:
   # Intel DPC++ SYCL compiler with HIP/ROCm backend
-  - llvmdpcpp@sycl +clang +hip %cxx=gcc
+  - llvmdpcpp@sycl +clang +hip
   # Base development tools (from prgenv-gnu-dpcpp/25.11)
   - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
   - cmake

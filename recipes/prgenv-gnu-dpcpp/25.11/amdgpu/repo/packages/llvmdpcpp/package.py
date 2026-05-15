@@ -161,19 +161,21 @@ class Llvmdpcpp(CMakePackage):
             self.define("LLVM_RUNTIME_TARGETS", ";".join(runtime_targets)),
         ]
 
-        # Explicitly set the host compiler used to BUILD llvm/clang itself.
-        # Without this, CMake falls back to whatever /usr/bin/c++ resolves to
-        # (GCC 7.5 on SLES 15), which lacks the C++17 CTAD support required
-        # by recent intel/llvm sycl code (e.g. FactsGenerator.cpp uses
-        # `ArrayRef Args = {ptr, size}` deduction that needs GCC >= 9).
-        # self.compiler is NOT accessible in the Spack 1.x builder context;
-        # Spack sets SPACK_CC/SPACK_CXX to actual compiler paths before cmake.
-        spack_cc = os.environ.get("SPACK_CC")
-        spack_cxx = os.environ.get("SPACK_CXX")
-        if spack_cc:
-            args.append(self.define("CMAKE_C_COMPILER", spack_cc))
-        if spack_cxx:
-            args.append(self.define("CMAKE_CXX_COMPILER", spack_cxx))
+        # Use llvm-amdgpu clang/clang++ as the host compiler to build intel/llvm.
+        # This avoids the system GCC 7.5 fallback on SLES 15 and is more
+        # consistent with a clang-based build environment.
+        amdgpu_bin = os.path.join(spec["llvm-amdgpu"].prefix, "bin")
+        args.append(self.define("CMAKE_C_COMPILER", os.path.join(amdgpu_bin, "clang")))
+        args.append(self.define("CMAKE_CXX_COMPILER", os.path.join(amdgpu_bin, "clang++")))
+
+        # Suppress pragma-once warnings-as-errors from AMD clang headers / third-party
+        # headers that use #pragma once (e.g. hipdnn's MiopenLegacyPlugin.hpp).
+        # -Wno-error=pragma-once-outside-header turns the promotion to error off
+        # while keeping any warning visible; -Wno-pragma-once-outside-header
+        # silences it entirely.
+        no_pragma_once_err = "-Wno-error=pragma-once-outside-header"
+        args.append(self.define("CMAKE_C_FLAGS", no_pragma_once_err))
+        args.append(self.define("CMAKE_CXX_FLAGS", no_pragma_once_err))
 
         # Add per-runtime libclc enablement (configure.py pattern)
         for target in runtime_targets:
