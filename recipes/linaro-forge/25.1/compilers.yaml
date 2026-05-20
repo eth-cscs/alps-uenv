@@ -1,2 +1,2 @@
 gcc:
-  version: "12.3.0"
+  version: "14"
