@@ -1,11 +1,11 @@
-name: linaro
+name: linaro-forge
 store: /user-tools
 spack:
   repo: https://github.com/spack/spack.git
-  commit: releases/v1.0
+  commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: develop
-modules: true
-description: https://www.linaroforge.com/download-documentation
+    commit: releases/v2026.02
+default-view: 'forge'
+description: 'provides the ddt debugger and map profiler'
 version: 2
