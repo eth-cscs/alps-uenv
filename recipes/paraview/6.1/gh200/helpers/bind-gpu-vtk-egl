@@ -16,7 +16,7 @@ if [ -z ${SLURM_LOCALID-} ]; then
   usage "This wrapper is supposed to be used in a SLURM job."
 fi
 
-GPUS=(3 2 1 0)
+GPUS=(0 1 2 3)
 let lrank=$SLURM_LOCALID%4
 export VTK_DEFAULT_EGL_DEVICE_INDEX=${GPUS[lrank]}
 
