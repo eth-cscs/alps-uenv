@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import json
 
-# modify the meta/env.json for the uenv
-# simplify the 'forge' view to apply a single change
+# Modify the meta/env.json for the uenv
+#
+# Simplify the 'forge' view to apply a single change
 # to the PATH variable: prepend the bin path in the forge view
 #
-# this specificially removes /usr/bin and /usr/local/bin from
+# Specificially remove /usr/bin and /usr/local/bin from
 # PATH updates to make the uenv work better when loaded
 # alongside development environments
 

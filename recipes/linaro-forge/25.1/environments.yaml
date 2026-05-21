@@ -8,12 +8,6 @@ linaro-env:
       link: roots
       uenv:
         add_compilers: false
-        #prefix_paths:
-            #LD_LIBRARY_PATH: [lib, lib64]
         env_vars:
             set:
             - DDT_VERSION: '25.1'
-            # use append to ensure that we do not take precedence over software provided
-            # in other uenv loaded at the same time
-            append_path:
-            - PATH: '$@view_path@/bin'
