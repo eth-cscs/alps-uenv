@@ -285,12 +285,6 @@ uenvs:
       deploy:
         eiger: [zen2]
   prgenv-gnu:
-    "24.2":
-      recipes:
-        gh200: 24.2/gh200
-      deploy:
-        santis: [gh200]
-        daint: [gh200]
     "24.7":
       recipes:
         # zen2 and zen3 targets use the same recipe
