@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+import json
+
+# Modify the meta/env.json for the uenv
+#
+# Simplify the 'forge' view to apply a single change
+# to the PATH variable: prepend the bin path in the forge view
+#
+# Specificially remove /usr/bin and /usr/local/bin from
+# PATH updates to make the uenv work better when loaded
+# alongside development environments
+
+path = '{{ env.mount }}/meta/env.json'
+
+with open(path, 'r') as f:
+    data = json.load(f)
+
+data['views']['forge']['env']['values']['list'] = {
+    "PATH": [
+        {
+            "op": "prepend",
+            "value": ["{{ env.mount }}/env/forge/bin"]
+        }
+    ]
+}
+
+with open(path, 'w') as f:
+    json.dump(data, f, indent=2)
+

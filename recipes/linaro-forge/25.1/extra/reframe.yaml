@@ -6,4 +6,4 @@ default:
    cxx: g++
    ftn: gfortran
    views:
-     - default
+     - forge
