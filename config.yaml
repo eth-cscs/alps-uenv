@@ -230,6 +230,10 @@ uenvs:
         zen3: "25.10/mc"
         gh200: "25.10/gh200"
         mi200: "25.10/amdgpu"
+    "26.3":
+      recipes:
+        gh200: "26.3/gh200"
+        mi200: "26.3/amdgpu"
       deploy:
         daint: [gh200]
         eiger: [zen2]
