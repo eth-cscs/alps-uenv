@@ -277,6 +277,10 @@ uenvs:
         zen3: '2025/x86_64'
         a100: '2025/x86_64'
         gh200: '2025/aarch64'
+    "2026":
+      recipes:
+        gh200: '2026/aarch64'
+        zen2: '2026/x86_64'
   # OpenFOAM Foundation
   openfoam-org:
     "8":
