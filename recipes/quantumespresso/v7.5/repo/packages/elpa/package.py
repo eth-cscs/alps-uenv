@@ -89,6 +89,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@:2025.01.001",
     )
     patch("hipcc.patch", when="+rocm @2025.01.001:2025.06.001")
+    patch("0001-add-cpp17-flag.patch", when="+cuda %nvhpc")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -243,7 +244,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             if spec.satisfies("^cuda@13:"):
                 nvccflags += ["-std=c++17"]
 
-            options.append(f"NVCCFLAGS={nvccflags}")
+            options.append(f"NVCCFLAGS={' '.join(nvccflags)}")
         else:
             options.append(f"--disable-{cuda_flag}" + kernels)
 
