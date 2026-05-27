@@ -240,7 +240,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
                     "--with-{0}-compute-capability=sm_{1}".format(cuda_flag.upper(), cuda_arch)
                 )
 
-            if spec.satisfies("^cuda@13"):
+            if spec.satisfies("^cuda@13:"):
                 nvccflags += ["-std=c++17"]
 
             options.append(f"NVCCFLAGS={nvccflags}")
