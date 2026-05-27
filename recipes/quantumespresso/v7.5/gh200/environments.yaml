@@ -1,7 +1,7 @@
 nvhpc-env:
   compiler: [gcc, nvhpc]
   network:
-      mpi: cray-mpich@8.1.32+cuda %c,cxx,fortran=nvhpc
+      mpi: cray-mpich@9.1.0+cuda %c,cxx,fortran=nvhpc
       specs: [ 'libfabric@2.3 +gdrcopy %c=gcc' ]
   unify: when_possible
   specs:
