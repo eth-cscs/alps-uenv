@@ -1,0 +1,9 @@
+default:
+  features:
+    - mpi
+    - cray-mpich
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - default

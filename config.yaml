@@ -560,3 +560,8 @@ uenvs:
         clariden: [gh200]
         santis: [gh200]
         eiger: [zen2]
+  wannier90:
+    "3.1.0":
+      recipes:
+        gh200: 3.1.0/mc
+        zen2: 3.1.0/mc

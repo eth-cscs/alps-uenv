@@ -1,0 +1,16 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 ~cuda
+      specs:
+      - libfabric ~cuda
+  unify: true
+  specs:
+  - wannier90
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
