@@ -1,0 +1,724 @@
+diff --git a/library/src/tensor_operation_instance/gpu/CMakeLists.txt b/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+index 172f6681b..1d5407ad9 100644
+--- a/library/src/tensor_operation_instance/gpu/CMakeLists.txt
++++ b/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+@@ -157,7 +157,9 @@ function(add_instance_library INSTANCE_NAME)
+             foreach(target IN LISTS INST_TARGETS)
+                 string(APPEND offload_targets "--offload-arch=${target} ")
+             endforeach()
+-            set_source_files_properties(${source} PROPERTIES COMPILE_FLAGS ${offload_targets})
++            if(offload_targets)
++                set_source_files_properties(${source} PROPERTIES COMPILE_FLAGS "${offload_targets}")
++            endif()
+             list(APPEND INST_OBJ ${source})
+         endforeach()
+         add_library(${INSTANCE_NAME} OBJECT ${INST_OBJ})
+diff --git a/tile_engine/ops/gemm/CMakeLists.txt b/tile_engine/ops/gemm/CMakeLists.txt
+index a72b6c40a..2cf1a18ba 100644
+--- a/tile_engine/ops/gemm/CMakeLists.txt
++++ b/tile_engine/ops/gemm/CMakeLists.txt
+@@ -176,7 +176,7 @@ function(build_individual_gemm_targets datatype layout)
+                 --datatype ${datatype}
+                 --layout ${layout}
+                 --config_json ${json_blob}
+-                --gpu_target ${GEMM_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_GPU_TARGETS_INDIVIDUAL}"
+                 --list_kernels  
+         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+         RESULT_VARIABLE ret
+diff --git a/tile_engine/ops/gemm/gemm_instance_builder.py b/tile_engine/ops/gemm/gemm_instance_builder.py
+index 8885c821c..ea970601c 100644
+--- a/tile_engine/ops/gemm/gemm_instance_builder.py
++++ b/tile_engine/ops/gemm/gemm_instance_builder.py
+@@ -9,6 +9,7 @@ import argparse
+ import itertools
+ import multiprocessing
+ import concurrent.futures
++import re
+ from pathlib import Path
+ import logging
+ import importlib.util
+@@ -43,6 +44,7 @@ class GemmKernelBuilder:
+     def __init__(self, working_path, gpu_target, datatype, layout, config_json=None):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.config_json = config_json
+@@ -55,6 +57,24 @@ class GemmKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -245,24 +265,29 @@ class GemmKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                layout,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    layout,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_trait_combinations(self):
+         """Generate all combinations of traits"""
+@@ -729,7 +754,7 @@ def main():
+     parser.add_argument(
+         "--gpu_target",
+         required=True,
+-        help="GPU target architecture",
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
+     )
+     parser.add_argument(
+         "--datatype",
+diff --git a/tile_engine/ops/gemm_multi_d/CMakeLists.txt b/tile_engine/ops/gemm_multi_d/CMakeLists.txt
+index 8d9c087e2..c29b6f061 100644
+--- a/tile_engine/ops/gemm_multi_d/CMakeLists.txt
++++ b/tile_engine/ops/gemm_multi_d/CMakeLists.txt
+@@ -181,7 +181,7 @@ function(build_individual_gemm_multi_d_targets datatype layout)
+                 --layout ${layout}
+                 --elementwise_function ${GEMM_MULTI_D_ELEMENTWISE_FUNCTION}
+                 --config_json ${json_blob}
+-                --gpu_target ${GEMM_MULTI_D_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_MULTI_D_GPU_TARGETS_INDIVIDUAL}"
+                 --list_kernels  
+         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+         RESULT_VARIABLE ret
+diff --git a/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py b/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
+index cc167fb75..ec8445e93 100644
+--- a/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
++++ b/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
+@@ -9,6 +9,7 @@ import argparse
+ import itertools
+ import multiprocessing
+ import concurrent.futures
++import re
+ from pathlib import Path
+ import logging
+ import importlib.util
+@@ -51,6 +52,7 @@ class GemmMultiDKernelBuilder:
+     ):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.elementwise_function = elementwise_function
+@@ -64,6 +66,24 @@ class GemmMultiDKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -254,24 +274,29 @@ class GemmMultiDKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                layout,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    layout,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_trait_combinations(self):
+         """Generate all combinations of traits"""
+@@ -748,7 +773,11 @@ def main():
+         description="GEMM Multi D kernel instance builder with parallel support"
+     )
+     parser.add_argument("--working_path", required=True, help="Working directory path")
+-    parser.add_argument("--gpu_target", required=True, help="GPU target architecture")
++    parser.add_argument(
++        "--gpu_target",
++        required=True,
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
++    )
+     parser.add_argument(
+         "--datatype",
+         required=True,
+diff --git a/tile_engine/ops/gemm_preshuffle/CMakeLists.txt b/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
+index e3bee6ff5..51f111d05 100644
+--- a/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
++++ b/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
+@@ -166,7 +166,7 @@ function(build_individual_gemm_preshuffle_targets datatype layout)
+     execute_process(
+         COMMAND ${Python3_EXECUTABLE} -u ${CMAKE_CURRENT_LIST_DIR}/gemm_preshuffle_instance_builder.py
+                 --working_path ${working_path}
+-                --gpu_target ${GEMM_PRESHUFFLE_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_PRESHUFFLE_GPU_TARGETS_INDIVIDUAL}"
+                 --datatype ${datatype}
+                 --layout ${layout}
+                 --config_json ${json_blob}
+diff --git a/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py b/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
+index 9ce6d8cb2..310c84400 100644
+--- a/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
++++ b/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
+@@ -8,6 +8,7 @@ import itertools
+ import logging
+ import multiprocessing
+ import concurrent.futures
++import re
+ 
+ from pathlib import Path
+ 
+@@ -23,6 +24,7 @@ class GemmPreshuffleKernelBuilder:
+     def __init__(self, working_path, gpu_target, datatype, layout, config_json=None):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.config_json = config_json
+@@ -35,6 +37,24 @@ class GemmPreshuffleKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -309,23 +329,28 @@ class GemmPreshuffleKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_kernel_instance(
+         self, tile_config, trait_combo, k_block_per_cu, permute_n, is_header=True
+@@ -758,7 +783,7 @@ def main():
+     parser.add_argument(
+         "--gpu_target",
+         required=True,
+-        help="GPU target architecture",
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
+     )
+     parser.add_argument(
+         "--datatype",
+diff --git a/library/src/tensor_operation_instance/gpu/CMakeLists.txt b/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+index 172f6681b..1d5407ad9 100644
+--- a/library/src/tensor_operation_instance/gpu/CMakeLists.txt
++++ b/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+@@ -157,7 +157,9 @@ function(add_instance_library INSTANCE_NAME)
+             foreach(target IN LISTS INST_TARGETS)
+                 string(APPEND offload_targets "--offload-arch=${target} ")
+             endforeach()
+-            set_source_files_properties(${source} PROPERTIES COMPILE_FLAGS ${offload_targets})
++            if(offload_targets)
++                set_source_files_properties(${source} PROPERTIES COMPILE_FLAGS "${offload_targets}")
++            endif()
+             list(APPEND INST_OBJ ${source})
+         endforeach()
+         add_library(${INSTANCE_NAME} OBJECT ${INST_OBJ})
+diff --git a/tile_engine/ops/gemm/CMakeLists.txt b/tile_engine/ops/gemm/CMakeLists.txt
+index a72b6c40a..2cf1a18ba 100644
+--- a/tile_engine/ops/gemm/CMakeLists.txt
++++ b/tile_engine/ops/gemm/CMakeLists.txt
+@@ -176,7 +176,7 @@ function(build_individual_gemm_targets datatype layout)
+                 --datatype ${datatype}
+                 --layout ${layout}
+                 --config_json ${json_blob}
+-                --gpu_target ${GEMM_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_GPU_TARGETS_INDIVIDUAL}"
+                 --list_kernels  
+         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+         RESULT_VARIABLE ret
+diff --git a/tile_engine/ops/gemm/gemm_instance_builder.py b/tile_engine/ops/gemm/gemm_instance_builder.py
+index 8885c821c..ea970601c 100644
+--- a/tile_engine/ops/gemm/gemm_instance_builder.py
++++ b/tile_engine/ops/gemm/gemm_instance_builder.py
+@@ -9,6 +9,7 @@ import argparse
+ import itertools
+ import multiprocessing
+ import concurrent.futures
++import re
+ from pathlib import Path
+ import logging
+ import importlib.util
+@@ -43,6 +44,7 @@ class GemmKernelBuilder:
+     def __init__(self, working_path, gpu_target, datatype, layout, config_json=None):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.config_json = config_json
+@@ -55,6 +57,24 @@ class GemmKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -245,24 +265,29 @@ class GemmKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                layout,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    layout,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_trait_combinations(self):
+         """Generate all combinations of traits"""
+@@ -729,7 +754,7 @@ def main():
+     parser.add_argument(
+         "--gpu_target",
+         required=True,
+-        help="GPU target architecture",
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
+     )
+     parser.add_argument(
+         "--datatype",
+diff --git a/tile_engine/ops/gemm_multi_d/CMakeLists.txt b/tile_engine/ops/gemm_multi_d/CMakeLists.txt
+index 8d9c087e2..c29b6f061 100644
+--- a/tile_engine/ops/gemm_multi_d/CMakeLists.txt
++++ b/tile_engine/ops/gemm_multi_d/CMakeLists.txt
+@@ -181,7 +181,7 @@ function(build_individual_gemm_multi_d_targets datatype layout)
+                 --layout ${layout}
+                 --elementwise_function ${GEMM_MULTI_D_ELEMENTWISE_FUNCTION}
+                 --config_json ${json_blob}
+-                --gpu_target ${GEMM_MULTI_D_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_MULTI_D_GPU_TARGETS_INDIVIDUAL}"
+                 --list_kernels  
+         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+         RESULT_VARIABLE ret
+diff --git a/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py b/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
+index cc167fb75..ec8445e93 100644
+--- a/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
++++ b/tile_engine/ops/gemm_multi_d/gemm_multi_d_instance_builder.py
+@@ -9,6 +9,7 @@ import argparse
+ import itertools
+ import multiprocessing
+ import concurrent.futures
++import re
+ from pathlib import Path
+ import logging
+ import importlib.util
+@@ -51,6 +52,7 @@ class GemmMultiDKernelBuilder:
+     ):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.elementwise_function = elementwise_function
+@@ -64,6 +66,24 @@ class GemmMultiDKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -254,24 +274,29 @@ class GemmMultiDKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                layout,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    layout,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_trait_combinations(self):
+         """Generate all combinations of traits"""
+@@ -748,7 +773,11 @@ def main():
+         description="GEMM Multi D kernel instance builder with parallel support"
+     )
+     parser.add_argument("--working_path", required=True, help="Working directory path")
+-    parser.add_argument("--gpu_target", required=True, help="GPU target architecture")
++    parser.add_argument(
++        "--gpu_target",
++        required=True,
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
++    )
+     parser.add_argument(
+         "--datatype",
+         required=True,
+diff --git a/tile_engine/ops/gemm_preshuffle/CMakeLists.txt b/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
+index e3bee6ff5..51f111d05 100644
+--- a/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
++++ b/tile_engine/ops/gemm_preshuffle/CMakeLists.txt
+@@ -166,7 +166,7 @@ function(build_individual_gemm_preshuffle_targets datatype layout)
+     execute_process(
+         COMMAND ${Python3_EXECUTABLE} -u ${CMAKE_CURRENT_LIST_DIR}/gemm_preshuffle_instance_builder.py
+                 --working_path ${working_path}
+-                --gpu_target ${GEMM_PRESHUFFLE_GPU_TARGETS_INDIVIDUAL}
++                --gpu_target "${GEMM_PRESHUFFLE_GPU_TARGETS_INDIVIDUAL}"
+                 --datatype ${datatype}
+                 --layout ${layout}
+                 --config_json ${json_blob}
+diff --git a/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py b/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
+index 9ce6d8cb2..310c84400 100644
+--- a/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
++++ b/tile_engine/ops/gemm_preshuffle/gemm_preshuffle_instance_builder.py
+@@ -8,6 +8,7 @@ import itertools
+ import logging
+ import multiprocessing
+ import concurrent.futures
++import re
+ 
+ from pathlib import Path
+ 
+@@ -23,6 +24,7 @@ class GemmPreshuffleKernelBuilder:
+     def __init__(self, working_path, gpu_target, datatype, layout, config_json=None):
+         self.working_path = Path(working_path)
+         self.gpu_target = gpu_target
++        self.gpu_targets = self._parse_gpu_targets(gpu_target)
+         self.datatype = datatype
+         self.layout = layout
+         self.config_json = config_json
+@@ -35,6 +37,24 @@ class GemmPreshuffleKernelBuilder:
+             with open(config_json, "r") as f:
+                 self.config = json.load(f)
+ 
++    @staticmethod
++    def _parse_gpu_targets(gpu_target):
++        """Parse GPU target argument into a list of architectures.
++
++        Supports single target strings as well as semicolon/comma/space-separated
++        lists passed from CMake.
++        """
++        if isinstance(gpu_target, (list, tuple)):
++            targets = [str(t).strip() for t in gpu_target if str(t).strip()]
++            return targets if targets else ["unknown"]
++
++        target_str = str(gpu_target).strip()
++        if not target_str:
++            return ["unknown"]
++
++        targets = [t for t in re.split(r"[;,\s]+", target_str) if t]
++        return targets if targets else [target_str]
++
+     def write_kernel_list(self):
+         """Write kernel list to file for CMake to read (with comprehensive validation)"""
+         # Get configurations using comprehensive validation
+@@ -309,23 +329,28 @@ class GemmPreshuffleKernelBuilder:
+             if self.datatype in ["fp8", "bf8"]:
+                 c_datatype = "fp16"
+ 
+-            # Use the comprehensive validation function
+-            return is_tile_config_valid(
+-                tile_m,
+-                tile_n,
+-                tile_k,
+-                warp_m,
+-                warp_n,
+-                warp_k,
+-                warp_tile_m,
+-                warp_tile_n,
+-                warp_tile_k,
+-                a_datatype,
+-                b_datatype,
+-                c_datatype,
+-                pipeline,
+-                self.gpu_target,
+-            )
++            # Validate against all GPU targets when a list is provided from CMake.
++            # This keeps generated kernels compatible with multi-arch builds.
++            for target in self.gpu_targets:
++                if not is_tile_config_valid(
++                    tile_m,
++                    tile_n,
++                    tile_k,
++                    warp_m,
++                    warp_n,
++                    warp_k,
++                    warp_tile_m,
++                    warp_tile_n,
++                    warp_tile_k,
++                    a_datatype,
++                    b_datatype,
++                    c_datatype,
++                    pipeline,
++                    target,
++                ):
++                    return False
++
++            return True
+ 
+     def _generate_kernel_instance(
+         self, tile_config, trait_combo, k_block_per_cu, permute_n, is_header=True
+@@ -758,7 +783,7 @@ def main():
+     parser.add_argument(
+         "--gpu_target",
+         required=True,
+-        help="GPU target architecture",
++        help="GPU target architecture (single target or semicolon/comma-separated list)",
+     )
+     parser.add_argument(
+         "--datatype",
