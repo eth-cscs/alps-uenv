@@ -1,0 +1,10 @@
+name: quantumespresso
+version: 2
+spack:
+  commit: releases/v1.1
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: badd2122140f3850ac5e57a7ece1e885cc1436ce
+store: /user-environment
+description: QuantumESPRESSO on Zen2
