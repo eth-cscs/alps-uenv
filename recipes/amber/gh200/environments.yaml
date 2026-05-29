@@ -1,0 +1,58 @@
+gcc-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@9.1 +cuda
+  unify: true
+  specs:
+  - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
+  - cmake
+  - cuda@12.8
+  - fftw
+  - gmp
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - netlib-scalapack
+  - lua
+  - libtree
+  - lz4
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-cxx4
+  - netcdf-fortran
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - papi
+  # amber requires tikinter
+  - python +tkinter
+  - zlib-ng
+  - xcb-util-cursor
+  # needed by Python freesasa package 
+  - freesasa
+  # missing python packages
+  #- Bio
+  #- freesasa
+  # python packages
+  - py-numpy
+  - py-scipy
+  - py-matplotlib
+  - py-setuptools
+  - py-pandas
+  - py-numba
+  - py-gemmi
+  - py-rich
+  - py-scikit-learn
+  - py-sympy
+  - py-pydantic
+  - py-psutil
+  - py-networkx
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    default:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
