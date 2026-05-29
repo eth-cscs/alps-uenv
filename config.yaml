@@ -350,7 +350,6 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
-        bristen: [a100]
         eiger: [zen2]
     "7.2.3":
       recipes:
