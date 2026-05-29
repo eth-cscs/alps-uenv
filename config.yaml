@@ -97,6 +97,13 @@ clusters:
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
+  amber:
+    "26":
+      recipes:
+        gh200: "26/gh200"
+      deploy:
+        daint: [gh200]
+      mount: "/user-environment"
   editors:
     "24.7":
       recipes:
@@ -343,7 +350,6 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
-        bristen: [a100]
         eiger: [zen2]
     "7.2.3":
       recipes:
