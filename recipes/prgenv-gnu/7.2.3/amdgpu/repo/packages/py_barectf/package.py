@@ -17,7 +17,7 @@ class PyBarectf(PythonPackage):
 
     license("MIT")
 
-    version("3.1.2-fix", branch="master", commit="e16d289")
+    version("3.1.2-fix", branch="master", commit="e16d289546bb4f6b0d909f79b8d6188eabe32640")
 
     depends_on("py-poetry-core", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
