@@ -12,11 +12,12 @@ class PyBarectf(PythonPackage):
     """barectf (from bare metal and CTF) is a generator of
     tracer which produces CTF data streams."""
 
-    pypi = "barectf/barectf-3.1.2.tar.gz"
+    homepage = "https://github.com/efficios/barectf"
+    git = "https://github.com/efficios/barectf.git"
 
     license("MIT")
 
-    version("3.1.2", sha256="d4d626b22a33b7d9bc9ac033bba8893890aba0ee1011c9e78429a67296c09e1c")
+    version("3.1.2-fix", branch="master", commit="e16d289")
 
     depends_on("py-poetry-core", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
