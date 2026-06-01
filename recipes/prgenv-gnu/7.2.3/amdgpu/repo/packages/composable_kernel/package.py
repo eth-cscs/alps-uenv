@@ -109,7 +109,7 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
     # Build is breaking on warning, -Werror, -Wunused-parameter. The patch is part of:
     # https://github.com/ROCm/composable_kernel/commit/959073842c0db839d45d565eb260fd018c996ce4
     patch("0001-mark-kernels-maybe-unused.patch", when="@6.2")
-    patch("multi_gpu_arch.patch", when="@7.2.3", working_dir="projects/composablekernel")
+    patch("0002-multi-gpu-arch.patch", when="@7.2.3", working_dir="projects/composablekernel")
 
     @property
     def root_cmakelists_dir(self):
