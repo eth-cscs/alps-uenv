@@ -1,37 +1,30 @@
-gcc-env:
+amber-env:
   compiler: [gcc]
   network:
-      mpi: cray-mpich@9.1 +cuda
+      mpi: cray-mpich@8.1.32 +cuda
   unify: true
   specs:
   - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
   - cmake
   - cuda@12.8
   - fftw
-  - gmp
   - gsl
   - hdf5+cxx+hl+fortran
   - netlib-scalapack
-  - lua
   - libtree
-  - lz4
   - netcdf-c
   - netcdf-cxx
   - netcdf-cxx4
   - netcdf-fortran
   - openblas threads=openmp
-  - osu-micro-benchmarks
-  - papi
+  - osu-micro-benchmarks ~xccl
   # amber requires tikinter
   - python +tkinter
   - zlib-ng
   - xcb-util-cursor
-  # needed by Python freesasa package 
-  - freesasa
-  # missing python packages
-  #- Bio
-  #- freesasa
   # python packages
+  - py-biopython
+  - py-pip  # used to install freesasa in post-install
   - py-numpy
   - py-scipy
   - py-matplotlib
@@ -45,13 +38,16 @@ gcc-env:
   - py-pydantic
   - py-psutil
   - py-networkx
+  # installed using pip in post-install
+  #- freesasa
   variants:
   - +mpi
   - +cuda
   - cuda_arch=90a
   views:
-    default:
-      link: roots
+    amber:
+      # include all runtime deps in view so that all python packages are available
+      link: run
       uenv:
         add_compilers: true
         prefix_paths:

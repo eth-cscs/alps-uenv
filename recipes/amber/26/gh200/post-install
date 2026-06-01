@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+export VIRTUAL_ENV={{ env.mount }}/env/amber
+export PATH=$VIRTUAL_ENV/bin:$PATH
+
+pip install freesasa
+
