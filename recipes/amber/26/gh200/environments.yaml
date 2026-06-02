@@ -19,7 +19,7 @@ amber-env:
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
   # amber requires tikinter
-  - python +tkinter
+  - python@12 +tkinter
   - zlib-ng
   - xcb-util-cursor
   # python packages
