@@ -12,7 +12,7 @@ nvhpc-env:
   - nvpl-lapack threads=openmp
   - libxc~cuda %c,fortran=nvhpc
   - cmake
-  - elpa +cuda %nvhpc
+  - elpa +cuda %c,cxx,fortran=nvhpc
   - hdf5 %nvhpc
   - cuda
   packages:

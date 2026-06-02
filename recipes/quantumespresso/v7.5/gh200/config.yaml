@@ -1,7 +1,7 @@
 name: quantumespresso
 version: 2
 spack:
-  commit: releases/v1.1
+  commit: 6b82a5593fad7fdfa9f9a9ef3f20248d5a95a675 # develop June 2
   repo: https://github.com/spack/spack.git
   packages:
     repo: https://github.com/spack/spack-packages.git
