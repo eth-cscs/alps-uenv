@@ -4,7 +4,7 @@ amber-env:
       mpi: cray-mpich@8.1.32 +cuda
   unify: true
   specs:
-  - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer
+  - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer +thread
   - cmake
   - cuda@12.8
   - fftw
@@ -19,7 +19,7 @@ amber-env:
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
   # amber requires tikinter
-  - python@12 +tkinter
+  - python@3.12 +tkinter
   - zlib-ng
   - xcb-util-cursor
   # python packages
