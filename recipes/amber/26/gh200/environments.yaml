@@ -8,7 +8,8 @@ amber-env:
   specs:
   # pick the (old) version vendored into amber26
   # this is the exact set of "modules" in boost that amber checks for
-  - boost@1.68 +thread +system +program_options +iostreams +regex +timer +chrono +filesystem +graph
+  # ... this was dropped because Amber was just too awkward about boost - we let it build its own
+  # - boost@1.68 +thread +system +program_options +iostreams +regex +timer +chrono +filesystem +graph
   - cmake
   - cuda@12.8
   - fftw
@@ -22,6 +23,8 @@ amber-env:
   - netcdf-fortran
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
+  # needed to try speeding up builds of Amber
+  - ninja
   # amber requires tikinter
   - python@3.12 +tkinter
   - zlib-ng
