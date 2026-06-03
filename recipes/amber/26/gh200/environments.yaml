@@ -4,7 +4,7 @@ amber-env:
       mpi: cray-mpich@8.1.32 +cuda
   unify: true
   specs:
-  - boost +chrono +filesystem +iostreams +mpi +program_options +python +regex +serialization +shared +system +timer +thread
+  - boost@1.68 +thread +system +program_options +iostreams +regex +timer +chrono +filesystem +graph
   - cmake
   - cuda@12.8
   - fftw
