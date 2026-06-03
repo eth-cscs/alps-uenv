@@ -1,7 +1,15 @@
 #!/bin/bash -e
 
+# install the freesasa python package into the amber view
+
 export VIRTUAL_ENV={{ env.mount }}/env/amber
 export PATH=$VIRTUAL_ENV/bin:$PATH
 
 pip install freesasa
+
+# update the CC, CXX, and FC env. vars in the amber view to point to gcc
+# somehow they were being set to clang/clang++ that do not exist
+
+jq '.views.amber.env.values.scalar |= (. + {"CC":"/user-environment/env/amber/bin/gcc","CXX":"/user-environment/env/amber/bin/g++","FC":"/user-environment/env/amber/bin/gfortran"})' {{ env.mount }}/meta/env.json > ./env.temp.json
+mv ./env.temp.json {{ env.mount }}/meta/env.json
 
