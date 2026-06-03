@@ -1,3 +1,5 @@
+# TODO:
+# - if it still does not build, go with python@3.11
 amber-env:
   compiler: [gcc]
   network:
@@ -30,7 +32,9 @@ amber-env:
   - py-scipy
   - py-matplotlib
   # pick the (old) version vendored into amber26
-  - py-mpi4py@3.1.4
+  # this is not compatible with python 3.12, so give it free reign
+  #- py-mpi4py@3.1.4
+  - py-mpi4py
   - py-setuptools
   - py-pandas
   - py-numba
