@@ -23,6 +23,11 @@ class ComposableKernel(Package):
     homepage = "https://github.com/ROCm/composable_kernel"
     url = "file:///capstor/scratch/cscs/simonpi/binary-packages/composable-kernel-7.2.3-1-x86_64.pkg.tar.gz"
     maintainers = ["simonpintarelli"]
+
+    variant("amdgpu_target", values=("gfx90a","gfx942",), multi=True, description="AMD GPU target")
+    variant("amdgpu_target_sram_ecc", values=("gfx90a","gfx942",),
+            multi=True, default="false", description="SRAM ECC option")
+
     for ver, packages in _versions.items():
         key = "{0}-{1}".format(platform.system(), platform.machine())
         sha = packages.get(key)
