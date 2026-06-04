@@ -58,6 +58,7 @@ class Hipdnn(CMakePackage):
         depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
 
     patch("0001-change-the-install-prefix-of-hipdnn-for-spack-builds.patch", when="@7.1")
+    patch("0002-disable-clang-tidy-checks.patch", when="@7.2.3", working_dir="projects/hipdnn")
 
     def patch(self):
         filter_file(
@@ -99,12 +100,10 @@ class Hipdnn(CMakePackage):
         if self.spec.satisfies("@7.1:"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
-            env.set("CFLAGS", "-Wno-portability-avoid-pragma-once")
-            env.set("CXXFLAGS", "-Wno-portability-avoid-pragma-once")
         if self.spec.satisfies("+asan"):
             env.set("ASAN_OPTIONS", "detect_leaks=0")
-            env.append_flags("CFLAGS", "-fsanitize=address -shared-libasan")
-            env.append_flags("CXXFLAGS", "-fsanitize=address -shared-libasan")
+            env.set("CFLAGS", "-fsanitize=address -shared-libasan")
+            env.set("CXXFLAGS", "-fsanitize=address -shared-libasan")
             env.set("LDFLAGS", "-fuse-ld=lld")
 
     def cmake_args(self):
