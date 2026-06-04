@@ -24,9 +24,9 @@ class ComposableKernel(Package):
     url = "file:///capstor/scratch/cscs/simonpi/binary-packages/composable-kernel-7.2.3-1-x86_64.pkg.tar.gz"
     maintainers = ["simonpintarelli"]
 
-    variant("amdgpu_target", values=("gfx90a","gfx942",), multi=True, description="AMD GPU target")
+    variant("amdgpu_target", values=("gfx90a","gfx942",), multi=True, default="gfx90a", description="AMD GPU target")
     variant("amdgpu_target_sram_ecc", values=("gfx90a","gfx942",),
-            multi=True, default="false", description="SRAM ECC option")
+            multi=True, default="gfx90a", description="SRAM ECC option")
 
     for ver, packages in _versions.items():
         key = "{0}-{1}".format(platform.system(), platform.machine())
