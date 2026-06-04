@@ -24,8 +24,16 @@ class ComposableKernel(Package):
     url = "file:///capstor/scratch/cscs/simonpi/binary-packages/composable-kernel-7.2.3-1-x86_64.pkg.tar.gz"
     maintainers = ["simonpintarelli"]
 
-    variant("amdgpu_target", values=("gfx90a","gfx942",), multi=True, default="gfx90a", description="AMD GPU target")
-    variant("amdgpu_target_sram_ecc", values=("gfx90a","gfx942",),
+    # Define valid targets as a class attribute
+    amdgpu_targets = ("gfx90a", "gfx942")
+
+    # Use any_combination_of for multi-valued variant
+    variant("amdgpu_target",
+            values=any_combination_of(*amdgpu_targets),
+            default="gfx90a",
+            description="AMD GPU target")
+
+    variant("amdgpu_target_sram_ecc", values=any_combination_of(*amdgpu_targets),
             multi=True, default="gfx90a", description="SRAM ECC option")
 
     for ver, packages in _versions.items():
