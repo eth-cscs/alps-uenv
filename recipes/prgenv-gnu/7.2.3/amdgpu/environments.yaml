@@ -6,7 +6,7 @@ gcc-env:
   duplicates:
     strategy: full
   specs:
-  - boost@1.88.0 +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - boost@1.88.0 +chrono +filesystem +iostreams ~mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
   - fmt
