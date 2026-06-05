@@ -19,7 +19,7 @@ gcc-env:
   - hdf5 +fortran +hl
   - hwloc
   - hypre +superlu-dist
-  - kokkos +aggressive_vectorization ~alloc_async cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning +wrapper
+  - kokkos +aggressive_vectorization cxxstd=17 +hwloc +openmp +pic +serial +shared ~tuning
   - kokkos-kernels +blas +execspace_openmp +execspace_serial +lapack +openmp scalars=float,double,complex_float,complex_double +serial +shared +superlu
   - kokkos-tools +mpi +papi
   - lapackpp
@@ -37,7 +37,6 @@ gcc-env:
   - openblas threads=openmp
   - osu-micro-benchmarks
   - p4est +mpi
-  - papi
   - parmetis
   - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
   - pika malloc=mimalloc +mpi +stdexec

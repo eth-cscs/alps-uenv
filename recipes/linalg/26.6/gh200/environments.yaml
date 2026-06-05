@@ -40,7 +40,7 @@ gcc-env:
   - papi ~cuda
   - parmetis
   - petsc +batch +hwloc +hypre +kokkos +libyaml +metis +mumps +openmp +ptscotch +suite-sparse
-  - pika malloc=jemalloc +mpi +stdexec
+  - pika malloc=mimalloc +mpi +stdexec
   - python
   - slepc
   - spdlog
