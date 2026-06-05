@@ -1,7 +1,7 @@
 name: linalg
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v1.1.1
+  commit: v1.0.4
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: f6bd1b71c65209095b935ce9d6dc1b9bdb249fc5 # develop on 2026-06-05
