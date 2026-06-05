@@ -35,6 +35,7 @@ gcc-env:
   - rocm-core %cxx=gcc
   - rocminfo
   - rocprim
+  - amdsmi
   - rocprofiler-dev
   - rocprofiler-sdk
   - rocprofiler-systems +internal-dyninst
