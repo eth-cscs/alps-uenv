@@ -25,6 +25,8 @@ amber-env:
   - osu-micro-benchmarks ~xccl
   # needed to try speeding up builds of Amber
   - ninja
+  # amber uses perl
+  - perl
   # amber requires tikinter
   - python@3.12 +tkinter
   - zlib-ng
