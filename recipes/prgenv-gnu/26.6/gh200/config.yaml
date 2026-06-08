@@ -1,0 +1,10 @@
+name: prgenv-gnu
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: e232e665151997789b4d441702412a167d8ef284 # cuda 13.3 addition
+store: /user-environment
+description: GNU Compiler toolchain with cray-mpich, Python, CMake and other development tools.
+version: 2
