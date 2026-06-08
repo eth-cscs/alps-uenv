@@ -345,6 +345,14 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "26.6":
+      recipes:
+        gh200: 26.6/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        bristen: [a100]
     "7.2.3":
       recipes:
         mi200: 7.2.3/amdgpu
