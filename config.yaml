@@ -486,6 +486,21 @@ uenvs:
         santis: [gh200]
         clariden: [gh200]
     "9.2-gcc13":
+  srt:
+    "26.4":
+      recipes:
+        zen2: "26.4"
+        zen3: "26.4"
+        gh200: "26.4"
+        a100: "26.4"
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+        eiger: [zen2]
+        bristen: [a100]
+      mount: "/user-tools"
+  vasp:
       recipes:
         gh200: 9.2-gcc13/gh200
       deploy:
