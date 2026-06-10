@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Description: Install @anthropic-ai/sandbox-runtime via npm into the srt spack view directory, so the srt binary is co-located with node/npm/ripgrep.
+
+# UENV specific environment variables
+export ENV_MOUNT={{ env.mount }}    # export ENV_MOUNT=/user-environment
+
+# Find the node-js and npm prefixes installed by Spack
+NODE_HOME=$(spack -C $ENV_MOUNT/config location -i node-js)
+NPM_HOME=$(spack -C $ENV_MOUNT/config location -i npm)
+
+# Add node and npm to the active PATH for this execution context
+export PATH="${NODE_HOME}/bin:${NPM_HOME}/bin:${PATH}"
+
+# Install @anthropic-ai/sandbox-runtime globally with --prefix set to the srt spack view directory ($ENV_MOUNT/env/srt).
+# This places the srt binary at $ENV_MOUNT/env/srt/bin/srt, alongside the spack-linked node, npm, ripgrep, bwrap and socat binaries in that view's bin/.
+npm install --global --prefix $ENV_MOUNT/env/srt @anthropic-ai/sandbox-runtime
+

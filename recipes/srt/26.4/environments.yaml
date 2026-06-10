@@ -1,0 +1,17 @@
+srt:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - python@3.12 # Node.js uses gyp for its build system, which is notoriously sensitive to Python versions. 
+  - node-js
+  - npm            # Add this as a standalone spec as it is not automatically included with node-js
+  - bubblewrap
+  - socat
+  - ripgrep
+  views:
+    srt:
+      link: roots
+      uenv:
+        prefix_paths:
+          PATH: [bin]
+          LD_LIBRARY_PATH: [lib, lib64]

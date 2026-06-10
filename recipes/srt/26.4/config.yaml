@@ -1,0 +1,10 @@
+name: srt
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 1a32c3379c9fa28549c68b7931712d81831304df # 2025-12-16
+store: /user-environment
+description: Anthropic Sandbox Runtime (srt) and its Linux runtime dependencies (bubblewrap, socat, ripgrep, node-js)
+version: 2
