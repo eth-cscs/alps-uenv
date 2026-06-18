@@ -1,10 +1,11 @@
-name: cp2k
+name: namd
+description: "NAMD: Scalable Molecular Dynamics" 
 store: /user-environment
 spack:
   repo: https://github.com/spack/spack.git
   commit: v1.1.0
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: v2026.03.0
+    commit: 73fde59703ca0e51339c67b47bceb4c9a9632f46 # develop-26-07-08
 modules: True
 version: 2
