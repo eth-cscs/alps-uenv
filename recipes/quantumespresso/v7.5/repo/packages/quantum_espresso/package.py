@@ -165,6 +165,9 @@ class QuantumEspresso(CMakePackage, Package):
         multi=False,
     )
 
+    variant("wannier90_external", default=False, description="Enable external wannier90")
+    depends_on("wannier90", when="+wannier90_external")
+
     # Versions of HDF5 prior to 1.8.16 lead to QE runtime errors
     depends_on("hdf5@1.8.16:+fortran+hl+mpi", when="hdf5=parallel")
     depends_on("hdf5@1.8.16:+fortran+hl~mpi", when="hdf5=serial")
@@ -506,12 +509,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
             if spec.satisfies("@:7.1"):
                 cmake_args.append(self.define("BLA_VENDOR", "All"))
 
-        if "^nvpl-blas" in spec and "^nvpl-lapack" in spec:
+        if "^nvpl-blas" in spec:
             cmake_args.append(self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
+        if "^nvpl-lapack" in spec:
             cmake_args.append(self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
-            # Up to q-e@7.1 set BLA_VENDOR to All to force detection of vanilla scalapack
-            if spec.satisfies("@:7.1"):
-                cmake_args.append(self.define("BLA_VENDOR", "All"))
+        if "^nvpl-scalapack" in spec:
+            cmake_args.append(self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";")))
+
+        if "+wannier90_external" in spec:
+            cmake_args.append(self.define("WANNIER90_ROOT", spec["wannier90"].prefix))
 
 
         if plugins:
