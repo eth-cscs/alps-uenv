@@ -1,0 +1,35 @@
+editors:
+  compiler: [gcc]
+  unify: true
+  network:
+    mpi: null
+  specs:
+  # the editors
+  - emacs +treesitter +native
+  - nano
+  - vim +python +lua
+  - neovim
+  # additional tools that integrate well with tools
+  - direnv
+  - fd
+  #- go
+  - lazygit
+  - lua
+  - python
+  - ripgrep
+  #- screen # breaks the concretizer: maybe put in a different view?
+  #- rust
+  - tree-sitter
+  # filebrowser
+  - py-ranger-fm
+  - nnn
+  - tmux
+  # cmdline fuzzy finder
+  - fzf
+  views:
+    editors:
+      link: roots
+      uenv:
+        add_compilers: false
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

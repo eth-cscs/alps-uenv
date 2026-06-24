@@ -115,6 +115,12 @@ uenvs:
       deploy:
         eiger: [zen2]
       mount: "/user-tools"
+    "26.6":
+      recipes:
+        zen2: "26.6"
+        zen3: "26.6"
+        gh200: "26.6"
+      mount: "/user-tools"
   gromacs:
     "2023":
       recipes:
