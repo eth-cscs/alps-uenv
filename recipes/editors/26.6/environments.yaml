@@ -5,27 +5,23 @@ editors:
     mpi: null
   specs:
   # the editors
-  - emacs +treesitter +native
-  - nano
-  - vim +python +lua
-  - neovim
-  # additional tools that integrate well with tools
-  - direnv
-  - fd
-  #- go
-  - lazygit
-  - lua
-  - python
-  - ripgrep
-  #- screen # breaks the concretizer: maybe put in a different view?
-  #- rust
-  - tree-sitter
+  #- 'emacs +treesitter +native' # maybe breaks concretizer
+  - 'nano'
+  - 'vim +python +lua'
+  - 'neovim'
+  - 'direnv'
+  - 'fd'
+  - 'lazygit'
+  - 'lua'
+  - 'python'
+  - 'ripgrep'
+  #- 'screen' # breaks the concretizer
+  - 'tree-sitter'
   # filebrowser
-  - py-ranger-fm
-  - nnn
-  - tmux
-  # cmdline fuzzy finder
-  - fzf
+  - 'py-ranger-fm'
+  - 'nnn'
+  - 'tmux'
+  - 'fzf'
   views:
     editors:
       link: roots
