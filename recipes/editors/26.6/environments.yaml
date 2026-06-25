@@ -1,6 +1,6 @@
 editors:
   compiler: [gcc]
-  unify: true
+  unify: when_possible
   network:
     mpi: null
   specs:
@@ -8,7 +8,7 @@ editors:
   - 'emacs +treesitter'
   - 'nano'
   - 'vim +python +lua'
-  - 'neovim'
+  - 'neovim ~no_luajit'
   - 'tree-sitter'
   # handy CLI tools
   - 'direnv'
