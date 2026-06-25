@@ -4,24 +4,34 @@ editors:
   network:
     mpi: null
   specs:
-  # the editors
-  #- 'emacs +treesitter +native' # maybe breaks concretizer
+  # editors
+  - 'emacs +treesitter'
   - 'nano'
   - 'vim +python +lua'
   - 'neovim'
+  - 'tree-sitter'
+  # handy CLI tools
   - 'direnv'
   - 'fd'
   - 'lazygit'
+  - 'ripgrep'
+  # building stuff
+  - 'cmake'
+  - 'meson'
+  - 'ninja'
+  # session management
+  - 'screen'
+  - 'tmux'
+  # languages
   - 'lua'
   - 'python'
-  - 'ripgrep'
-  #- 'screen' # breaks the concretizer
-  - 'tree-sitter'
   # filebrowser
-  - 'py-ranger-fm'
   - 'nnn'
-  - 'tmux'
   - 'fzf'
+  # needed to compress after garbage collection
+  - 'squashfs'
+  # drawing
+  - 'gnuplot'
   views:
     editors:
       link: roots

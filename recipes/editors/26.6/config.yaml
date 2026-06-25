@@ -5,7 +5,9 @@ spack:
   commit: 'releases/v1.2'
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 81bd1863a3767db1c283cb28d0c6037c86aeeb53 #develop on 2026-06-11
+    commit: releases/v2026.06
+    #commit: 81bd1863a3767db1c283cb28d0c6037c86aeeb53 #develop on 2026-06-11
 description: text editors and handy command line tools
 default-view: editors
+cleanup: runtime
 version: 3
