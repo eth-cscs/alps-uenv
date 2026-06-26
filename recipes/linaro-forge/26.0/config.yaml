@@ -5,7 +5,7 @@ spack:
   commit: releases/v1.1
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: releases/v2026.06.0
+    commit: releases/v2026.06
 default-view: 'forge'
 description: 'provides the ddt debugger and map profiler'
 version: 2
