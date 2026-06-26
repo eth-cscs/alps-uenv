@@ -8,4 +8,4 @@ spack:
     commit: releases/v2026.06
 default-view: 'forge'
 description: 'provides the ddt debugger and map profiler'
-version: 2
+version: 3
