@@ -58,7 +58,7 @@ gcc-env:
   - hipfft
   - hipblas-common
   - hipdnn
-  # - miopen-hip  # TODO(iomaganaris): enable for julia AMD gpu build
+  - miopen-hip
   # networking
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
