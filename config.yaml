@@ -192,6 +192,13 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
         clariden: [gh200]
+    "26.3":
+      recipes:
+        gh200: "26.3/gh200"
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
+        clariden: [gh200]
   lammps:
     "2023":
       recipes:
@@ -270,6 +277,11 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "3.0.2":
+      recipes:
+        gh200: 3.0.2/gh200
+      deploy:
+        daint: [gh200]
   netcdf-tools:
     "2025":
       recipes:
