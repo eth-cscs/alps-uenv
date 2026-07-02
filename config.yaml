@@ -261,8 +261,10 @@ uenvs:
   linaro-forge:
     "26.0":
       recipes:
-        zen2: "26.0"
+        a100: "26.0"
         gh200: "26.0"
+        mi300: "26.0"
+        zen2: "26.0"
       deploy:
         eiger: [zen2]
         daint: [gh200]
