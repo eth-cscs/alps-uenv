@@ -274,16 +274,6 @@ uenvs:
         bristen: [a100]
         beverin: [mi300]
       mount: "/user-tools"
-    "25.1":
-      recipes:
-        zen2: "25.1"
-        gh200: "25.1"
-      deploy:
-        eiger: [zen2]
-        daint: [gh200]
-        santis: [gh200]
-        clariden: [gh200]
-      mount: "/user-tools"
   namd:
     "3.0":
       recipes:
