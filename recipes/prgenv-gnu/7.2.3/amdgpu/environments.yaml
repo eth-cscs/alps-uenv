@@ -55,6 +55,7 @@ gcc-env:
   - hipblaslt
   - hiprand
   - hipsparse
+  - hipsolver
   - hipfft
   - hipblas-common
   - hipdnn
