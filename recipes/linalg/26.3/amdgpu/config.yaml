@@ -1,10 +1,10 @@
 name: linalg
 spack:
   repo: https://github.com/spack/spack.git
-  commit: v1.1.1
+  commit: v1.2.0
   packages:
     repo: https://github.com/spack/spack-packages.git
-    commit: 0abbba52ede7c79af7f3088561311d5ebac2c2a9 # develop on 2026-03-18
+    commit: 372cd074a29f6e95f4061005056a4bf29845885e # develop on 2026-07-03
 store: /user-environment
 description: Linear algebra libraries, PETSc, Trilinos
 version: 2
