@@ -259,15 +259,20 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   linaro-forge:
-    "25.1":
+    "26.0":
       recipes:
-        zen2: "25.1"
-        gh200: "25.1"
+        a100: "26.0"
+        gh200: "26.0"
+        mi300: "26.0"
+        zen2: "26.0"
       deploy:
         eiger: [zen2]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
+        starlex: [gh200]
+        bristen: [a100]
+        beverin: [mi300]
       mount: "/user-tools"
   namd:
     "3.0":
