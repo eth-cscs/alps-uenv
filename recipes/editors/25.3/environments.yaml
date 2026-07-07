@@ -9,7 +9,7 @@ editors:
   - emacs +treesitter +native
   - nano
   - vim +python +lua
-  - neovim ~no_luajit
+  - neovim
   # additional tools that integrate well with tools
   - direnv
   - fd
