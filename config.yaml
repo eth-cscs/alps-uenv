@@ -378,7 +378,7 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         eiger: [zen2]
-  prgenv-gnu-dpcpp:
+  prgenv-dpcpp:
     "25.11":
       recipes:
         gh200: 25.11/gh200

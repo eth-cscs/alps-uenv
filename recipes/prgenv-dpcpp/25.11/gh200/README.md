@@ -1,4 +1,4 @@
-# prgenv-gnu-dpcpp
+# prgenv-dpcpp
 
 > **Status: Experimental**
 
@@ -55,7 +55,7 @@ git clone git@github.com:eth-cscs/alps-cluster-config.git /dev/shm/$USER/alps-cl
 
 stack-config \
     --build /dev/shm/$USER/dpc \
-    --recipe /path/to/recipes/prgenv-gnu-dpcpp/25.11/gh200 \
+    --recipe /path/to/recipes/prgenv-dpcpp/25.11/gh200 \
     --system /dev/shm/$USER/alps-cluster-config/<cluster>
 
 # Workaround: pre-create CXI staging directories (Spack bug with / in version strings)

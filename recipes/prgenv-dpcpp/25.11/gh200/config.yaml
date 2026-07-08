@@ -1,4 +1,4 @@
-name: prgenv-gnu-dpcpp
+name: prgenv-dpcpp
 spack:
   repo: https://github.com/spack/spack.git
   commit: v1.1.1
