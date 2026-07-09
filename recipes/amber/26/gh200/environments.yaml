@@ -15,7 +15,6 @@ amber-env:
   - fftw
   - gsl
   - hdf5+cxx+hl+fortran
-  - netlib-scalapack
   - libtree
   - netcdf-c
   - netcdf-cxx
@@ -23,8 +22,6 @@ amber-env:
   - netcdf-fortran
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
-  # needed to try speeding up builds of Amber
-  - ninja
   # amber uses perl
   - perl
   # amber requires tikinter
@@ -36,9 +33,8 @@ amber-env:
   - py-numpy
   - py-scipy
   - py-matplotlib
-  # pick the (old) version vendored into amber26
-  # this is not compatible with python 3.12, so give it free reign
-  #- py-mpi4py@3.1.4
+  # pick the (old) mpi4py version vendored into amber26
+  # is not compatible with python 3.12, so give it free reign
   - py-mpi4py
   - py-setuptools
   - py-pandas
@@ -50,8 +46,6 @@ amber-env:
   - py-pydantic
   - py-psutil
   - py-networkx
-  # installed using pip in post-install
-  #- freesasa
   variants:
   - +mpi
   - +cuda
