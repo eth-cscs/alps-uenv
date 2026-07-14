@@ -10,7 +10,7 @@ develop:
   activation:
    - module load cmake fftw openblas cray-mpich netlib-scalapack libxc
   extras:
-    version: v7.5
+    version: v7.6
 modules:
   features:
     - mpi
