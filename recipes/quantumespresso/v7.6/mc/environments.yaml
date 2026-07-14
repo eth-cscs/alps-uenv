@@ -4,7 +4,8 @@ gcc-env:
       mpi: cray-mpich@8.1.32
   unify: true
   specs:
-  - quantum-espresso@7.6 +libxc +oscdft +wannier90_external +gipaw +scalapack +elpa +openmp hdf5=parallel
+    # current QE doesn't compile with gipaw
+  - quantum-espresso@7.6 +libxc +oscdft +wannier90_external ~gipaw +scalapack +elpa +openmp hdf5=parallel
   - netlib-scalapack
   - wannier90
   - cmake
