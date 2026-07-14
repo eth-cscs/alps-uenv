@@ -23,4 +23,4 @@ modules:
   activation:
     - module load quantum-espresso
   extras:
-    version: v7.5
+    version: v7.6
