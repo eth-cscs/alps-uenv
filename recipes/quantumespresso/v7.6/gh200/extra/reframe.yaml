@@ -10,6 +10,8 @@ develop:
     - modules
   activation:
    - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc cray-mpich cuda
+  extras:
+    version: v7.6
 modules:
   features:
     - cuda
@@ -22,3 +24,5 @@ modules:
     - modules
   activation:
     - module load quantum-espresso nvhpc
+  extras:
+    version: v7.6
