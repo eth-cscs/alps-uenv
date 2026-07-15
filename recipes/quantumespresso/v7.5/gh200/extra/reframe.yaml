@@ -12,6 +12,7 @@ develop:
    - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich nvpl-scalapack libxc cray-mpich cuda
   extras:
     version: v7.5
+    cmake: -DQE_ENABLE_MPI=ON -DQE_ENABLE_OPENMP=ON -DQE_ENABLE_SCALAPACK:BOOL=OFF -DQE_ENABLE_LIBXC=ON -DQE_ENABLE_CUDA=OFF -DQE_ENABLE_PROFILE_NVTX=OFF -DQE_CLOCK_SECONDS:BOOL=OFF -DQE_ENABLE_MPI_GPU_AWARE:BOOL=OFF -DQE_ENABLE_OPENACC=OFF  '-DBLAS_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'  '-DLAPACK_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_lapack_core.so;/user-environment/env/develop/lib/libnvpl_lapack_lp64_gomp.so;/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'
 modules:
   features:
     - cuda
@@ -26,3 +27,4 @@ modules:
     - module load quantum-espresso nvhpc
   extras:
     version: v7.5
+    cmake: -DQE_ENABLE_MPI=ON -DQE_ENABLE_OPENMP=ON -DQE_ENABLE_SCALAPACK:BOOL=OFF -DQE_ENABLE_LIBXC=ON -DQE_ENABLE_CUDA=OFF -DQE_ENABLE_PROFILE_NVTX=OFF -DQE_CLOCK_SECONDS:BOOL=OFF -DQE_ENABLE_MPI_GPU_AWARE:BOOL=OFF -DQE_ENABLE_OPENACC=OFF  '-DBLAS_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'  '-DLAPACK_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_lapack_core.so;/user-environment/env/develop/lib/libnvpl_lapack_lp64_gomp.so;/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'
