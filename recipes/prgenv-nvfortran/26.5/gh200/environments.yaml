@@ -22,7 +22,7 @@ nvfortran:
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
   - osu-micro-benchmarks
-  - python@3.13
+  - python
   - zlib-ng
   - netcdf-c
   - netcdf-fortran %fortran=nvhpc
