@@ -12,3 +12,5 @@ default:
   ftn: mpifort
   views:
     - nvfort
+  extras:
+    version: 26.5
