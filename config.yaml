@@ -22,7 +22,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: 'https://api.cscs.ch/ml/firecrest/v2'
-          SLURM_ACCOUNT: 'a-csstaff'
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   clariden:
     targets:
@@ -31,7 +31,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/ml/firecrest/v2"
-          SLURM_ACCOUNT: 'a-csstaff'
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   daint:
     targets:
@@ -40,6 +40,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   eiger:
     targets:
@@ -49,6 +50,7 @@ clusters:
         variables:
           SLURM_CONSTRAINT: 'mc'
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   santis:
     targets:
@@ -57,6 +59,7 @@ clusters:
         partition: 'normal'
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   starlex:
     targets:
@@ -68,6 +71,7 @@ clusters:
           F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
           F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
           F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
+          SLURM_ACCOUNT: 'csstaff'
     runner: f7t
   beverin:
     targets:
@@ -75,20 +79,20 @@ clusters:
         uarch: 'mi200'
         partition: 'mi200'
         variables:
-          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
-          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
-          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
-          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          F7T_URL: "https://api.cscs.ch/beverin/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          F7T_CLIENT_ID: $F7T_BEVERIN_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_BEVERIN_CLIENT_SECRET
           SLURM_TIMELIMIT: '500'
           SLURM_CPUS_PER_TASK: '64'
       -
         uarch: 'mi300'
         partition: 'mi300'
         variables:
-          F7T_CLIENT_ID: $F7T_TDS_CLIENT_ID
-          F7T_CLIENT_SECRET: $F7T_TDS_CLIENT_SECRET
-          F7T_URL: "https://api.tds.cscs.ch/stp/firecrest/v2"
-          F7T_TOKEN_URL: "https://auth-tds.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
+          F7T_CLIENT_ID: $F7T_BEVERIN_CLIENT_ID
+          F7T_CLIENT_SECRET: $F7T_BEVERIN_CLIENT_SECRET
+          F7T_URL: "https://api.cscs.ch/beverin/firecrest/v2"
+          F7T_TOKEN_URL: "https://auth.cscs.ch/auth/realms/firecrest-clients/protocol/openid-connect/token"
           SLURM_TIMELIMIT: '500'
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
@@ -188,6 +192,13 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
         clariden: [gh200]
+    "26.3":
+      recipes:
+        gh200: "26.3/gh200"
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
+        clariden: [gh200]
   lammps:
     "2023":
       recipes:
@@ -252,15 +263,20 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   linaro-forge:
-    "25.1":
+    "26.0":
       recipes:
-        zen2: "25.1"
-        gh200: "25.1"
+        a100: "26.0"
+        gh200: "26.0"
+        mi300: "26.0"
+        zen2: "26.0"
       deploy:
         eiger: [zen2]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
+        starlex: [gh200]
+        bristen: [a100]
+        beverin: [mi300]
       mount: "/user-tools"
   namd:
     "3.0":
@@ -270,6 +286,11 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "3.0.2":
+      recipes:
+        gh200: 3.0.2/gh200
+      deploy:
+        daint: [gh200]
   netcdf-tools:
     "2025":
       recipes:
@@ -285,12 +306,6 @@ uenvs:
       deploy:
         eiger: [zen2]
   prgenv-gnu:
-    "24.2":
-      recipes:
-        gh200: 24.2/gh200
-      deploy:
-        santis: [gh200]
-        daint: [gh200]
     "24.7":
       recipes:
         # zen2 and zen3 targets use the same recipe
@@ -340,12 +355,33 @@ uenvs:
         santis: [gh200]
         bristen: [a100]
         eiger: [zen2]
+    "26.3":
+      recipes:
+        zen2: 26.3/mc
+        zen3: 26.3/mc
+        gh200: 26.3/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        bristen: [a100]
+        eiger: [zen2]
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
         zen2: 25.12/mc
         zen3: 25.12/mc
         gh200: 25.12/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        eiger: [zen2]
+    "26.3":
+      recipes:
+        zen2: 26.3/mc
+        zen3: 26.3/mc
+        gh200: 26.3/gh200
       deploy:
         clariden: [gh200]
         daint: [gh200]
@@ -364,6 +400,13 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+  prgenv-intel:
+    "2022.1":
+      recipes:
+        zen2: "2022.1"
+        zen3: "2022.1"
+      deploy:
+        eiger: [zen2]
   pytorch:
     "v2.6.0":
       recipes:
@@ -414,6 +457,14 @@ uenvs:
       recipes:
         gh200: v7.4.1/gh200
         zen2: v7.4.1/mc
+      deploy:
+        santis: [gh200]
+        daint: [gh200]
+        eiger: [zen2]
+    "v7.5":
+      recipes:
+        gh200: v7.5/gh200
+        zen2: v7.5/mc
       deploy:
         santis: [gh200]
         daint: [gh200]
@@ -509,6 +560,13 @@ uenvs:
         eiger: [zen2]
       mount: "/user-tools"
   paraview:
+    "6.1":
+      recipes:
+        gh200: 6.1/gh200
+        zen2: 6.1/zen2
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
     "6.0.1":
       recipes:
         gh200: 6.0.1/gh200

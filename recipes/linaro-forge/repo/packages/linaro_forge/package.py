@@ -24,11 +24,11 @@ class LinaroForge(Package):
     maintainers("kenche-linaro")
 
     if platform.machine() == "aarch64":
-        version("25.1", sha256="62d215e4ffd20e69863b1ffb7f043968aa7a3bf21280f5dcf2e64a2db7deb675")
-        version("25.0.4", sha256="6d9a7ffcc18c6b89175167e100d80c46e2206b7a3655d6449dc63881f834b031")
+        version("26.0", sha256="e1510c0377bbc49821ba9758c8ed5563fe3e08dc072860319ea0ac5cb088c7c8")
+        version("25.1.2", sha256="4bd7928dae0d9e3f01c6cecc671ad31b957731a1f137c81993b7b20373c5623d")
     elif platform.machine() == "x86_64":
-        version("25.1", sha256="153b0264939762431cb5242cd67774832c9ac9c2a2658a6918110064c322eaa1")
-        version("25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be")
+        version("26.0", sha256="060b44e014b13632f1d56386acd3bbbbd7d07b5033dbb2af264bd91c5ac23e1e")
+        version("25.1.2", sha256="277f810b6cb52428a10c3317d07d0887140b8dbe5269485ba6715e23be3b55bb")
 
     variant(
         "probe",
@@ -45,8 +45,7 @@ class LinaroForge(Package):
     license_required = False
 
     def url_for_version(self, version):
-        pre = "arm" if version < Version("23.0") else "linaro"
-        return f"https://downloads.linaroforge.com/{version}/{pre}-forge-{version}-linux-{platform.machine()}.tar"
+        return f"https://downloads.linaroforge.com/{version}/linaro-forge-{version}-linux-{platform.machine()}.tar"
 
     @run_before("install")
     def abort_without_eula_acceptance(self):

@@ -1,0 +1,15 @@
+linaro-env:
+  compiler: [gcc]
+  unify: true
+  network:
+    mpi: null
+  specs:
+  - linaro-forge@26.0 +accept-eula
+  views:
+    forge:
+      link: roots
+      uenv:
+        add_compilers: false
+        env_vars:
+          set:
+            - DDT_VERSION: '26.0'
