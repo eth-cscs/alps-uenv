@@ -1,8 +1,10 @@
 gcc-env:
-  compiler: [gcc]
+  compiler: [gcc, llvm-amdgpu]
   network:
       mpi: cray-mpich@9 +rocm
-  unify: true
+  unify: when_possible
+  duplicates:
+    strategy: full
   specs:
   # - arpack-ng
   # - blaspp
