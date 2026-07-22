@@ -1,0 +1,54 @@
+namd-single-node:
+  compiler: [gcc]
+  unify: true
+  specs:
+  # NAMD 3.0.2 is incompatible with cuda@13
+  - cuda@12
+  - fftw +openmp ~mpi
+  - tcl@8.6
+  - charmpp@=8.0.0 backend=multicore +production +tracing build-target=charm++
+  - namd@=3.0.2 +cuda cuda_arch=90 +single_node_gpu
+  variants:
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop-single-node:
+      link: roots
+      exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    namd-single-node:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+namd:
+  compiler: [gcc]
+  unify: true
+  specs:
+  # NAMD 3.0.2 is incompatible with cuda@13
+  - cuda@12
+  - fftw +openmp
+  - tcl@8.6
+  - charmpp@=8.0.0 backend=mpi +production +tracing build-target=charm++ ^cray-mpich
+  - namd@=3.0.2 +cuda cuda_arch=90
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+      specs:
+      - libfabric@2.5 +gdrcopy
+  variants:
+  - +cuda
+  - cuda_arch=90
+  views:
+    develop:
+      link: roots
+      exclude: ["namd"]
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+    namd:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
