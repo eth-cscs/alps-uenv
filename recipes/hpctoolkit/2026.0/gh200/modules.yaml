@@ -5,21 +5,17 @@ modules:
       - PATH
     lib:
       - LD_LIBRARY_PATH
-    lib64:
-      - LD_LIBRARY_PATH
 
   default:
     arch_folder: false
     # Where to install modules
-    roots:
-      tcl: /user-environment/modules
+    #del roots:
+    #del  tcl: /user-tools/modules
     tcl:
       all:
-        autoload: none
+        autoload: run
       hash_length: 0
       exclude_implicits: true
       exclude: ['%gcc@7.5.0', 'gcc %gcc@7.5.0']
       projections:
         all: '{name}/{version}'
-        #cray-mpich-binary: 'cray-mpich-{compiler.name}'
-        #libxc: '{name}/{version}-{compiler.name}'

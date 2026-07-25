@@ -1,0 +1,15 @@
+hpctoolkit-env:
+  compiler: [gcc]
+  unify: true
+  network:
+    mpi: cray-mpich@9.1.0+cuda
+  specs:
+    - py-hatchet 
+    - hpctoolkit@2026.0.stable +cuda +python ~viewer buildtype=debug build_system=meson
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    hpctoolkit:
+      link: roots

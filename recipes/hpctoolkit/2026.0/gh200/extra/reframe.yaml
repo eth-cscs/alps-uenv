@@ -1,0 +1,8 @@
+default:
+   features:
+     - hpctoolkit
+   cc: gcc
+   cxx: g++
+   ftn: gfortran
+   views:
+     - hpctoolkit
