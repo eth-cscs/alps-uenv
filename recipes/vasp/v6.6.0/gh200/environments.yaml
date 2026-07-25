@@ -1,0 +1,76 @@
+vasp:
+  compiler: [gcc, nvhpc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+      specs:
+      - libfabric@2.3.1 +gdrcopy +uring fabrics=cxi,rxm,sockets,tcp,udp,lnx
+      - xpmem@2.9.6 ~kernel-module
+  unify: when_possible
+  specs:
+      - vasp@6.6.0 +cuda +openmp +hdf5 +wannier90 %c,cxx,fortran=nvhpc ^libxml2%gcc
+      - cuda@12.9 ^libxml2 %c=gcc
+      - wannier90 %c,fortran=nvhpc
+      - fftw +openmp %c,fortran=nvhpc
+      - nvpl-blas threads=openmp
+      - nvpl-lapack threads=openmp
+      - netlib-scalapack ~shared  %c,fortran=nvhpc ^cmake%gcc
+      - hdf5 +fortran +mpi %c,fortran=nvhpc
+      - cmake %c,cxx=gcc
+      - aws-ofi-nccl@1.17.1 %c,cxx=gcc ^cray-mpich%nvhpc
+  variants:
+      - cuda_arch=90
+      - +cuda
+  views:
+    vasp:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - CUDA_CACHE_DISABLE: "1"
+          - NCCL_NET: "AWS Libfabric"
+          - NCCL_CROSS_NIC: "1"
+          - NCCL_P2P_LEVEL: "NVL"
+          - NCCL_NET_GDR_LEVEL: "PHB"
+          - NCCL_NET_GDR_C2C: "1"
+          - NCCL_NET_GDR_READ: "1"
+          - NCCL_PROTO: "^LL128"
+          - NCCL_NCHANNELS_PER_NET_PEER: "4"
+          - NCCL_SOCKET_IFNAME: "hsn"
+          - FI_CXI_DEFAULT_CQ_SIZE: "131072"
+          - FI_CXI_DEFAULT_TX_SIZE: "16384"
+          - FI_CXI_DISABLE_HOST_REGISTER: "1"
+          - FI_CXI_RX_MATCH_MODE: "hybrid"
+          - FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD: "16777216"
+          - FI_MR_CACHE_MONITOR: "userfaultfd"
+          - FI_MR_CACHE_MAX_SIZE: "-1"
+          - FI_MR_CACHE_MAX_COUNT: "524288"
+    develop:
+      link: roots
+      exclude: ['vasp']
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - CUDA_CACHE_DISABLE: "1"
+          - NCCL_NET: "AWS Libfabric"
+          - NCCL_CROSS_NIC: "1"
+          - NCCL_P2P_LEVEL: "NVL"
+          - NCCL_NET_GDR_LEVEL: "PHB"
+          - NCCL_NET_GDR_C2C: "1"
+          - NCCL_NET_GDR_READ: "1"
+          - NCCL_PROTO: "^LL128"
+          - NCCL_NCHANNELS_PER_NET_PEER: "4"
+          - NCCL_SOCKET_IFNAME: "hsn"
+          - FI_CXI_DEFAULT_CQ_SIZE: "131072"
+          - FI_CXI_DEFAULT_TX_SIZE: "16384"
+          - FI_CXI_DISABLE_HOST_REGISTER: "1"
+          - FI_CXI_RX_MATCH_MODE: "hybrid"
+          - FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD: "16777216"
+          - FI_MR_CACHE_MONITOR: "userfaultfd"
+          - FI_MR_CACHE_MAX_SIZE: "-1"
+          - FI_MR_CACHE_MAX_COUNT: "524288"

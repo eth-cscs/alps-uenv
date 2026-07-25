@@ -1,0 +1,10 @@
+name: prgenv-intel
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: e02cf51997aef358976fe367c02170f8633ea447 # develop on 2026-04-17
+store: /user-environment
+description: Intel OneAPI toolchain with cray-mpich, Python, CMake and other development tools.
+version: 2

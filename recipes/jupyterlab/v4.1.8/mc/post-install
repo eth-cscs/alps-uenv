@@ -7,3 +7,6 @@ git clone --filter=tree:0 https://github.com/eth-cscs/firecrestspawner.git
 git -C firecrestspawner checkout 0.1.2
 cd firecrestspawner
 pip install .
+
+curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/user-tools/env/jupyter --version=4.109.2
+export CODE_EXECUTABLE=/user-tools/env/jupyter/bin/code-server

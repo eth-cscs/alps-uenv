@@ -1,0 +1,11 @@
+modules:
+  features:
+    - rocm
+    - mpi
+    - q-e-sirius
+    - mi300
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - sirius

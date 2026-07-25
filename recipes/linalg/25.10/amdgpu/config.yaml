@@ -1,0 +1,11 @@
+name: linalg
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.1
+  packages:
+    # Includes superlu-dist patch: https://github.com/spack/spack-packages/pull/1968
+    repo: https://github.com/spack/spack-packages.git
+    commit: 5ece166daa3065a1b212fb93fe587fcb138e9004
+store: /user-environment
+description: Linear algebra libraries, PETSc, Trilinos
+version: 2

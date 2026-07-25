@@ -21,4 +21,4 @@ modules:
   views:
     - modules
   activation:
-    - module load quantum-espresso
+    - module load quantum-espresso nvhpc

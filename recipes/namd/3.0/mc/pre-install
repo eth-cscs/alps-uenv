@@ -8,7 +8,7 @@ namd=NAMD_${namd_version}_Source.tar.gz
 username=$CSCS_REGISTRY_USERNAME
 password=$CSCS_REGISTRY_PASSWORD
 
-curl -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
+curl -L -u ${username}:${password} https://jfrog.svc.cscs.ch/artifactory/uenv-sources/namd/${namd} --output {{ env.build }}/environments/${namd}
 
 sha256sum {{ env.build }}/environments/${namd}
 

@@ -1,0 +1,11 @@
+name: namd
+description: "NAMD: Scalable Molecular Dynamics" 
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.1.0
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 73fde59703ca0e51339c67b47bceb4c9a9632f46 # develop-26-07-08
+modules: True
+version: 2

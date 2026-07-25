@@ -1,0 +1,10 @@
+name: q-e-sirius
+version: 2
+spack:
+  commit: releases/v1.1
+  repo: https://github.com/spack/spack.git
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 876d656ad17366f92e2233d843ba285d655150dd # March 9
+store: /user-environment
+description: q-e-sirius uenv

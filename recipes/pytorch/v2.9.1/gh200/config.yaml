@@ -1,0 +1,11 @@
+name: pytorch
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: e79ba9fc76dd02568da737230bd5f570822fcbb9
+modules: false
+store: /user-environment
+description: pytorch and friends
+version: 2

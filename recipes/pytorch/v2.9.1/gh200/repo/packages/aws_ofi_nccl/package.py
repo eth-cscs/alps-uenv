@@ -1,0 +1,118 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+
+from spack.package import *
+
+
+class AwsOfiNccl(AutotoolsPackage):
+    """AWS OFI NCCL is a plug-in which enables EC2 developers to use
+    libfabric as a network provider while running NVIDIA's NCCL based
+    applications."""
+
+    homepage = "https://github.com/aws/aws-ofi-nccl"
+    url = "https://github.com/aws/aws-ofi-nccl/archive/v0.0.0.tar.gz"
+    git = "https://github.com/aws/aws-ofi-nccl.git"
+
+    maintainers("bvanessen", "msimberg")
+
+    version("master", branch="master")
+    version("1.18.0-dev", commit="eb9877e9cfecf725dba0794a5e0fc06f8fdf7f3f")
+    #version("1.18.0-dev", commit="f4d964adb0be307987338078b0c978c721ad117f")
+    #version("1.18.0", commit="86ebeaf59a2348b22780023effdb682503747de7")
+    version("1.17.3", sha256="0b3313e9ad48226cb143c8f1dead60bcd59a8083e582558ee44a438d58cc23c1")
+    version("1.17.2", sha256="6676f49cdfbaa10e953f18aad55f25812e0a7e716692bc911a69fd55cab42181")
+    version("1.17.1", sha256="15a3b5db51075d20b2cb255b99668a7161779fdf5455436e3bea02d59a04685a")
+    version("1.17.0", sha256="45a383ffca1e17866e290247e4a314d190aeee09c5380b983a62633168765ec1")
+    version("1.16.3", sha256="a3e99ecdb6331139b28097ffb3dc03418ed41d1867c6d225778e16a22fbebf60")
+    version("1.16.2", sha256="579ea75626d8ca5219b8b9c394521cd5d14c058c0f8f7851ce398a1d6bd005e3")
+    version("1.16.1", sha256="8688a49067bb763db42350563cc4420cd50570a79b7c1f71f8ee0f010cbe159c")
+    version("1.16.0", sha256="442342eba7ac09f4a089cb4bf33d19935f59a4c7ad12109b4dca366f99a80f65")
+    version("1.15.0", sha256="0a962d8444ad8312b08a2a9784671c554ae0350600e62bb6c6652e5bd3d96b9d")
+    version("1.14.2", sha256="e523ea08ce0caeff5c949b2134b4897186d793ce908904dd9d47bb08230b9bbd")
+    version("1.14.1", sha256="1171acf19ebd9c320bcb5d2749518e6bf15867b3694fc6eacb156ec74a6c5cf4")
+    version("1.14.0", sha256="0420998e79a8ec0db0541bcc1f09f4a94c4c75fd1c096a4ef0507a0e8f2d540c")
+    version("1.13.0", sha256="50dd231a0a99cec29300df46b8e828139ced15322a3c3c41b1d22dcc9a62ec02")
+    version("1.12.1", sha256="821f0929c016e5448785bbc6795af5096559ecfc6c9479eb3818cafa61424576")
+    version("1.12.0", sha256="93029207103b75f4dc15f023b3b8692851202b52b7e2824723dd5d328f0ea65b")
+    version("1.11.1", sha256="a300e620e03ba3cc0915f9d466232ff0bf6c84edf4e2cd93592d53cf2a62741b")
+    version("1.11.0", sha256="45d935133b183c945c16b70d8428d676a554faf5bd922b7909e9f1ec55ba6168")
+    version("1.10.0", sha256="ed63f627b42c7b0f7312ce2916a3c4dfeb5145f78b492c0d1e0d0a6828a0474c")
+    version("1.9.2", sha256="f763771e511ae3bc7bb708795f9802867a4a2bc4e4df6a265c7f6a033e9a8b9a")
+    version("1.9.1", sha256="3ee01258674e70d6966eb6d319461f9b882afae618e217e0ae7ec03d26169b35")
+    version("1.9.0", sha256="8d6d0469110a89b5431836d263860fb60fde7beccb26f553de41dca1feb61b51")
+    version("1.8.1", sha256="beb59959be0f60b891f9549f4df51b394e97e739416c88c3436e75516fe067c8")
+    version("1.8.0", sha256="a2f1750d4908924985335e513186353d0c4d9a5d27b1a759f6aa31a10e74c06d")
+    version("1.7.4", sha256="472bbc977ce37d0cf9239b8e366f4f247226a984eb8c487aadd884af53f00e13")
+    version("1.7.3", sha256="7a49b530eb0fa5e262c1fcf3412289bc1d538c15290435c579d5e7f08d806fd4")
+    version("1.7.2", sha256="c89bbe5fa49a7036eb873c01c8fdc5693238ae010ddcaf10b10fdc88aec6e56a")
+    version("1.7.1", sha256="d50a160c7aba76445e5c895fba0f3dbfdec51f702d218168a5e5017806cf0fb0")
+    version("1.6.0", sha256="19a6fc91afe9a317fd3154c897fa219eab48fcdddefa66d881f1843c1165f7ee")
+
+    variant("trace", default=False, description="Enable printing trace messages")
+    variant("tests", default=False, description="Build tests")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.15:")
+
+    depends_on("libfabric")
+    depends_on("cuda")
+    depends_on("nccl fabrics=auto")
+    depends_on("mpi")
+    depends_on("hwloc", when="@1.7:")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
+
+    patch(
+        "endpoint_mr.eb9877e.patch",
+        sha256="7bfa48a1e7d3220d0033177cea46173b35ec2fcb7c6a786fddedcbca551ab6ab",
+        when="@=1.18.0-dev",
+    )
+    #patch(
+    #    "https://github.com/aws/aws-ofi-nccl/compare/86ebeaf59a2348b22780023effdb682503747de7...ryanhankins:endpoint_mr_for_rdma.patch?full_index_index=1",
+    #    sha256="6399681b4cea8e38963a76e728802cb332b443776afaca10e8b272087093a388",
+    #    when="@=1.18.0",
+    #)
+
+    def url_for_version(self, version):
+        if version < Version("1.7.0") or version >= Version("1.14.0"):
+            return super().url_for_version(version)
+        url_fmt = "https://github.com/aws/aws-ofi-nccl/archive/v{0}-aws.tar.gz"
+        return url_fmt.format(version)
+
+    # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
+        # Set the network so that NCCL doesn't pick up anything else.
+        env.set("NCCL_NET", "AWS Libfabric")
+
+    # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
+
+    def configure_args(self):
+        spec = self.spec
+        args = []
+
+        # Always set configure's external paths to use the Spack
+        # provided dependencies
+        args.extend(
+            [
+                "--with-libfabric={0}".format(spec["libfabric"].prefix),
+                "--with-cuda={0}".format(spec["cuda"].prefix),
+                "--with-nccl={0}".format(spec["nccl"].prefix),
+                "--with-mpi={0}".format(spec["mpi"].prefix),
+            ]
+        )
+        if spec.satisfies("@1.7:"):
+            args.extend(["--with-hwloc={0}".format(spec["hwloc"].prefix)])
+
+        args.extend(self.enable_or_disable("trace"))
+        args.extend(self.enable_or_disable("tests"))
+
+        return args

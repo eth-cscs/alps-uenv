@@ -1,0 +1,10 @@
+name: netcdf-tools
+store: /user-tools
+description: utilities used for climate/weather analysis and file manipulation
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.0
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2025.07
+version: 2

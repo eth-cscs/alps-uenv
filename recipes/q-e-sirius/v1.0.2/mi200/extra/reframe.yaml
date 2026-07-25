@@ -1,0 +1,13 @@
+run:
+  features:
+    - rocm
+    - mpi
+    - q-e-sirius
+    - mi200
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - sirius
+  extras:
+    version: v1.0.2
