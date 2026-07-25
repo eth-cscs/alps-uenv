@@ -9,8 +9,6 @@ modules:
   default:
     arch_folder: false
     # Where to install modules
-    #del roots:
-    #del  tcl: /user-tools/modules
     tcl:
       all:
         autoload: run
