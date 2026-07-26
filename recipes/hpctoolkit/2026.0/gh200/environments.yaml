@@ -4,6 +4,7 @@ hpctoolkit-env:
   network:
     mpi: cray-mpich@9.1.0+cuda
   specs:
+    - flamegraph
     - py-hatchet 
     - hpctoolkit@2026.0.stable +cuda +python ~viewer buildtype=debug build_system=meson
   variants:
