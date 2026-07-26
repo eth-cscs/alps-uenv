@@ -5,6 +5,8 @@ modules:
       - PATH
     lib:
       - LD_LIBRARY_PATH
+    lib/python3.11/site-packages:
+      - PYTHONPATH
 
   default:
     arch_folder: false

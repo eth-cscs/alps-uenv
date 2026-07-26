@@ -1,6 +1,7 @@
 default:
    features:
      - hpctoolkit
+     - py-hatchet
    cc: gcc
    cxx: g++
    ftn: gfortran

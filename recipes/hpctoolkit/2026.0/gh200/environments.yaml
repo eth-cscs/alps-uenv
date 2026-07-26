@@ -12,4 +12,4 @@ hpctoolkit-env:
   - cuda_arch=90
   views:
     hpctoolkit:
-      link: roots
+      link: all
