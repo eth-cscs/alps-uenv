@@ -1,0 +1,25 @@
+packages:
+  all:
+    require:
+      - +cuda cuda_arch=90a
+      - ~rocm
+      - ~x11
+      - ~fortran
+      - ~applications
+      - ~examples
+      - ~tests
+  cuda:
+    require:
+      - "@13"
+  conduit:
+    require:
+      - +hdf5
+      # note: https://github.com/llnl/conduit/issues/1582
+      - "@git.df1394ba1d6a3bfba467a60ee0e1ea3d87a8eb53=0.9.6"
+  gl:
+    require: egl
+  llvm:
+    require:
+      - targets=aarch64
+      - ~gold
+      - ~cuda

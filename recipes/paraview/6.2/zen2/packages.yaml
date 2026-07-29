@@ -1,0 +1,22 @@
+packages:
+  all:
+    require:
+      - ~cuda
+      - ~rocm
+      - ~x11
+      - ~fortran
+      - ~applications
+      - ~examples
+      - ~tests
+  conduit:
+    require:
+      - +hdf5
+      # note: https://github.com/llnl/conduit/issues/1582
+      - "@git.df1394ba1d6a3bfba467a60ee0e1ea3d87a8eb53=0.9.6"
+  gl:
+    require: osmesa
+  llvm:
+    require:
+      - targets:=x86
+      - ~gold
+      - ~cuda
