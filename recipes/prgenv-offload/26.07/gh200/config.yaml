@@ -1,0 +1,11 @@
+name: prgenv-offload
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2026.06
+store: /user-environment
+description: NVIDIA compiler toolchain (nvhpc) and gcc with cray-mpich, both tuned for OpenMP and OpenACC offload.
+version: 3
+

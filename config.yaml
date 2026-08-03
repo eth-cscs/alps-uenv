@@ -383,6 +383,10 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         eiger: [zen2]
+  prgenv-offload:
+    "26.07":
+      recipes:
+        gh200: 26.07/gh200
   prgenv-nvfortran:
     "24.11":
       recipes:
