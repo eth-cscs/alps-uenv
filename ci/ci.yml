@@ -5,7 +5,8 @@ stages:
 pipeline-configure:
   stage: configure
   tags: [languard-k8s-lightweight]
-  image: docker.io/python:latest
+  #image: docker.io/python:latest
+  image: docker.io/python:3.14.6-slim
   script:
     - git clone https://github.com/eth-cscs/uenv-pipeline.git
     - ./uenv-pipeline/configure-pipeline -c./config.yaml -r./recipes -s$system -u$uenv -a$uarch -o./pipeline.yml

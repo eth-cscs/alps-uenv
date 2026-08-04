@@ -16,15 +16,6 @@ nvfortran:
   - nvpl-lapack threads=openmp
   - osu-micro-benchmarks ~xccl
   - python
-  #
-  #- fmt
-  #- hdf5 +cxx+fortran+threadsafe+hl
-  #- lua
-  #- libtree
-  #- lz4
-  #- zlib-ng
-  #- netcdf-c
-  #- netcdf-fortran %fortran=nvhpc
   variants:
   - +mpi
   - +cuda
