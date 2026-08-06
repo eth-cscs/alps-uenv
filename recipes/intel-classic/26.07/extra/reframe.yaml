@@ -10,4 +10,4 @@ default:
   cxx: mpic++
   ftn: mpifort
   views:
-    - oneapi
+    - intel
