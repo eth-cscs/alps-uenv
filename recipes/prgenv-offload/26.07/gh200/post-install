@@ -1,0 +1,51 @@
+#!/bin/bash
+# post-install hook: expose gcc's OpenMP-offload toolchain in the views.
+#
+# gcc's nvptx offload path needs two things that the filesystem view does not
+# surface on its own:
+#   1. the offload sub-tools (aarch64-...-accel-nvptx-none-gcc, nvptx-none-as,
+#      nvptx-none-ld) which mkoffload spawns via PATH  -> add <gcc>/bin to PATH
+#   2. the runtime plugin libgomp-plugin-nvptx.so.1     -> add <gcc>/lib64 to
+#      LD_LIBRARY_PATH
+# Without these, host OpenMP works but `-foffload=nvptx-none` fails to link/run.
+#
+# We discover the concrete (hash-prefixed) gcc prefix with `spack find` and
+# inject the two paths into every view in meta/env.json. Idempotent: re-running
+# does not duplicate entries.
+set -euo pipefail
+
+META="{{ env.mount }}/meta/env.json"
+
+GCC_PREFIX=$(spack find --format "{prefix}" "gcc@15 +nvptx" \
+             | grep "^{{ env.mount }}" | head -n1)
+if [ -z "$GCC_PREFIX" ]; then
+    echo "post-install: could not locate gcc +nvptx in the store; aborting" >&2
+    exit 1
+fi
+GCC_BIN="$GCC_PREFIX/bin"
+GCC_LIB="$GCC_PREFIX/lib64"
+
+# Sanity: the offload tools and plugin must actually be there.
+for f in "$GCC_BIN/nvptx-none-as" "$GCC_LIB/libgomp-plugin-nvptx.so.1"; do
+    [ -e "$f" ] || { echo "post-install: missing expected file $f" >&2; exit 1; }
+done
+
+echo "post-install: adding gcc offload paths to views"
+echo "  PATH            += $GCC_BIN"
+echo "  LD_LIBRARY_PATH += $GCC_LIB"
+
+tmp=$(mktemp)
+jq --arg bin "$GCC_BIN" --arg lib "$GCC_LIB" '
+  .views |= map_values(
+    (if (.env.values.list.PATH?)
+        and ((.env.values.list.PATH[0].value | index($bin)) | not)
+       then .env.values.list.PATH[0].value += [$bin] else . end)
+    | (if (.env.values.list.LD_LIBRARY_PATH?)
+          and ((.env.values.list.LD_LIBRARY_PATH[0].value | index($lib)) | not)
+         then .env.values.list.LD_LIBRARY_PATH[0].value += [$lib] else . end)
+  )
+' "$META" > "$tmp"
+
+jq empty "$tmp"          # fail loudly if we produced invalid JSON
+mv "$tmp" "$META"
+echo "post-install: done"

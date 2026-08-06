@@ -1,0 +1,5 @@
+gcc:
+  version: "15"
+  spec: "+nvptx"
+nvhpc:
+  version: "26.3"

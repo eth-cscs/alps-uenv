@@ -1,0 +1,29 @@
+nvfortran:
+  compiler: [gcc, nvhpc]
+  network:
+      mpi: cray-mpich +cuda %fortran=nvhpc
+  unify: true
+  specs:
+  #- aws-ofi-nccl
+  #- cmake
+  - cuda@13
+  - fftw +openmp
+  - meson
+  - nccl
+  - nccl-tests
+  - ninja
+  - nvpl-blas threads=openmp
+  - nvpl-lapack threads=openmp
+  - osu-micro-benchmarks ~xccl
+  - python
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    nvfort:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
