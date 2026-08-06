@@ -5,8 +5,6 @@ default:
     - nvhpc
     - openmp
     - osu-micro-benchmarks
-    - prgenv
-    - serial
   cc: mpicc
   cxx: mpic++
   ftn: mpifort
