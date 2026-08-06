@@ -1,0 +1,44 @@
+#!/bin/sh
+# Expose the oneAPI C/C++/Fortran compilers (icx/icpx/ifx) in the oneapi view.
+#
+# The intel-classic compiler group builds intel-oneapi-compilers as an internal
+# dependency, but stackinator's add_compilers step only symlinks the *classic*
+# toolchain (icc/icpc/ifort) into the view because the environment's compiler
+# list names intel-classic. The oneAPI bins live in the package's own tree and
+# are never linked, so icx/icpx/ifx are missing from the view PATH and the
+# CC/CXX env vars (overridden in environments.yaml to point at <view>/bin) would
+# otherwise dangle. Symlink them in here. Idempotent (ln -sf), which matters
+# because stackinator may run this hook more than once.
+set -eu
+
+view_bin="/user-environment/env/oneapi/bin"
+
+# Resolve the intel-oneapi-compilers install prefix from the store. There is a
+# single install; glob it rather than depending on the spack DB being queryable
+# from inside the hook.
+oneapi_bindir=""
+for d in /user-environment/linux-*/intel-oneapi-compilers-*/compiler/*/linux/bin; do
+    case "$d" in
+        *intel-oneapi-compilers-classic-*) continue ;;  # skip the classic package
+    esac
+    if [ -x "$d/icx" ]; then
+        oneapi_bindir="$d"
+        break
+    fi
+done
+
+if [ -z "$oneapi_bindir" ]; then
+    echo "post-install: ERROR could not locate intel-oneapi-compilers icx bin dir" >&2
+    exit 1
+fi
+
+echo "post-install: linking oneAPI compilers from $oneapi_bindir into $view_bin"
+mkdir -p "$view_bin"
+for c in icx icpx ifx; do
+    if [ -x "$oneapi_bindir/$c" ]; then
+        ln -sf "$oneapi_bindir/$c" "$view_bin/$c"
+        echo "post-install:   linked $c"
+    else
+        echo "post-install: WARNING $c not found in $oneapi_bindir" >&2
+    fi
+done
