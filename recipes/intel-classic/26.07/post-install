@@ -1,22 +1,28 @@
 #!/bin/sh
-# Expose the oneAPI C/C++/Fortran compilers (icx/icpx/ifx) in the oneapi view.
+# Recipe post-install hook for the intel-classic uenv. Runs inside the sandbox
+# after the Spack build, before the squashfs is packaged. Two jobs, both fixing
+# gaps in what the `intel` view exposes. Everything here is idempotent
+# (ln -sf), which matters because stackinator may run this hook more than once.
+set -eu
+
+view_bin="/user-environment/env/intel/bin"
+view_lib="/user-environment/env/intel/lib"
+
+# ---------------------------------------------------------------------------
+# 1. Expose the oneAPI C/C++/Fortran compilers (icx/icpx/ifx) in the view.
 #
 # The intel-classic compiler group builds intel-oneapi-compilers as an internal
 # dependency, but stackinator's add_compilers step only symlinks the *classic*
 # toolchain (icc/icpc/ifort) into the view because the environment's compiler
 # list names intel-classic. The oneAPI bins live in the package's own tree and
 # are never linked, so icx/icpx/ifx are missing from the view PATH and the
-# CC/CXX env vars (overridden in environments.yaml to point at <view>/bin) would
-# otherwise dangle. Symlink them in here. Idempotent (ln -sf), which matters
-# because stackinator may run this hook more than once.
-set -eu
-
-view_bin="/user-environment/env/oneapi/bin"
-
+# CC/CXX env vars (set in environments.yaml to <view>/bin/{icx,icpx}) dangle.
+# Symlink them into <view>/bin.
+# ---------------------------------------------------------------------------
+oneapi_bindir=""
 # Resolve the intel-oneapi-compilers install prefix from the store. There is a
 # single install; glob it rather than depending on the spack DB being queryable
 # from inside the hook.
-oneapi_bindir=""
 for d in /user-environment/linux-*/intel-oneapi-compilers-*/compiler/*/linux/bin; do
     case "$d" in
         *intel-oneapi-compilers-classic-*) continue ;;  # skip the classic package
@@ -42,3 +48,46 @@ for c in icx icpx ifx; do
         echo "post-install: WARNING $c not found in $oneapi_bindir" >&2
     fi
 done
+
+# ---------------------------------------------------------------------------
+# 2. Make the classic Fortran runtime libs resolvable via the view's
+#    LD_LIBRARY_PATH.
+#
+# Classic `ifort` drives GNU `ld` with an LTO plugin (icx-lto.so) that NEEDs
+# libimf.so / libsvml.so / libirng.so / libintlc.so.5. Spack baked a RUNPATH
+# into that plugin pointing at the *intel-oneapi-compilers* store prefix
+# (compiler/<ver>/linux/compiler/lib/intel64_lin) — a different package with a
+# different hash. That RUNPATH is the ONLY resolution path (the view does not
+# project the compiler lib subtree), so after a re-concretization that shifts
+# intel-oneapi-compilers to a new hash the RUNPATH dangles and Fortran linking
+# dies with:
+#   ld: .../icx-lto.so: error loading plugin: libimf.so: cannot open shared object file
+#
+# The classic compiler ships its OWN copy of these libs under
+# compiler/lib/intel64_lin. Symlink them into <view>/lib, which is already on
+# the view's LD_LIBRARY_PATH and is searched BEFORE the plugin's RUNPATH, so
+# resolution becomes self-contained within the (always-present, named) classic
+# compiler and no longer depends on the oneAPI package's hash.
+# ---------------------------------------------------------------------------
+classic_libdir=""
+for d in /user-environment/linux-*/intel-oneapi-compilers-classic-*/compiler/lib/intel64_lin; do
+    if [ -e "$d/libimf.so" ]; then
+        classic_libdir="$d"
+        break
+    fi
+done
+
+if [ -z "$classic_libdir" ]; then
+    echo "post-install: ERROR could not locate classic compiler intel64_lin lib dir" >&2
+    exit 1
+fi
+
+echo "post-install: linking classic runtime libs from $classic_libdir into $view_lib"
+mkdir -p "$view_lib"
+n=0
+for so in "$classic_libdir"/*.so "$classic_libdir"/*.so.*; do
+    [ -e "$so" ] || continue
+    ln -sf "$so" "$view_lib/$(basename "$so")"
+    n=$((n + 1))
+done
+echo "post-install:   linked $n runtime libs"

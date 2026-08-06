@@ -27,18 +27,25 @@ prefer:
 
 plus the MPI spec `cray-mpich@8.1.32 %c,cxx=oneapi %fortran=intel`.
 
-## Two recipe-level fixes so the view exposes the right compilers
+## Recipe-level fixes so the view exposes a working toolchain
 
-Out of the box the `intel` view only exposed the **classic** bins and the
-`CC/CXX/FC` env vars dangled. Two fixes in the recipe:
+Out of the box the `intel` view only exposed the **classic** bins, the
+`CC/CXX/FC` env vars dangled, and classic **Fortran linking was broken**. Three
+fixes in the recipe:
 
-1. **`post-install` hook** — symlinks the oneAPI `icx`/`icpx`/`ifx` from the
-   `intel-oneapi-compilers` install into `<view>/bin`. Stackinator's
+1. **`post-install` hook, part 1 — oneAPI bins into the view.** Symlinks the
+   oneAPI `icx`/`icpx`/`ifx` from the `intel-oneapi-compilers` install into
+   `<view>/bin` (i.e. `/user-environment/env/intel/bin`). Stackinator's
    `add_compilers` step only links the compilers *named* in the environment's
    `compiler:` list (i.e. classic + gcc), so the oneAPI bins are otherwise
    missing from the view. The hook globs the store for the (single)
    `intel-oneapi-compilers-*` prefix and is idempotent (`ln -sf`) — important
    because stackinator can run the hook more than once.
+   **NB:** the hook's target must be the *default view's* bin. The view is named
+   `intel` (see `config.yaml`/`environments.yaml`), so `view_bin` is
+   `env/intel/bin`. An earlier revision hard-coded `env/oneapi/bin` (a stale
+   view name); that directory is not on `PATH`, so `which icx` failed and
+   `CC`/`CXX` dangled even though the symlinks existed.
 
 2. **`env_vars.set` in the `intel` view** — spack auto-sets `CC/CXX/FC` (from the
    oneAPI compiler package's `setup_run_environment`) to paths under
@@ -46,6 +53,28 @@ Out of the box the `intel` view only exposed the **classic** bins and the
    projects into the view, so they dangle. We override them to the `<view>/bin`
    symlinks and point **Fortran at classic `ifort`** (spack would default `FC` to
    `ifx`). Uses the `$@view_path@` substitution.
+
+3. **`post-install` hook, part 2 — classic Fortran runtime libs on
+   `LD_LIBRARY_PATH`.** Classic `ifort` drives GNU `ld` with an LTO plugin
+   (`<classic>/lib/icx-lto.so`) that `NEED`s `libimf.so` / `libsvml.so` /
+   `libirng.so` / `libintlc.so.5`. Spack baked a `RUNPATH` into that plugin
+   pointing at the **`intel-oneapi-compilers`** store prefix
+   (`compiler/<ver>/linux/compiler/lib/intel64_lin`) — a *different* package with
+   a *different* hash — and that `RUNPATH` is the plugin's **only** resolution
+   path (the view does not project the compiler `lib` subtree). So after a
+   re-concretization that shifts `intel-oneapi-compilers` to a new hash and
+   orphans the old install, the `RUNPATH` dangles and Fortran linking dies with:
+
+   ```
+   ld: .../icx-lto.so: error loading plugin: libimf.so: cannot open shared object file
+   ```
+
+   The classic compiler ships its *own* copy of these libs under
+   `compiler/lib/intel64_lin`. The hook symlinks them into `<view>/lib`, which is
+   already on the view's `LD_LIBRARY_PATH` and is searched **before** the plugin's
+   `RUNPATH`. Resolution becomes self-contained within the (always-present, named)
+   classic compiler and no longer depends on the oneAPI package's hash. Verified
+   with `ldd icx-lto.so` → `libimf.so => .../env/intel/lib/libimf.so`.
 
 ### Why NOT add `intel-oneapi` as a second compiler group
 
@@ -65,21 +94,36 @@ known-good single-stack concretization untouched.
 which can shift concretization to new hashes while the old installs remain in the
 store DB — again triggering a module-name clash. If you hit this after an
 iteration, uninstall the orphans (installs whose hash is absent from
-`env/spack.lock`) before the modules step, e.g. inside `stack-debug.sh`:
+`env/spack.lock`) before the modules step. From inside the sandbox (copy the
+`env … bwrap-mutable-root.sh …` line out of `stack-debug.sh` and append
+`bash -noprofile -lc "<cmd>"`), the exact reconciliation is:
 
+```sh
+keep=$(spack -e $BUILD/env find --format '{/hash}' | sort -u)   # keep set (spack.lock)
+allh=$(spack find          --format '{/hash}' | sort -u)         # everything in the store DB
+orphans=$(comm -13 <(echo "$keep") <(echo "$allh"))              # installed but not in the env
+spack uninstall --force --yes-to-all $orphans
 ```
-spack uninstall --force --yes-to-all /<hash> ...
-```
 
-or do a clean-store rebuild.
+Compare hashes *with* their leading `/` on both sides — mismatched stripping
+makes `comm` flag the keepers as orphans too. Then re-run `make store.squashfs`
+(it re-runs the modules step, the post-install hook, and repackages). Or do a
+clean-store rebuild.
 
-## Verified (2026-08-06)
+## Verified (2026-08-06, after the Fortran-linking fix)
 
 All exercised inside `uenv run store.squashfs`:
 
-- `which` + `--version`: icx/icpx 2023.2.4, ifort 2021.10.0, ifx 2023.2.4, icc/icpc classic — all in view.
+- `which`: icx/icpx/ifx **and** icc/icpc/ifort all resolve to `env/intel/bin`.
+- `--version`: icx/icpx/ifx 2023.2.4, ifort 2021.10.0, icc/icpc classic.
 - `CC=icx`, `CXX=icpx`, `FC=F77=ifort` — all resolve (no dangling).
-- `mpicc -show`→icx, `mpicxx -show`→icpx, `mpif90 -show`→ifort.
-- Compile **and run**: C (icx), C++ (icpx), Fortran (ifort).
-- 2-rank MPI (`srun -n2`): C and Fortran both print ranks.
-- hdf5 1.14.6 `h5cc` compile+run; netcdf-c 4.10.0 / netcdf-fortran 4.6.2 (`nc-config --cc`→icx).
+- Compile **and run** (all 6 drivers): C (icx/icc), C++ (icpx/icpc), Fortran (ifort/ifx).
+- **Fortran linking regression fixed:** `ifort hello.F90` and `mpif90 hello.F90`
+  both link and run. `ldd .../icx-lto.so` shows `libimf.so` (and svml/irng/intlc)
+  resolving from `env/intel/lib/` — the classic package's own libs via
+  `LD_LIBRARY_PATH`, not the oneAPI-hashed `RUNPATH`. This is robust across
+  re-concretization (previously failed with `error loading plugin: libimf.so`).
+- `mpicc` compile+run.
+
+Not re-run this pass (unchanged since prior verification): 2-rank `srun` MPI,
+hdf5 `h5cc`, netcdf `nc-config`.
