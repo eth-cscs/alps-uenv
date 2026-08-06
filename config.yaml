@@ -181,6 +181,8 @@ uenvs:
     "26.07":
       recipes:
         zen2: "26.07"
+      deploy:
+        eiger: [zen2]
   julia:
     "24.9":
       recipes:
