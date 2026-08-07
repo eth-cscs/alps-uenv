@@ -59,36 +59,36 @@ gcc-env:
   - umpire@develop # TODO
   # - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
-  - whip
+  # - whip
   - hip@7.2.3
-  - llvm-amdgpu
+  # - llvm-amdgpu
   # rocm packages
-  - rocblas ~tensile # TODO
-  - rocfft
-  - rocm-cmake
-  - rocm-openmp-extras
-  - rocm-core
-  - rocminfo
-  - rocprim
+  # - rocblas ~tensile # TODO
+  # - rocfft
+  # - rocm-cmake
+  # - rocm-openmp-extras
+  # - rocm-core
+  # - rocminfo
+  # - rocprim
   # - rocprofiler-dev # TODO
-  - rocprofiler-register
+  # - rocprofiler-register
   # - rocprofiler-systems+internal-dyninst+internal-tbb # TODO
-  - rocrand
-  - rocsolver
-  - rocsparse
-  - rocthrust
-  - roctracer-dev-api
-  - roctracer-dev
-  - rocm-gdb
-  - rocm-debug-agent
+  # - rocrand
+  # - rocsolver
+  # - rocsparse
+  # - rocthrust
+  # - roctracer-dev-api
+  # - roctracer-dev
+  # - rocm-gdb
+  # - rocm-debug-agent
   # hip packages
-  - hipblas
+  # - hipblas
   # - hipblaslt # TODO
-  - hipcub
-  - hiprand
-  - hipsparse
-  - hipfft
-  - hipblas-common
+  # - hipcub
+  # - hiprand
+  # - hipsparse
+  # - hipfft
+  # - hipblas-common
   variants:
   - +mpi
   - +rocm
