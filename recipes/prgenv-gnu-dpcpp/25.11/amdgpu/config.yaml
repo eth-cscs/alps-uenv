@@ -1,0 +1,11 @@
+name: prgenv-gnu-dpcpp
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.1
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: 876d656ad17366f92e2233d843ba285d655150dd # develop on 2026-03-09
+store: /user-environment
+description: GNU Compiler toolchain with Intel DPC++ SYCL (HIP backend), cray-mpich, Python, CMake and other development tools for gfx90a, gfx942 (MI300A, MI250X)
+default-view: default
+version: 2
