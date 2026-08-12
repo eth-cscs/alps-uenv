@@ -1,0 +1,28 @@
+develop:
+  features:
+    - cuda
+    - mpi
+    - qe-dev
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc cray-mpich cuda
+  extras:
+    version: v7.6
+modules:
+  features:
+    - cuda
+    - mpi
+    - qe
+  cc: mpicc
+  cxx: mpic++
+  ftn: mpifort
+  views:
+    - modules
+  activation:
+    - module load quantum-espresso nvhpc
+  extras:
+    version: v7.6
