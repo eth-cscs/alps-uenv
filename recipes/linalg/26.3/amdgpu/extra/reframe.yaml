@@ -1,0 +1,10 @@
+run:
+  features:
+    - rocm
+    - mpi
+    - cray-mpich
+    - osu-micro-benchmarks
+    - serial
+    - dlaf
+  views:
+    - default
