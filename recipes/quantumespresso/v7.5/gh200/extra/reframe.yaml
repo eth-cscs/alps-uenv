@@ -9,7 +9,10 @@ develop:
   views:
     - modules
   activation:
-   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich netlib-scalapack libxc cray-mpich cuda
+   - module load cmake fftw nvhpc nvpl-lapack nvpl-blas cray-mpich nvpl-scalapack libxc cray-mpich cuda
+  extras:
+    version: 7.5
+    cmake: -DQE_ENABLE_MPI=ON -DQE_ENABLE_OPENMP=ON -DQE_ENABLE_SCALAPACK:BOOL=ON -DQE_ENABLE_LIBXC=ON -DQE_ENABLE_CUDA=ON -DQE_ENABLE_PROFILE_NVTX=OFF -DQE_CLOCK_SECONDS:BOOL=OFF -DQE_ENABLE_MPI_GPU_AWARE:BOOL=ON -DQE_ENABLE_OPENACC=ON  '-DBLAS_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'  '-DLAPACK_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_lapack_core.so;/user-environment/env/develop/lib/libnvpl_lapack_lp64_gomp.so;/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so' '-DSCALAPACK_LIBRARIES:STRING=/user-environment/linux-neoverse_v2/nvpl-scalapack-0.2.1-vcvb6h7xs7pgaugyufomtkiigcq5xc2v/lib/libnvpl_blacs_lp64_mpich.so;/user-environment/linux-neoverse_v2/nvpl-scalapack-0.2.1-vcvb6h7xs7pgaugyufomtkiigcq5xc2v/lib/libnvpl_scalapack_lp64.so'
 modules:
   features:
     - cuda
@@ -22,3 +25,6 @@ modules:
     - modules
   activation:
     - module load quantum-espresso nvhpc
+  extras:
+    version: 7.5
+    cmake: -DQE_ENABLE_MPI=ON -DQE_ENABLE_OPENMP=ON -DQE_ENABLE_SCALAPACK:BOOL=OFF -DQE_ENABLE_LIBXC=ON -DQE_ENABLE_CUDA=OFF -DQE_ENABLE_PROFILE_NVTX=OFF -DQE_CLOCK_SECONDS:BOOL=OFF -DQE_ENABLE_MPI_GPU_AWARE:BOOL=ON -DQE_ENABLE_OPENACC=ON  '-DBLAS_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so'  '-DLAPACK_LIBRARIES:STRING=/user-environment/env/develop/lib/libnvpl_lapack_core.so;/user-environment/env/develop/lib/libnvpl_lapack_lp64_gomp.so;/user-environment/env/develop/lib/libnvpl_blas_core.so;/user-environment/env/develop/lib/libnvpl_blas_lp64_gomp.so' '-DSCALAPACK_LIBRARIES:STRING=/user-environment/linux-neoverse_v2/nvpl-scalapack-0.2.1-vcvb6h7xs7pgaugyufomtkiigcq5xc2v/lib/libnvpl_blacs_lp64_mpich.so;/user-environment/linux-neoverse_v2/nvpl-scalapack-0.2.1-vcvb6h7xs7pgaugyufomtkiigcq5xc2v/lib/libnvpl_scalapack_lp64.so'
