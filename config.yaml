@@ -513,6 +513,16 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
+  hpctoolkit:
+    "2026.0":
+      recipes:
+        gh200: 2026.0/gh200
+      deploy:
+        clariden: [gh200]
+        daint: [gh200]
+        santis: [gh200]
+        starlex: [gh200]
+      mount: "/user-tools"
   vasp:
     "v6.4.2":
       recipes:
