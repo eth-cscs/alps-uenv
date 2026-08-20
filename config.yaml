@@ -546,8 +546,10 @@ uenvs:
     "v6.6.1":
       recipes:
         zen2: v6.6.1/mc
+        gh200: v6.6.1/gh200
       deploy:
         eiger: [zen2]
+        daint: [gh200]
   ascent:
     "0.9.5":
       recipes:
