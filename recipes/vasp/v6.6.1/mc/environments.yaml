@@ -1,12 +1,12 @@
 vasp:
   compiler: [gcc]
   network:
-    mpi: cray-mpich@8.1.32
+    mpi: cray-mpich@8.1.32 ~cuda
     specs:
-    - libfabric@2.3
+    - libfabric@2.3 ~cuda
   unify: true
   specs:
-      - vasp@6.6.1 ~cuda +openmp +hdf5 +wannier90 +libxc +dftd4 ~simple_dftd3
+      - vasp@6.6.1 +openmp +hdf5 +wannier90 +libxc +dftd4 ~simple_dftd3
       - openblas threads=openmp
       - netlib-scalapack ~shared
       - hdf5+fortran+mpi
@@ -17,6 +17,8 @@ vasp:
       - cmake
       - ninja
       - gdb
+  variants:
+      - ~cuda
   views:
     vasp:
       link: roots
