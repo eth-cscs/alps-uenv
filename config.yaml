@@ -543,6 +543,11 @@ uenvs:
       deploy:
         eiger: [zen2]
         daint: [gh200]
+    "v6.6.1":
+      recipes:
+        zen2: v6.6.1/mc
+      deploy:
+        eiger: [zen2]
   ascent:
     "0.9.5":
       recipes:
