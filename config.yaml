@@ -404,6 +404,12 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+    "26.5":
+      recipes:
+        gh200: 26.5/gh200
+      deploy:
+        daint: [gh200]
+        santis: [gh200]
   prgenv-intel:
     "2022.1":
       recipes:
