@@ -294,6 +294,23 @@ uenvs:
         zen3: '2025/x86_64'
         a100: '2025/x86_64'
         gh200: '2025/aarch64'
+  opencode:
+    "1.18.20":
+      recipes:
+        a100: "1.18.20"
+        gh200: "1.18.20"
+        mi200: "1.18.20"
+        mi300: "1.18.20"
+        zen2: "1.18.20"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+        starlex: [gh200]
+        bristen: [a100]
+        beverin: [mi200, mi300]
+      mount: "/user-tools"
   # OpenFOAM Foundation
   openfoam-org:
     "8":

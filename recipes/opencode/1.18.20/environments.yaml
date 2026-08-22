@@ -1,0 +1,11 @@
+opencode-env:
+  compiler: [gcc]
+  unify: true
+  specs:
+    - opencode-bwrap@1.18.20
+  views:
+    opencode:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

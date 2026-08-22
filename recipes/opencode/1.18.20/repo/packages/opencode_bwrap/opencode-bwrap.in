@@ -1,0 +1,464 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+usage() {
+  cat <<'EOF'
+Usage:
+  opencode-bwrap [launcher-options] [-- command-args ...]
+
+Launcher options:
+  --project-dir PATH
+      Project directory to expose read-write. Default: current directory.
+
+  --config-dir PATH
+      XDG config root for this launcher. Default:
+      ${XDG_CONFIG_HOME:-$HOME/.config}/opencode-spack
+
+  --data-dir PATH
+      XDG data root for this launcher. Default:
+      ${XDG_DATA_HOME:-$HOME/.local/share}/opencode-spack
+
+  --cache-dir PATH
+      XDG cache root for this launcher. Default:
+      ${XDG_CACHE_HOME:-$HOME/.cache}/opencode-spack
+
+  --state-dir PATH
+      XDG state root for this launcher. Default:
+      ${XDG_STATE_HOME:-$HOME/.local/state}/opencode-spack
+
+  --ro-bind SRC:DST
+      Add an extra read-only bind mount.
+
+  --bind SRC:DST
+      Add an extra read-write bind mount.
+
+  --hide-path PATH
+      Hide a host path behind an empty tmpfs mount. Can be repeated.
+
+  --no-default-hide-paths
+      Do not hide the default sensitive paths: /users, /home, /root.
+      Paths added with --hide-path are still hidden.
+
+  --ssh-agent
+      Expose SSH_AUTH_SOCK inside the sandbox. The socket must be in a private
+      parent directory owned by the current user with no group/world access.
+
+  --share-ipc
+      Share the host IPC namespace. By default, the sandbox uses a separate IPC
+      namespace.
+
+  --shell
+      Start ${SHELL:-/bin/sh} inside the sandbox instead of OpenCode. Arguments
+      after -- are passed to the shell.
+
+  --print-bwrap
+      Print the bubblewrap invocation to stderr before executing it.
+
+  --no-gpu-devices
+      Do not pass through host /dev. GPU access is enabled by default.
+
+  -h, --help
+      Show this help.
+
+Behavior:
+  - The host filesystem is visible read-only, except hidden paths.
+  - /users, /home, and /root are hidden by default.
+  - /tmp is hidden by default.
+  - The project directory and launcher-specific XDG roots are writable.
+  - Network is inherited from the host.
+  - SSH_AUTH_SOCK is unset unless --ssh-agent is passed.
+  - PID and IPC namespaces are isolated unless --share-ipc is passed.
+  - --shell can be used to debug the sandbox without launching OpenCode.
+  - Existing default OpenCode config directories are not used unless explicitly
+    passed with --config-dir, --data-dir, --cache-dir, or --state-dir.
+EOF
+}
+
+require_value() {
+  local option="$1"
+  local value="${2-}"
+
+  if [[ -z "${value}" ]]; then
+    printf 'error: %s requires a value\n' "${option}" >&2
+    exit 2
+  fi
+}
+
+abspath_existing_dir() {
+  local directory="$1"
+  mkdir -p "${directory}"
+  (cd "${directory}" && pwd -P)
+}
+
+add_sandbox_dir_chain() {
+  local path="${1%/}"
+  local current=""
+
+  [[ "${path}" == /* ]] || return 0
+  path="${path#/}"
+  [[ -n "${path}" ]] || return 0
+
+  local old_ifs="${IFS}"
+  IFS=/
+  read -r -a parts <<< "${path}"
+  IFS="${old_ifs}"
+
+  for part in "${parts[@]}"; do
+    [[ -n "${part}" ]] || continue
+    current="${current}/${part}"
+    BWRAP_ARGS+=(--dir "${current}")
+  done
+}
+
+add_bind_mountpoint() {
+  local destination="$1"
+  add_sandbox_dir_chain "$(dirname "${destination}")"
+}
+
+print_invocation() {
+  local arg
+
+  printf '+' >&2
+  for arg in "$@"; do
+    printf ' %q' "${arg}" >&2
+  done
+  printf '\n' >&2
+}
+
+configure_ssh_agent() {
+  local socket_path="${SSH_AUTH_SOCK-}"
+
+  if [[ -z "${socket_path}" ]]; then
+    printf 'error: --ssh-agent requires SSH_AUTH_SOCK to be set\n' >&2
+    exit 2
+  fi
+
+  if [[ "${socket_path}" != /* ]]; then
+    printf 'error: --ssh-agent requires SSH_AUTH_SOCK to be an absolute path: %s\n' "${socket_path}" >&2
+    exit 2
+  fi
+
+  if [[ -L "${socket_path}" ]]; then
+    printf 'error: --ssh-agent rejects symlinked sockets: %s\n' "${socket_path}" >&2
+    exit 2
+  fi
+
+  if [[ ! -S "${socket_path}" ]]; then
+    printf 'error: --ssh-agent requires SSH_AUTH_SOCK to point to a Unix socket: %s\n' "${socket_path}" >&2
+    exit 2
+  fi
+
+  local socket_name socket_dir parent_owner parent_mode current_uid
+  socket_name="$(basename "${socket_path}")"
+  socket_dir="$(cd "$(dirname "${socket_path}")" && pwd -P)"
+
+  if [[ ! -S "${socket_dir}/${socket_name}" ]]; then
+    printf 'error: --ssh-agent could not resolve socket path safely: %s\n' "${socket_path}" >&2
+    exit 2
+  fi
+
+  parent_owner="$(stat -c '%u' "${socket_dir}")"
+  parent_mode="$(stat -c '%f' "${socket_dir}")"
+  current_uid="$(id -u)"
+
+  if [[ "${parent_owner}" != "${current_uid}" ]]; then
+    printf 'error: --ssh-agent socket parent is not owned by the current user: %s\n' "${socket_dir}" >&2
+    exit 2
+  fi
+
+  if (( (16#${parent_mode} & 077) != 0 )); then
+    printf 'error: --ssh-agent socket parent must not allow group/world access: %s\n' "${socket_dir}" >&2
+    exit 2
+  fi
+
+  SSH_AGENT_DIR="${socket_dir}"
+  SANDBOX_SSH_AUTH_SOCK="${socket_dir}/${socket_name}"
+}
+
+REAL_OPENCODE="@OPENCODE@"
+BWRAP="@BWRAP@"
+SANDBOX_BASE_PATH="@OPENCODE_BIN@:@RIPGREP_BIN@"
+
+PROJECT_DIR="$(pwd -P)"
+
+HOST_XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+HOST_XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+HOST_XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
+HOST_XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
+
+CONFIG_DIR="${HOST_XDG_CONFIG_HOME}/opencode-spack"
+DATA_DIR="${HOST_XDG_DATA_HOME}/opencode-spack"
+CACHE_DIR="${HOST_XDG_CACHE_HOME}/opencode-spack"
+STATE_DIR="${HOST_XDG_STATE_HOME}/opencode-spack"
+
+GPU_DEVICES=true
+USE_DEFAULT_HIDE_PATHS=true
+SHARE_IPC=false
+SSH_AGENT=false
+RUN_SHELL=false
+PRINT_BWRAP=false
+DEFAULT_HIDE_PATHS=(/users /home /root)
+EXTRA_HIDE_PATHS=()
+EXTRA_BWRAP_ARGS=()
+COMMAND_ARGS=()
+SSH_AGENT_DIR=""
+SANDBOX_SSH_AUTH_SOCK=""
+SANDBOX_COMMAND=()
+
+while (($#)); do
+  case "$1" in
+    --project-dir)
+      require_value "$1" "${2-}"
+      PROJECT_DIR="$2"
+      shift 2
+      ;;
+    --project-dir=*)
+      PROJECT_DIR="${1#*=}"
+      shift
+      ;;
+
+    --config-dir)
+      require_value "$1" "${2-}"
+      CONFIG_DIR="$2"
+      shift 2
+      ;;
+    --config-dir=*)
+      CONFIG_DIR="${1#*=}"
+      shift
+      ;;
+
+    --data-dir)
+      require_value "$1" "${2-}"
+      DATA_DIR="$2"
+      shift 2
+      ;;
+    --data-dir=*)
+      DATA_DIR="${1#*=}"
+      shift
+      ;;
+
+    --cache-dir)
+      require_value "$1" "${2-}"
+      CACHE_DIR="$2"
+      shift 2
+      ;;
+    --cache-dir=*)
+      CACHE_DIR="${1#*=}"
+      shift
+      ;;
+
+    --state-dir)
+      require_value "$1" "${2-}"
+      STATE_DIR="$2"
+      shift 2
+      ;;
+    --state-dir=*)
+      STATE_DIR="${1#*=}"
+      shift
+      ;;
+
+    --ro-bind)
+      require_value "$1" "${2-}"
+      EXTRA_BWRAP_ARGS+=(--ro-bind "${2%%:*}" "${2#*:}")
+      shift 2
+      ;;
+    --ro-bind=*)
+      bind_spec="${1#*=}"
+      EXTRA_BWRAP_ARGS+=(--ro-bind "${bind_spec%%:*}" "${bind_spec#*:}")
+      shift
+      ;;
+
+    --bind)
+      require_value "$1" "${2-}"
+      EXTRA_BWRAP_ARGS+=(--bind "${2%%:*}" "${2#*:}")
+      shift 2
+      ;;
+    --bind=*)
+      bind_spec="${1#*=}"
+      EXTRA_BWRAP_ARGS+=(--bind "${bind_spec%%:*}" "${bind_spec#*:}")
+      shift
+      ;;
+
+    --hide-path)
+      require_value "$1" "${2-}"
+      EXTRA_HIDE_PATHS+=("$2")
+      shift 2
+      ;;
+    --hide-path=*)
+      EXTRA_HIDE_PATHS+=("${1#*=}")
+      shift
+      ;;
+
+    --no-default-hide-paths)
+      USE_DEFAULT_HIDE_PATHS=false
+      shift
+      ;;
+
+    --ssh-agent)
+      SSH_AGENT=true
+      shift
+      ;;
+
+    --share-ipc)
+      SHARE_IPC=true
+      shift
+      ;;
+
+    --shell)
+      RUN_SHELL=true
+      shift
+      ;;
+
+    --print-bwrap)
+      PRINT_BWRAP=true
+      shift
+      ;;
+
+    --no-gpu-devices)
+      GPU_DEVICES=false
+      shift
+      ;;
+
+    -h|--help)
+      usage
+      exit 0
+      ;;
+
+    --)
+      shift
+      COMMAND_ARGS=("$@")
+      break
+      ;;
+
+    *)
+      COMMAND_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ "${RUN_SHELL}" == false && ! -x "${REAL_OPENCODE}" ]]; then
+  printf 'error: packaged opencode executable is missing: %s\n' "${REAL_OPENCODE}" >&2
+  exit 1
+fi
+
+if [[ ! -x "${BWRAP}" ]]; then
+  printf 'error: packaged bubblewrap executable is missing: %s\n' "${BWRAP}" >&2
+  exit 1
+fi
+
+if [[ "${RUN_SHELL}" == true ]]; then
+  shell_path="${SHELL:-/bin/sh}"
+  if [[ "${shell_path}" != /* || ! -x "${shell_path}" ]]; then
+    shell_path="/bin/sh"
+  fi
+
+  if [[ ! -x "${shell_path}" ]]; then
+    printf 'error: debug shell is missing or not executable: %s\n' "${shell_path}" >&2
+    exit 1
+  fi
+
+  SANDBOX_COMMAND=("${shell_path}")
+else
+  SANDBOX_COMMAND=("${REAL_OPENCODE}")
+fi
+
+SANDBOX_COMMAND+=("${COMMAND_ARGS[@]}")
+
+PROJECT_DIR="$(abspath_existing_dir "${PROJECT_DIR}")"
+CONFIG_DIR="$(abspath_existing_dir "${CONFIG_DIR}")"
+DATA_DIR="$(abspath_existing_dir "${DATA_DIR}")"
+CACHE_DIR="$(abspath_existing_dir "${CACHE_DIR}")"
+STATE_DIR="$(abspath_existing_dir "${STATE_DIR}")"
+
+SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
+TUI_CONFIG_HOST="${SANDBOX_XDG_CONFIG_HOME}/opencode/tui.json"
+if [[ ! -f "${TUI_CONFIG_HOST}" ]]; then
+  mkdir -p "$(dirname "${TUI_CONFIG_HOST}")"
+  cat > "${TUI_CONFIG_HOST}" <<'EOF'
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "mouse": false
+}
+EOF
+fi
+
+SANDBOX_PATH="${SANDBOX_BASE_PATH}${PATH:+:${PATH}}"
+
+HIDE_PATHS=()
+if [[ "${USE_DEFAULT_HIDE_PATHS}" == true ]]; then
+  HIDE_PATHS+=("${DEFAULT_HIDE_PATHS[@]}")
+fi
+HIDE_PATHS+=("${EXTRA_HIDE_PATHS[@]}")
+
+if [[ "${SSH_AGENT}" == true ]]; then
+  configure_ssh_agent
+fi
+
+BWRAP_ARGS=(
+  --die-with-parent
+  --unshare-pid
+)
+
+if [[ "${SHARE_IPC}" == false ]]; then
+  BWRAP_ARGS+=(--unshare-ipc)
+fi
+
+BWRAP_ARGS+=(
+  --proc /proc
+  --ro-bind / /
+  --tmpfs /tmp
+)
+
+for hide_path in "${HIDE_PATHS[@]}"; do
+  if [[ -e "${hide_path}" ]]; then
+    BWRAP_ARGS+=(--tmpfs "${hide_path}")
+  fi
+done
+
+add_bind_mountpoint "${PROJECT_DIR}"
+add_bind_mountpoint "${CONFIG_DIR}"
+add_bind_mountpoint "${DATA_DIR}"
+add_bind_mountpoint "${CACHE_DIR}"
+add_bind_mountpoint "${STATE_DIR}"
+
+if [[ -n "${SSH_AGENT_DIR}" ]]; then
+  add_bind_mountpoint "${SSH_AGENT_DIR}"
+fi
+
+BWRAP_ARGS+=(
+  --bind "${PROJECT_DIR}" "${PROJECT_DIR}"
+  --bind "${CONFIG_DIR}" "${CONFIG_DIR}"
+  --bind "${DATA_DIR}" "${DATA_DIR}"
+  --bind "${CACHE_DIR}" "${CACHE_DIR}"
+  --bind "${STATE_DIR}" "${STATE_DIR}"
+  --chdir "${PROJECT_DIR}"
+  --setenv HOME "${CONFIG_DIR}/home"
+  --setenv XDG_CONFIG_HOME "${SANDBOX_XDG_CONFIG_HOME}"
+  --setenv XDG_DATA_HOME "${DATA_DIR}"
+  --setenv XDG_CACHE_HOME "${CACHE_DIR}"
+  --setenv XDG_STATE_HOME "${STATE_DIR}"
+  --setenv PATH "${SANDBOX_PATH}"
+  --setenv OPENCODE_DISABLE_AUTOUPDATE true
+  --setenv OPENCODE_DB opencode-local.db
+)
+
+if [[ -n "${SSH_AGENT_DIR}" ]]; then
+  BWRAP_ARGS+=(--ro-bind "${SSH_AGENT_DIR}" "${SSH_AGENT_DIR}")
+  BWRAP_ARGS+=(--setenv SSH_AUTH_SOCK "${SANDBOX_SSH_AUTH_SOCK}")
+else
+  BWRAP_ARGS+=(--unsetenv SSH_AUTH_SOCK)
+fi
+
+if [[ "${GPU_DEVICES}" == true ]]; then
+  BWRAP_ARGS+=(--dev-bind /dev /dev)
+fi
+
+FINAL_COMMAND=("${BWRAP}" "${BWRAP_ARGS[@]}" "${EXTRA_BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
+
+if [[ "${PRINT_BWRAP}" == true ]]; then
+  print_invocation "${FINAL_COMMAND[@]}"
+fi
+
+exec "${FINAL_COMMAND[@]}"
