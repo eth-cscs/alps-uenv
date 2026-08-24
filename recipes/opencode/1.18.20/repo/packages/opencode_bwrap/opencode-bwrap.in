@@ -66,6 +66,7 @@ Behavior:
   - /users, /home, and /root are hidden by default.
   - /tmp is hidden by default.
   - The project directory and launcher-specific XDG roots are writable.
+  - XDG_RUNTIME_DIR is a private writable directory under host /tmp.
   - Network is inherited from the host.
   - SSH_AUTH_SOCK is unset unless --ssh-agent is passed.
   - PID and IPC namespaces are isolated unless --share-ipc is passed.
@@ -178,6 +179,7 @@ configure_ssh_agent() {
 
 REAL_OPENCODE="@OPENCODE@"
 BWRAP="@BWRAP@"
+PACKAGED_CSCS_SKILLS="@CSCS_SKILLS@"
 SANDBOX_BASE_PATH="@OPENCODE_BIN@:@RIPGREP_BIN@"
 
 PROJECT_DIR="$(pwd -P)"
@@ -373,15 +375,142 @@ CACHE_DIR="$(abspath_existing_dir "${CACHE_DIR}")"
 STATE_DIR="$(abspath_existing_dir "${STATE_DIR}")"
 
 SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
-TUI_CONFIG_HOST="${SANDBOX_XDG_CONFIG_HOME}/opencode/tui.json"
-if [[ ! -f "${TUI_CONFIG_HOST}" ]]; then
-  mkdir -p "$(dirname "${TUI_CONFIG_HOST}")"
-  cat > "${TUI_CONFIG_HOST}" <<'EOF'
+SANDBOX_XDG_RUNTIME_DIR="/tmp/opencode-bwrap-runtime-$(id -u)"
+OPENCODE_CONFIG_HOME="${SANDBOX_XDG_CONFIG_HOME}/opencode"
+OPENCODE_CONFIG_HOST="${OPENCODE_CONFIG_HOME}/opencode.json"
+OPENCODE_SKILLS_HOME="${OPENCODE_CONFIG_HOME}/skills"
+TUI_CONFIG_HOST="${OPENCODE_CONFIG_HOME}/tui.json"
+
+mkdir -p "${OPENCODE_CONFIG_HOME}" "${OPENCODE_SKILLS_HOME}"
+
+if [[ -L "${SANDBOX_XDG_RUNTIME_DIR}" ]]; then
+  printf 'error: XDG runtime directory must not be a symlink: %s\n' "${SANDBOX_XDG_RUNTIME_DIR}" >&2
+  exit 1
+fi
+mkdir -p "${SANDBOX_XDG_RUNTIME_DIR}"
+chmod 700 "${SANDBOX_XDG_RUNTIME_DIR}"
+
+runtime_owner="$(stat -c '%u' "${SANDBOX_XDG_RUNTIME_DIR}")"
+if [[ "${runtime_owner}" != "$(id -u)" ]]; then
+  printf 'error: XDG runtime directory is not owned by the current user: %s\n' "${SANDBOX_XDG_RUNTIME_DIR}" >&2
+  exit 1
+fi
+
+if [[ -d "${PACKAGED_CSCS_SKILLS}" ]]; then
+  for packaged_skill in "${PACKAGED_CSCS_SKILLS}"/*; do
+    [[ -d "${packaged_skill}" ]] || continue
+
+    skill_dir="${OPENCODE_SKILLS_HOME}/$(basename "${packaged_skill}")"
+    skill_marker="${skill_dir}/.opencode-bwrap-packaged-skill"
+
+    if [[ -e "${skill_dir}" && ! -f "${skill_marker}" ]]; then
+      continue
+    fi
+
+    mkdir -p "${skill_dir}"
+    : > "${skill_marker}"
+
+    for packaged_entry in "${packaged_skill}"/*; do
+      entry_link="${skill_dir}/$(basename "${packaged_entry}")"
+      relative_target="$(realpath --relative-to="${skill_dir}" "${packaged_entry}")"
+
+      if [[ -L "${entry_link}" ]]; then
+        if [[ "$(readlink "${entry_link}")" != "${relative_target}" ]]; then
+          ln -sfn "${relative_target}" "${entry_link}"
+        fi
+      elif [[ ! -e "${entry_link}" ]]; then
+        ln -s "${relative_target}" "${entry_link}"
+      fi
+    done
+  done
+fi
+
+if [[ ! -f "${OPENCODE_CONFIG_HOST}" && ! -f "${OPENCODE_CONFIG_HOME}/opencode.jsonc" ]]; then
+  cat > "${OPENCODE_CONFIG_HOST}" <<'OPENCODE_CONFIG_EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "cscs/moonshotai/Kimi-K2.7-Code",
+  "provider": {
+    "cscs": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "CSCS Inference",
+      "options": {
+        "baseURL": "https://api.inference.cscs.ch/v1",
+        "systemMessageMode": "system"
+      },
+      "models": {
+        "swiss-ai/Apertus-70B-Instruct-2509": {
+          "name": "Apertus 70B",
+          "limit": {
+            "context": 65536,
+            "output": 32768
+          }
+        },
+        "swiss-ai/Apertus-8B-Instruct-2509": {
+          "name": "Apertus 8B",
+          "limit": {
+            "context": 65536,
+            "output": 32768
+          }
+        },
+        "swiss-ai/Apertus-v1.5-70B": {
+          "name": "Apertus v1.5 70B",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        },
+        "swiss-ai/Apertus-v1.5-70B-thinking": {
+          "name": "Apertus v1.5 70B Thinking",
+          "tool_call": false,
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        },
+        "swiss-ai/Apertus-v1.5-8B": {
+          "name": "Apertus v1.5 8B",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        },
+        "swiss-ai/Apertus-v1.5-8B-thinking": {
+          "name": "Apertus v1.5 8B Thinking",
+          "tool_call": false,
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        },
+        "zai-org/GLM-5.2": {
+          "name": "GLM 5.2",
+          "limit": {
+            "context": 1048576,
+            "output": 131072
+          }
+        },
+        "moonshotai/Kimi-K2.7-Code": {
+          "name": "Kimi K2.7 Code",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        }
+      }
+    }
+  }
+}
+OPENCODE_CONFIG_EOF
+fi
+
+if [[ ! -f "${TUI_CONFIG_HOST}" && ! -f "${OPENCODE_CONFIG_HOME}/tui.jsonc" ]]; then
+  cat > "${TUI_CONFIG_HOST}" <<'TUI_CONFIG_EOF'
 {
   "$schema": "https://opencode.ai/tui.json",
   "mouse": false
 }
-EOF
+TUI_CONFIG_EOF
 fi
 
 SANDBOX_PATH="${SANDBOX_BASE_PATH}${PATH:+:${PATH}}"
@@ -391,6 +520,24 @@ if [[ "${USE_DEFAULT_HIDE_PATHS}" == true ]]; then
   HIDE_PATHS+=("${DEFAULT_HIDE_PATHS[@]}")
 fi
 HIDE_PATHS+=("${EXTRA_HIDE_PATHS[@]}")
+
+OPTIONAL_RW_BINDS=()
+if [[ "${SCRATCH:-}" == /* ]]; then
+  for scratch_path in \
+    "${SCRATCH}/.edf_imagestore" \
+    "${SCRATCH}/.enroot" \
+    "${SCRATCH}/.enroot-images" \
+    "${SCRATCH}/.parallax_imagestore" \
+    "${SCRATCH}/.sarus" \
+    "${SCRATCH}/.uenv-images"; do
+    if [[ -e "${scratch_path}" ]]; then
+      OPTIONAL_RW_BINDS+=("${scratch_path}")
+    fi
+  done
+fi
+if [[ -e /dev/shm ]]; then
+  OPTIONAL_RW_BINDS+=(/dev/shm)
+fi
 
 if [[ "${SSH_AGENT}" == true ]]; then
   configure_ssh_agent
@@ -422,6 +569,11 @@ add_bind_mountpoint "${CONFIG_DIR}"
 add_bind_mountpoint "${DATA_DIR}"
 add_bind_mountpoint "${CACHE_DIR}"
 add_bind_mountpoint "${STATE_DIR}"
+add_bind_mountpoint "${SANDBOX_XDG_RUNTIME_DIR}"
+
+for rw_bind in "${OPTIONAL_RW_BINDS[@]}"; do
+  add_bind_mountpoint "${rw_bind}"
+done
 
 if [[ -n "${SSH_AGENT_DIR}" ]]; then
   add_bind_mountpoint "${SSH_AGENT_DIR}"
@@ -433,12 +585,14 @@ BWRAP_ARGS+=(
   --bind "${DATA_DIR}" "${DATA_DIR}"
   --bind "${CACHE_DIR}" "${CACHE_DIR}"
   --bind "${STATE_DIR}" "${STATE_DIR}"
+  --bind "${SANDBOX_XDG_RUNTIME_DIR}" "${SANDBOX_XDG_RUNTIME_DIR}"
   --chdir "${PROJECT_DIR}"
   --setenv HOME "${CONFIG_DIR}/home"
   --setenv XDG_CONFIG_HOME "${SANDBOX_XDG_CONFIG_HOME}"
   --setenv XDG_DATA_HOME "${DATA_DIR}"
   --setenv XDG_CACHE_HOME "${CACHE_DIR}"
   --setenv XDG_STATE_HOME "${STATE_DIR}"
+  --setenv XDG_RUNTIME_DIR "${SANDBOX_XDG_RUNTIME_DIR}"
   --setenv PATH "${SANDBOX_PATH}"
   --setenv OPENCODE_DISABLE_AUTOUPDATE true
   --setenv OPENCODE_DB opencode-local.db
@@ -454,6 +608,10 @@ fi
 if [[ "${GPU_DEVICES}" == true ]]; then
   BWRAP_ARGS+=(--dev-bind /dev /dev)
 fi
+
+for rw_bind in "${OPTIONAL_RW_BINDS[@]}"; do
+  BWRAP_ARGS+=(--bind "${rw_bind}" "${rw_bind}")
+done
 
 FINAL_COMMAND=("${BWRAP}" "${BWRAP_ARGS[@]}" "${EXTRA_BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
 

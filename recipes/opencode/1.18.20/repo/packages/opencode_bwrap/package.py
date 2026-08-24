@@ -21,7 +21,21 @@ class OpencodeBwrap(Package):
     depends_on("opencode@1.18.20", when="@1.18.20", type="run")
     depends_on("opencode@1.18.3", when="@1.18.3", type="run")
     depends_on("bubblewrap", type="run")
+    depends_on("opencode-cscs-skills", type="run")
     depends_on("ripgrep", type="run")
+
+    def content_hash(self, content=None):
+        if content is None:
+            with open(join_path(self.package_dir, "package.py"), "rb") as f:
+                content = f.read()
+
+        with open(join_path(self.package_dir, "opencode-bwrap.in"), "rb") as f:
+            template = f.read()
+
+        # Spack hashes only package.py by default. Inject the template as valid
+        # Python source, then delegate to Spack's own content-hash machinery.
+        content += b"\n_opencode_bwrap_template = " + repr(template).encode("utf-8") + b"\n"
+        return super().content_hash(content=content)
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
@@ -33,6 +47,7 @@ class OpencodeBwrap(Package):
         replacements = {
             "@OPENCODE@": str(spec["opencode"].prefix.bin.opencode),
             "@BWRAP@": str(spec["bubblewrap"].prefix.bin.bwrap),
+            "@CSCS_SKILLS@": str(spec["opencode-cscs-skills"].prefix.share.opencode.skills),
             "@OPENCODE_BIN@": str(spec["opencode"].prefix.bin),
             "@RIPGREP_BIN@": str(spec["ripgrep"].prefix.bin),
         }
