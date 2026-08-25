@@ -553,8 +553,8 @@ if [[ "${SHARE_IPC}" == false ]]; then
 fi
 
 BWRAP_ARGS+=(
-  --proc /proc
   --ro-bind / /
+  --proc /proc
   --tmpfs /tmp
 )
 
