@@ -1,0 +1,37 @@
+netcdf:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 ~cuda~rocm
+      # disable GPU aware MPI
+      specs: ['libfabric~cuda~gdrcopy']
+  unify: true
+  specs:
+  - hdf5 +szip +hl
+  - netcdf-c
+  - netcdf-cxx4
+  - netcdf-fortran
+  - ncview
+  - cdo
+  # +tools enables the eccodes CLI tools
+  - eccodes +netcdf +tools +png
+  - py-eccodes
+  - gdal +netcdf
+  - geos
+  - nco
+  - python
+  - udunits
+  - ferret
+  - ncl ~esmf
+  variants:
+  - ~cuda
+  views:
+    netcdf:
+      # link: run (not roots) so transitive runtime deps are present in the
+      # view. Needed for python: py-eccodes' deps (numpy, cffi, findlibs) must
+      # be co-located in the view's site-packages or `import eccodes` fails.
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+
