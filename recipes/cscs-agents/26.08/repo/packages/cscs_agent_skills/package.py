@@ -11,20 +11,20 @@ class CscsAgentSkills(Package):
     """CSCS skills shared by the packaged coding agents."""
 
     homepage = "https://github.com/eth-cscs/agent-skills"
-    url = "https://github.com/eth-cscs/agent-skills/archive/6d1c86ddf3ba2c785c27e03fce999c79c6af499f.tar.gz"
+    url = "https://github.com/eth-cscs/agent-skills/archive/62b583eb3407f6266198db5d22244a233741aa45.tar.gz"
 
     license("MIT")
 
     version(
-        "2026.07.13",
-        sha256="a3538d1f91f5d483ba63b254c0e3cc28032fa468ddf144473796c8566426c29d",
+        "2026.08.28",
+        sha256="2a405bc4fa68ae83078515e806b0bca8d59e194f0bb6d348cebbae8f02be0801",
     )
 
     phases = ["install"]
 
     def url_for_version(self, version):
-        if str(version) == "2026.07.13":
-            return "https://github.com/eth-cscs/agent-skills/archive/6d1c86ddf3ba2c785c27e03fce999c79c6af499f.tar.gz"
+        if str(version) == "2026.08.28":
+            return "https://github.com/eth-cscs/agent-skills/archive/62b583eb3407f6266198db5d22244a233741aa45.tar.gz"
 
         return self.url
 

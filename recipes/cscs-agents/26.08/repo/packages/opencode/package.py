@@ -16,7 +16,7 @@ class Opencode(Package):
     """
 
     homepage = "https://opencode.ai"
-    url = "https://github.com/anomalyco/opencode/archive/refs/tags/v1.18.3.tar.gz"
+    url = "https://github.com/anomalyco/opencode/archive/refs/tags/v1.18.25.tar.gz"
     supplier = "Organization: Anomaly Innovations"
 
     maintainers("aprozo")
@@ -25,8 +25,7 @@ class Opencode(Package):
 
     sanity_check_is_file = ["bin/opencode"]
 
-    version("1.18.20", sha256="10129b7a233d8ea227fe8a65c158d3df4adc3d1296e3af5a136d94080b25a630")
-    version("1.18.3", sha256="494041aedd7407079f91fd694de355f4ff022ba6bf876e09ff30983bbdc70ae1")
+    version("1.18.25", sha256="44e9530d7be172005c7d60aef317440eecb85d557d94cce7fa35c5a7b9d9da0b")
 
     depends_on("bun@1.3.14:1", type="build")
     depends_on("node-js@22.12:22", type="build")

@@ -1,6 +1,6 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 1.18.20 and Oh-My-Pi (OMP) 18.0.5 launchers with CSCS inference defaults, runtime model discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 1.18.25 and Oh-My-Pi (OMP) 18.0.9 launchers with CSCS inference defaults, runtime model discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 

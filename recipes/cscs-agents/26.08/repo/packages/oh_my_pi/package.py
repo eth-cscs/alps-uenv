@@ -13,33 +13,33 @@ class OhMyPi(Package):
     """Oh-My-Pi coding agent CLI."""
 
     homepage = "https://omp.sh"
-    url = "https://github.com/can1357/oh-my-pi/releases/download/v18.0.5/LICENSE"
+    url = "https://github.com/can1357/oh-my-pi/releases/download/v18.0.9/LICENSE"
 
     license("MIT")
 
     sanity_check_is_file = ["bin/omp"]
 
     version(
-        "18.0.5",
+        "18.0.9",
         sha256="16c45f9d667442781f03fa198914cc39abcaa48ec5ed8f644643e554ca2fbf63",
         expand=False,
     )
 
     resource(
         name="omp-linux-arm64",
-        url="https://github.com/can1357/oh-my-pi/releases/download/v18.0.5/omp-linux-arm64",
-        sha256="9fa632da09cc6f2b625bb79aa291d52985f936a10408d278d550983f91460785",
+        url="https://github.com/can1357/oh-my-pi/releases/download/v18.0.9/omp-linux-arm64",
+        sha256="99cbd2b24b57f11029c345271b3c3adb7820f435f0229f6c577f503f2e64c12a",
         expand=False,
         placement={"omp-linux-arm64": "omp-linux-arm64"},
-        when="@18.0.5 target=aarch64:",
+        when="@18.0.9 target=aarch64:",
     )
     resource(
         name="omp-linux-x64",
-        url="https://github.com/can1357/oh-my-pi/releases/download/v18.0.5/omp-linux-x64",
-        sha256="d5a322af241cebe2662b3b792ff29d3ea6e61364328e916c9429065f346391ed",
+        url="https://github.com/can1357/oh-my-pi/releases/download/v18.0.9/omp-linux-x64",
+        sha256="55304008876a61f48c2a1dc1b0998ca36e7e45b8bc25aa25cf24e5c44524412c",
         expand=False,
         placement={"omp-linux-x64": "omp-linux-x64"},
-        when="@18.0.5 target=x86_64:",
+        when="@18.0.9 target=x86_64:",
     )
 
     phases = ["install"]

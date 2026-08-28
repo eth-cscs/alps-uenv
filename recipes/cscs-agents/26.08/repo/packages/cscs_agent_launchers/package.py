@@ -18,10 +18,10 @@ class CscsAgentLaunchers(Package):
 
     license("MIT")
 
-    version("2026.08.27")
+    version("2026.08.28")
 
-    depends_on("opencode@1.18.20", type="run")
-    depends_on("oh-my-pi@18.0.5", type="run")
+    depends_on("opencode@1.18.25", type="run")
+    depends_on("oh-my-pi@18.0.9", type="run")
     depends_on("bubblewrap", type="run")
     depends_on("cscs-agent-model-config", type="run")
     depends_on("cscs-agent-skills", type="run")
