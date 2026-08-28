@@ -24,7 +24,7 @@ class CscsAgentLaunchers(Package):
     depends_on("oh-my-pi@18.0.5", type="run")
     depends_on("bubblewrap", type="run")
     depends_on("cscs-agent-model-config", type="run")
-    depends_on("opencode-cscs-skills", type="run")
+    depends_on("cscs-agent-skills", type="run")
     depends_on("ripgrep", type="run")
 
     sanity_check_is_file = ["bin/opencode-bwrap", "bin/omp-bwrap"]
@@ -73,8 +73,10 @@ class CscsAgentLaunchers(Package):
                 "defaults",
             ),
             "@LAUNCHER_DEFAULTS@": defaults,
-            "@CSCS_SKILLS@": str(
-                spec["opencode-cscs-skills"].prefix.share.opencode.skills
+            "@CSCS_SKILLS@": join_path(
+                spec["cscs-agent-skills"].prefix.share,
+                "cscs-agent-skills",
+                "skills",
             ),
             "@OPENCODE_BIN@": str(spec["opencode"].prefix.bin),
             "@OMP_BIN@": str(spec["oh-my-pi"].prefix.bin),

@@ -7,8 +7,8 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 
-class OpencodeCscsSkills(Package):
-    """CSCS agent skills packaged for OpenCode."""
+class CscsAgentSkills(Package):
+    """CSCS skills shared by the packaged coding agents."""
 
     homepage = "https://github.com/eth-cscs/agent-skills"
     url = "https://github.com/eth-cscs/agent-skills/archive/6d1c86ddf3ba2c785c27e03fce999c79c6af499f.tar.gz"
@@ -29,11 +29,13 @@ class OpencodeCscsSkills(Package):
         return self.url
 
     def install(self, spec, prefix):
-        install_tree("skills", prefix.share.opencode.skills)
-        install("LICENSE", prefix.share.opencode)
-        install("README.md", prefix.share.opencode)
+        share_dir = join_path(prefix.share, "cscs-agent-skills")
+        skills_dir = join_path(share_dir, "skills")
+        install_tree("skills", skills_dir)
+        install("LICENSE", share_dir)
+        install("README.md", share_dir)
 
-        skill_dir = join_path(prefix.share.opencode.skills, "refresh-cscs-models")
+        skill_dir = join_path(skills_dir, "refresh-cscs-models")
         mkdirp(skill_dir)
         with open(join_path(skill_dir, "SKILL.md"), "w", encoding="utf-8") as f:
             f.write(

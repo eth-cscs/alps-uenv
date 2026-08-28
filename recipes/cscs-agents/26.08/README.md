@@ -1,4 +1,4 @@
-# OpenCode and Oh-My-Pi uenv
+# CSCS coding agents uenv
 
 This uenv provides isolated OpenCode 1.18.20 and Oh-My-Pi (OMP) 18.0.5 launchers with CSCS inference defaults, runtime model discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
@@ -15,11 +15,11 @@ export CSCS_INFERENCE_API_KEY=...
 When starting through `uenv run`:
 
 ```bash
-uenv run agents-bwrap -- omp-bwrap
-uenv run agents-bwrap -- opencode-bwrap
+uenv run cscs-agents/26.08 -- omp-bwrap
+uenv run cscs-agents/26.08 -- opencode-bwrap
 ```
 
-When the uenv and its `opencode` view are already active:
+When the uenv and its `agents` view are already active:
 
 ```bash
 omp-bwrap
@@ -76,7 +76,7 @@ rm "${XDG_CONFIG_HOME:-$HOME/.config}/omp-spack/home/.omp/agent/.omp-bwrap-cscs-
 Mounting another uenv is not enough: its view must also be active. For example, to use the Python and packages from a PyTorch uenv:
 
 ```bash
-uenv run agents-bwrap,pytorch --view=opencode,default -- omp-bwrap
+uenv run cscs-agents/26.08,pytorch --view=agents,default -- omp-bwrap
 ```
 
 Use fully qualified uenv names or image paths as appropriate. Verify both views with:
@@ -88,8 +88,8 @@ uenv status
 Expected state:
 
 ```text
-uenv  agents-bwrap
-  views  [opencode]
+uenv  cscs-agents
+  views  [agents]
 uenv  pytorch
   views  [default]
 ```

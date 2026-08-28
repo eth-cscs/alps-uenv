@@ -5,7 +5,7 @@ User-facing launch and CSCS inference instructions are in [README.md](README.md)
 ## Recipe composition
 
 - Spack is pinned to `v1.2.2`; `spack-packages` is pinned to commit `7318c6ac1a452a5e9f433d6de81841a036114e8f` from 2026-08-21.
-- The environment uses GCC 14, `unify: true`, a root-linked `opencode` view, and `add_compilers: false`.
+- The `cscs-agents/26.08` recipe uses an `agents` environment and view, GCC 14, `unify: true`, root linking, and `add_compilers: false`.
 - Runtime roots are `cscs-agent-model-config`, `cscs-agent-launchers@2026.08.27`, ShellCheck, jq, yq 4, and `squashfs`.
 - Keep `cleanup: runtime` and keep `squashfs` explicit. Stackinator's implicit `squashfs` group is not an explicit environment root and is otherwise eligible for garbage collection before image creation.
 
@@ -33,7 +33,7 @@ Installation replaces literal ED3 terminal scrollback clears (`ESC[3J`) with har
 
 Builds OpenCode 1.18.20 from source with Bun and Node.js. The installed binary is standalone; Bun and Node are build dependencies. Runtime auto-update is disabled.
 
-### `opencode-cscs-skills`
+### `cscs-agent-skills`
 
 Packages the CSCS agent skills and adds the `refresh-cscs-models` skill. Launchers install relative links into launcher-owned skill directories and leave user-owned directories untouched.
 
@@ -67,7 +67,7 @@ Packages the CSCS agent skills and adds the `refresh-cscs-models` skill. Launche
 
 ## Build history and workarounds
 
-- The earlier split-launcher recipe built as `agents-bwrap/v26.08` on Daint GH200. The consolidated launcher recipe subsequently built successfully and was exercised through the published uenv.
+- The split and consolidated launcher iterations were built and exercised on Daint GH200 under the former `agents-bwrap/26.08` identity. The recipe was then renamed to `cscs-agents/26.08`, its view to `agents`, and the shared skills package to `cscs-agent-skills`. This naming cutover changes package hashes and requires a rebuild, but is not intended to change runtime behavior.
 - During the consolidated build, `ftp.gnu.org` was unreachable for the URL patches of `bash@5.3`, while `mirror.spack.io` lacked the objects. Downloading all nine patches from `https://ftpmirror.gnu.org/bash/bash-5.3-patches/`, verifying the package checksums, and placing them in the configured content-addressed Spack source cache allowed the unmodified Bash package to build.
 - `cleanup: runtime` initially removed Stackinator's implicit GCC and `squashfs` groups. Missing GCC produced an empty compiler configuration but was nonfatal; missing `squashfs` made image creation resolve `/bin/mksquashfs`. Making `squashfs` an explicit recipe root is the per-recipe keep exception. Revisit this if Stackinator begins protecting its internal packaging tools.
 - Validation performed during development includes Bash syntax checks, Python source compilation, JSON/YAML parsing, substitution-token/content-hash checks, fake-bubblewrap launcher exercises, managed-config ownership tests, first/cached uv bootstrap tests, and live multi-uenv Python/PyTorch selection.

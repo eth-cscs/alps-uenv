@@ -1,4 +1,4 @@
-name: opencode
+name: cscs-agents
 store: /user-tools
 spack:
   repo: https://github.com/spack/spack.git
