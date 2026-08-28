@@ -1,4 +1,4 @@
-opencode-env:
+agents:
   compiler: [gcc]
   unify: true
   specs:
@@ -10,7 +10,7 @@ opencode-env:
     # Keep Stackinator's image packer alive across cleanup: runtime.
     - squashfs
   views:
-    opencode:
+    agents:
       link: roots
       uenv:
         add_compilers: false
