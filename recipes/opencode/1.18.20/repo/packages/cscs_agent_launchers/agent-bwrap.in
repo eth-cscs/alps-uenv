@@ -1,0 +1,825 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+LAUNCHER_NAME="$(basename "$0")"
+case "${LAUNCHER_NAME}" in
+  opencode-bwrap)
+    AGENT_KIND=opencode
+    AGENT_LABEL=OpenCode
+    REAL_AGENT="@OPENCODE@"
+    AGENT_BIN="@OPENCODE_BIN@"
+    XDG_STEM=opencode-spack
+    ;;
+  omp-bwrap)
+    AGENT_KIND=omp
+    AGENT_LABEL=OMP
+    REAL_AGENT="@OMP@"
+    AGENT_BIN="@OMP_BIN@"
+    XDG_STEM=omp-spack
+    ;;
+  *)
+    printf 'error: launcher must be invoked as opencode-bwrap or omp-bwrap, not %s\n' \
+      "${LAUNCHER_NAME}" >&2
+    exit 2
+    ;;
+esac
+
+BWRAP="@BWRAP@"
+CSCS_MODEL_CONFIG="@CSCS_MODEL_CONFIG@"
+CSCS_MODEL_DEFAULTS="@CSCS_MODEL_DEFAULTS@"
+LAUNCHER_DEFAULTS="@LAUNCHER_DEFAULTS@"
+PACKAGED_CSCS_SKILLS="@CSCS_SKILLS@"
+SANDBOX_BASE_PATH="${AGENT_BIN}:@RIPGREP_BIN@"
+
+HOST_XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+HOST_XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+HOST_XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
+HOST_XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
+TOOLS_DIR="${CSCS_AGENT_TOOLS_DIR:-${HOST_XDG_DATA_HOME}/cscs-agent-tools}"
+TOOLS_CACHE_DIR="${CSCS_AGENT_TOOLS_CACHE_DIR:-${HOST_XDG_CACHE_HOME}/cscs-agent-tools/uv}"
+AGENT_PYTHON_VERSION="${CSCS_AGENT_PYTHON_VERSION:-3.13}"
+AGENT_UV_VERSION="${CSCS_AGENT_UV_VERSION:-0.12.7}"
+AGENT_UV_INSTALL_URL="${CSCS_AGENT_UV_INSTALL_URL:-https://astral.sh/uv/${AGENT_UV_VERSION}/install.sh}"
+
+usage() {
+  cat <<EOF
+Usage:
+  ${LAUNCHER_NAME} [launcher-options] [-- command-args ...]
+
+Launcher options:
+  --project-dir PATH
+      Project directory to expose read-write. Default: current directory.
+
+  --config-dir PATH
+      XDG config root for this launcher. Default: ${HOST_XDG_CONFIG_HOME}/${XDG_STEM}
+
+  --data-dir PATH
+      XDG data root for this launcher. Default: ${HOST_XDG_DATA_HOME}/${XDG_STEM}
+
+  --cache-dir PATH
+      XDG cache root for this launcher. Default: ${HOST_XDG_CACHE_HOME}/${XDG_STEM}
+
+  --state-dir PATH
+      XDG state root for this launcher. Default: ${HOST_XDG_STATE_HOME}/${XDG_STEM}
+
+  --ro-bind SRC:DST
+      Add an extra read-only bind mount.
+
+  --bind SRC:DST
+      Add an extra read-write bind mount.
+
+  --hide-path PATH
+      Hide a host path behind an empty tmpfs mount. Can be repeated.
+
+  --no-default-hide-paths
+      Do not hide the default sensitive paths: /users, /home, /root.
+      Paths added with --hide-path are still hidden.
+
+  --ssh-agent
+      Expose SSH_AUTH_SOCK inside the sandbox. The socket must be in a private
+      parent directory owned by the current user with no group/world access.
+
+  --share-ipc
+      Share the host IPC namespace. By default, the sandbox uses a separate IPC
+      namespace.
+
+  --shell
+      Start ${SHELL:-/bin/sh} inside the sandbox instead of ${AGENT_LABEL}.
+      Arguments after -- are passed to the shell.
+
+  --print-bwrap
+      Print the bubblewrap invocation to stderr before executing it.
+
+  --no-gpu-devices
+      Do not pass through host /dev. GPU access is enabled by default.
+
+  -h, --help
+      Show this help.
+
+Behavior:
+  - The host filesystem is visible read-only, except hidden paths.
+  - /users, /home, /root, and /tmp are hidden by default.
+  - The project directory and launcher-specific XDG roots are writable.
+  - XDG_RUNTIME_DIR is a private writable directory under host /tmp.
+  - Network is inherited from the host.
+  - SSH_AUTH_SOCK is unset unless --ssh-agent is passed.
+  - PID and IPC namespaces are isolated unless --share-ipc is passed.
+  - Existing default ${AGENT_LABEL} config directories are not used unless
+    explicitly selected with the XDG directory options above.
+  - uv and its private managed Python live under ${TOOLS_DIR} and are shared by
+    both harnesses. Project Python follows the inherited uenv PATH, while the
+    CSCS model generator explicitly selects the managed interpreter.
+  - If uv is absent, the launcher installs uv ${AGENT_UV_VERSION} from
+    ${AGENT_UV_INSTALL_URL} using the host curl.
+EOF
+}
+
+fail_usage() {
+  printf 'error: %s\n' "$1" >&2
+  exit 2
+}
+
+require_value() {
+  local option="$1"
+  local value="${2-}"
+  [[ -n "${value}" ]] || fail_usage "${option} requires a value"
+}
+
+abspath_existing_dir() {
+  local directory="$1"
+  mkdir -p "${directory}"
+  (cd "${directory}" && pwd -P)
+}
+
+add_sandbox_dir_chain() {
+  local path="${1%/}"
+  local current=""
+  local old_ifs part
+  local -a parts
+
+  [[ "${path}" == /* ]] || return 0
+  path="${path#/}"
+  [[ -n "${path}" ]] || return 0
+
+  old_ifs="${IFS}"
+  IFS=/
+  read -r -a parts <<< "${path}"
+  IFS="${old_ifs}"
+
+  for part in "${parts[@]}"; do
+    [[ -n "${part}" ]] || continue
+    current="${current}/${part}"
+    BWRAP_ARGS+=(--dir "${current}")
+  done
+}
+
+add_bind_mountpoint() {
+  add_sandbox_dir_chain "$(dirname "$1")"
+}
+
+add_extra_bind() {
+  local mode="$1"
+  local specification="$2"
+  local source destination
+
+  [[ "${specification}" == *:* ]] || \
+    fail_usage "${mode} requires SRC:DST, got ${specification}"
+  source="${specification%%:*}"
+  destination="${specification#*:}"
+  [[ -n "${source}" && -n "${destination}" ]] || \
+    fail_usage "${mode} requires non-empty SRC and DST"
+  [[ "${source}" == /* && "${destination}" == /* ]] || \
+    fail_usage "${mode} requires absolute SRC and DST paths"
+  [[ -e "${source}" ]] || fail_usage "${mode} source does not exist: ${source}"
+
+  EXTRA_BIND_MODES+=("${mode}")
+  EXTRA_BIND_SOURCES+=("${source}")
+  EXTRA_BIND_DESTINATIONS+=("${destination}")
+}
+
+print_invocation() {
+  local arg
+  printf '+' >&2
+  for arg in "$@"; do
+    printf ' %q' "${arg}" >&2
+  done
+  printf '\n' >&2
+}
+
+configure_ssh_agent() {
+  local socket_path="${SSH_AUTH_SOCK-}"
+  local socket_name socket_dir parent_owner parent_mode current_uid
+
+  [[ -n "${socket_path}" ]] || \
+    fail_usage "--ssh-agent requires SSH_AUTH_SOCK to be set"
+  [[ "${socket_path}" == /* ]] || \
+    fail_usage "--ssh-agent requires an absolute SSH_AUTH_SOCK path: ${socket_path}"
+  [[ ! -L "${socket_path}" ]] || \
+    fail_usage "--ssh-agent rejects symlinked sockets: ${socket_path}"
+  [[ -S "${socket_path}" ]] || \
+    fail_usage "--ssh-agent requires a Unix socket: ${socket_path}"
+
+  socket_name="$(basename "${socket_path}")"
+  socket_dir="$(cd "$(dirname "${socket_path}")" && pwd -P)"
+  [[ -S "${socket_dir}/${socket_name}" ]] || \
+    fail_usage "--ssh-agent could not resolve socket safely: ${socket_path}"
+
+  parent_owner="$(stat -c '%u' "${socket_dir}")"
+  parent_mode="$(stat -c '%f' "${socket_dir}")"
+  current_uid="$(id -u)"
+  [[ "${parent_owner}" == "${current_uid}" ]] || \
+    fail_usage "SSH agent directory is not owned by the current user: ${socket_dir}"
+  (( (16#${parent_mode} & 077) == 0 )) || \
+    fail_usage "SSH agent directory allows group/world access: ${socket_dir}"
+
+  SSH_AGENT_DIR="${socket_dir}"
+  SANDBOX_SSH_AUTH_SOCK="${socket_dir}/${socket_name}"
+}
+
+has_cscs_model_refresh_key() {
+  [[ -n "${CSCS_INFERENCE_API_KEY-}" || -n "${CSCS_API_KEY-}" ]]
+}
+
+harmonize_cscs_api_key() {
+  if [[ -z "${CSCS_INFERENCE_API_KEY-}" && -n "${CSCS_API_KEY-}" ]]; then
+    export CSCS_INFERENCE_API_KEY="${CSCS_API_KEY}"
+  fi
+}
+
+prepare_managed_python() {
+  local installed_uv python_marker python_ready executable resolved
+
+  mkdir -p "${TOOLS_DIR}/bin" "${TOOLS_CACHE_DIR}"
+  installed_uv="${TOOLS_DIR}/bin/uv"
+
+  if [[ ! -x "${installed_uv}" ]]; then
+    command -v curl >/dev/null 2>&1 || {
+      printf 'error: curl is required to install uv from %s\n' \
+        "${AGENT_UV_INSTALL_URL}" >&2
+      exit 1
+    }
+    printf 'installing uv %s in %s\n' \
+      "${AGENT_UV_VERSION}" "${TOOLS_DIR}/bin" >&2
+    if ! curl -LsSf "${AGENT_UV_INSTALL_URL}" | \
+      env \
+        PATH="${TOOLS_DIR}/bin${PATH:+:${PATH}}" \
+        UV_INSTALL_DIR="${TOOLS_DIR}/bin" \
+        UV_NO_MODIFY_PATH=1 \
+        sh -s -- --quiet; then
+      printf 'error: failed to install uv from %s\n' "${AGENT_UV_INSTALL_URL}" >&2
+      exit 1
+    fi
+    [[ -x "${installed_uv}" ]] || {
+      printf 'error: uv installer did not create %s\n' "${installed_uv}" >&2
+      exit 1
+    }
+  fi
+
+  UV_BIN="${installed_uv}"
+  UV_PYTHON_INSTALL_DIR="${TOOLS_DIR}/python"
+  UV_PYTHON_BIN_DIR="${TOOLS_DIR}/python-bin"
+  UV_TOOL_DIR="${TOOLS_DIR}/tools"
+  UV_TOOL_BIN_DIR="${TOOLS_DIR}/bin"
+  UV_CACHE_DIR="${TOOLS_CACHE_DIR}"
+  UV_PYTHON_PREFERENCE=system
+
+  export \
+    CSCS_AGENT_UV="${UV_BIN}" \
+    CSCS_AGENT_PYTHON_VERSION="${AGENT_PYTHON_VERSION}" \
+    UV_CACHE_DIR \
+    UV_PYTHON_BIN_DIR \
+    UV_PYTHON_INSTALL_DIR \
+    UV_PYTHON_PREFERENCE \
+    UV_TOOL_BIN_DIR \
+    UV_TOOL_DIR
+
+  python_marker="${TOOLS_DIR}/.managed-python-version"
+  python_ready=false
+  if [[ -f "${python_marker}" ]] && \
+    [[ "$(<"${python_marker}")" == "${AGENT_PYTHON_VERSION}" ]]; then
+    python_ready=true
+    for executable in python python3; do
+      if [[ ! -x "${UV_PYTHON_BIN_DIR}/${executable}" ]]; then
+        python_ready=false
+        break
+      fi
+      resolved="$(realpath "${UV_PYTHON_BIN_DIR}/${executable}")"
+      case "${resolved}" in
+        "${UV_PYTHON_INSTALL_DIR}"/*) ;;
+        *)
+          python_ready=false
+          break
+          ;;
+      esac
+    done
+  fi
+
+  if [[ "${python_ready}" == false ]]; then
+    printf 'installing uv-managed Python %s; the first launch can take a while (no input is required)\n' \
+      "${AGENT_PYTHON_VERSION}" >&2
+    env PATH="${UV_PYTHON_BIN_DIR}${PATH:+:${PATH}}" \
+      "${UV_BIN}" --preview-features python-install-default \
+      python install "${AGENT_PYTHON_VERSION}" --default
+  fi
+
+  for executable in python python3; do
+    [[ -x "${UV_PYTHON_BIN_DIR}/${executable}" ]] || {
+      printf 'error: uv did not install the managed %s executable\n' "${executable}" >&2
+      exit 1
+    }
+    resolved="$(realpath "${UV_PYTHON_BIN_DIR}/${executable}")"
+    case "${resolved}" in
+      "${UV_PYTHON_INSTALL_DIR}"/*) ;;
+      *)
+        printf 'error: %s does not resolve to a uv-managed Python: %s\n' \
+          "${executable}" "${resolved}" >&2
+        exit 1
+        ;;
+    esac
+  done
+  printf '%s\n' "${AGENT_PYTHON_VERSION}" > "${python_marker}"
+}
+
+record_managed_hash() {
+  local file="$1"
+  local marker="$2"
+  local hash
+
+  hash="$(sha256sum "${file}" | cut -d ' ' -f 1)" || return 1
+  printf '%s\n' "${hash}" > "${marker}"
+}
+
+managed_file_matches_hash() {
+  local file="$1"
+  local marker="$2"
+  local expected current
+
+  [[ -f "${file}" && -f "${marker}" ]] || return 1
+  expected="$(<"${marker}")"
+  current="$(sha256sum "${file}" | cut -d ' ' -f 1)" || return 1
+  [[ "${current}" == "${expected}" ]]
+}
+
+seed_managed_file() {
+  local source="$1"
+  local target="$2"
+  local alternate="$3"
+  local marker="$4"
+
+  [[ ! -e "${target}" ]] || return 0
+  [[ -z "${alternate}" || ! -e "${alternate}" ]] || return 0
+  [[ -f "${source}" ]] || return 0
+
+  install -m 600 "${source}" "${target}"
+  record_managed_hash "${target}" "${marker}" || true
+}
+
+update_managed_default() {
+  local source="$1"
+  local target="$2"
+  local alternate="$3"
+  local marker="$4"
+
+  seed_managed_file "${source}" "${target}" "${alternate}" "${marker}"
+  managed_file_matches_hash "${target}" "${marker}" || return 0
+  cmp -s "${source}" "${target}" && return 0
+
+  install -m 600 "${source}" "${target}"
+  record_managed_hash "${target}" "${marker}" || true
+}
+
+refresh_due() {
+  local stamp="$1"
+  local now last
+
+  [[ -f "${stamp}" ]] || return 0
+  now="$(date +%s)"
+  last="$(stat -c '%Y' "${stamp}" 2>/dev/null || printf '0')"
+  (( now - last >= 86400 ))
+}
+
+generate_cscs_model_config() {
+  if [[ "${CSCS_MODEL_REFRESH_VERBOSE-}" == 1 ]]; then
+    env HOME="${SANDBOX_HOME}" XDG_CACHE_HOME="${CACHE_DIR}" \
+      "${CSCS_MODEL_CONFIG}" "$@"
+  else
+    env HOME="${SANDBOX_HOME}" XDG_CACHE_HOME="${CACHE_DIR}" \
+      "${CSCS_MODEL_CONFIG}" "$@" >/dev/null 2>&1
+  fi
+}
+
+refresh_managed_model_config() {
+  local format="$1"
+  local output="$2"
+  local target="$3"
+  local marker="$4"
+  local stamp="$5"
+  local tmp_dir
+
+  [[ -x "${CSCS_MODEL_CONFIG}" ]] || return 0
+  has_cscs_model_refresh_key || return 0
+  managed_file_matches_hash "${target}" "${marker}" || return 0
+  refresh_due "${stamp}" || return 0
+
+  tmp_dir="$(mktemp -d "${CACHE_DIR}/cscs-models.XXXXXX")" || return 0
+  if generate_cscs_model_config --format "${format}" --out-dir "${tmp_dir}"; then
+    if [[ -s "${tmp_dir}/${output}" ]]; then
+      install -m 600 "${tmp_dir}/${output}" "${target}"
+      record_managed_hash "${target}" "${marker}" || true
+      : > "${stamp}"
+    fi
+  elif [[ "${CSCS_MODEL_REFRESH_VERBOSE-}" == 1 ]]; then
+    printf 'warning: failed to refresh CSCS model config; keeping %s\n' \
+      "${target}" >&2
+  fi
+  rm -rf "${tmp_dir}"
+}
+
+sync_packaged_skills() {
+  local skills_home="$1"
+  local marker_name="$2"
+  local packaged_skill skill_dir skill_marker packaged_entry entry_link relative_target
+
+  [[ -d "${PACKAGED_CSCS_SKILLS}" ]] || return 0
+  mkdir -p "${skills_home}"
+
+  for packaged_skill in "${PACKAGED_CSCS_SKILLS}"/*; do
+    [[ -d "${packaged_skill}" ]] || continue
+    skill_dir="${skills_home}/$(basename "${packaged_skill}")"
+    skill_marker="${skill_dir}/${marker_name}"
+
+    if [[ -e "${skill_dir}" && ! -f "${skill_marker}" ]]; then
+      continue
+    fi
+
+    mkdir -p "${skill_dir}"
+    : > "${skill_marker}"
+    for packaged_entry in "${packaged_skill}"/*; do
+      [[ -e "${packaged_entry}" ]] || continue
+      entry_link="${skill_dir}/$(basename "${packaged_entry}")"
+      relative_target="$(realpath --relative-to="${skill_dir}" "${packaged_entry}")"
+
+      if [[ -L "${entry_link}" ]]; then
+        if [[ "$(readlink "${entry_link}")" != "${relative_target}" ]]; then
+          ln -sfn "${relative_target}" "${entry_link}"
+        fi
+      elif [[ ! -e "${entry_link}" ]]; then
+        ln -s "${relative_target}" "${entry_link}"
+      fi
+    done
+  done
+}
+
+initialize_opencode() {
+  local config_home model_target model_marker model_stamp skills_home tui_target
+
+  SANDBOX_HOME="${CONFIG_DIR}/home"
+  SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
+  config_home="${SANDBOX_XDG_CONFIG_HOME}/opencode"
+  model_target="${config_home}/opencode.json"
+  model_marker="${config_home}/.opencode-bwrap-cscs-models.sha256"
+  model_stamp="${config_home}/.opencode-bwrap-cscs-models.refresh"
+  skills_home="${config_home}/skills"
+  tui_target="${config_home}/tui.json"
+
+  mkdir -p "${SANDBOX_HOME}" "${config_home}" "${skills_home}"
+  sync_packaged_skills "${skills_home}" .opencode-bwrap-packaged-skill
+
+  # OpenCode merges opencode.json and opencode.jsonc. Manage only our JSON file,
+  # even when a separate user-owned JSONC file exists.
+  seed_managed_file \
+    "${CSCS_MODEL_DEFAULTS}/opencode.json" \
+    "${model_target}" "" "${model_marker}"
+  refresh_managed_model_config \
+    opencode opencode.json "${model_target}" "${model_marker}" "${model_stamp}"
+
+  if [[ ! -f "${tui_target}" && ! -f "${config_home}/tui.jsonc" ]]; then
+    install -m 600 "${LAUNCHER_DEFAULTS}/opencode-tui.json" "${tui_target}"
+  fi
+
+  APP_ENV_ARGS=(
+    --setenv OPENCODE_DISABLE_AUTOUPDATE true
+    --setenv OPENCODE_DB opencode-local.db
+  )
+}
+
+initialize_omp() {
+  local agent_dir model_target model_marker model_stamp skills_home config_target config_marker
+
+  SANDBOX_HOME="${CONFIG_DIR}/home"
+  SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
+  agent_dir="${SANDBOX_HOME}/.omp/agent"
+  model_target="${agent_dir}/models.yml"
+  model_marker="${agent_dir}/.omp-bwrap-cscs-models.sha256"
+  model_stamp="${agent_dir}/.omp-bwrap-cscs-models.refresh"
+  skills_home="${agent_dir}/skills"
+  config_target="${agent_dir}/config.yml"
+  config_marker="${agent_dir}/.omp-bwrap-config.sha256"
+
+  mkdir -p "${agent_dir}" "${skills_home}"
+  sync_packaged_skills "${skills_home}" .omp-bwrap-packaged-skill
+
+  seed_managed_file \
+    "${CSCS_MODEL_DEFAULTS}/omp-models.yml" \
+    "${model_target}" "${agent_dir}/models.yaml" "${model_marker}"
+  update_managed_default \
+    "${LAUNCHER_DEFAULTS}/omp-config.yml" \
+    "${config_target}" "${agent_dir}/config.yaml" "${config_marker}"
+  if [[ ! -f "${agent_dir}/models.yaml" ]]; then
+    refresh_managed_model_config \
+      pi omp-models.yml "${model_target}" "${model_marker}" "${model_stamp}"
+  fi
+
+  APP_ENV_ARGS=(--setenv PI_CODING_AGENT_DIR "${agent_dir}")
+}
+
+should_filter_ed3() {
+  [[ "${AGENT_KIND}" == omp ]] || return 1
+  [[ "${OMP_BWRAP_FILTER_ED3-1}" != 0 ]] || return 1
+  [[ "${RUN_SHELL}" == false ]] || return 1
+  [[ -t 0 && -t 1 ]] || return 1
+  command -v script >/dev/null 2>&1 || return 1
+  command -v perl >/dev/null 2>&1 || return 1
+}
+
+run_with_ed3_filter() {
+  local launcher status
+
+  launcher="$(mktemp "${SANDBOX_XDG_RUNTIME_DIR}/omp-bwrap-launch.XXXXXX")" || return 1
+  {
+    printf '#!/usr/bin/env bash\n'
+    printf 'exec'
+    printf ' %q' "${FINAL_COMMAND[@]}"
+    printf '\n'
+  } > "${launcher}"
+  chmod 700 "${launcher}"
+
+  set +e
+  script -q -e -c "${launcher}" /dev/null | perl -e '
+    $| = 1;
+    my $buffer = "";
+    while (1) {
+      my $n = sysread(STDIN, my $chunk, 4096);
+      last unless $n;
+      $buffer .= $chunk;
+      $buffer =~ s/\e\[3J//g;
+      if (length($buffer) > 3) {
+        print substr($buffer, 0, length($buffer) - 3, "");
+      }
+    }
+    $buffer =~ s/\e\[3J//g;
+    print $buffer;
+  '
+  status=${PIPESTATUS[0]}
+  set -e
+
+  rm -f "${launcher}"
+  exit "${status}"
+}
+
+PROJECT_DIR="$(pwd -P)"
+CONFIG_DIR="${HOST_XDG_CONFIG_HOME}/${XDG_STEM}"
+DATA_DIR="${HOST_XDG_DATA_HOME}/${XDG_STEM}"
+CACHE_DIR="${HOST_XDG_CACHE_HOME}/${XDG_STEM}"
+STATE_DIR="${HOST_XDG_STATE_HOME}/${XDG_STEM}"
+
+GPU_DEVICES=true
+USE_DEFAULT_HIDE_PATHS=true
+SHARE_IPC=false
+SSH_AGENT=false
+RUN_SHELL=false
+PRINT_BWRAP=false
+DEFAULT_HIDE_PATHS=(/users /home /root)
+EXTRA_HIDE_PATHS=()
+EXTRA_BIND_MODES=()
+EXTRA_BIND_SOURCES=()
+EXTRA_BIND_DESTINATIONS=()
+COMMAND_ARGS=()
+SSH_AGENT_DIR=""
+SANDBOX_SSH_AUTH_SOCK=""
+SANDBOX_COMMAND=()
+APP_ENV_ARGS=()
+
+while (($#)); do
+  case "$1" in
+    --project-dir|--config-dir|--data-dir|--cache-dir|--state-dir|--ro-bind|--bind|--hide-path)
+      option="$1"
+      require_value "${option}" "${2-}"
+      value="$2"
+      shift 2
+      ;;
+    --project-dir=*|--config-dir=*|--data-dir=*|--cache-dir=*|--state-dir=*|--ro-bind=*|--bind=*|--hide-path=*)
+      option="${1%%=*}"
+      value="${1#*=}"
+      require_value "${option}" "${value}"
+      shift
+      ;;
+    --no-default-hide-paths)
+      USE_DEFAULT_HIDE_PATHS=false
+      shift
+      continue
+      ;;
+    --ssh-agent)
+      SSH_AGENT=true
+      shift
+      continue
+      ;;
+    --share-ipc)
+      SHARE_IPC=true
+      shift
+      continue
+      ;;
+    --shell)
+      RUN_SHELL=true
+      shift
+      continue
+      ;;
+    --print-bwrap)
+      PRINT_BWRAP=true
+      shift
+      continue
+      ;;
+    --no-gpu-devices)
+      GPU_DEVICES=false
+      shift
+      continue
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      COMMAND_ARGS=("$@")
+      break
+      ;;
+    *)
+      COMMAND_ARGS+=("$1")
+      shift
+      continue
+      ;;
+  esac
+
+  case "${option}" in
+    --project-dir) PROJECT_DIR="${value}" ;;
+    --config-dir) CONFIG_DIR="${value}" ;;
+    --data-dir) DATA_DIR="${value}" ;;
+    --cache-dir) CACHE_DIR="${value}" ;;
+    --state-dir) STATE_DIR="${value}" ;;
+    --ro-bind) add_extra_bind --ro-bind "${value}" ;;
+    --bind) add_extra_bind --bind "${value}" ;;
+    --hide-path)
+      [[ "${value}" == /* ]] || fail_usage "--hide-path requires an absolute path"
+      EXTRA_HIDE_PATHS+=("${value}")
+      ;;
+  esac
+done
+
+if [[ "${RUN_SHELL}" == false && ! -x "${REAL_AGENT}" ]]; then
+  printf 'error: packaged %s executable is missing: %s\n' \
+    "${AGENT_LABEL}" "${REAL_AGENT}" >&2
+  exit 1
+fi
+[[ -x "${BWRAP}" ]] || {
+  printf 'error: packaged bubblewrap executable is missing: %s\n' "${BWRAP}" >&2
+  exit 1
+}
+
+if [[ "${RUN_SHELL}" == true ]]; then
+  shell_path="${SHELL:-/bin/sh}"
+  if [[ "${shell_path}" != /* || ! -x "${shell_path}" ]]; then
+    shell_path=/bin/sh
+  fi
+  [[ -x "${shell_path}" ]] || {
+    printf 'error: debug shell is missing or not executable: %s\n' "${shell_path}" >&2
+    exit 1
+  }
+  SANDBOX_COMMAND=("${shell_path}")
+else
+  SANDBOX_COMMAND=("${REAL_AGENT}")
+fi
+SANDBOX_COMMAND+=("${COMMAND_ARGS[@]}")
+
+PROJECT_DIR="$(abspath_existing_dir "${PROJECT_DIR}")"
+CONFIG_DIR="$(abspath_existing_dir "${CONFIG_DIR}")"
+DATA_DIR="$(abspath_existing_dir "${DATA_DIR}")"
+CACHE_DIR="$(abspath_existing_dir "${CACHE_DIR}")"
+STATE_DIR="$(abspath_existing_dir "${STATE_DIR}")"
+TOOLS_DIR="$(abspath_existing_dir "${TOOLS_DIR}")"
+TOOLS_CACHE_DIR="$(abspath_existing_dir "${TOOLS_CACHE_DIR}")"
+
+prepare_managed_python
+harmonize_cscs_api_key
+case "${AGENT_KIND}" in
+  opencode) initialize_opencode ;;
+  omp) initialize_omp ;;
+esac
+
+SANDBOX_XDG_RUNTIME_DIR="/tmp/${LAUNCHER_NAME}-runtime-$(id -u)"
+if [[ -L "${SANDBOX_XDG_RUNTIME_DIR}" ]]; then
+  printf 'error: XDG runtime directory must not be a symlink: %s\n' \
+    "${SANDBOX_XDG_RUNTIME_DIR}" >&2
+  exit 1
+fi
+mkdir -p "${SANDBOX_XDG_RUNTIME_DIR}"
+chmod 700 "${SANDBOX_XDG_RUNTIME_DIR}"
+[[ "$(stat -c '%u' "${SANDBOX_XDG_RUNTIME_DIR}")" == "$(id -u)" ]] || {
+  printf 'error: XDG runtime directory is not owned by the current user: %s\n' \
+    "${SANDBOX_XDG_RUNTIME_DIR}" >&2
+  exit 1
+}
+
+SANDBOX_PATH="${SANDBOX_BASE_PATH}:${TOOLS_DIR}/bin${PATH:+:${PATH}}"
+HIDE_PATHS=()
+if [[ "${USE_DEFAULT_HIDE_PATHS}" == true ]]; then
+  HIDE_PATHS+=("${DEFAULT_HIDE_PATHS[@]}")
+fi
+HIDE_PATHS+=("${EXTRA_HIDE_PATHS[@]}")
+
+OPTIONAL_RW_BINDS=()
+if [[ "${SCRATCH:-}" == /* ]]; then
+  for scratch_path in \
+    "${SCRATCH}/.edf_imagestore" \
+    "${SCRATCH}/.enroot" \
+    "${SCRATCH}/.enroot-images" \
+    "${SCRATCH}/.parallax_imagestore" \
+    "${SCRATCH}/.sarus" \
+    "${SCRATCH}/.uenv-images"; do
+    [[ ! -e "${scratch_path}" ]] || OPTIONAL_RW_BINDS+=("${scratch_path}")
+  done
+fi
+[[ ! -e /dev/shm ]] || OPTIONAL_RW_BINDS+=(/dev/shm)
+
+if [[ "${SSH_AGENT}" == true ]]; then
+  configure_ssh_agent
+fi
+
+BWRAP_ARGS=(--die-with-parent --unshare-pid)
+if [[ "${SHARE_IPC}" == false ]]; then
+  BWRAP_ARGS+=(--unshare-ipc)
+fi
+# Keep the root bind before --proc. Reversing these exposes the host /proc in
+# the private PID namespace and breaks CUDA initialization.
+BWRAP_ARGS+=(--ro-bind / / --proc /proc --tmpfs /tmp)
+
+for hide_path in "${HIDE_PATHS[@]}"; do
+  [[ ! -e "${hide_path}" ]] || BWRAP_ARGS+=(--tmpfs "${hide_path}")
+done
+
+add_bind_mountpoint "${PROJECT_DIR}"
+add_bind_mountpoint "${CONFIG_DIR}"
+add_bind_mountpoint "${DATA_DIR}"
+add_bind_mountpoint "${CACHE_DIR}"
+add_bind_mountpoint "${STATE_DIR}"
+add_bind_mountpoint "${TOOLS_DIR}"
+add_bind_mountpoint "${TOOLS_CACHE_DIR}"
+add_bind_mountpoint "${SANDBOX_XDG_RUNTIME_DIR}"
+for rw_bind in "${OPTIONAL_RW_BINDS[@]}"; do
+  add_bind_mountpoint "${rw_bind}"
+done
+for destination in "${EXTRA_BIND_DESTINATIONS[@]}"; do
+  add_bind_mountpoint "${destination}"
+done
+if [[ -n "${SSH_AGENT_DIR}" ]]; then
+  add_bind_mountpoint "${SSH_AGENT_DIR}"
+fi
+
+BWRAP_ARGS+=(
+  --bind "${PROJECT_DIR}" "${PROJECT_DIR}"
+  --bind "${CONFIG_DIR}" "${CONFIG_DIR}"
+  --bind "${DATA_DIR}" "${DATA_DIR}"
+  --bind "${CACHE_DIR}" "${CACHE_DIR}"
+  --bind "${STATE_DIR}" "${STATE_DIR}"
+  --bind "${TOOLS_DIR}" "${TOOLS_DIR}"
+  --bind "${TOOLS_CACHE_DIR}" "${TOOLS_CACHE_DIR}"
+  --bind "${SANDBOX_XDG_RUNTIME_DIR}" "${SANDBOX_XDG_RUNTIME_DIR}"
+  --chdir "${PROJECT_DIR}"
+  --setenv HOME "${SANDBOX_HOME}"
+  --setenv XDG_CONFIG_HOME "${SANDBOX_XDG_CONFIG_HOME}"
+  --setenv XDG_DATA_HOME "${DATA_DIR}"
+  --setenv XDG_CACHE_HOME "${CACHE_DIR}"
+  --setenv XDG_STATE_HOME "${STATE_DIR}"
+  --setenv XDG_RUNTIME_DIR "${SANDBOX_XDG_RUNTIME_DIR}"
+  --setenv PATH "${SANDBOX_PATH}"
+  --setenv CSCS_AGENT_PYTHON_VERSION "${AGENT_PYTHON_VERSION}"
+  --setenv CSCS_AGENT_UV_INSTALL_URL "${AGENT_UV_INSTALL_URL}"
+  --setenv CSCS_AGENT_UV_VERSION "${AGENT_UV_VERSION}"
+  --setenv CSCS_AGENT_UV "${UV_BIN}"
+  --setenv UV_CACHE_DIR "${UV_CACHE_DIR}"
+  --setenv UV_PYTHON_BIN_DIR "${UV_PYTHON_BIN_DIR}"
+  --setenv UV_PYTHON_INSTALL_DIR "${UV_PYTHON_INSTALL_DIR}"
+  --setenv UV_PYTHON_PREFERENCE "${UV_PYTHON_PREFERENCE}"
+  --setenv UV_TOOL_BIN_DIR "${UV_TOOL_BIN_DIR}"
+  --setenv UV_TOOL_DIR "${UV_TOOL_DIR}"
+  "${APP_ENV_ARGS[@]}"
+)
+
+if [[ -n "${SSH_AGENT_DIR}" ]]; then
+  BWRAP_ARGS+=(--ro-bind "${SSH_AGENT_DIR}" "${SSH_AGENT_DIR}")
+  BWRAP_ARGS+=(--setenv SSH_AUTH_SOCK "${SANDBOX_SSH_AUTH_SOCK}")
+else
+  BWRAP_ARGS+=(--unsetenv SSH_AUTH_SOCK)
+fi
+if [[ "${GPU_DEVICES}" == true ]]; then
+  BWRAP_ARGS+=(--dev-bind /dev /dev)
+fi
+for rw_bind in "${OPTIONAL_RW_BINDS[@]}"; do
+  BWRAP_ARGS+=(--bind "${rw_bind}" "${rw_bind}")
+done
+for ((i = 0; i < ${#EXTRA_BIND_MODES[@]}; i++)); do
+  BWRAP_ARGS+=(
+    "${EXTRA_BIND_MODES[i]}"
+    "${EXTRA_BIND_SOURCES[i]}"
+    "${EXTRA_BIND_DESTINATIONS[i]}"
+  )
+done
+
+FINAL_COMMAND=("${BWRAP}" "${BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
+if [[ "${PRINT_BWRAP}" == true ]]; then
+  print_invocation "${FINAL_COMMAND[@]}"
+fi
+if should_filter_ed3; then
+  run_with_ed3_filter
+fi
+exec "${FINAL_COMMAND[@]}"

@@ -6,6 +6,7 @@ spack:
   packages:
     repo: https://github.com/spack/spack-packages.git
     commit: 7318c6ac1a452a5e9f433d6de81841a036114e8f # 21 August 26
-description: "Opencode and Bubble-wrapped opencode"
+description: "OpenCode and Oh-My-Pi agent harnesses with Bubblewrap launchers"
 default-view: opencode
+cleanup: runtime
 version: 3

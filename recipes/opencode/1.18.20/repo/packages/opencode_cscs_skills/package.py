@@ -32,3 +32,37 @@ class OpencodeCscsSkills(Package):
         install_tree("skills", prefix.share.opencode.skills)
         install("LICENSE", prefix.share.opencode)
         install("README.md", prefix.share.opencode)
+
+        skill_dir = join_path(prefix.share.opencode.skills, "refresh-cscs-models")
+        mkdirp(skill_dir)
+        with open(join_path(skill_dir, "SKILL.md"), "w", encoding="utf-8") as f:
+            f.write(
+                "---\n"
+                "name: refresh-cscs-models\n"
+                "description: Refresh CSCS inference model configuration for OpenCode or Oh-My-Pi. Use when agent model lists, context windows, pricing, or CSCS provider config look stale or missing.\n"
+                "---\n"
+                "\n"
+                "# Refresh CSCS Model Configuration\n"
+                "\n"
+                "Use `cscs-agent-model-config` to regenerate CSCS inference provider config.\n"
+                "It queries only metadata endpoints and never writes API keys to disk.\n"
+                "\n"
+                "Requirements:\n"
+                "- Export `CSCS_INFERENCE_API_KEY` before refreshing. `CSCS_API_KEY` is accepted as a compatibility alias.\n"
+                "- Generated files reference `CSCS_INFERENCE_API_KEY` by name; the secret value is not persisted.\n"
+                "\n"
+                "Useful commands:\n"
+                "\n"
+                "```bash\n"
+                "# OpenCode config block\n"
+                "cscs-agent-model-config --format opencode --out-dir /tmp/cscs-models\n"
+                "\n"
+                "# Oh-My-Pi models.yml provider block\n"
+                "cscs-agent-model-config --format pi --out-dir /tmp/cscs-models\n"
+                "\n"
+                "# Human-readable model table\n"
+                "cscs-agent-model-config --format table\n"
+                "```\n"
+                "\n"
+                "The `opencode-bwrap` and `omp-bwrap` launchers seed static CSCS defaults and refresh their managed config files opportunistically. If a managed file was edited by the user, the launcher stops overwriting it.\n"
+            )
