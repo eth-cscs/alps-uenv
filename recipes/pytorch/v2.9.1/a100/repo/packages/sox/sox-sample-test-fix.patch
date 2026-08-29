@@ -1,0 +1,10 @@
+--- src/sox_sample_test.h	2012-01-23 23:27:33.000000000 +0100
++++ src/sox_sample_test.h	2025-10-15 17:59:23.000000000 +0200
+@@ -20,6 +20,7 @@
+ #endif
+ #include <assert.h>
+ #include "sox.h"
++#include <math.h>
+ 
+ #define TEST_UINT(bits) \
+   uint##bits = 0; \
