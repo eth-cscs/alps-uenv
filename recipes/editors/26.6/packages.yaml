@@ -1,0 +1,16 @@
+packages:
+  bash:
+    buildable: false
+    externals:
+    - prefix: /usr
+      spec: bash@4.4.23
+  perl:
+    buildable: false
+    externals:
+    - prefix: /usr
+      spec: perl@5.26.1
+  git:
+    buildable: false
+    externals:
+    - prefix: /usr
+      spec: git@2.43.0

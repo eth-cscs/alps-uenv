@@ -1,0 +1,41 @@
+editors:
+  compiler: [gcc]
+  unify: when_possible
+  network:
+    mpi: null
+  specs:
+  # editors
+  - 'emacs +treesitter'
+  - 'nano'
+  - 'vim +python +lua'
+  - 'neovim ~no_luajit'
+  - 'tree-sitter'
+  # handy CLI tools
+  - 'direnv'
+  - 'fd'
+  - 'lazygit'
+  - 'ripgrep'
+  # building stuff
+  - 'cmake'
+  - 'meson'
+  - 'ninja'
+  # session management
+  - 'screen'
+  - 'tmux'
+  # languages
+  - 'lua'
+  - 'python'
+  # filebrowser
+  - 'nnn'
+  - 'fzf'
+  # needed to compress after garbage collection
+  - 'squashfs'
+  # drawing
+  - 'gnuplot'
+  views:
+    editors:
+      link: roots
+      uenv:
+        add_compilers: false
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
