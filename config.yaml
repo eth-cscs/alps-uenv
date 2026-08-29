@@ -177,6 +177,12 @@ uenvs:
         gh200: wcp/icon/v1/gh200
       deploy:
         santis: [gh200]
+  intel-classic:
+    "26.07":
+      recipes:
+        zen2: "26.07"
+      deploy:
+        eiger: [zen2]
   julia:
     "24.9":
       recipes:
