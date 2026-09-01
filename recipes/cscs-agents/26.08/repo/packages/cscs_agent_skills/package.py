@@ -16,14 +16,14 @@ class CscsAgentSkills(Package):
     license("MIT")
 
     version(
-        "2026.08.28",
+        "2026.09.01",
         sha256="2a405bc4fa68ae83078515e806b0bca8d59e194f0bb6d348cebbae8f02be0801",
     )
 
     phases = ["install"]
 
     def url_for_version(self, version):
-        if str(version) == "2026.08.28":
+        if str(version) == "2026.09.01":
             return "https://github.com/eth-cscs/agent-skills/archive/62b583eb3407f6266198db5d22244a233741aa45.tar.gz"
 
         return self.url
@@ -41,17 +41,17 @@ class CscsAgentSkills(Package):
             f.write(
                 "---\n"
                 "name: refresh-cscs-models\n"
-                "description: Refresh CSCS inference model configuration for OpenCode or Oh-My-Pi. Use when agent model lists, context windows, pricing, or CSCS provider config look stale or missing.\n"
+                "description: Refresh CSCS production and experimental Forno inference model configuration for OpenCode or Oh-My-Pi. Use when agent model lists, context windows, pricing, or CSCS provider config look stale or missing.\n"
                 "---\n"
                 "\n"
                 "# Refresh CSCS Model Configuration\n"
                 "\n"
-                "Use `cscs-agent-model-config` to regenerate CSCS inference provider config.\n"
+                "Use `cscs-agent-model-config` to regenerate CSCS production and Forno inference provider config.\n"
                 "It queries only metadata endpoints and never writes API keys to disk.\n"
                 "\n"
                 "Requirements:\n"
-                "- Export `CSCS_INFERENCE_API_KEY` before refreshing. `CSCS_API_KEY` is accepted as a compatibility alias.\n"
-                "- Generated files reference `CSCS_INFERENCE_API_KEY` by name; the secret value is not persisted.\n"
+                "- Export `CSCS_INFERENCE_API_KEY` for production and/or `CSCS_INFERENCE_API_KEY_FORNO` for Forno. `CSCS_API_KEY` remains a production compatibility alias.\n"
+                "- Generated files reference the corresponding environment-variable names; secret values are not persisted.\n"
                 "\n"
                 "Useful commands:\n"
                 "\n"
@@ -66,5 +66,5 @@ class CscsAgentSkills(Package):
                 "cscs-agent-model-config --format table\n"
                 "```\n"
                 "\n"
-                "The `opencode-bwrap` and `omp-bwrap` launchers seed static CSCS defaults and refresh their managed config files opportunistically. If a managed file was edited by the user, the launcher stops overwriting it.\n"
+                "The `opencode-bwrap` and `omp-bwrap` launchers seed static production defaults and refresh their managed config files opportunistically. Adding or removing a gateway key triggers immediate regeneration. If a managed file was edited by the user, the launcher stops overwriting it.\n"
             )

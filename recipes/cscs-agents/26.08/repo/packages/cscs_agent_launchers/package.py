@@ -18,7 +18,7 @@ class CscsAgentLaunchers(Package):
 
     license("MIT")
 
-    version("2026.08.28")
+    version("2026.09.01")
 
     depends_on("opencode@1.18.25", type="run")
     depends_on("oh-my-pi@18.0.9", type="run")

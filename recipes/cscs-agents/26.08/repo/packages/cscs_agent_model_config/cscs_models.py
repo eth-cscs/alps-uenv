@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""List the models served by the CSCS inference service and their settings.
+"""List the models served by the CSCS production and Forno inference gateways.
 
 READ-ONLY BY DESIGN
 -------------------
-Against the CSCS service this script issues only metadata GETs:
+Against CSCS services this script issues only metadata GETs:
 
-    GET https://api.inference.cscs.ch/v1/models      (Envoy AI Gateway)
+    GET https://api.inference.cscs.ch/v1/models
+    GET https://ai-gateway.forno-tds.tds.cscs.ch/v1/models
     GET https://ui.inference.cscs.ch/api/prices      (unless --no-pricing)
     GET https://docs.cscs.ch/services/inference/api/ (unless --no-docs)
 
-None of these reaches a model replica, enqueues work on a GPU, or consumes
-inference quota. No completion, embedding, or other inference request is ever
-sent, so the script cannot interfere with the regular working of the service.
+The Forno gateway is queried only when CSCS_INFERENCE_API_KEY_FORNO is set.
+None of these requests reaches a model replica, enqueues work on a GPU, or
+consumes inference quota. No completion, embedding, or other inference request
+is ever sent.
 
 WHERE THE NUMBERS COME FROM
 ---------------------------
@@ -40,19 +42,20 @@ client-side would only risk overriding them with stale values.
 
 WHAT IT WRITES
 --------------
-  opencode.json            opencode custom-provider block (provider.<KEY>)
+  opencode.json            OpenCode provider blocks
   claude-code.sh           per-model `export` blocks for a `claude` session
   claude-code.settings.json  the same env, as a Claude Code settings.json block
   chatLanguageModels.json  VS Code Custom Endpoint provider array
   omp-models.yml           Oh-My-Pi ~/.omp/agent/models.yml providers block
-  pi-cscs-provider.ts      Pi extension calling pi.registerProvider()
+  pi-cscs-provider.ts      Pi extensions calling pi.registerProvider()
 
-All follow the CSCS-recommended setup: the Anthropic-compatible route
-(/v1/messages), which is the one both Claude Code and the docs' OpenCode
-snippet use. Everything is written to --out-dir (default: the current
-directory) and contains ONLY the CSCS block, so nothing clobbers unrelated
-settings. Merge them into your real config yourself. No API key is ever
-written into any of them.
+The production gateway uses its Anthropic-compatible route, as recommended by
+the CSCS documentation. Forno currently exposes only the OpenAI-compatible
+Chat Completions route, so its OpenCode, Oh-My-Pi, VS Code and Pi providers use
+that protocol. Claude Code output remains production-only because Claude Code
+cannot use an OpenAI-compatible endpoint. Everything is written to --out-dir
+(default: the current directory), contains only CSCS-managed blocks, and never
+stores an API key.
 """
 
 from __future__ import annotations
@@ -66,11 +69,18 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
 from pathlib import Path
 
-CSCS_BASE = os.environ.get("CSCS_INFERENCE_BASE", "https://api.inference.cscs.ch")
+CSCS_BASE = os.environ.get(
+    "CSCS_INFERENCE_BASE", "https://api.inference.cscs.ch"
+).rstrip("/")
+FORNO_BASE = os.environ.get(
+    "CSCS_INFERENCE_BASE_FORNO",
+    "https://ai-gateway.forno-tds.tds.cscs.ch",
+).rstrip("/")
 CSCS_DOCS = os.environ.get(
     "CSCS_INFERENCE_DOCS", "https://docs.cscs.ch/services/inference/api/"
 )
@@ -81,10 +91,51 @@ SECRET_NAME = "cscs-inference-api-key"
 CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "cscs-models"
 TIMEOUT = 30
 
-# Environment variable the CSCS docs use to hold the key. Referenced by the
-# generated configs by name; the secret value is never written to disk.
+# Canonical credential names referenced by generated configs. Secret values are
+# read only from the environment (or secret-sh for production) and never stored.
 KEY_ENV = "CSCS_INFERENCE_API_KEY"
 KEY_ALIASES = (KEY_ENV, "CSCS_API_KEY")
+FORNO_KEY_ENV = "CSCS_INFERENCE_API_KEY_FORNO"
+FORNO_PROVIDER_KEY = "cscs-forno"
+FORNO_PROVIDER_NAME = "CSCS Forno (Experimental)"
+FORNO_LABEL_SUFFIX = " [CSCS Forno]"
+FORNO_FALLBACK_CONTEXT = 32768
+
+
+@dataclass(frozen=True)
+class Gateway:
+    provider_key: str
+    provider_name: str
+    base_url: str
+    key_env: str
+    label_suffix: str
+    api: str
+    opencode_npm: str
+    reasoning_default: bool = False
+
+
+def production_gateway(args) -> Gateway:
+    return Gateway(
+        provider_key=args.provider_key,
+        provider_name=args.provider_name,
+        base_url=f"{CSCS_BASE}/v1",
+        key_env=KEY_ENV,
+        label_suffix=args.label_suffix,
+        api="anthropic-messages",
+        opencode_npm="@ai-sdk/anthropic",
+    )
+
+
+FORNO_GATEWAY = Gateway(
+    provider_key=FORNO_PROVIDER_KEY,
+    provider_name=FORNO_PROVIDER_NAME,
+    base_url=f"{FORNO_BASE}/v1",
+    key_env=FORNO_KEY_ENV,
+    label_suffix=FORNO_LABEL_SUFFIX,
+    api="openai-completions",
+    opencode_npm="@ai-sdk/openai-compatible",
+    reasoning_default=True,
+)
 
 # Maximum context length as published by CSCS, snapshot of the docs table taken
 # 2026-08-20. Only used when the live docs page cannot be read or does not carry
@@ -131,28 +182,27 @@ SAMPLING_KEYS = ("temperature", "top_p", "top_k", "repetition_penalty")
 # --------------------------------------------------------------------------- #
 # credentials
 # --------------------------------------------------------------------------- #
-def get_api_key() -> str:
-    """Return the CSCS API key. Never logged or echoed anywhere."""
-    for name in KEY_ALIASES:
+def get_api_key(
+    aliases: tuple[str, ...], *, secret_name: str | None = None
+) -> str | None:
+    """Return a gateway key without logging or echoing it."""
+    for name in aliases:
         key = os.environ.get(name)
         if key:
             return key.strip()
-    if not SECRET_SH.exists():
-        sys.exit(
-            f"error: none of {', '.join(KEY_ALIASES)} is set and {SECRET_SH} not found.\n"
-            f"       Set {KEY_ENV}=... or install secret-sh."
-        )
+    if secret_name is None or not SECRET_SH.exists():
+        return None
     # `secret` is a shell function, so it must be sourced before it can be called.
     proc = subprocess.run(
-        ["bash", "-c", f'. "{SECRET_SH}" && secret dec {SECRET_NAME}'],
+        ["bash", "-c", f'. "{SECRET_SH}" && secret dec {secret_name}'],
         capture_output=True,
         text=True,
     )
     if proc.returncode != 0:
-        sys.exit(f"error: could not decrypt '{SECRET_NAME}': {proc.stderr.strip()}")
+        sys.exit(f"error: could not decrypt '{secret_name}': {proc.stderr.strip()}")
     key = proc.stdout.strip()
     if not key:
-        sys.exit(f"error: '{SECRET_NAME}' decrypted to an empty value")
+        sys.exit(f"error: '{secret_name}' decrypted to an empty value")
     return key
 
 
@@ -186,13 +236,14 @@ def auth(api_key: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
 
 
-def list_models(api_key: str) -> list[dict]:
-    """Which models the key can reach. The only call against the gateway."""
-    status, payload = http_json(f"{CSCS_BASE}/v1/models", auth(api_key))
+def list_models(gateway: Gateway, api_key: str) -> list[dict]:
+    """Return the models reachable through one gateway."""
+    url = f"{gateway.base_url}/models"
+    status, payload = http_json(url, auth(api_key))
     if status != 200:
-        sys.exit(f"error: GET {CSCS_BASE}/v1/models returned HTTP {status}: {payload}")
-    if not isinstance(payload, dict) or "data" not in payload:
-        sys.exit(f"error: unexpected /v1/models payload: {str(payload)[:200]}")
+        sys.exit(f"error: GET {url} returned HTTP {status}: {payload}")
+    if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+        sys.exit(f"error: unexpected {url} payload: {str(payload)[:200]}")
     return sorted(payload["data"], key=lambda m: m.get("id", ""))
 
 
@@ -351,10 +402,41 @@ def has_key(cfg: dict, *names: str) -> bool:
     return False
 
 
-def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict:
-    """Build the settings record for one model id."""
+def finalize_context(row: dict, args) -> dict:
+    """Give unresolved Forno models a conservative but usable client limit."""
+    if (
+        row["provider_key"] == FORNO_PROVIDER_KEY
+        and row["context_window"] is None
+        and args.forno_fallback_context > 0
+    ):
+        row["context_window"] = args.forno_fallback_context
+        row["context_source"] = "forno-fallback"
+        row["notes"].append(
+            "Forno publishes no context metadata and public model metadata was "
+            f"unavailable; using conservative {args.forno_fallback_context:,}-token "
+            "fallback"
+        )
+    return row
+
+
+def describe(
+    model: dict,
+    published: dict[str, int],
+    prices: dict,
+    gateway: Gateway,
+    args,
+) -> dict:
+    """Build the settings record for one model id on one gateway."""
     repo = model.get("id", "")
     row: dict = {
+        "provider_key": gateway.provider_key,
+        "provider_name": gateway.provider_name,
+        "base_url": gateway.base_url,
+        "api_key_env": gateway.key_env,
+        "api": gateway.api,
+        "opencode_npm": gateway.opencode_npm,
+        "label_suffix": gateway.label_suffix,
+        "credential_available": bool(model.get("_credential_available", True)),
         "id": repo,
         "owned_by": model.get("owned_by"),
         "created": model.get("created"),
@@ -372,11 +454,16 @@ def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict
         "rope_scaling_factor": None,
         "vision": False,
         "audio": False,
-        "reasoning": "thinking" in repo.lower() or "-think" in repo.lower(),
+        "reasoning": gateway.reasoning_default
+        or "thinking" in repo.lower()
+        or "-think" in repo.lower(),
         "tool_call": not NO_TOOL_CALL.search(repo),
         "chf_per_mtok_in": None,
         "chf_per_mtok_out": None,
-        "metadata_source": "cscs:/v1/models",
+        "gateway_source": model.get(
+            "_metadata_source", f"{gateway.base_url}/models"
+        ),
+        "metadata_source": None,
         "notes": [],
     }
 
@@ -394,7 +481,7 @@ def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict
             row["notes"].append("priced but not currently loaded on the server")
 
     if args.no_enrich:
-        return row
+        return finalize_context(row, args)
 
     cfg = hf_file(repo, "config.json", args.refresh)
     if cfg is None:
@@ -403,7 +490,7 @@ def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict
                 "no published context length and no public config.json on Hugging "
                 "Face (repo gated, private, or renamed); set HF_TOKEN if you have access"
             )
-        return row
+        return finalize_context(row, args)
 
     row["metadata_source"] = f"huggingface.co/{repo}/config.json"
     arch_ctx, ctx_key = dig_context(cfg)
@@ -433,8 +520,8 @@ def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict
     row["audio"] = has_key(cfg, "audio_config", "audio_token_id", "audio_token_index")
     if row["audio"]:
         row["notes"].append(
-            "accepts audio input, but the Anthropic-compatible route these configs "
-            "use has no audio content block, so it is not advertised"
+            "accepts audio input, but generated agent configurations deliberately "
+            "advertise only text and image inputs"
         )
 
     sw = dig(cfg, "sliding_window")
@@ -468,7 +555,7 @@ def describe(model: dict, published: dict[str, int], prices: dict, args) -> dict
         row["sampling_defaults"] = {
             k: gen[k] for k in SAMPLING_KEYS if isinstance(gen.get(k), (int, float))
         }
-    return row
+    return finalize_context(row, args)
 
 
 # --------------------------------------------------------------------------- #
@@ -538,23 +625,34 @@ def short_name(model_id: str, suffix: str) -> str:
     return model_id.rsplit("/", 1)[-1] + suffix
 
 
+def gateway_groups(rows: list[dict]) -> list[tuple[dict, list[dict]]]:
+    """Group rows by provider while preserving discovery order."""
+    groups: dict[str, tuple[dict, list[dict]]] = {}
+    for row in rows:
+        key = row["provider_key"]
+        if key not in groups:
+            groups[key] = (row, [])
+        groups[key][1].append(row)
+    return list(groups.values())
+
+
 def modalities(row: dict) -> list[str]:
     """Inputs the configs may advertise.
 
-    Audio is deliberately left out even for models that accept it: every config
-    here goes over the Anthropic-compatible route, and the Messages API has no
-    audio content block. `describe` records the model's own audio support and
-    notes it instead.
+    Audio is deliberately left out even when public model metadata advertises
+    it because client support differs across the generated API adapters.
     """
     return ["text"] + (["image"] if row["vision"] else [])
 
 
 FIELDS = [
+    "provider_key", "provider_name", "base_url", "api_key_env", "api",
+    "credential_available",
     "id", "context_window", "context_source", "architectural_context",
     "max_output_tokens", "max_output_source", "sampling_defaults",
     "sliding_window", "architecture", "model_type", "torch_dtype", "vocab_size",
     "rope_scaling_factor", "vision", "audio", "reasoning", "tool_call",
-    "chf_per_mtok_in", "chf_per_mtok_out",
+    "chf_per_mtok_in", "chf_per_mtok_out", "gateway_source",
     "metadata_source", "owned_by", "created", "notes",
 ]
 
@@ -570,48 +668,47 @@ PI_FILE = "pi-cscs-provider.ts"
 # opencode
 # --------------------------------------------------------------------------- #
 def build_opencode(rows: list[dict], default: dict | None, args) -> dict:
-    """opencode custom-provider block. Schema: https://opencode.ai/config.json
+    """Build OpenCode provider blocks for both CSCS gateways."""
+    providers: dict[str, dict] = {}
+    for gateway, gateway_rows in gateway_groups(rows):
+        models: dict[str, dict] = {}
+        for row in gateway_rows:
+            entry: dict = {"name": short_name(row["id"], row["label_suffix"])}
+            ctx, out = limits(row, args)
+            if ctx is not None:
+                # OpenCode requires both fields when `limit` is present.
+                entry["limit"] = {"context": ctx, "output": out}
+            entry["tool_call"] = bool(row["tool_call"] and args.tool_call)
+            if row["reasoning"]:
+                entry["reasoning"] = True
+            if row["vision"]:
+                entry["modalities"] = {"input": modalities(row), "output": ["text"]}
+                entry["attachment"] = True
+            if row["chf_per_mtok_in"] is not None:
+                # OpenCode reads `cost` as per-1M-token; CSCS bills in CHF, not USD.
+                entry["cost"] = {
+                    "input": round(row["chf_per_mtok_in"], 6),
+                    "output": round(row["chf_per_mtok_out"], 6),
+                }
+            models[row["id"]] = entry
 
-    Mirrors the provider the CSCS docs recommend -- @ai-sdk/anthropic against
-    the Anthropic-compatible route, with systemMessageMode "system" -- and adds
-    the per-model `limit` block the docs' minimal snippet leaves out.
-    """
-    models: dict[str, dict] = {}
-    for row in rows:
-        entry: dict = {"name": short_name(row["id"], args.label_suffix)}
-        ctx, out = limits(row, args)
-        if ctx is not None:
-            # opencode requires both `context` and `output` when `limit` is present.
-            entry["limit"] = {"context": ctx, "output": out}
-        entry["tool_call"] = bool(row["tool_call"] and args.tool_call)
-        if row["reasoning"]:
-            entry["reasoning"] = True
-        if row["vision"]:
-            entry["modalities"] = {"input": modalities(row), "output": ["text"]}
-            entry["attachment"] = True
-        if row["chf_per_mtok_in"] is not None:
-            # opencode reads `cost` as per-1M-token; CSCS bills in CHF, not USD.
-            entry["cost"] = {
-                "input": round(row["chf_per_mtok_in"], 6),
-                "output": round(row["chf_per_mtok_out"], 6),
-            }
-        models[row["id"]] = entry
+        options = {
+            "baseURL": gateway["base_url"],
+            "apiKey": f"{{env:{gateway['api_key_env']}}}",
+        }
+        if gateway["api"] == "anthropic-messages":
+            options["systemMessageMode"] = "system"
+        providers[gateway["provider_key"]] = {
+            "npm": gateway["opencode_npm"],
+            "name": gateway["provider_name"],
+            "options": options,
+            "models": models,
+        }
 
     config = {"$schema": "https://opencode.ai/config.json"}
     if default is not None:
-        config["model"] = f"{args.provider_key}/{default['id']}"
-    config["provider"] = {
-        args.provider_key: {
-            "npm": "@ai-sdk/anthropic",
-            "name": args.provider_name,
-            "options": {
-                "baseURL": f"{CSCS_BASE}/v1",
-                "systemMessageMode": "system",
-                "apiKey": f"{{env:{KEY_ENV}}}",
-            },
-            "models": models,
-        }
-    }
+        config["model"] = f"{default['provider_key']}/{default['id']}"
+    config["provider"] = providers
     return config
 
 
@@ -629,9 +726,9 @@ def claude_env(row: dict, background: dict | None, args, *, with_token: bool) ->
     ctx, out = limits(row, args)
     env = {}
     if with_token:
-        env["ANTHROPIC_AUTH_TOKEN"] = f"${KEY_ENV}"
+        env["ANTHROPIC_AUTH_TOKEN"] = f"${row['api_key_env']}"
     # ANTHROPIC_BASE_URL is the host: Claude Code appends /v1/messages itself.
-    env["ANTHROPIC_BASE_URL"] = CSCS_BASE
+    env["ANTHROPIC_BASE_URL"] = row["base_url"].removesuffix("/v1")
     env["ANTHROPIC_MODEL"] = row["id"]
     if background is not None:
         # Unpinned, the haiku alias resolves to a Claude model the gateway does
@@ -714,37 +811,47 @@ def build_claude_settings(default, background, args) -> dict:
 # vs code
 # --------------------------------------------------------------------------- #
 def build_vscode(rows: list[dict], args) -> list[dict]:
-    """VS Code Custom Endpoint provider array (chatLanguageModels.json).
+    """Build one VS Code Custom Endpoint entry per gateway."""
+    providers = []
+    for gateway, gateway_rows in gateway_groups(rows):
+        api_type = (
+            "messages" if gateway["api"] == "anthropic-messages"
+            else "chat-completions"
+        )
+        endpoint = (
+            "messages" if api_type == "messages"
+            else "chat/completions"
+        )
+        models = []
+        for row in gateway_rows:
+            entry: dict = {
+                "id": row["id"],
+                "name": short_name(row["id"], row["label_suffix"]),
+                "url": f"{row['base_url']}/{endpoint}",
+                "toolCalling": bool(row["tool_call"] and args.tool_call),
+                "vision": bool(row["vision"]),
+            }
+            ctx, out = limits(row, args)
+            if ctx is not None:
+                entry["contextWindow"] = ctx
+                entry["maxOutputTokens"] = out
+            if row["reasoning"]:
+                entry["thinking"] = True
+            models.append(entry)
 
-    apiType "messages" is the Anthropic-compatible route CSCS recommends; VS
-    Code sends the key as x-api-key for it, which the CSCS gateway accepts.
-    """
-    models = []
-    for row in rows:
-        entry: dict = {
-            "id": row["id"],
-            "name": short_name(row["id"], args.label_suffix),
-            "url": f"{CSCS_BASE}/v1/messages",
-            "toolCalling": bool(row["tool_call"] and args.tool_call),
-            "vision": bool(row["vision"]),
-        }
-        ctx, out = limits(row, args)
-        if ctx is not None:
-            # With contextWindow set, VS Code derives maxInputTokens as
-            # contextWindow - maxOutputTokens, so maxInputTokens is omitted.
-            entry["contextWindow"] = ctx
-            entry["maxOutputTokens"] = out
-        if row["reasoning"]:
-            entry["thinking"] = True
-        models.append(entry)
-
-    return [{
-        "name": args.provider_name,
-        "vendor": "customendpoint",
-        "apiKey": "${input:cscsApiKey}",
-        "apiType": "messages",
-        "models": models,
-    }]
+        input_name = (
+            "cscsApiKey"
+            if gateway["provider_key"] != FORNO_PROVIDER_KEY
+            else "cscsFornoApiKey"
+        )
+        providers.append({
+            "name": gateway["provider_name"],
+            "vendor": "customendpoint",
+            "apiKey": f"${{input:{input_name}}}",
+            "apiType": api_type,
+            "models": models,
+        })
+    return providers
 
 
 # --------------------------------------------------------------------------- #
@@ -771,100 +878,103 @@ def yaml_scalar(value) -> str:
 
 
 def build_omp(rows: list[dict], args) -> str:
-    """Oh-My-Pi providers block for ~/.omp/agent/models.yml."""
+    """Build Oh-My-Pi providers for ~/.omp/agent/models.yml."""
     out_lines = [
-        "# CSCS inference service for Oh-My-Pi.",
-        "# Merge into ~/.omp/agent/models.yml. `apiKey` names the environment",
-        f"# variable to read, so export {KEY_ENV} -- no key is stored here.",
+        "# CSCS inference gateways for Oh-My-Pi.",
+        "# `apiKey` names an environment variable; no key is stored here.",
+        "# Production uses Anthropic Messages; Forno uses OpenAI Chat Completions.",
         "#",
-        "# contextWindow is the maximum context length CSCS publishes; maxTokens is a",
-        "# client-side output budget, since CSCS publishes no output cap.",
+        "# contextWindow is published deployment metadata where available, otherwise",
+        "# public model metadata or the conservative Forno fallback. maxTokens is a",
+        "# client-side output budget.",
         "providers:",
-        f"  {args.provider_key}:",
-        f"    baseUrl: {CSCS_BASE}/v1",
-        f"    apiKey: {KEY_ENV}",
-        "    api: anthropic-messages",
-        "    authHeader: true",
-        "    # The models behind this Anthropic-compatible route are not Claude models",
-        "    # and do not accept strict tool schemas.",
-        "    disableStrictTools: true",
-        "    models:",
     ]
-    for row in rows:
-        ctx, out = limits(row, args)
-        fields = [
-            ("id", row["id"]),
-            ("name", short_name(row["id"], args.label_suffix)),
-            ("reasoning", bool(row["reasoning"])),
-            ("contextWindow", ctx),
-            ("maxTokens", out),
-        ]
-        tokenizer = omp_tokenizer(row["id"])
-        if tokenizer:
-            fields.insert(3, ("tokenizer", tokenizer))
+    for gateway, gateway_rows in gateway_groups(rows):
+        out_lines.extend([
+            f"  {gateway['provider_key']}:",
+            f"    baseUrl: {gateway['base_url']}",
+            f"    apiKey: {gateway['api_key_env']}",
+            f"    api: {gateway['api']}",
+            "    authHeader: true",
+            "    disableStrictTools: true",
+            "    models:",
+        ])
+        for row in gateway_rows:
+            ctx, out = limits(row, args)
+            fields = [
+                ("id", row["id"]),
+                ("name", short_name(row["id"], row["label_suffix"])),
+                ("reasoning", bool(row["reasoning"])),
+                ("contextWindow", ctx),
+                ("maxTokens", out),
+            ]
+            tokenizer = omp_tokenizer(row["id"])
+            if tokenizer:
+                fields.insert(3, ("tokenizer", tokenizer))
 
-        for note in row["notes"]:
-            out_lines.append(f"      # {note}")
-        head, *rest = fields
-        out_lines.append(f"      - {head[0]}: {yaml_scalar(head[1])}")
-        for key, value in rest:
-            out_lines.append(f"        {key}: {yaml_scalar(value)}")
-        out_lines.append(
-            "        input: [" + ", ".join(modalities(row)) + "]"
-        )
-        if row["chf_per_mtok_in"] is not None:
-            out_lines.append("        cost:  # CHF per 1M tokens, not USD")
-            out_lines.append(f"          input: {round(row['chf_per_mtok_in'], 6)}")
-            out_lines.append(f"          output: {round(row['chf_per_mtok_out'], 6)}")
-            out_lines.append(f"          cacheRead: {round(row['chf_per_mtok_in'], 6)}")
-            out_lines.append(f"          cacheWrite: {round(row['chf_per_mtok_in'], 6)}")
+            for note in row["notes"]:
+                out_lines.append(f"      # {note}")
+            head, *rest = fields
+            out_lines.append(f"      - {head[0]}: {yaml_scalar(head[1])}")
+            for key, value in rest:
+                out_lines.append(f"        {key}: {yaml_scalar(value)}")
+            out_lines.append(
+                "        input: [" + ", ".join(modalities(row)) + "]"
+            )
+            if row["chf_per_mtok_in"] is not None:
+                out_lines.append("        cost:  # CHF per 1M tokens, not USD")
+                out_lines.append(f"          input: {round(row['chf_per_mtok_in'], 6)}")
+                out_lines.append(f"          output: {round(row['chf_per_mtok_out'], 6)}")
+                out_lines.append(f"          cacheRead: {round(row['chf_per_mtok_in'], 6)}")
+                out_lines.append(f"          cacheWrite: {round(row['chf_per_mtok_in'], 6)}")
     out_lines.append("")
     return "\n".join(out_lines)
 
 
 def build_pi(rows: list[dict], args) -> str:
-    """Pi extension registering CSCS as a custom provider."""
-    models = []
-    for row in rows:
-        ctx, out = limits(row, args)
-        entry = {
-            "id": row["id"],
-            "name": short_name(row["id"], args.label_suffix),
-            "reasoning": bool(row["reasoning"]),
-            "input": modalities(row),
-            "cost": {
-                "input": round(row["chf_per_mtok_in"] or 0, 6),
-                "output": round(row["chf_per_mtok_out"] or 0, 6),
-                "cacheRead": round(row["chf_per_mtok_in"] or 0, 6),
-                "cacheWrite": round(row["chf_per_mtok_in"] or 0, 6),
-            },
-            "contextWindow": ctx,
-            "maxTokens": out,
-        }
-        block = json.dumps(entry, indent=2)
-        models.append("\n".join("    " + line for line in block.splitlines()))
+    """Build a Pi extension registering every discovered CSCS gateway."""
+    registrations = []
+    for gateway, gateway_rows in gateway_groups(rows):
+        models = []
+        for row in gateway_rows:
+            ctx, out = limits(row, args)
+            entry = {
+                "id": row["id"],
+                "name": short_name(row["id"], row["label_suffix"]),
+                "reasoning": bool(row["reasoning"]),
+                "input": modalities(row),
+                "cost": {
+                    "input": round(row["chf_per_mtok_in"] or 0, 6),
+                    "output": round(row["chf_per_mtok_out"] or 0, 6),
+                    "cacheRead": round(row["chf_per_mtok_in"] or 0, 6),
+                    "cacheWrite": round(row["chf_per_mtok_in"] or 0, 6),
+                },
+                "contextWindow": ctx,
+                "maxTokens": out,
+            }
+            block = json.dumps(entry, indent=2)
+            models.append("\n".join("      " + line for line in block.splitlines()))
 
-    body = ",\n".join(models)
-    return f"""// CSCS inference service for Pi.
-//
-// Drop into your Pi extensions directory. `apiKey` reads the environment, so
-// export {KEY_ENV} -- no key is stored here.
-//
-// contextWindow is the maximum context length CSCS publishes; maxTokens is a
-// client-side output budget, since CSCS publishes no output cap. `cost` is
-// CHF per 1M tokens as billed by CSCS, not USD.
-import type {{ ExtensionAPI }} from "@earendil-works/pi-coding-agent";
-
-export default function (pi: ExtensionAPI) {{
-  pi.registerProvider("{args.provider_key}", {{
-    name: {json.dumps(args.provider_name)},
-    baseUrl: "{CSCS_BASE}/v1",
-    apiKey: "${KEY_ENV}",
-    api: "anthropic-messages",
+        body = ",\n".join(models)
+        registrations.append(
+            f"""  pi.registerProvider("{gateway['provider_key']}", {{
+    name: {json.dumps(gateway['provider_name'])},
+    baseUrl: {json.dumps(gateway['base_url'])},
+    apiKey: "${gateway['api_key_env']}",
+    api: "{gateway['api']}",
     models: [
 {body}
     ],
-  }});
+  }});"""
+        )
+
+    registration_body = "\n\n".join(registrations)
+    return f"""// CSCS inference gateways for Pi.
+// `apiKey` reads environment variables; no key is stored here.
+import type {{ ExtensionAPI }} from "@earendil-works/pi-coding-agent";
+
+export default function (pi: ExtensionAPI) {{
+{registration_body}
 }}
 """
 
@@ -874,10 +984,13 @@ export default function (pi: ExtensionAPI) {{
 # --------------------------------------------------------------------------- #
 def print_table(rows: list[dict], context_source: str, args) -> None:
     cols = [
+        ("PROVIDER", lambda r: r["provider_key"]),
         ("MODEL", lambda r: r["id"]),
         ("CONTEXT", lambda r: human(r["context_window"])),
-        ("SOURCE", lambda r: "cscs" if r["context_source"] == "cscs-docs" else
-                            ("hf" if r["context_source"] else "-")),
+        ("SOURCE", lambda r:
+            "cscs" if r["context_source"] == "cscs-docs" else
+            "hf" if r["context_source"] and r["context_source"].startswith("huggingface") else
+            "fallback" if r["context_source"] == "forno-fallback" else "-"),
         ("ARCH MAX", lambda r: human(r["architectural_context"])),
         ("OUT BUDGET", lambda r: human(limits(r, args)[1])),
         ("TOOLS", lambda r: "yes" if r["tool_call"] else "NO"),
@@ -891,22 +1004,26 @@ def print_table(rows: list[dict], context_source: str, args) -> None:
         if i == 0:
             print("  ".join("-" * w for w in widths))
 
-    print(f"\n{len(rows)} model(s) from {CSCS_BASE}/v1/models")
-    print(f"CONTEXT source 'cscs': maximum context length published by CSCS at")
+    sources = ", ".join(
+        f"{gateway['provider_key']}={len(gateway_rows)}"
+        for gateway, gateway_rows in gateway_groups(rows)
+    )
+    print(f"\n{len(rows)} model(s): {sources}")
+    print("CONTEXT source 'cscs': maximum context length published by CSCS at")
     print(f"  {context_source}")
     print(
-        "  -- the window the deployment actually serves. 'hf' means CSCS does not\n"
-        "  publish that model, so the figure is its architectural maximum and an\n"
-        "  upper bound only. ARCH MAX is the architectural maximum for comparison.\n"
-        "OUT BUDGET is a client-side generation budget clamped to the context; CSCS\n"
-        "  publishes no output cap and these models ship no hard one."
+        "  -- the window the production deployment serves. 'hf' is the public\n"
+        "  architectural maximum and an upper bound on a gateway deployment.\n"
+        "  'fallback' is the conservative Forno default used only when public\n"
+        "  metadata is unavailable. ARCH MAX is shown for comparison.\n"
+        "OUT BUDGET is a client-side generation budget clamped to the context."
     )
     flagged = [r for r in rows if r["notes"]]
     if flagged:
         print("\nNotes:")
         for r in flagged:
             for note in r["notes"]:
-                print(f"  {r['id']}: {note}")
+                print(f"  {r['provider_key']}/{r['id']}: {note}")
 
 
 def write_or_print(text: str, filename: str, args) -> None:
@@ -961,6 +1078,15 @@ def main() -> None:
              "rather than guessing",
     )
     parser.add_argument(
+        "--forno-fallback-context",
+        type=int,
+        default=FORNO_FALLBACK_CONTEXT,
+        metavar="N",
+        help="context used only when a Forno model has no public metadata; this "
+             "keeps newly deployed experimental models usable until metadata appears "
+             f"(default: {FORNO_FALLBACK_CONTEXT})",
+    )
+    parser.add_argument(
         "--default-model", default="moonshotai/Kimi-K2.7-Code", metavar="ID",
         help="model the generated configs select by default, matching the CSCS "
              "docs (default: moonshotai/Kimi-K2.7-Code)",
@@ -1007,17 +1133,68 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    api_key = get_api_key()
-    models = list_models(api_key)
-    prices = {} if args.no_pricing else list_prices(api_key)
+    production_key = get_api_key(KEY_ALIASES, secret_name=SECRET_NAME)
+    forno_key = get_api_key((FORNO_KEY_ENV,))
+    if production_key is None and forno_key is None:
+        sys.exit(
+            f"error: no CSCS inference key is available.\n"
+            f"       Set {KEY_ENV}=... for production and/or "
+            f"{FORNO_KEY_ENV}=... for Forno."
+        )
 
     if args.no_docs:
-        published, context_source = dict(PUBLISHED_CONTEXT), "built-in snapshot (--no-docs)"
+        published, context_source = (
+            dict(PUBLISHED_CONTEXT),
+            "built-in snapshot (--no-docs)",
+        )
     else:
-        published, context_source = fetch_published_context(args.docs_url, args.refresh)
+        published, context_source = fetch_published_context(
+            args.docs_url, args.refresh
+        )
+
+    work: list[tuple[dict, dict[str, int], dict, Gateway]] = []
+    production = production_gateway(args)
+    if production_key is not None:
+        production_models = list_models(production, production_key)
+        production_prices = (
+            {} if args.no_pricing else list_prices(production_key)
+        )
+        for model in production_models:
+            model["_credential_available"] = True
+    else:
+        # The launcher replaces its whole managed file atomically. Preserve the
+        # production provider when only a Forno key is available by regenerating
+        # it from the published model snapshot; it becomes selectable whenever
+        # the production key is exported later.
+        production_models = [
+            {
+                "id": model_id,
+                "_credential_available": False,
+                "_metadata_source": context_source,
+            }
+            for model_id in sorted(published)
+        ]
+        production_prices = {}
+    work.extend(
+        (model, published, production_prices, production)
+        for model in production_models
+    )
+
+    if forno_key is not None:
+        forno_models = list_models(FORNO_GATEWAY, forno_key)
+        for model in forno_models:
+            model["_credential_available"] = True
+        # Forno has no pricing or deployment-context endpoint. Public model
+        # metadata is used when available, then the conservative fallback.
+        work.extend((model, {}, {}, FORNO_GATEWAY) for model in forno_models)
 
     with ThreadPoolExecutor(max_workers=8) as pool:
-        rows = list(pool.map(lambda m: describe(m, published, prices, args), models))
+        rows = list(
+            pool.map(
+                lambda item: describe(*item, args),
+                work,
+            )
+        )
 
     if args.format == "json":
         json.dump(rows, sys.stdout, indent=2)
@@ -1038,18 +1215,26 @@ def main() -> None:
         return
 
     usable = agent_models(rows, args)
-    default = pick_default(usable, args.default_model)
-    background = pick_background(usable, default)
+    available = [row for row in usable if row["credential_available"]]
+    default = pick_default(available, args.default_model)
+    claude_rows = [row for row in available if row["api"] == "anthropic-messages"]
+    claude_default = pick_default(claude_rows, args.default_model)
+    background = pick_background(claude_rows, claude_default)
 
     if args.format in ("configs", "opencode"):
         write_json(build_opencode(usable, default, args), OPENCODE_FILE, args)
     if args.format in ("configs", "claude-code"):
         write_or_print(
-            build_claude_env_script(usable, default, background, args),
-            CLAUDE_ENV_FILE, args,
+            build_claude_env_script(
+                claude_rows, claude_default, background, args
+            ),
+            CLAUDE_ENV_FILE,
+            args,
         )
         write_json(
-            build_claude_settings(default, background, args), CLAUDE_SETTINGS_FILE, args
+            build_claude_settings(claude_default, background, args),
+            CLAUDE_SETTINGS_FILE,
+            args,
         )
     if args.format in ("configs", "vscode"):
         write_json(build_vscode(usable, args), VSCODE_FILE, args)
@@ -1057,14 +1242,23 @@ def main() -> None:
         write_or_print(build_omp(usable, args), OMP_FILE, args)
         write_or_print(build_pi(usable, args), PI_FILE, args)
 
-    print(f"\ncontext lengths from: {context_source}", file=sys.stderr)
+    print(f"\nproduction context lengths from: {context_source}", file=sys.stderr)
     if default is not None:
-        print(f"default model:        {default['id']}", file=sys.stderr)
-    if background is not None and background is not default:
-        print(f"background model:     {background['id']} (Claude Code haiku alias)",
-              file=sys.stderr)
+        print(
+            f"default model:        {default['provider_key']}/{default['id']}",
+            file=sys.stderr,
+        )
+    if background is not None and background is not claude_default:
+        print(
+            f"background model:     {background['id']} (Claude Code haiku alias)",
+            file=sys.stderr,
+        )
 
-    dropped = [r["id"] for r in rows if r not in usable]
+    dropped = [
+        f"{row['provider_key']}/{row['id']}"
+        for row in rows
+        if row not in usable
+    ]
     if dropped:
         print(
             f"\nnote: {len(dropped)} model(s) left out of the configs:\n  "
@@ -1076,10 +1270,11 @@ def main() -> None:
             file=sys.stderr,
         )
     print(
-        f"\nreminder: none of these files contains an API key. Export {KEY_ENV} for "
-        "OpenCode, Oh-My-Pi and Pi; Claude Code snippets map it to "
-        "ANTHROPIC_AUTH_TOKEN; VS Code prompts via ${input:cscsApiKey}. Merge each "
-        "block into your\nreal config -- nothing was written to a live config location.",
+        f"\nreminder: no generated file contains an API key. Export {KEY_ENV} for "
+        f"production and {FORNO_KEY_ENV} for Forno. OpenCode, Oh-My-Pi and Pi read "
+        "those variables directly; Claude Code output is production-only; VS Code "
+        "prompts for separate provider keys. Merge each block into your real config "
+        "-- nothing was written to a live config location.",
         file=sys.stderr,
     )
 

@@ -3,7 +3,7 @@ agents:
   unify: true
   specs:
     - cscs-agent-model-config
-    - cscs-agent-launchers@2026.08.28
+    - cscs-agent-launchers@2026.09.01
     - shellcheck
     - jq
     - yq@4

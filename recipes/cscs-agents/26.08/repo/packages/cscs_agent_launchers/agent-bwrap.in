@@ -218,7 +218,8 @@ configure_ssh_agent() {
 }
 
 has_cscs_model_refresh_key() {
-  [[ -n "${CSCS_INFERENCE_API_KEY-}" || -n "${CSCS_API_KEY-}" ]]
+  [[ -n "${CSCS_INFERENCE_API_KEY-}" || -n "${CSCS_API_KEY-}" || \
+     -n "${CSCS_INFERENCE_API_KEY_FORNO-}" ]]
 }
 
 harmonize_cscs_api_key() {
@@ -226,6 +227,14 @@ harmonize_cscs_api_key() {
     export CSCS_INFERENCE_API_KEY="${CSCS_API_KEY}"
   fi
 }
+cscs_model_refresh_signature() {
+  local production=0 forno=0
+
+  [[ -n "${CSCS_INFERENCE_API_KEY-}" || -n "${CSCS_API_KEY-}" ]] && production=1
+  [[ -n "${CSCS_INFERENCE_API_KEY_FORNO-}" ]] && forno=1
+  printf 'production=%s forno=%s\n' "${production}" "${forno}"
+}
+
 
 prepare_managed_python() {
   local installed_uv python_marker python_ready executable resolved
@@ -371,9 +380,11 @@ update_managed_default() {
 
 refresh_due() {
   local stamp="$1"
+  local signature="$2"
   local now last
 
   [[ -f "${stamp}" ]] || return 0
+  [[ "$(<"${stamp}")" == "${signature}" ]] || return 0
   now="$(date +%s)"
   last="$(stat -c '%Y' "${stamp}" 2>/dev/null || printf '0')"
   (( now - last >= 86400 ))
@@ -395,19 +406,20 @@ refresh_managed_model_config() {
   local target="$3"
   local marker="$4"
   local stamp="$5"
-  local tmp_dir
+  local tmp_dir signature
 
   [[ -x "${CSCS_MODEL_CONFIG}" ]] || return 0
   has_cscs_model_refresh_key || return 0
   managed_file_matches_hash "${target}" "${marker}" || return 0
-  refresh_due "${stamp}" || return 0
+  signature="$(cscs_model_refresh_signature)"
+  refresh_due "${stamp}" "${signature}" || return 0
 
   tmp_dir="$(mktemp -d "${CACHE_DIR}/cscs-models.XXXXXX")" || return 0
   if generate_cscs_model_config --format "${format}" --out-dir "${tmp_dir}"; then
     if [[ -s "${tmp_dir}/${output}" ]]; then
       install -m 600 "${tmp_dir}/${output}" "${target}"
       record_managed_hash "${target}" "${marker}" || true
-      : > "${stamp}"
+      printf '%s\n' "${signature}" > "${stamp}"
     fi
   elif [[ "${CSCS_MODEL_REFRESH_VERBOSE-}" == 1 ]]; then
     printf 'warning: failed to refresh CSCS model config; keeping %s\n' \

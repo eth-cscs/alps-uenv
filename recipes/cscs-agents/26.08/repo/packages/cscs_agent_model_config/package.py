@@ -17,7 +17,7 @@ class CscsAgentModelConfig(Package):
 
     license("MIT")
 
-    version("2026.08.26")
+    version("2026.09.01")
 
 
     def _source_script(self):

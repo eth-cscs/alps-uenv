@@ -1,16 +1,17 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 1.18.25 and Oh-My-Pi (OMP) 18.0.9 launchers with CSCS inference defaults, runtime model discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 1.18.25 and Oh-My-Pi (OMP) 18.0.9 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 
-Export the CSCS inference key before starting a harness:
+Export either or both CSCS inference keys before starting a harness:
 
 ```bash
-export CSCS_INFERENCE_API_KEY=...
+export CSCS_INFERENCE_API_KEY=...        # production gateway
+export CSCS_INFERENCE_API_KEY_FORNO=...  # experimental Forno gateway
 ```
 
-`CSCS_API_KEY` is accepted as a compatibility alias. The key is read from the environment and is never written to generated configuration.
+`CSCS_API_KEY` is accepted as a compatibility alias for the production key. `CSCS_INFERENCE_API_KEY_FORNO` is the canonical Forno key name. Keys are read from the environment and are never written to generated configuration.
 
 When starting through `uenv run`:
 
@@ -37,13 +38,17 @@ The current directory is the default writable project directory. Run either laun
 
 ## CSCS inference configuration
 
-The image contains static CSCS model defaults, so the provider is available before the first successful metadata refresh. On every harness launch, the wrapper checks whether a refresh is due:
+The image contains static production model defaults, so the `cscs` provider is available before the first successful metadata refresh. On every harness launch, the wrapper checks whether a refresh is due:
 
-- the key must be available;
+- at least one production or Forno key must be available;
 - the managed config must still match its ownership hash;
-- at least 24 hours must have passed since the last successful refresh.
+- the set of available gateway credentials must have changed, or at least 24 hours must have passed since the last successful refresh.
 
-The first launch with a key refreshes immediately. Refresh is launch-driven; there is no background service. Failures keep the existing config and are retried on the next launch. Set `CSCS_MODEL_REFRESH_VERBOSE=1` to display generator errors and wrapper warnings.
+The first launch with either key refreshes immediately. Adding or removing the Forno key also refreshes immediately instead of waiting for the 24-hour interval. Refresh is launch-driven; there is no background service. Generation is atomic: a gateway or metadata failure keeps the existing complete config and is retried on the next launch. Set `CSCS_MODEL_REFRESH_VERBOSE=1` to display generator errors and wrapper warnings.
+
+When `CSCS_INFERENCE_API_KEY_FORNO` is set, the generator queries `https://ai-gateway.forno-tds.tds.cscs.ch/v1/models` and adds every advertised model under the `cscs-forno` provider. The catalogue is not pinned because Forno is an experimental service and changes frequently. Forno exposes OpenAI Chat Completions rather than the production Anthropic Messages route, so the generated OpenCode and OMP providers use their OpenAI-compatible adapters. Forno currently publishes neither prices nor deployment context lengths; the generator uses public Hugging Face metadata when available and a conservative 32,768-token context fallback for a new or private model until metadata appears.
+
+With both keys present, the production default remains selected. With only the Forno key, OpenCode selects the first advertised Forno model while retaining the static production catalogue for later use when its key becomes available.
 
 OMP defaults to these model roles:
 
