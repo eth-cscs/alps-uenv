@@ -16,8 +16,8 @@ export CSCS_INFERENCE_API_KEY_FORNO=...  # experimental Forno gateway
 When starting through `uenv run`:
 
 ```bash
-uenv run cscs-agents/26.08 -- omp-bwrap
-uenv run cscs-agents/26.08 -- opencode-bwrap
+uenv run cscs-agents/26.09 -- omp-bwrap
+uenv run cscs-agents/26.09 -- opencode-bwrap
 ```
 
 When the uenv and its `agents` view are already active:
@@ -81,7 +81,7 @@ rm "${XDG_CONFIG_HOME:-$HOME/.config}/omp-spack/home/.omp/agent/.omp-bwrap-cscs-
 Mounting another uenv is not enough: its view must also be active. For example, to use the Python and packages from a PyTorch uenv:
 
 ```bash
-uenv run cscs-agents/26.08,pytorch --view=agents,default -- omp-bwrap
+uenv run cscs-agents/26.09,pytorch --view=agents,default -- omp-bwrap
 ```
 
 Use fully qualified uenv names or image paths as appropriate. Verify both views with:
