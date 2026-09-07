@@ -1,0 +1,38 @@
+  <machine MACH="eiger">
+    <DESC>CSCS AMD EPYC 7742 CPU Rome system</DESC>
+    <OS>LINUX</OS>
+    <COMPILERS>gnu</COMPILERS>
+    <MPILIBS>mpich</MPILIBS>
+    <CIME_OUTPUT_ROOT>$ENV{SCRATCH}/ctsm5_3/output</CIME_OUTPUT_ROOT>
+    <DIN_LOC_ROOT>TODO</DIN_LOC_ROOT>
+    <DIN_LOC_ROOT_CLMFORC>TODO</DIN_LOC_ROOT_CLMFORC>
+    <DOUT_S_ROOT>$ENV{SCRATCH}/ctsm5_3/archive/$CASE</DOUT_S_ROOT>
+    <BASELINE_ROOT>$ENV{CESMDATAROOT}/cesm_baselines</BASELINE_ROOT>
+    <CCSM_CPRNC>$ENV{SCRATCH}/ctsm5_3/cprnc/cprnc</CCSM_CPRNC>
+    <GMAKE_J>12</GMAKE_J>
+    <BATCH_SYSTEM>slurm</BATCH_SYSTEM>
+    <SUPPORTED_BY>bcumming@cscs.ch</SUPPORTED_BY>
+    <MAX_TASKS_PER_NODE>128</MAX_TASKS_PER_NODE>
+    <MAX_MPITASKS_PER_NODE>128</MAX_MPITASKS_PER_NODE>
+    <mpirun mpilib="default">
+     <executable>srun</executable>
+      <arguments>
+        <arg name="cpubind"> --cpu_bind=rank</arg>
+        <arg name="uenv"> --uenv=esmf/26.07:v1</arg>
+        <arg name="view"> --view=esmf-serial</arg>
+        <arg name="uenvpassthrough"> --uenv-passthrough=use</arg>
+      </arguments>
+    </mpirun>
+
+    <module_system type="none"/>
+
+    <environment_variables>
+      <env name="OMP_STACKSIZE">128M</env>
+      <env name="FI_CXI_RX_MATCH_MODE">hybrid</env>
+    </environment_variables>
+    <environment_variables comp_interface="nuopc">
+      <!-- required on all systems for timing file output --> 
+      <env name="ESMF_RUNTIME_PROFILE">ON</env>
+      <env name="ESMF_RUNTIME_PROFILE_OUTPUT">SUMMARY</env>
+    </environment_variables>
+  </machine>

@@ -1,0 +1,11 @@
+  <batch_system MACH="eiger" type="slurm" >
+    <batch_submit>sbatch</batch_submit>
+    <submit_args>
+      <argument> --time $JOB_WALLCLOCK_TIME </argument>
+      <argument> --partition $JOB_PARTITION </argument>
+      <argument> --account $JOB_ACCOUNT </argument>
+    </submit_args>
+    <queues>
+      <queue default="true">default</queue>
+    </queues>
+  </batch_system>

@@ -1,0 +1,99 @@
+esmf-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32
+  unify: true
+  specs:
+  - cmake
+  - fftw
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - lua
+  - libtree
+  - lz4
+  - netcdf-c build_system=cmake
+  - netcdf-cxx
+  - netcdf-fortran
+  - parallel-netcdf
+  - openblas threads=openmp
+  - osu-micro-benchmarks
+  - python
+  - gmake
+  - zlib-ng
+  - libxml2
+  # NCAR packages
+  - parallelio@2.6.6 +fortran +ncint +pnetcdf
+  - esmf@8.8.0 +pnetcdf
+  # needed when bootstrapping CESM
+  - subversion
+  # perl is used directly by CESM
+  - perl
+  - perl-xml-libxml
+  - perl-xml-namespacesupport
+  - perl-xml-sax
+  - perl-xml-sax-base
+  # the python code uses lxml
+  - py-lxml
+  variants:
+  - +mpi
+  views:
+    esmf:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+            set:
+            - ESMF_LIBDIR: '$@view_path@/lib'
+            - PNETCDF_PATH: '$@view_path@'
+            - NETCDF_PATH: '$@view_path@'
+            - MACHINE_PATH: '$@mount@/meta/extra/$@view_name@/machines/eiger'
+esmf-serial:
+  compiler: [gcc]
+  network: # no MPI
+      mpi: null
+  unify: true
+  specs:
+  - cmake
+  - fftw ~mpi
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - lua
+  - libtree
+  - lz4
+  - netcdf-c build_system=cmake ~mpi
+  - netcdf-cxx
+  - netcdf-fortran
+  - openblas threads=openmp
+  - python
+  - gmake
+  - zlib-ng
+  - libxml2
+  # NCAR packages
+  - parallelio@2.6.6 +fortran +ncint ~mpi
+  - esmf@8.8.0 ~pnetcdf
+  # needed when bootstrapping CESM
+  - subversion
+  # perl is used directly by CESM
+  - perl
+  - perl-xml-libxml
+  - perl-xml-namespacesupport
+  - perl-xml-sax
+  - perl-xml-sax-base
+  # the python code uses lxml
+  - py-lxml
+  variants:
+  - ~mpi
+  views:
+    esmf-serial:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+            set:
+            - ESMF_LIBDIR: '$@view_path@/lib'
+            - NETCDF_PATH: '$@view_path@'
+            - MACHINE_PATH: '$@mount@/meta/extra/$@view_name@/machines/eiger'
