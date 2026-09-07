@@ -1,0 +1,25 @@
+From b5ae0e1984464513841f7125f18ac2cbcbf2e470 Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Wed, 27 May 2026 22:43:10 +0200
+Subject: [PATCH] add cpp17 flag
+
+---
+ manual_cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/manual_cpp b/manual_cpp
+index b3bdaf9..10c1345 100755
+--- a/manual_cpp
++++ b/manual_cpp
+@@ -75,7 +75,7 @@ tmp_filename = tmp_filename[-250:]
+ 
+ if (ext==".cu"):
+     # preprocess
+-    list_preprocess_call_cu  = ["nvcc"]  + cpp_args + ["-E"] + [file] + ["-o"] + [tmp_filename]
++    list_preprocess_call_cu  = ["nvcc"]  + cpp_args + ["-std=c++17"] + ["-E"] + [file] + ["-o"] + [tmp_filename]
+     check_call(list_preprocess_call_cu)
+ 
+     # compile
+-- 
+2.54.0
+
