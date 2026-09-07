@@ -580,7 +580,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 cmake_args.append(self.define("QE_GPU", "openacc;cuda"))
                 cmake_args.append(
                     self.define(
-                        "QE_GPU_ARCHS", ";".join(spec.variants["cuda_archs"].value)
+                        "QE_GPU_ARCHS", ";".join(spec.variants["cuda_arch"].value)
                     )
                 )
 
