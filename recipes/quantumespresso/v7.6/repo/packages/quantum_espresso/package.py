@@ -566,7 +566,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("QE_ENABLE_SCALAPACK", "scalapack"),
             self.define_from_variant("QE_ENABLE_ELPA", "elpa"),
             self.define_from_variant("QE_ENABLE_LIBXC", "libxc"),
-            self.define_from_variant("QE_ENABLE_CUDA", "cuda"),
             self.define_from_variant("QE_ENABLE_PROFILE_NVTX", "nvtx"),
             self.define_from_variant("QE_ENABLE_TRACE", "trace"),
             self.define_from_variant("QE_CLOCK_SECONDS", "clock"),
@@ -575,13 +574,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
         ]
 
         if spec.satisfies("@:7.5"):
-            self.define_from_variant("QE_ENABLE_CUDA", "cuda")
+            cmake_args.append(self.define_from_variant("QE_ENABLE_CUDA", "cuda"))
         elif spec.satisfies("@7.6:"):
             if spec.satisfies("+cuda"):
-                cmake_args += ['QE_GPU="openacc;cuda"']
-                cmake_args += [
-                    "QE_GPU_ARCHS=" + ";".join(spec.variants["cuda_archs"].value)
-                ]
+                cmake_args.append(self.define("QE_GPU", "openacc;cuda"))
+                cmake_args.append(
+                    self.define(
+                        "QE_GPU_ARCHS", ";".join(spec.variants["cuda_archs"].value)
+                    )
+                )
 
         plugins = []
 
@@ -591,7 +592,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "+gipaw" in spec:
             plugins.append("gipaw")
 
-        if "+cuda" in self.spec:
+        if "+cuda" in self.spec and spec.satisfies("@:7.5"):
             cmake_args.append(self.define("QE_ENABLE_OPENACC", True))
 
         # QE prefers taking MPI compiler wrappers as CMake compilers.
