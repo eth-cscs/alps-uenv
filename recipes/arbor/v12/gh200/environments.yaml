@@ -1,0 +1,37 @@
+arbor:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+  unify: true
+  specs:
+  - cmake@3.31
+  - libtree
+  - meson
+  - ninja
+  - python@3.13
+  - cuda@12.9
+  # specific dependencies
+  - benchmark
+  - fmt
+  - googletest
+  - nlohmann-json
+  - pugixml
+  - py-mpi4py
+  - py-pybind11
+  - py-pybind11-stubgen
+  - random123
+  - units-llnl
+  # not available
+  #- unordered_dense source code
+  #- tinyopt
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    arbor:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

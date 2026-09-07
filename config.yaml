@@ -97,6 +97,10 @@ clusters:
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
+  arbor:
+    "12":
+      recipes:
+        gh200: "v12/gh200"
   editors:
     "24.7":
       recipes:
