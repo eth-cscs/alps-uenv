@@ -1,0 +1,60 @@
+# TODO:
+# - if it still does not build, go with python@3.11
+amber-env:
+  compiler: [gcc]
+  network:
+      mpi: cray-mpich@8.1.32 +cuda
+  unify: true
+  specs:
+  # pick the (old) version vendored into amber26
+  # this is the exact set of "modules" in boost that amber checks for
+  # ... this was dropped because Amber was just too awkward about boost - we let it build its own
+  # - boost@1.68 +thread +system +program_options +iostreams +regex +timer +chrono +filesystem +graph
+  - cmake
+  - cuda@12.8
+  - fftw
+  - gsl
+  - hdf5+cxx+hl+fortran
+  - libtree
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-cxx4
+  - netcdf-fortran
+  - openblas threads=openmp
+  - osu-micro-benchmarks ~xccl
+  # amber uses perl
+  - perl
+  # amber requires tikinter
+  - python@3.12 +tkinter
+  - zlib-ng
+  # python packages
+  - py-biopython
+  - py-pip  # used to install freesasa in post-install
+  - py-numpy
+  - py-scipy
+  - py-matplotlib
+  # pick the (old) mpi4py version vendored into amber26
+  # is not compatible with python 3.12, so give it free reign
+  - py-mpi4py
+  - py-setuptools
+  - py-pandas
+  - py-numba
+  - py-gemmi
+  - py-rich
+  - py-scikit-learn
+  - py-sympy
+  - py-pydantic
+  - py-psutil
+  - py-networkx
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90a
+  views:
+    amber:
+      # include all runtime deps in view so that all python packages are available
+      link: run
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

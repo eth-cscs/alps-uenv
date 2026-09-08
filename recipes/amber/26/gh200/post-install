@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+# install python packages that Amber needs but that are not available in Spack.
+# spack views are also venv compatible, so installing into the view makes these
+# packages available to python when the amber view is loaded.
+#
+# - freesasa: required python package, not in Spack.
+# - f90nml:   AmberTools/src/PyPE_RESP/setup.py hard-codes `pip install f90nml` at
+#             *build* time. The view is read-only when the user builds Amber, so that
+#             pip call fails with a read-only-filesystem error and silently drops the
+#             PyPE_RESP tool. Pre-installing it here makes pip a no-op at build time.
+
+export VIRTUAL_ENV={{ env.mount }}/env/amber
+export PATH=$VIRTUAL_ENV/bin:$PATH
+
+pip install freesasa f90nml
+
+# update the CC, CXX, and FC env. vars in the amber view to point to gcc
+# somehow they were being set to clang/clang++ that do not exist
+
+jq '.views.amber.env.values.scalar |= (. + {"CC":"/user-environment/env/amber/bin/gcc","CXX":"/user-environment/env/amber/bin/g++","FC":"/user-environment/env/amber/bin/gfortran"})' {{ env.mount }}/meta/env.json > ./env.temp.json
+mv ./env.temp.json {{ env.mount }}/meta/env.json
+
