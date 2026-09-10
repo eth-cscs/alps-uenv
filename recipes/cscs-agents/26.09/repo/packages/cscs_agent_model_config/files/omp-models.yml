@@ -1,0 +1,60 @@
+# CSCS inference service for Oh-My-Pi.
+# `apiKey` names the environment variable to read; no key is stored here.
+providers:
+  cscs:
+    baseUrl: https://api.inference.cscs.ch/v1
+    apiKey: CSCS_INFERENCE_API_KEY
+    api: anthropic-messages
+    authHeader: true
+    disableStrictTools: true
+    models:
+      - id: google/gemma-4-31B-it
+        name: Gemma 4 31B It [CSCS]
+        reasoning: false
+        contextWindow: 262144
+        maxTokens: 32768
+        input: [text]
+      - id: moonshotai/Kimi-K2.7-Code
+        name: Kimi K2.7 Code [CSCS]
+        reasoning: false
+        tokenizer: kimi-k2
+        contextWindow: 262144
+        maxTokens: 32768
+        input: [text]
+      - id: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16
+        name: NVIDIA Nemotron 3 Super 120B A12B BF16 [CSCS]
+        reasoning: false
+        contextWindow: 262144
+        maxTokens: 32768
+        input: [text]
+      - id: swiss-ai/Apertus-70B-Instruct-2509
+        name: Apertus 70B Instruct 2509 [CSCS]
+        reasoning: false
+        contextWindow: 64000
+        maxTokens: 32000
+        input: [text]
+      - id: swiss-ai/Apertus-8B-Instruct-2509
+        name: Apertus 8B Instruct 2509 [CSCS]
+        reasoning: false
+        contextWindow: 32768
+        maxTokens: 16384
+        input: [text]
+      - id: swiss-ai/Apertus-v1.5-70B
+        name: Apertus v1.5 70B [CSCS]
+        reasoning: false
+        contextWindow: 262144
+        maxTokens: 32768
+        input: [text]
+      - id: swiss-ai/Apertus-v1.5-8B
+        name: Apertus v1.5 8B [CSCS]
+        reasoning: false
+        contextWindow: 262144
+        maxTokens: 32768
+        input: [text]
+      - id: zai-org/GLM-5.2
+        name: GLM 5.2 [CSCS]
+        reasoning: false
+        tokenizer: glm5
+        contextWindow: 976000
+        maxTokens: 32768
+        input: [text]

@@ -1,0 +1,23 @@
+agents:
+  compiler: [gcc]
+  unify: true
+  specs:
+    - cscs-agent-model-config
+    - cscs-agent-launchers@2026.09.10
+    - shellcheck
+    - jq
+    - yq@4
+    # Podman runtime tools for the --podman sandbox mode; explicit roots so
+    # cleanup: runtime cannot garbage-collect them before image creation.
+    - crun
+    - catatonit
+    - fuse-overlayfs
+    # Keep Stackinator's image packer alive across cleanup: runtime.
+    - squashfs
+  views:
+    agents:
+      link: roots
+      uenv:
+        add_compilers: false
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
