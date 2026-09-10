@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# In-sandbox podman wrapper, installed by the cscs-agent-launchers --podman
+# mode. Runs host podman rootful inside a dedicated user + mount namespace:
+#
+#   - a fresh user namespace maps root to the current user, giving
+#     CAP_SYS_ADMIN over a fresh mount namespace without setuid helpers
+#     (the node mounts / nosuid, so newuidmap/fusermount3 cannot elevate);
+#   - /run becomes a tmpfs holding podman runtime state, because the
+#     sandbox root is read-only;
+#   - /etc/resolv.conf is restored from the launcher's copy, because the
+#     host file is a symlink into /run which the tmpfs above replaces;
+#   - /var/cache and /var/tmp become tmpfs mounts: rootful containers/image
+#     hardcodes /var/cache/containers (blob metadata cache) and stages in
+#     /var/tmp even when TMPDIR is set; both hold only regenerable data;
+#   - all podman volatile state (runroot, tmp, XDG dirs, /run/libpod) lives
+#     under /dev/shm, shared across podman invocations: conmon supervisors
+#     and their exit files must outlive the podman command that started
+#     them, and the home filesystem is NFS, where buildah's mode-restricted
+#     scratch directories (mkdir 0100, then write) and fuse-overlayfs
+#     unmounts (.nfs silly-renames) fail;
+#   - image storage uses fuse-overlayfs on /dev/shm, which mounts fine as
+#     namespace root without fusermount3;
+#   - the CSCS-patched crun drops devpts gid=5 when gid 5 is unmappable in
+#     the calling user namespace, which is what allows containers to start
+#     here at all.
+#
+# Rootful-in-userns means container root maps back to the current user, so
+# image layer extraction never needs subid ranges.
+set -euo pipefail
+
+# Environment provided by the launcher (exported into the sandbox):
+#   PODMAN_HOST_BINARY   host podman to exec (verified at launch)
+#   PODMAN_CONF_DIR      generated containers.conf/storage.conf directory
+#   PODMAN_STORAGE_ROOT  parent for the graphroot (session-shared, /dev/shm)
+#   SANDBOX_RESOLV_CONF  launcher's copy of the host resolv.conf
+
+if [[ -z "${PODMAN_HOST_BINARY:-}" || -z "${PODMAN_CONF_DIR:-}" ]]; then
+  printf 'error: podman wrapper is not configured; relaunch with --podman\n' >&2
+  exit 1
+fi
+
+if [[ ! -c /dev/fuse || ! -r /dev/fuse || ! -w /dev/fuse ]]; then
+  cat >&2 <<'ERROR'
+error: podman requires a usable /dev/fuse.
+
+The sandbox passes the host /dev through by default; do not combine
+--no-gpu-devices with --podman, and ensure the outer node environment
+exposes /dev/fuse.
+ERROR
+  exit 1
+fi
+
+PODMAN_VOLATILE="${PODMAN_VOLATILE_ROOT:-/dev/shm/podman-$(id -u)-state}"
+export PODMAN_VOLATILE
+
+exec unshare --user --map-root-user --mount --propagation slave bash -c '
+set -euo pipefail
+
+mount -t tmpfs none /run
+mkdir -p /run/netconfig /run/lock
+
+# /etc/resolv.conf on this system is a symlink into /run; the tmpfs above
+# removed its target. Restore the resolver configuration from the copy the
+# launcher took while the host file was still reachable.
+if [[ ! -e /etc/resolv.conf ]]; then
+  if [[ -r "${SANDBOX_RESOLV_CONF:-}" ]]; then
+    cp "${SANDBOX_RESOLV_CONF}" /run/netconfig/resolv.conf
+  elif [[ -r /proc/1/root/etc/resolv.conf ]]; then
+    grep "^nameserver" /proc/1/root/etc/resolv.conf \
+      > /run/netconfig/resolv.conf || true
+  fi
+fi
+
+# Rootful containers/image stores its blob metadata cache in
+# /var/cache/containers and stages through /var/tmp even when TMPDIR is
+# set; neither exists on the read-only sandbox root. Both locations hold
+# only regenerable data, so shadow them with tmpfs mounts.
+mount -t tmpfs none /var/cache
+mkdir -p /var/cache/containers
+mount -t tmpfs none /var/tmp
+
+
+# All volatile state lives under /dev/shm, shared across podman
+# invocations (see header). The launcher-generated storage.conf points
+# its runroot at a per-launch NFS location; rewrite it to the volatile
+# root before starting podman.
+export TMPDIR="${PODMAN_VOLATILE}/tmp"
+export XDG_RUNTIME_DIR="${PODMAN_VOLATILE}/xdg"
+mkdir -p "${TMPDIR}" "${XDG_RUNTIME_DIR}" \
+  "${PODMAN_STORAGE_ROOT}/graphroot" \
+  "${PODMAN_VOLATILE}/runroot" \
+  "${PODMAN_VOLATILE}/libpod" \
+  "${PODMAN_VOLATILE}/crun"
+
+# Bind the shared libpod state over /run/libpod so conmon exit files and
+# detached-container supervision survive across podman invocations.
+mkdir -p /run/libpod /run/crun
+mount --bind "${PODMAN_VOLATILE}/libpod" /run/libpod
+# crun keeps per-container state under /run/crun by default; detached
+# containers must remain reachable from later podman invocations.
+mount --bind "${PODMAN_VOLATILE}/crun" /run/crun
+
+# Rewrite both generated configs with the volatile locations: the
+# engine runroot/tmpdir in containers.conf take precedence over
+# storage.conf, so both must point at /dev/shm state.
+sed -e "/^runroot/d" -e "/^tmpdir/d" \
+    -e "/^\[engine\]/a runroot = \"${PODMAN_VOLATILE}/runroot\"\ntmpdir = \"${PODMAN_VOLATILE}/tmp\"" \
+    "${PODMAN_CONF_DIR}/containers.conf" > "${PODMAN_VOLATILE}/containers.conf"
+export CONTAINERS_CONF="${PODMAN_VOLATILE}/containers.conf"
+
+sed -e "/^runroot/d" \
+    -e "/^\[storage\]/a runroot = \"${PODMAN_VOLATILE}/runroot\"" \
+    "${PODMAN_CONF_DIR}/storage.conf" > "${PODMAN_VOLATILE}/storage.conf"
+export CONTAINERS_STORAGE_CONF="${PODMAN_VOLATILE}/storage.conf"
+
+exec "${PODMAN_HOST_BINARY}" "$@"
+' podman-wrapper "$@"

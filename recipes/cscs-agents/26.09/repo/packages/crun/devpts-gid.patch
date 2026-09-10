@@ -1,0 +1,149 @@
+Upstream crun mounts a fresh devpts instance with gid=5 (the host `tty`
+group) whenever the calling process runs with euid 0, and podman writes
+gid=5 (with its paired mode=0620) into the OCI spec for rootful
+containers. Inside a user namespace that maps only the caller's own
+uid/gid -- the only kind of namespace an unprivileged `unshare -Ur` or
+bubblewrap sandbox can create on a system where / is mounted nosuid --
+gid 5 is not mappable and the kernel rejects the mount with EINVAL:
+
+    Error: OCI runtime error: crun: mount `devpts` to `dev/pts`: Invalid argument
+
+That makes podman inside such sandboxes fail on every container start.
+This patch drops gid=5 (and its paired mode=0620) whenever gid 5 is not
+covered by the current /proc/self/gid_map, in both crun's default mount
+path and the spec-options path, matching what crun's rootless branch has
+always done. On normal hosts (no user namespace, or a userns whose gid
+map covers gid 5) the stock behavior is preserved byte-for-byte.
+--- a/src/libcrun/linux.c
++++ b/src/libcrun/linux.c
+@@ -2433,6 +2433,108 @@
+   return 0;
+ }
+ 
++
++
++/* Return true when `gid` is covered by the gid map of the current user
++ * namespace.  Used to decide whether a fresh devpts instance can be
++ * mounted with that gid (the kernel requires every gid mentioned in the
++ * mount options to be resolvable in the userns owning the mount).  */
++static bool
++gid_mapped_in_current_userns (gid_t gid)
++{
++  cleanup_free char *content = NULL;
++  size_t len = 0;
++  int ret;
++
++  ret = read_all_file ("/proc/self/gid_map", &content, &len, NULL);
++  if (UNLIKELY (ret < 0))
++    return false;
++
++  /* The initial user namespace maps every gid.  */
++  if (len == 0)
++    return true;
++
++  char *saveptr = NULL;
++  for (char *line = strtok_r (content, "\n", &saveptr); line != NULL;
++       line = strtok_r (NULL, "\n", &saveptr))
++    {
++      unsigned long container_id, host_id, size;
++      char *end = NULL;
++
++      container_id = strtoul (line, &end, 10);
++      if (end == line || end == NULL || *end != ' ')
++        continue;
++      host_id = strtoul (end + 1, &end, 10);
++      if (end == line || end == NULL || *end != ' ')
++        continue;
++      size = strtoul (end + 1, &end, 10);
++      if (end == line)
++        continue;
++
++      if (gid >= container_id && gid < container_id + size)
++        return true;
++    }
++
++  return false;
++}
++
++/* Sanitize the mount options of a devpts mount: drop gid=5 and its
++ * paired mode=0620 whenever gid 5 is not covered by the current user
++ * namespace gid map, because the kernel rejects devpts mounts whose gid
++ * cannot be resolved (EINVAL).  Podman writes gid=5 (the host `tty`
++ * group) into the OCI spec for rootful containers; inside a
++ * single-mapping user namespace that gid does not exist and every
++ * container start would fail with "mount `devpts` to `dev/pts`:
++ * Invalid argument".  */
++static void
++sanitize_devpts_options (char **data)
++{
++  cleanup_free char *src = NULL;
++  cleanup_free char *result = NULL;
++  char *saveptr = NULL;
++  char *write;
++  bool dropped = false;
++
++  if (data == NULL || *data == NULL)
++    return;
++
++  if (strstr (*data, "gid=5") == NULL)
++    return;
++
++  if (gid_mapped_in_current_userns (5))
++    return;
++
++  src = xstrdup (*data);
++  result = xmalloc (strlen (src) + 2);
++  write = result;
++  *write = '\0';
++
++  for (char *tok = strtok_r (src, ",", &saveptr); tok != NULL;
++       tok = strtok_r (NULL, ",", &saveptr))
++    {
++      size_t len;
++
++      if (strcmp (tok, "gid=5") == 0 || strcmp (tok, "mode=0620") == 0)
++        {
++          dropped = true;
++          continue;
++        }
++
++      len = strlen (tok);
++      if (write != result)
++        *write++ = ',';
++      memcpy (write, tok, len);
++      write += len;
++      *write = '\0';
++    }
++
++  if (dropped)
++    {
++      free (*data);
++      *data = xstrdup (result);
++    }
++}
++
+ static int
+ get_default_flags (libcrun_container_t *container, const char *destination, char **data)
+ {
+@@ -2458,7 +2560,10 @@
+   if (strcmp (destination, "/dev/pts") == 0)
+     {
+       if (container->host_uid == 0)
+-        *data = xstrdup ("newinstance,ptmxmode=0666,mode=620,gid=5");
++        if (! gid_mapped_in_current_userns (5))
++          *data = xstrdup ("newinstance,ptmxmode=0666");
++        else
++          *data = xstrdup ("newinstance,ptmxmode=0666,mode=620,gid=5");
+       else
+         *data = xstrdup ("newinstance,ptmxmode=0666,mode=620");
+       return MS_NOEXEC | MS_NOSUID;
+@@ -2693,6 +2798,9 @@
+ 
+       for (j = 0; j < mount->options_len; j++)
+         flags |= get_mount_flags_or_option (mount->options[j], flags, &extra_flags, &data, &rec_clear, &rec_set);
++
++      if (type != NULL && strcmp (type, "devpts") == 0)
++        sanitize_devpts_options (&data);
+     }
+ 
+   if (type == NULL && (flags & MS_BIND) == 0)

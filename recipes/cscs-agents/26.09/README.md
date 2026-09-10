@@ -1,6 +1,6 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 1.18.25 and Oh-My-Pi (OMP) 18.0.9 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 1.18.30 and Oh-My-Pi (OMP) 18.1.16 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 
@@ -117,6 +117,21 @@ uv tool install <tool>
 ```
 
 The uenv also exposes `shellcheck`, `jq`, `yq`, and `rg` without requiring uv.
+
+## Building containers
+
+Launch either harness with `--podman` to get a working `podman` command inside the sandbox:
+
+```bash
+uenv run cscs-agents/26.09 -- omp-bwrap --podman
+```
+
+The command runs the host podman inside an isolated user and mount namespace with its own generated configuration: images are stored under `/dev/shm` (RAM-backed, shared across launches, counted against the node's memory allocation), and runtime state lives under the launcher's data directory. Containers run as the current user. Requirements: host podman and `/dev/fuse`; do not combine with `--no-gpu-devices`.
+
+```bash
+podman pull registry.suse.com/bci/bci-base:latest
+podman run --rm registry.suse.com/bci/bci-base:latest cat /etc/os-release
+```
 
 ## Isolation model
 

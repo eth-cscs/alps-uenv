@@ -18,14 +18,20 @@ class CscsAgentLaunchers(Package):
 
     license("MIT")
 
+    version("2026.09.10")
     version("2026.09.01")
 
-    depends_on("opencode@1.18.25", type="run")
-    depends_on("oh-my-pi@18.0.9", type="run")
+    depends_on("opencode@1.18.30", type="run", when="@2026.09.10")
+    depends_on("oh-my-pi@18.1.16", type="run", when="@2026.09.10")
+    depends_on("opencode@1.18.25", type="run", when="@2026.09.01")
+    depends_on("oh-my-pi@18.0.9", type="run", when="@2026.09.01")
+    depends_on("ripgrep", type="run")
     depends_on("bubblewrap", type="run")
     depends_on("cscs-agent-model-config", type="run")
     depends_on("cscs-agent-skills", type="run")
-    depends_on("ripgrep", type="run")
+    depends_on("crun", type="run")
+    depends_on("catatonit", type="run")
+    depends_on("fuse-overlayfs", type="run")
 
     sanity_check_is_file = ["bin/opencode-bwrap", "bin/omp-bwrap"]
 
@@ -79,6 +85,14 @@ class CscsAgentLaunchers(Package):
                 "skills",
             ),
             "@OPENCODE_BIN@": str(spec["opencode"].prefix.bin),
+            "@CRUN_BIN@": str(spec["crun"].prefix.bin.crun),
+            "@CATATONIT_BIN@": str(spec["catatonit"].prefix.bin.catatonit),
+            # join_path, not attribute access: the installed binary is
+            # "fuse-overlayfs" (dash); prefix.bin.fuse_overlayfs would
+            # silently yield a path to a nonexistent file.
+            "@FUSE_OVERLAYFS_BIN@": join_path(
+                str(spec["fuse-overlayfs"].prefix.bin), "fuse-overlayfs"
+            ),
             "@OMP_BIN@": str(spec["oh-my-pi"].prefix.bin),
             "@RIPGREP_BIN@": str(spec["ripgrep"].prefix.bin),
         }

@@ -94,6 +94,46 @@ class MultiGatewayConfigTest(unittest.TestCase):
             set(config["provider"]), {"cscs", "cscs-forno"}
         )
 
+    def test_output_budget_capped_at_half_context(self):
+        # Regression test for the gateway maxTokens incident (2026-09-10):
+        # the production gateway's proxy discovery advertises maxTokens
+        # equal to the full context window. The generator must ignore
+        # discovery output limits and cap the client-side budget at half
+        # the context so input_tokens + max_tokens <= context_window can
+        # hold on the Anthropic /v1/messages route.
+        files = self.run_generator(
+            ["--format", "opencode"],
+            {MODELS.KEY_ENV: "production-secret"},
+            {
+                "cscs": [
+                    # Kimi-K2.7-Code: CSCS publishes 262144 context; the
+                    # gateway advertises maxTokens: 262144, which the
+                    # generator must not adopt.
+                    {
+                        "id": "moonshotai/Kimi-K2.7-Code",
+                        "maxTokens": 262144,
+                    },
+                    # A model with a published context half the requested
+                    # budget: --max-output 32768 stays capped at ctx // 2.
+                    {
+                        "id": "swiss-ai/Apertus-8B-Instruct-2509",
+                        "maxTokens": 262144,
+                    }
+                ]
+            },
+        )
+        config = json.loads(files[MODELS.OPENCODE_FILE])
+        models = config["provider"]["cscs"]["models"]
+
+        self.assertEqual(
+            models["moonshotai/Kimi-K2.7-Code"]["limit"],
+            {"context": 262144, "output": 32768},
+        )
+        self.assertEqual(
+            models["swiss-ai/Apertus-8B-Instruct-2509"]["limit"],
+            {"context": 32768, "output": 16384},
+        )
+
     def test_omp_and_pi_use_openai_for_forno(self):
         files = self.run_generator(
             ["--format", "pi"],
