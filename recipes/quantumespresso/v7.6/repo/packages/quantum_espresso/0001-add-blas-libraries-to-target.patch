@@ -1,0 +1,28 @@
+From 42c723156d61a15e94b9f36b893f7992e6c49b60 Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Thu, 13 Mar 2025 10:34:21 +0100
+Subject: [PATCH] add blas libraries to target
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d394cb469..e50bcbb32 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -462,9 +462,9 @@ if(NOT QE_LAPACK_INTERNAL)
+         unset(CMAKE_REQUIRED_LINK_OPTIONS)
+     endif()
+     if(LAPACK_FOUND)
+-        target_link_libraries(qe_lapack INTERFACE ${LAPACK_LIBRARIES})
++        target_link_libraries(qe_lapack INTERFACE "${LAPACK_LIBRARIES};${BLAS_LIBRARIES}")
+         target_link_options(qe_lapack INTERFACE ${LAPACK_LINKER_FLAGS})
+-        set(CMAKE_REQUIRED_LIBRARIES "${LAPACK_LINKER_FLAGS};${LAPACK_LIBRARIES}")
++        set(CMAKE_REQUIRED_LIBRARIES "${LAPACK_LINKER_FLAGS};${LAPACK_LIBRARIES};${BLAS_LIBRARIES}")
+         if(QE_ENABLE_OPENMP)
+             target_link_libraries(qe_lapack INTERFACE ${OpenMP_Fortran_LIBRARIES})
+             list(APPEND CMAKE_REQUIRED_LIBRARIES "${OpenMP_Fortran_LIBRARIES}")
+-- 
+2.48.1
+
