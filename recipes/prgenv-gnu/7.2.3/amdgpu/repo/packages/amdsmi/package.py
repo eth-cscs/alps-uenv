@@ -1,0 +1,95 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+import re
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+
+from spack.package import *
+
+
+class Amdsmi(CMakePackage):
+    """The AMD System Management Interface Library, or AMD SMI library,
+    is a C library for Linux that provides a user space interface for
+    applications to monitor and control AMD device."""
+
+    homepage = "https://github.com/ROCm/amdsmi"
+    git = "https://github.com/ROCm/rocm-systems.git"
+
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["amd-smi"]
+    license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    version("7.1.1", sha256="2a9dfafac9593d3093c3f5fc611682e712f08816414f210344ea7b719c085ff5")
+    version("7.1.0", sha256="17ccddf8988a5674edb360b9f3b41bf3d94c6f4ba36cf8d84739c6ccdfc87c50")
+    version("7.0.2", sha256="6df8d828157124b513f4ffa6c059231398b19120f5b782ec42fc151862e2cf90")
+    version("7.0.0", sha256="5a126721473859afc687bd5f00bf480cffc76c2aed2bfa0b74dfbc87d93037a2")
+    version("6.4.3", sha256="a850125bf33402cad6e57d2130e32d8b37bfc315a6dcfddd90fb593fea1f0e46")
+    version("6.4.2", sha256="194652d8d6fa8acfdd638ae1d474647ea057441e139971d366a24cbb265722f9")
+    version("6.4.1", sha256="5e1030cebacf2c92e63a555db6433ce7bb4f91409910ec98947e459d36630401")
+    version("6.4.0", sha256="6f0200ba7305171e9dadbfcd41ff00c194b98d2b88e0555c57739ef01c767233")
+    version("6.3.3", sha256="e23abc65a1cd75764d7da049b91cce2a095b287279efcd4f90b4b9b63b974dd5")
+    version("6.3.2", sha256="1ed452eedfe51ac6e615d7bfe0bd7a0614f21113874ae3cbea7df72343cc2d13")
+    version("6.3.1", sha256="a3a5a711052e813b9be9304d5e818351d3797f668ec2a455e61253a73429c355")
+    version("6.3.0", sha256="7234c46648938239385cd5db57516ed53985b8c09d2f0828ae8f446386d8bd1e")
+    version("6.2.4", sha256="5ebe8d0f176bf4a73b0e7000d9c47cb7f65ecca47011d3f9b08b93047dcf7ac5")
+    version("6.2.1", sha256="136941e3f13e0d373ee3698bd60d4fc36353a2df6406e5a50b6ac78f1b639698")
+    version("6.2.0", sha256="49e4b15af62bf9800c02a24c75c6cd99dc8b146d69cc7f00ecbbcd60f6106315")
+    version("6.1.2", sha256="4583ea9bc71d55e987db4a42f9b3b730def22892953d30bca64ca29ac844e058")
+    version("6.1.1", sha256="10ece6b1ca8bb36ab3ae987fc512838f30a92ab788a2200410e9c1707fe0166b")
+    version("6.1.0", sha256="5bd1f150a2191b1703ff2670e40f6fed730f59f155623d6e43b7f64c39ae0967")
+    version("6.0.2", sha256="aeadf07750def0325a0eaa29e767530b2ec94f3d45dc3b7452fd7a2493769428")
+    version("6.0.0", sha256="2626e3af9d60dec245c61af255525a0c0841a73fb7ec2836477c0ce5793de39c")
+    version("5.7.0", sha256="144391d537710dafa9ef69571dd76203e56db6142ab61a1375346b5733137e23")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")  # generated
+
+    depends_on("cmake@3.11:")
+    depends_on("python@3.6:", type=("build", "run"))
+    depends_on("py-virtualenv")
+    depends_on("pkgconfig")
+    depends_on("libdrm")
+    depends_on("py-pyyaml")
+    patch(
+        "https://github.com/ROCm/amdsmi/commit/2858e51b4e8ff124ed67e23e0cd131e8b2140fae.patch?full_index=1",
+        sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
+        when="@6.2",
+    )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/amdsmi"
+        else:
+            return "."
+
+    def cmake_args(self):
+        args = []
+        args.append(self.define("BUILD_TESTS", "ON"))
+        args.append("-DCMAKE_INSTALL_LIBDIR=lib")
+        return args
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # The amdsmi Python module is installed to share/amd_smi/amdsmi rather than
+        # site-packages. The amd-smi CLI locates it through a path relative to
+        # libexec/amdsmi_cli, but anything else needs it on PYTHONPATH.
+        env.prepend_path("PYTHONPATH", self.prefix.share.amd_smi)
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("version", output=str, error=str)
+        match = re.search(r"ROCm version: (\d+\.\d+\.\d+)", output)
+        return match.group(1) if match else None
