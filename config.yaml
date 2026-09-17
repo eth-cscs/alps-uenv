@@ -375,6 +375,10 @@ uenvs:
         daint: [gh200]
         santis: [gh200]
         eiger: [zen2]
+  prgenv-gnu-dpcpp:
+    "25.11":
+      recipes:
+        mi200: 25.11/amdgpu
   prgenv-gnu-openmpi:
     "25.12":
       recipes:
