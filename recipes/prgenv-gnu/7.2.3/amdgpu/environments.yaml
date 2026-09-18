@@ -67,8 +67,6 @@ gcc-env:
   - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu
   # ICON specific packages
   - eccodes +tools +fortran +aec +openmp jp2k=jasper
-  - libaec%gcc
-  - jasper%gcc
   - netcdf-c%gcc
   - netcdf-cxx4%gcc
   - netcdf-fortran%gcc
@@ -79,7 +77,7 @@ gcc-env:
   - automake%gcc
   - ca-certificates-mozilla
   - diffutils%gcc
-  - gnuconfig%gcc
+  - gnuconfig
   - libiconv%gcc
   - libxcrypt%gcc
   - libxml2%gcc
