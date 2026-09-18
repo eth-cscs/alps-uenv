@@ -107,8 +107,8 @@ cmake                                                       \
     -DPARAVIEW_ENABLE_RAYTRACING:BOOL=ON                    \
     -DPARAVIEW_ENABLE_CATALYST=ON                           \
     -DPARAVIEW_ENABLE_WEB:BOOL=OFF                          \
-    -DPARAVIEW_ENABLE_ADIOS2=OFF                            \
-    -DPARAVIEW_ENABLE_FIDES:BOOL=OFF                        \
+    -DPARAVIEW_ENABLE_ADIOS2=ON                             \
+    -DPARAVIEW_ENABLE_FIDES:BOOL=ON                         \
     -DPARAVIEW_ENABLE_VISITBRIDGE:BOOL=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_CDIReader=ON                   \
     -DPARAVIEW_PLUGIN_ENABLE_NetCDFTimeAnnotationPlugin=ON  \
