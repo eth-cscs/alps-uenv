@@ -75,9 +75,9 @@ gcc-env:
   - lapackpp
   - serialbox+c+fortran %gcc
   # probably necessary for ICON and have to be built with gcc
-  - autoconf%gcc
+  - autoconf
   - automake%gcc
-  - ca-certificates-mozilla%gcc
+  - ca-certificates-mozilla
   - diffutils%gcc
   - gnuconfig%gcc
   - libiconv%gcc
