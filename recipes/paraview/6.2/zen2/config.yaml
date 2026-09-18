@@ -1,0 +1,12 @@
+version: 3
+name: paraview
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    # required for viskores 1.2 (cuda thrust fix, and cmake problem)
+    commit: 871c0aa39840cdc60d42ea1789665951153582e0
+description: ParaView for Alps Zen2 clusters using OSMesa (Off Screen Mesa)
+default-view: default
