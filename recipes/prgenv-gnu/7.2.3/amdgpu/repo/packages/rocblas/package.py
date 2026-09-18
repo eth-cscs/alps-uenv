@@ -249,7 +249,9 @@ class Rocblas(CMakePackage):
         sha256="1f436c5ad03c8fdc021f309a1ad84d4356f30c39c4cc940bb8267841561bf5f1",
         when="@7.2",
     )
-    patch("offload_bundler_path.patch", when="@7.0:+tensile", working_dir="Tensile")
+    patch("offload_bundler_path.patch", when="@7.0:7.1 +tensile", working_dir="Tensile")
+    # from 7.2 the source is the rocm-libraries monorepo, which ships Tensile in shared/tensile
+    patch("offload_bundler_path.patch", when="@7.2: +tensile", working_dir="shared/tensile")
 
     @property
     def root_cmakelists_dir(self):
