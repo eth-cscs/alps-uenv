@@ -87,7 +87,7 @@ paraview-osmesa:
   - verdict +shared
   - xz
   - zlib-ng
-  - viskores@1.1 +64bitids +tbb +vtktypes
+  - viskores +64bitids +tbb +vtktypes
 
   # climate/weather
   - cdi
