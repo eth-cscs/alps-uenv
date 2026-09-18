@@ -49,7 +49,7 @@ SECTION "download paraview sources..."
 SRC_ROOT=$UENV_STORE/temp/src
 BUILD_ROOT=$UENV_STORE/temp/build
 
-PARAVIEW_TAG="v6.1.1"
+PARAVIEW_TAG="v6.2.0-RC2"
 
 PARAVIEW_SRC_DIR=$SRC_ROOT/paraview-src
 PARAVIEW_BUILD_DIR=$BUILD_ROOT/paraview
@@ -64,12 +64,6 @@ mkdir -p $PARAVIEW_PLUGINS_DIR
 git clone --branch ${PARAVIEW_TAG} --depth 1 https://gitlab.kitware.com/paraview/paraview.git ${PARAVIEW_SRC_DIR}
 pushd ${PARAVIEW_SRC_DIR}
 git submodule update --init --recursive
-popd
-
-# NOTE: a proper fix has been merged in master but it is not part of v6.1.0
-echo "Patching VTK::hdf5 CMake target problem..."
-pushd $PARAVIEW_SRC_DIR
-git grep -lr --recurse-submodules "VTK::hdf5" | xargs sed -i "s/VTK::hdf5/VTK::hdf5vtk/g"
 popd
 
 # NOTE: https://gitlab.kitware.com/vtk/vtk/-/work_items/19940
@@ -150,20 +144,6 @@ git remote add origin https://github.com/jfavre/ParaViewGadgetPlugin
 git fetch --depth 1 origin $PARAVIEW_GADGET_PLUGIN_COMMIT
 git reset --hard FETCH_HEAD
 popd
-
-SECTION "Patch Gadget for VTK::hdf5 workaround"
-patch -p 1 -d $PARAVIEW_GADGET_PLUGIN_REPO <<-'EOF'
-  diff --git a/src/Reader/vtk.module b/src/Reader/vtk.module
-  index 46b504d..ed640bc 100644
-  --- a/src/Reader/vtk.module
-  +++ b/src/Reader/vtk.module
-  @@ -12,4 +12,4 @@ DEPENDS
-   PRIVATE_DEPENDS
-     VTK::vtksys
-     VTK::mpi
-  -  VTK::hdf5
-  +  VTK::hdf5vtk
-EOF
 
 cmake                                         \
   -G Ninja                                    \
