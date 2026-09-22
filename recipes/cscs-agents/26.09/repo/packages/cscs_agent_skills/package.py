@@ -16,9 +16,15 @@ class CscsAgentSkills(Package):
     license("MIT")
 
     version(
+        "2026.09.22",
+        sha256="2a405bc4fa68ae83078515e806b0bca8d59e194f0bb6d348cebbae8f02be0801",
+    )
+    version(
         "2026.09.01",
         sha256="2a405bc4fa68ae83078515e806b0bca8d59e194f0bb6d348cebbae8f02be0801",
     )
+
+    patch("cscs-ci-frontmatter.patch")
 
     phases = ["install"]
 
@@ -41,7 +47,7 @@ class CscsAgentSkills(Package):
             f.write(
                 "---\n"
                 "name: refresh-cscs-models\n"
-                "description: Refresh CSCS production and experimental Forno inference model configuration for OpenCode or Oh-My-Pi. Use when agent model lists, context windows, pricing, or CSCS provider config look stale or missing.\n"
+                'description: "Refresh CSCS production and experimental Forno inference model configuration for OpenCode, Oh-My-Pi, or Prime Agent. Use when agent model lists, context windows, pricing, or CSCS provider config look stale or missing."\n'
                 "---\n"
                 "\n"
                 "# Refresh CSCS Model Configuration\n"
@@ -59,12 +65,12 @@ class CscsAgentSkills(Package):
                 "# OpenCode config block\n"
                 "cscs-agent-model-config --format opencode --out-dir /tmp/cscs-models\n"
                 "\n"
-                "# Oh-My-Pi models.yml provider block\n"
+                "# Oh-My-Pi models.yml and Prime Agent provider extension\n"
                 "cscs-agent-model-config --format pi --out-dir /tmp/cscs-models\n"
                 "\n"
                 "# Human-readable model table\n"
                 "cscs-agent-model-config --format table\n"
                 "```\n"
                 "\n"
-                "The `opencode-bwrap` and `omp-bwrap` launchers seed static production defaults and refresh their managed config files opportunistically. Adding or removing a gateway key triggers immediate regeneration. If a managed file was edited by the user, the launcher stops overwriting it.\n"
+                "The `opencode-bwrap`, `omp-bwrap`, and `prime-agent-bwrap` launchers seed static production defaults and refresh their managed config files opportunistically. Adding or removing a gateway key triggers immediate regeneration. If a managed file was edited by the user, the launcher stops overwriting it.\n"
             )

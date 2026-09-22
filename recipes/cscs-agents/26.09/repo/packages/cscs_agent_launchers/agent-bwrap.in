@@ -18,8 +18,15 @@ case "${LAUNCHER_NAME}" in
     AGENT_BIN="@OMP_BIN@"
     XDG_STEM=omp-spack
     ;;
+  prime-agent-bwrap)
+    AGENT_KIND=prime-agent
+    AGENT_LABEL="Prime Agent"
+    REAL_AGENT="@PRIME_AGENT@"
+    AGENT_BIN="@PRIME_AGENT_BIN@"
+    XDG_STEM=prime-agent-spack
+    ;;
   *)
-    printf 'error: launcher must be invoked as opencode-bwrap or omp-bwrap, not %s\n' \
+    printf 'error: launcher must be invoked as opencode-bwrap, omp-bwrap, or prime-agent-bwrap, not %s\n' \
       "${LAUNCHER_NAME}" >&2
     exit 2
     ;;
@@ -120,8 +127,11 @@ Behavior:
   - Existing default ${AGENT_LABEL} config directories are not used unless
     explicitly selected with the XDG directory options above.
   - uv and its private managed Python live under ${TOOLS_DIR} and are shared by
-    both harnesses. Project Python follows the inherited uenv PATH, while the
+    all harnesses. Project Python follows the inherited uenv PATH, while the
     CSCS model generator explicitly selects the managed interpreter.
+  - Prime Agent uses a persistent daemon in a separate sandbox with the same
+    project and launcher options. Run \`prime-agent-bwrap shutdown\` with the
+    same launcher options to stop it.
   - With --podman, the podman command runs host podman rootful inside an
     isolated user and mount namespace with a tmpfs /run; the CSCS-patched
     crun from this uenv serves as the OCI runtime.
@@ -590,7 +600,7 @@ sync_packaged_skills() {
       relative_target="$(realpath --relative-to="${skill_dir}" "${packaged_entry}")"
 
       if [[ -L "${entry_link}" ]]; then
-        if [[ "$(readlink "${entry_link}")" != "${relative_target}" ]]; then
+        if [[ ! -e "${entry_link}" || "$(readlink "${entry_link}")" != "${relative_target}" ]]; then
           ln -sfn "${relative_target}" "${entry_link}"
         fi
       elif [[ ! -e "${entry_link}" ]]; then
@@ -663,6 +673,191 @@ initialize_omp() {
   APP_ENV_ARGS=(--setenv PI_CODING_AGENT_DIR "${agent_dir}")
 }
 
+initialize_prime_agent() {
+  local agent_dir extensions_home model_target model_marker model_stamp
+  local skills_home settings_target settings_marker
+
+  SANDBOX_HOME="${CONFIG_DIR}/home"
+  SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
+  agent_dir="${SANDBOX_HOME}/.prime/agent"
+  extensions_home="${agent_dir}/extensions"
+  model_target="${extensions_home}/cscs-provider.ts"
+  model_marker="${agent_dir}/.prime-agent-bwrap-cscs-models.sha256"
+  model_stamp="${agent_dir}/.prime-agent-bwrap-cscs-models.refresh"
+  skills_home="${agent_dir}/skills"
+  settings_target="${agent_dir}/settings.json"
+  settings_marker="${agent_dir}/.prime-agent-bwrap-settings.sha256"
+
+  mkdir -p \
+    "${agent_dir}" \
+    "${extensions_home}" \
+    "${skills_home}" \
+    "${DATA_DIR}/kernel-venv" \
+    "${DATA_DIR}/sessions"
+  sync_packaged_skills "${skills_home}" .prime-agent-bwrap-packaged-skill
+
+  seed_managed_file \
+    "${CSCS_MODEL_DEFAULTS}/prime-agent-cscs-provider.ts" \
+    "${model_target}" "" "${model_marker}"
+  refresh_managed_model_config \
+    pi pi-cscs-provider.ts "${model_target}" "${model_marker}" "${model_stamp}"
+  update_managed_default \
+    "${LAUNCHER_DEFAULTS}/prime-agent-settings.json" \
+    "${settings_target}" "" "${settings_marker}"
+
+  APP_ENV_ARGS=(
+    --setenv PRIME_AGENT_CODING_AGENT_DIR "${agent_dir}"
+    --setenv PRIME_AGENT_KERNEL_VENV "${DATA_DIR}/kernel-venv"
+    --setenv PRIME_AGENT_SESSION_DIR "${DATA_DIR}/sessions"
+    --setenv PRIME_AGENT_INSTALL_UV 0
+    --setenv PI_SKIP_VERSION_CHECK 1
+  )
+}
+
+prime_agent_sandbox_id() {
+  {
+    printf 'agent\0%s\0project\0%s\0config\0%s\0data\0%s\0cache\0%s\0state\0%s\0' \
+      "${REAL_AGENT}" "${PROJECT_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" "${CACHE_DIR}" "${STATE_DIR}"
+    printf 'path\0%s\0gpu\0%s\0podman\0%s\0ipc\0%s\0ssh\0%s\0ssh-socket\0%s\0' \
+      "${SANDBOX_PATH}" "${GPU_DEVICES}" "${PODMAN_MODE}" "${SHARE_IPC}" \
+      "${SSH_AGENT}" "${SANDBOX_SSH_AUTH_SOCK}"
+    printf 'hide\0%s\0' "${HIDE_PATHS[@]}"
+    printf 'optional-rw\0%s\0' "${OPTIONAL_RW_BINDS[@]}"
+    printf 'extra-mode\0%s\0' "${EXTRA_BIND_MODES[@]}"
+    printf 'extra-source\0%s\0' "${EXTRA_BIND_SOURCES[@]}"
+    printf 'extra-destination\0%s\0' "${EXTRA_BIND_DESTINATIONS[@]}"
+  } | sha256sum | cut -c1-16
+}
+
+prime_agent_command_uses_socket() {
+  case "${COMMAND_ARGS[0]-}" in
+    status|doctor|shutdown|package|mcp|update|model|session|config|help|-h|--help|-v|--version)
+      return 1
+      ;;
+  esac
+  return 0
+}
+
+build_prime_agent_command() {
+  local arg index inserted=false
+
+  for ((index = 0; index < ${#COMMAND_ARGS[@]}; index++)); do
+    arg="${COMMAND_ARGS[index]}"
+    case "${arg}" in
+      --daemon-socket|--daemon-socket=*|--mode=daemon)
+        fail_usage "prime-agent-bwrap manages the Prime Agent daemon and socket"
+        ;;
+      --mode)
+        if [[ "${COMMAND_ARGS[index + 1]-}" == daemon ]]; then
+          fail_usage "prime-agent-bwrap manages the Prime Agent daemon and socket"
+        fi
+        ;;
+    esac
+  done
+
+  SANDBOX_COMMAND=("${REAL_AGENT}")
+  if ! prime_agent_command_uses_socket; then
+    SANDBOX_COMMAND+=("${COMMAND_ARGS[@]}")
+    return
+  fi
+
+  for arg in "${COMMAND_ARGS[@]}"; do
+    if [[ "${inserted}" == false && "${arg}" == -- ]]; then
+      SANDBOX_COMMAND+=(--daemon-socket "${PRIME_AGENT_DAEMON_SOCKET}")
+      inserted=true
+    fi
+    SANDBOX_COMMAND+=("${arg}")
+  done
+  if [[ "${inserted}" == false ]]; then
+    SANDBOX_COMMAND+=(--daemon-socket "${PRIME_AGENT_DAEMON_SOCKET}")
+  fi
+}
+
+prime_agent_daemon_running() {
+  local daemon_pid daemon_cmdline
+
+  [[ -S "${PRIME_AGENT_DAEMON_SOCKET}" && -r "${PRIME_AGENT_DAEMON_PID_FILE}" ]] || return 1
+  IFS= read -r daemon_pid < "${PRIME_AGENT_DAEMON_PID_FILE}" || return 1
+  [[ "${daemon_pid}" =~ ^[0-9]+$ ]] || return 1
+  kill -0 "${daemon_pid}" 2>/dev/null || return 1
+  [[ -r "/proc/${daemon_pid}/cmdline" ]] || return 1
+  daemon_cmdline="$(tr '\0' '\n' < "/proc/${daemon_pid}/cmdline")"
+  [[ "${daemon_cmdline}" == *"${PRIME_AGENT_DAEMON_SOCKET}"* ]]
+}
+
+start_prime_agent_daemon() {
+  local daemon_dir daemon_lock daemon_log daemon_pid attempt status
+  local acquired=false
+  local -a daemon_command
+
+  prime_agent_daemon_running && return 0
+  daemon_lock="${SANDBOX_XDG_RUNTIME_DIR}/daemon-${PRIME_AGENT_DAEMON_ID}.starting"
+  for ((attempt = 0; attempt < 200; attempt++)); do
+    if mkdir "${daemon_lock}" 2>/dev/null; then
+      acquired=true
+      break
+    fi
+    prime_agent_daemon_running && return 0
+    sleep 0.05
+  done
+  if [[ "${acquired}" == false ]]; then
+    rmdir "${daemon_lock}" 2>/dev/null || true
+    if mkdir "${daemon_lock}" 2>/dev/null; then
+      acquired=true
+    fi
+  fi
+  if [[ "${acquired}" == false ]]; then
+    printf 'error: timed out acquiring Prime Agent daemon startup lock: %s\n' \
+      "${daemon_lock}" >&2
+    return 1
+  fi
+  if prime_agent_daemon_running; then
+    rmdir "${daemon_lock}" 2>/dev/null || true
+    return 0
+  fi
+  rm -f "${PRIME_AGENT_DAEMON_SOCKET}" "${PRIME_AGENT_DAEMON_PID_FILE}"
+
+  daemon_dir="${STATE_DIR}/daemons"
+  daemon_log="${daemon_dir}/${PRIME_AGENT_DAEMON_ID}.log"
+  mkdir -p "${daemon_dir}"
+  daemon_command=(
+    "${BWRAP}" "${BWRAP_ARGS[@]}" --
+    "${REAL_AGENT}" --mode daemon --daemon-socket "${PRIME_AGENT_DAEMON_SOCKET}"
+  )
+  if [[ "${PRINT_BWRAP}" == true ]]; then
+    print_invocation "${daemon_command[@]}"
+  fi
+
+  nohup "${daemon_command[@]}" >>"${daemon_log}" 2>&1 </dev/null &
+  daemon_pid=$!
+  printf '%s\n' "${daemon_pid}" > "${PRIME_AGENT_DAEMON_PID_FILE}"
+
+  for ((attempt = 0; attempt < 200; attempt++)); do
+    if [[ -S "${PRIME_AGENT_DAEMON_SOCKET}" ]] && kill -0 "${daemon_pid}" 2>/dev/null; then
+      rmdir "${daemon_lock}" 2>/dev/null || true
+      return 0
+    fi
+    if ! kill -0 "${daemon_pid}" 2>/dev/null; then
+      status=0
+      wait "${daemon_pid}" || status=$?
+      rm -f "${PRIME_AGENT_DAEMON_PID_FILE}"
+      printf 'error: Prime Agent daemon exited during startup (status %s); see %s\n' \
+        "${status}" "${daemon_log}" >&2
+      rmdir "${daemon_lock}" 2>/dev/null || true
+      return 1
+    fi
+    sleep 0.05
+  done
+
+  kill "${daemon_pid}" 2>/dev/null || true
+  wait "${daemon_pid}" 2>/dev/null || true
+  rm -f "${PRIME_AGENT_DAEMON_PID_FILE}"
+  rmdir "${daemon_lock}" 2>/dev/null || true
+  printf 'error: timed out waiting for Prime Agent daemon socket; see %s\n' \
+    "${daemon_log}" >&2
+  return 1
+}
+
 should_filter_ed3() {
   [[ "${AGENT_KIND}" == omp ]] || return 1
   [[ "${OMP_BWRAP_FILTER_ED3-1}" != 0 ]] || return 1
@@ -730,6 +925,9 @@ SSH_AGENT_DIR=""
 SANDBOX_SSH_AUTH_SOCK=""
 SANDBOX_COMMAND=()
 APP_ENV_ARGS=()
+PRIME_AGENT_DAEMON_ID=""
+PRIME_AGENT_DAEMON_SOCKET=""
+PRIME_AGENT_DAEMON_PID_FILE=""
 
 while (($#)); do
   case "$1" in
@@ -845,18 +1043,6 @@ STATE_DIR="$(abspath_existing_dir "${STATE_DIR}")"
 TOOLS_DIR="$(abspath_existing_dir "${TOOLS_DIR}")"
 TOOLS_CACHE_DIR="$(abspath_existing_dir "${TOOLS_CACHE_DIR}")"
 
-prepare_managed_python
-harmonize_cscs_api_key
-
-case "${AGENT_KIND}" in
-  opencode) initialize_opencode ;;
-  omp) initialize_omp ;;
-esac
-
-if [[ "${PODMAN_MODE}" == true ]]; then
-  configure_podman
-fi
-
 SANDBOX_XDG_RUNTIME_DIR="/tmp/${LAUNCHER_NAME}-runtime-$(id -u)"
 if [[ -L "${SANDBOX_XDG_RUNTIME_DIR}" ]]; then
   printf 'error: XDG runtime directory must not be a symlink: %s\n' \
@@ -870,6 +1056,19 @@ chmod 700 "${SANDBOX_XDG_RUNTIME_DIR}"
     "${SANDBOX_XDG_RUNTIME_DIR}" >&2
   exit 1
 }
+prepare_managed_python
+harmonize_cscs_api_key
+
+case "${AGENT_KIND}" in
+  opencode) initialize_opencode ;;
+  omp) initialize_omp ;;
+  prime-agent) initialize_prime_agent ;;
+esac
+
+if [[ "${PODMAN_MODE}" == true ]]; then
+  configure_podman
+fi
+
 
 SANDBOX_PATH="${SANDBOX_BASE_PATH}:${TOOLS_DIR}/bin${PATH:+:${PATH}}"
 HIDE_PATHS=()
@@ -896,7 +1095,14 @@ if [[ "${SSH_AGENT}" == true ]]; then
   configure_ssh_agent
 fi
 
-BWRAP_ARGS=(--die-with-parent --unshare-pid)
+if [[ "${AGENT_KIND}" == prime-agent && "${RUN_SHELL}" == false ]]; then
+  PRIME_AGENT_DAEMON_ID="$(prime_agent_sandbox_id)"
+  PRIME_AGENT_DAEMON_SOCKET="${SANDBOX_XDG_RUNTIME_DIR}/daemon-${PRIME_AGENT_DAEMON_ID}.sock"
+  PRIME_AGENT_DAEMON_PID_FILE="${SANDBOX_XDG_RUNTIME_DIR}/daemon-${PRIME_AGENT_DAEMON_ID}.pid"
+  build_prime_agent_command
+fi
+
+BWRAP_ARGS=(--unshare-pid)
 if [[ "${SHARE_IPC}" == false ]]; then
   BWRAP_ARGS+=(--unshare-ipc)
 fi
@@ -976,7 +1182,11 @@ for ((i = 0; i < ${#EXTRA_BIND_MODES[@]}; i++)); do
   )
 done
 
-FINAL_COMMAND=("${BWRAP}" "${BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
+if [[ "${AGENT_KIND}" == prime-agent && "${RUN_SHELL}" == false ]]; then
+  start_prime_agent_daemon
+fi
+
+FINAL_COMMAND=("${BWRAP}" --die-with-parent "${BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
 if [[ "${PRINT_BWRAP}" == true ]]; then
   print_invocation "${FINAL_COMMAND[@]}"
 fi

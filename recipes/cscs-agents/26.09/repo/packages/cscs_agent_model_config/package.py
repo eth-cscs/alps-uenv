@@ -17,6 +17,7 @@ class CscsAgentModelConfig(Package):
 
     license("MIT")
 
+    version("2026.09.22")
     version("2026.09.01")
 
 

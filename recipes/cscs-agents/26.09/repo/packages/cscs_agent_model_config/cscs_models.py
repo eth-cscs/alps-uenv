@@ -47,7 +47,7 @@ WHAT IT WRITES
   claude-code.settings.json  the same env, as a Claude Code settings.json block
   chatLanguageModels.json  VS Code Custom Endpoint provider array
   omp-models.yml           Oh-My-Pi ~/.omp/agent/models.yml providers block
-  pi-cscs-provider.ts      Pi extensions calling pi.registerProvider()
+  pi-cscs-provider.ts      Prime Agent extension calling pi.registerProvider()
 
 The production gateway uses its Anthropic-compatible route, as recommended by
 the CSCS documentation. Forno currently exposes only the OpenAI-compatible
@@ -932,7 +932,7 @@ def build_omp(rows: list[dict], args) -> str:
 
 
 def build_pi(rows: list[dict], args) -> str:
-    """Build a Pi extension registering every discovered CSCS gateway."""
+    """Build a Prime Agent extension registering every discovered CSCS gateway."""
     registrations = []
     for gateway, gateway_rows in gateway_groups(rows):
         models = []
@@ -969,7 +969,7 @@ def build_pi(rows: list[dict], args) -> str:
         )
 
     registration_body = "\n\n".join(registrations)
-    return f"""// CSCS inference gateways for Pi.
+    return f"""// CSCS inference gateways for Prime Agent.
 // `apiKey` reads environment variables; no key is stored here.
 import type {{ ExtensionAPI }} from "@earendil-works/pi-coding-agent";
 
@@ -1271,7 +1271,7 @@ def main() -> None:
         )
     print(
         f"\nreminder: no generated file contains an API key. Export {KEY_ENV} for "
-        f"production and {FORNO_KEY_ENV} for Forno. OpenCode, Oh-My-Pi and Pi read "
+        f"production and {FORNO_KEY_ENV} for Forno. OpenCode, Oh-My-Pi, and Prime Agent read "
         "those variables directly; Claude Code output is production-only; VS Code "
         "prompts for separate provider keys. Merge each block into your real config "
         "-- nothing was written to a live config location.",

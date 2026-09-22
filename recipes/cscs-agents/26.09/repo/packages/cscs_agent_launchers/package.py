@@ -11,16 +11,20 @@ from spack.package import *
 
 
 class CscsAgentLaunchers(Package):
-    """Bubblewrap launchers for OpenCode and Oh-My-Pi on CSCS systems."""
+    """Bubblewrap launchers for OpenCode, Oh-My-Pi, and Prime Agent."""
 
     homepage = "https://docs.cscs.ch"
     has_code = False
 
     license("MIT")
 
+    version("2026.09.22")
     version("2026.09.10")
     version("2026.09.01")
 
+    depends_on("opencode@1.18.30", type="run", when="@2026.09.22")
+    depends_on("oh-my-pi@18.1.16", type="run", when="@2026.09.22")
+    depends_on("prime-agent@0.9.4", type="run", when="@2026.09.22")
     depends_on("opencode@1.18.30", type="run", when="@2026.09.10")
     depends_on("oh-my-pi@18.1.16", type="run", when="@2026.09.10")
     depends_on("opencode@1.18.25", type="run", when="@2026.09.01")
@@ -33,7 +37,11 @@ class CscsAgentLaunchers(Package):
     depends_on("catatonit", type="run")
     depends_on("fuse-overlayfs", type="run")
 
-    sanity_check_is_file = ["bin/opencode-bwrap", "bin/omp-bwrap"]
+    sanity_check_is_file = [
+        "bin/opencode-bwrap",
+        "bin/omp-bwrap",
+        "bin/prime-agent-bwrap",
+    ]
 
     def content_hash(self, content=None):
         if content is None:
@@ -68,6 +76,7 @@ class CscsAgentLaunchers(Package):
         replacements = {
             "@OPENCODE@": str(spec["opencode"].prefix.bin.opencode),
             "@OMP@": str(spec["oh-my-pi"].prefix.bin.omp),
+            "@PRIME_AGENT@": join_path(spec["prime-agent"].prefix.bin, "prime-agent"),
             "@BWRAP@": str(spec["bubblewrap"].prefix.bin.bwrap),
             "@CSCS_MODEL_CONFIG@": join_path(
                 spec["cscs-agent-model-config"].prefix.bin,
@@ -94,6 +103,7 @@ class CscsAgentLaunchers(Package):
                 str(spec["fuse-overlayfs"].prefix.bin), "fuse-overlayfs"
             ),
             "@OMP_BIN@": str(spec["oh-my-pi"].prefix.bin),
+            "@PRIME_AGENT_BIN@": str(spec["prime-agent"].prefix.bin),
             "@RIPGREP_BIN@": str(spec["ripgrep"].prefix.bin),
         }
         for token, value in replacements.items():
@@ -104,7 +114,7 @@ class CscsAgentLaunchers(Package):
                 "unresolved launcher template tokens: {0}".format(", ".join(unresolved))
             )
 
-        for name in ("opencode-bwrap", "omp-bwrap"):
+        for name in ("opencode-bwrap", "omp-bwrap", "prime-agent-bwrap"):
             launcher = join_path(prefix.bin, name)
             with open(launcher, "w", encoding="utf-8") as f:
                 f.write(script)

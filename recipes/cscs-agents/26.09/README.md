@@ -1,6 +1,6 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 1.18.30 and Oh-My-Pi (OMP) 18.1.16 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 1.18.30, Oh-My-Pi (OMP) 18.1.16, and Prime Agent 0.9.4 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 
@@ -18,6 +18,7 @@ When starting through `uenv run`:
 ```bash
 uenv run cscs-agents/26.09 -- omp-bwrap
 uenv run cscs-agents/26.09 -- opencode-bwrap
+uenv run cscs-agents/26.09 -- prime-agent-bwrap
 ```
 
 When the uenv and its `agents` view are already active:
@@ -25,6 +26,7 @@ When the uenv and its `agents` view are already active:
 ```bash
 omp-bwrap
 opencode-bwrap
+prime-agent-bwrap
 ```
 
 Use `--` to separate launcher options from harness arguments:
@@ -32,9 +34,10 @@ Use `--` to separate launcher options from harness arguments:
 ```bash
 omp-bwrap -- --resume 01a0437e-5c57-727d-9bd9-8735c07fab3d
 opencode-bwrap -- <opencode arguments>
+prime-agent-bwrap -- <prime-agent arguments>
 ```
 
-The current directory is the default writable project directory. Run either launcher with `--help` for project/XDG directory overrides, extra bind mounts, SSH-agent forwarding, GPU control, and a sandbox shell.
+The current directory is the default writable project directory. Run any launcher with `--help` for project/XDG directory overrides, extra bind mounts, SSH-agent forwarding, GPU control, and a sandbox shell.
 
 ## CSCS inference configuration
 
@@ -44,11 +47,13 @@ The image contains static production model defaults, so the `cscs` provider is a
 - the managed config must still match its ownership hash;
 - the set of available gateway credentials must have changed, or at least 24 hours must have passed since the last successful refresh.
 
-The first launch with either key refreshes immediately. Adding or removing the Forno key also refreshes immediately instead of waiting for the 24-hour interval. Refresh is launch-driven; there is no background service. Generation is atomic: a gateway or metadata failure keeps the existing complete config and is retried on the next launch. Set `CSCS_MODEL_REFRESH_VERBOSE=1` to display generator errors and wrapper warnings.
+The first launch with either key refreshes immediately. Adding or removing the Forno key also refreshes immediately instead of waiting for the 24-hour interval. Model refresh is launch-driven and does not run in the background daemon. Generation is atomic: a gateway or metadata failure keeps the existing complete config and is retried on the next launch. Set `CSCS_MODEL_REFRESH_VERBOSE=1` to display generator errors and wrapper warnings.
 
-When `CSCS_INFERENCE_API_KEY_FORNO` is set, the generator queries `https://ai-gateway.forno-tds.tds.cscs.ch/v1/models` and adds every advertised model under the `cscs-forno` provider. The catalogue is not pinned because Forno is an experimental service and changes frequently. Forno exposes OpenAI Chat Completions rather than the production Anthropic Messages route, so the generated OpenCode and OMP providers use their OpenAI-compatible adapters. Forno currently publishes neither prices nor deployment context lengths; the generator uses public Hugging Face metadata when available and a conservative 32,768-token context fallback for a new or private model until metadata appears.
+When `CSCS_INFERENCE_API_KEY_FORNO` is set, the generator queries `https://ai-gateway.forno-tds.tds.cscs.ch/v1/models` and adds every advertised model under the `cscs-forno` provider. The catalogue is not pinned because Forno is an experimental service and changes frequently. Forno exposes OpenAI Chat Completions rather than the production Anthropic Messages route, so the generated OpenCode, OMP, and Prime Agent providers use their OpenAI-compatible adapters. Forno currently publishes neither prices nor deployment context lengths; the generator uses public Hugging Face metadata when available and a conservative 32,768-token context fallback for a new or private model until metadata appears.
 
 With both keys present, the production default remains selected. With only the Forno key, OpenCode selects the first advertised Forno model while retaining the static production catalogue for later use when its key becomes available.
+
+Prime Agent keeps its production default when both gateways are configured. With only a Forno key, select a generated model explicitly, for example with `prime-agent-bwrap -- --provider cscs-forno --model <model-id>`.
 
 OMP defaults to these model roles:
 
@@ -58,23 +63,33 @@ OMP defaults to these model roles:
 | `smol` | `cscs/swiss-ai/Apertus-8B-Instruct-2509` |
 | `slow` | `cscs/zai-org/GLM-5.2` |
 
-OpenCode defaults to `cscs/moonshotai/Kimi-K2.7-Code`.
+OpenCode and Prime Agent default to `cscs/moonshotai/Kimi-K2.7-Code`.
 
-Launcher-owned files use SHA-256 sidecars. Editing a managed model file makes it user-owned and stops automatic refresh rather than overwriting the edit.
+Launcher-owned files use SHA-256 sidecars. Editing a managed model, provider, or settings file makes it user-owned and stops automatic updates rather than overwriting the edit.
 
-OpenCode manages `opencode.json` and leaves `opencode.jsonc` user-owned; OpenCode merges both files. For OMP, a user-created `models.yaml` takes precedence and disables launcher management of `models.yml`.
+OpenCode manages `opencode.json` and leaves `opencode.jsonc` user-owned; OpenCode merges both files. For OMP, a user-created `models.yaml` takes precedence and disables launcher management of `models.yml`. Prime Agent manages `extensions/cscs-provider.ts` and seeds `settings.json`; editing either file transfers ownership to the user.
 
 | Harness | Host configuration directory |
 |---|---|
 | OpenCode | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode-spack/xdg/opencode` |
 | OMP | `${XDG_CONFIG_HOME:-$HOME/.config}/omp-spack/home/.omp/agent` |
+| Prime Agent | `${XDG_CONFIG_HOME:-$HOME/.config}/prime-agent-spack/home/.prime/agent` |
 
 To force the next refresh without changing ownership, delete only the relevant refresh stamp:
 
 ```bash
 rm "${XDG_CONFIG_HOME:-$HOME/.config}/opencode-spack/xdg/opencode/.opencode-bwrap-cscs-models.refresh"
 rm "${XDG_CONFIG_HOME:-$HOME/.config}/omp-spack/home/.omp/agent/.omp-bwrap-cscs-models.refresh"
+rm "${XDG_CONFIG_HOME:-$HOME/.config}/prime-agent-spack/home/.prime/agent/.prime-agent-bwrap-cscs-models.refresh"
 ```
+
+## Prime Agent background service
+
+Prime Agent uses a persistent supervisor and worker processes. `prime-agent-bwrap` starts the supervisor in a separate bubblewrap sandbox, then connects the foreground client through a private Unix socket. The daemon is keyed by project path and launcher isolation options, so its workers retain the same writable project and bind policy after the client exits. Changing those options creates a separate daemon.
+
+Sessions and the Python kernel environment live under `${XDG_DATA_HOME:-$HOME/.local/share}/prime-agent-spack`; daemon logs live under `${XDG_STATE_HOME:-$HOME/.local/state}/prime-agent-spack/daemons`. Use Prime Agent's `list`, `status`, and `doctor` commands through `prime-agent-bwrap`. Stop the service with `prime-agent-bwrap shutdown --force`, using the same launcher options that started it.
+
+Prime Agent discovers the packaged CSCS skills from its launcher-owned `skills` directory and project skills from `.agents/skills`. The separate `prime-rl` project is not installed: it is a GPU reinforcement-learning training stack, not a runtime dependency of the coding agent. Prime Agent's upstream `prime-intellect` skill still provides guidance for Prime Intellect services, including prime-rl workflows.
 
 ## Using another uenv
 
@@ -101,13 +116,13 @@ uenv  pytorch
 
 Direct `python` and `python3` follow the inherited view `PATH`; with the PyTorch default view active they resolve to its interpreter and retain its packages. User-facing uv also prefers compatible interpreters from the inherited `PATH`.
 
-The launcher separately maintains a private uv-managed Python for `cscs-agent-model-config`. Its executable links are deliberately not on `PATH`, so it cannot shadow project Python. The model generator always selects this private interpreter and never depends on the project or host Python.
+The launcher separately maintains a private uv-managed Python for `cscs-agent-model-config`. Its executable links are deliberately not on `PATH`, so it cannot shadow project Python. The model generator always selects this private interpreter and never depends on the project or host Python. Prime Agent also creates a persistent, isolated Python kernel environment under its launcher data directory; it uses the same launcher-managed uv command without changing project `python` resolution.
 
 An isolated uv project environment does not automatically inherit packages from a PyTorch uenv. Use the loaded uenv's Python directly when its packaged PyTorch installation is required, or declare the dependencies in the uv project.
 
 ## uv and mutable tools
 
-On first launch, the wrapper installs uv and a private managed Python under `${XDG_DATA_HOME:-$HOME/.local/share}/cscs-agent-tools`. This requires host `curl`, network access, and can take about a minute; it is noninteractive. Later launches validate a version marker and skip installation.
+On first launch, the wrapper installs uv and a private managed Python under `${XDG_DATA_HOME:-$HOME/.local/share}/cscs-agent-tools`. This requires host `curl`, network access, and can take about a minute; it is noninteractive. Later launches validate a version marker and skip installation. Prime Agent uses that uv installation to create its kernel environment on first use of the Python tool.
 
 Use uv normally for project-local dependencies and tools:
 
@@ -120,7 +135,7 @@ The uenv also exposes `shellcheck`, `jq`, `yq`, and `rg` without requiring uv.
 
 ## Building containers
 
-Launch either harness with `--podman` to get a working `podman` command inside the sandbox:
+Launch any harness with `--podman` to get a working `podman` command inside the sandbox:
 
 ```bash
 uenv run cscs-agents/26.09 -- omp-bwrap --podman
@@ -137,7 +152,7 @@ podman run --rm registry.suse.com/bci/bci-base:latest cat /etc/os-release
 
 The wrappers expose the host filesystem read-only, hide normal home directories and `/tmp`, and make only the project directory plus launcher-specific XDG state writable. Network and GPU devices are available by default. SSH agent access requires `--ssh-agent`.
 
-OpenCode and OMP use separate configuration, data, cache, and state roots. Existing configuration in the applications' normal home-directory locations is not used unless explicitly selected.
+OpenCode, OMP, and Prime Agent use separate configuration, data, cache, and state roots. Existing configuration in the applications' normal home-directory locations is not used unless explicitly selected.
 
 Because the harness itself runs in bubblewrap, nested bubblewrap workflows such as Stackinator builds must be run outside the harness.
 
