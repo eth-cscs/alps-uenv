@@ -1,0 +1,13 @@
+startup:
+  quiet: true
+  showSplash: false
+  checkUpdate: false
+  changelogMode: hidden
+tui:
+  resizeScrollback: preserve
+modelRoles:
+  default: cscs/moonshotai/Kimi-K2.7-Code
+  smol: cscs/swiss-ai/Apertus-8B-Instruct-2509
+  slow: cscs/zai-org/GLM-5.2
+modelProviderOrder:
+  - cscs
