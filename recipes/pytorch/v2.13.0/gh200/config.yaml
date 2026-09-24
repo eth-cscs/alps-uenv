@@ -1,0 +1,11 @@
+name: pytorch
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.2.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: fe741baa0756aa3ae377bbb5ac6faefe11903ad3 # 15 September 26
+description: "pytorch 2.13.0"
+default-view: pytorch
+version: 3

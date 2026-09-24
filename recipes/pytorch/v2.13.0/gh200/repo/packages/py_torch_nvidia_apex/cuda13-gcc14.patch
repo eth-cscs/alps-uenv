@@ -1,0 +1,176 @@
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -407,21 +407,6 @@ if has_flag("--cuda_ext", "APEX_CUDA_EXT"):
+     if bare_metal_version >= Version("11.0"):
+ 
+-        cc_flag = []
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_70,code=sm_70")
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_80,code=sm_80")
+-        if bare_metal_version >= Version("11.1"):
+-            cc_flag.append("-gencode")
+-            cc_flag.append("arch=compute_86,code=sm_86")
+-        if bare_metal_version >= Version("11.8"):
+-            cc_flag.append("-gencode")
+-            cc_flag.append("arch=compute_90,code=sm_90")
+-        if bare_metal_version >= Version("12.8"):
+-            cc_flag.append("-gencode")
+-            cc_flag.append("arch=compute_100,code=sm_100")
+-            cc_flag.append("-gencode")
+-            cc_flag.append("arch=compute_120,code=sm_120")
++        cc_flag = ["-gencode", "arch=compute_90a,code=sm_90a"]
+ 
+         ext_modules.append(
+             CUDAExtension(
+@@ -530,13 +515,7 @@ if has_flag("--group_norm", "APEX_GROUP_NORM"):
+         sys.argv.remove("--group_norm")
+     raise_if_cuda_home_none("--group_norm")
+ 
+-    # CUDA group norm supports from SM70
+-    arch_flags = []
+-    # FIXME: this needs to be done more cleanly
+-    for arch in [70, 75, 80, 86, 90, 100, 120]:
+-        arch_flag = f"-gencode=arch=compute_{arch},code=sm_{arch}"
+-        arch_flags.append(arch_flag)
+-    arch_flags.append(arch_flag)
++    arch_flags = ["-gencode=arch=compute_90a,code=sm_90a"]
+ 
+     ext_modules.append(
+         CUDAExtension(
+@@ -554,11 +533,7 @@ if has_flag("--group_norm", "APEX_GROUP_NORM"):
+         )
+     )
+ 
+-    # CUDA group norm V2 is tested on SM100
+-    if bare_metal_version >= Version("12.8"):
+-        arch_flags = ["-gencode=arch=compute_100,code=sm_100"]
+-    else:
+-        arch_flags = ["-gencode=arch=compute_90,code=compute_90"]
++    arch_flags = ["-gencode=arch=compute_90a,code=sm_90a"]
+ 
+     ext_modules.append(
+         CUDAExtension(
+@@ -652,20 +627,6 @@ if has_flag("--fast_layer_norm", "APEX_FAST_LAYER_NORM"):
+     raise_if_cuda_home_none("--fast_layer_norm")
+ 
+-    cc_flag = []
+-    cc_flag.append("-gencode")
+-    cc_flag.append("arch=compute_70,code=sm_70")
+-
+-    if bare_metal_version >= Version("11.0"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_80,code=sm_80")
+-    if bare_metal_version >= Version("11.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_90,code=sm_90")
+-    if bare_metal_version >= Version("12.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_100,code=sm_100")
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_120,code=sm_120")
++    cc_flag = ["-gencode", "arch=compute_90a,code=sm_90a"]
+ 
+     ext_modules.append(
+         CUDAExtension(
+@@ -703,17 +664,7 @@ if has_flag("--fmha", "APEX_FMHA"):
+     if bare_metal_version < Version("11.0"):
+         raise RuntimeError("--fmha only supported on sm_80 and sm_90 GPUs")
+ 
+-    cc_flag = []
+-    cc_flag.append("-gencode")
+-    cc_flag.append("arch=compute_80,code=sm_80")
+-    if bare_metal_version >= Version("11.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_90,code=sm_90")
+-    if bare_metal_version >= Version("12.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_100,code=sm_100")
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_120,code=sm_120")
++    cc_flag = ["-gencode", "arch=compute_90a,code=sm_90a"]
+ 
+     ext_modules.append(
+         CUDAExtension(
+@@ -756,23 +707,6 @@ if has_flag("--fast_multihead_attn", "APEX_FAST_MULTIHEAD_ATTN"):
+     raise_if_cuda_home_none("--fast_multihead_attn")
+ 
+-    cc_flag = []
+-    cc_flag.append("-gencode")
+-    cc_flag.append("arch=compute_70,code=sm_70")
+-
+-    if bare_metal_version >= Version("11.0"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_80,code=sm_80")
+-    if bare_metal_version >= Version("11.1"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_86,code=sm_86")
+-    if bare_metal_version >= Version("11.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_90,code=sm_90")
+-    if bare_metal_version >= Version("12.8"):
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_100,code=sm_100")
+-        cc_flag.append("-gencode")
+-        cc_flag.append("arch=compute_120,code=sm_120")
++    cc_flag = ["-gencode", "arch=compute_90a,code=sm_90a"]
+ 
+     subprocess.run(["git", "submodule", "update", "--init", "apex/contrib/csrc/multihead_attn/cutlass"])
+     ext_modules.append(
+diff --git a/apex/contrib/csrc/optimizers/multi_tensor_distopt_adam_kernel.cu b/apex/contrib/csrc/optimizers/multi_tensor_distopt_adam_kernel.cu
+--- a/apex/contrib/csrc/optimizers/multi_tensor_distopt_adam_kernel.cu
++++ b/apex/contrib/csrc/optimizers/multi_tensor_distopt_adam_kernel.cu
+@@ -30,7 +30,7 @@ __device__ __forceinline__ void load_store(T* dst, const T* src,
+ }
+ 
+ // (1-t)*x + t*y
+-__device__ __forceinline__ float lerp(float t, float x, float y) {
++__device__ __forceinline__ float apex_lerp(float t, float x, float y) {
+   // See https://developer.nvidia.com/blog/lerp-faster-cuda/
+   return fma(t, y, fma(-t, x, x));
+ }
+@@ -56,8 +56,8 @@ struct DistAdamFunctor {
+ #pragma unroll
+       for (int ii = 0; ii < ILP; ii++) {
+         float scaled_grad = (g[ii] * grad_scale) + (weight_decay * p[ii]);
+-        float next_m = lerp(beta1, scaled_grad, m[ii]);
+-        float next_v = lerp(beta2, scaled_grad * scaled_grad, v[ii]);
++        float next_m = apex_lerp(beta1, scaled_grad, m[ii]);
++        float next_v = apex_lerp(beta2, scaled_grad * scaled_grad, v[ii]);
+         float next_m_unbiased = next_m / beta1_correction;
+         float next_v_unbiased = next_v / beta2_correction;
+         float denom = sqrtf(next_v_unbiased) + eps;
+@@ -70,8 +70,8 @@ struct DistAdamFunctor {
+ #pragma unroll
+       for (int ii = 0; ii < ILP; ii++) {
+         float scaled_grad = g[ii] * grad_scale;
+-        float next_m = lerp(beta1, scaled_grad, m[ii]);
+-        float next_v = lerp(beta2, scaled_grad * scaled_grad, v[ii]);
++        float next_m = apex_lerp(beta1, scaled_grad, m[ii]);
++        float next_v = apex_lerp(beta2, scaled_grad * scaled_grad, v[ii]);
+         float next_m_unbiased = next_m / beta1_correction;
+         float next_v_unbiased = next_v / beta2_correction;
+         float denom = sqrtf(next_v_unbiased) + eps;
+@@ -189,8 +189,8 @@ struct DistAdamCapturableFunctor {
+ #pragma unroll
+       for (int ii = 0; ii < ILP; ii++) {
+         float scaled_grad = (g[ii] * grad_scale) + (weight_decay * p[ii]);
+-        float next_m = lerp(beta1, scaled_grad, m[ii]);
+-        float next_v = lerp(beta2, scaled_grad * scaled_grad, v[ii]);
++        float next_m = apex_lerp(beta1, scaled_grad, m[ii]);
++        float next_v = apex_lerp(beta2, scaled_grad * scaled_grad, v[ii]);
+         float next_m_unbiased = next_m / beta1_correction;
+         float next_v_unbiased = next_v / beta2_correction;
+         float denom = sqrtf(next_v_unbiased) + eps;
+@@ -203,8 +203,8 @@ struct DistAdamCapturableFunctor {
+ #pragma unroll
+       for (int ii = 0; ii < ILP; ii++) {
+         float scaled_grad = g[ii] * grad_scale;
+-        float next_m = lerp(beta1, scaled_grad, m[ii]);
+-        float next_v = lerp(beta2, scaled_grad * scaled_grad, v[ii]);
++        float next_m = apex_lerp(beta1, scaled_grad, m[ii]);
++        float next_v = apex_lerp(beta2, scaled_grad * scaled_grad, v[ii]);
+         float next_m_unbiased = next_m / beta1_correction;
+         float next_v_unbiased = next_v / beta2_correction;
+         float denom = sqrtf(next_v_unbiased) + eps;
