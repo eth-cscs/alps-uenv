@@ -1,0 +1,20 @@
+packages:
+  # This is a lightweight pre/post-processing env: we want cray-mpich for MPI,
+  # but WITHOUT GPU-aware (cuda) support. The shared cluster network config
+  # (alps-cluster-config/santis/network.yaml -> site/network/gh200) only
+  # provides +cuda externals for the Slingshot/CXI stack, which drags cuda in
+  # via libfabric and the buildable:false libcxi external.
+  #
+  # Override those externals here as ~cuda so the whole network stack
+  # concretizes cuda-free. These point at the same system prefixes; the CXI
+  # libraries still work for host (non-GPU-aware) MPI.
+  libfabric:
+    buildable: false
+    externals:
+    - spec: libfabric@1.22.0 fabrics=cxi,rxm,tcp,rxd,udp,shm ~cuda ~gdrcopy
+      prefix: /opt/cray/libfabric/1.22.0
+  libcxi:
+    buildable: false
+    externals:
+    - spec: libcxi@12.0.2 ~cuda
+      prefix: /usr
