@@ -1,0 +1,39 @@
+prgenv:
+  compiler: [intel-classic, gcc]
+  network:
+      mpi: cray-mpich@8.1.32 %c,cxx=oneapi %fortran=intel
+      # use the system libfabric because BYO libfabric forces gcc to be used to build other packages
+      specs: ['libfabric@1.22']
+  unify: true
+  specs:
+  #  does not build because of -ffp-model=consistent flag
+  #- openblas threads=openmp
+  - hdf5+cxx+hl+fortran
+  - netcdf-c build_system=cmake
+  - netcdf-cxx
+  - netcdf-fortran
+  - osu-micro-benchmarks
+  prefer:
+  - '%[when=%c] c=oneapi %[when=%cxx] cxx=oneapi %[when=%fortran] fortran=intel'
+  variants:
+  - +mpi
+  views:
+    intel:
+      link: roots
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        # The intel-classic compiler group builds intel-oneapi-compilers (icx/icpx/ifx)
+        # as an internal dependency but stackinator only exposes the *classic* bins
+        # (icc/icpc/ifort) in the view. A post-install hook symlinks the oneAPI bins
+        # into <view>/bin. Spack still auto-sets CC/CXX/FC from the oneAPI package to
+        # paths under env/oneapi/compiler/2023.2.4/... which link:roots never projects,
+        # so they dangle — override them here to the <view>/bin symlinks, with Fortran
+        # pointing at classic ifort (the intended toolchain) rather than ifx.
+        env_vars:
+          set:
+            - CC: $@view_path@/bin/icx
+            - CXX: $@view_path@/bin/icpx
+            - FC: $@view_path@/bin/ifort
+            - F77: $@view_path@/bin/ifort

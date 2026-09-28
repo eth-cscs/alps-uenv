@@ -1,0 +1,11 @@
+name: intel-classic
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2026.06
+store: /user-environment
+description: Intel classic toolchain with cray-mpich, Python, CMake and other development tools.
+default-view: intel
+version: 3
