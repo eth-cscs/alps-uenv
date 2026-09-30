@@ -28,7 +28,7 @@ gcc-env:
   - hipcub
   - llvm-amdgpu
   # rocm packages
-  - rocblas ~tensile ^py-msgpack %cxx=gcc
+  - rocblas +tensile ^py-msgpack %cxx=gcc
   - rocfft
   - rocm-cmake %cxx=gcc
   - rocm-openmp-extras
