@@ -1,4 +1,4 @@
-paraview-osmesa:
+paraview:
   compiler: [gcc]
   network:
     mpi: cray-mpich
@@ -25,7 +25,6 @@ paraview-osmesa:
             # note: these are needed because paraview plugins are not installed by spack
             - LD_LIBRARY_PATH: $@mount@/paraview-plugins/lib64
     develop:
-      exclude: ["paraview-osmesa"]
       uenv:
         add_compilers: true
         prefix_paths:

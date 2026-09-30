@@ -1,4 +1,4 @@
-paraview-cuda:
+paraview:
   compiler: [gcc]
   network:
     mpi: cray-mpich@9.1 +cuda
@@ -27,7 +27,6 @@ paraview-cuda:
             - LD_LIBRARY_PATH: $@mount@/paraview-plugins/lib64
             - LD_LIBRARY_PATH: $@mount@/paraview-plugins/nvidia-index/lib
     develop:
-      exclude: ["paraview-cuda"]
       uenv:
         add_compilers: true
         prefix_paths:
