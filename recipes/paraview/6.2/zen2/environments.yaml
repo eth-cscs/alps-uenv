@@ -43,12 +43,15 @@ paraview:
   - netcdf-c +mpi
   - lz4
   - conduit
+  - adios2 +python +hdf5 +libcatalyst
 
   # multithreading
   - tbb
 
   # in-situ support
   - libcatalyst +mpi +python
+  - fides@git.61836d4a41297a273eb029fc91e7beb145acff03=1.4.0-pre # pinned as VTK/ThirdParty/fides
+  - adios-catalyst
 
   # vtk external deps
   - abseil-cpp
