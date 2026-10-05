@@ -104,6 +104,7 @@ cmake                                                       \
     -DVTK_MODULE_USE_EXTERNAL_VTK_token=OFF                 \
     -DVTK_MODULE_USE_EXTERNAL_VTK_exprtk=OFF                \
     -DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores=ON            \
+    -DVTK_MODULE_USE_EXTERNAL_ParaView_protobuf=OFF         \
     -DVTK_ENABLE_OSPRAY:BOOL=ON                             \
     -DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON                     \
     -S $PARAVIEW_SRC_DIR                                    \
