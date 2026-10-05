@@ -58,7 +58,6 @@ paraview:
   - adios-catalyst
 
   # vtk external deps
-  - abseil-cpp
   - cgns #@4.4.0
   - cli11
   - double-conversion #@3.3.0
@@ -82,7 +81,6 @@ paraview:
   - parallel-netcdf
   - pegtl@2
   - proj
-  - protobuf #@:3.21 # problem about crc arm vs crc aarch64 -- give a try to 33.0, it failed with 32.1
   - pugixml
   - seacas@2025-02-27 ~legacy
   - sqlite
