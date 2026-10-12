@@ -1,0 +1,6 @@
+# amber requires cuda 12.8
+# -> cuda 12.8 is compatible with up to gcc 13.2
+# -> the only non-deprecated gcc 13 version is 13.4.0
+# -> so we are forced to pick the most recent gcc 12 version
+gcc:
+  version: "12.5"
