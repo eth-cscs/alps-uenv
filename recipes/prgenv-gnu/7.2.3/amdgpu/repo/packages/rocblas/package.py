@@ -252,6 +252,7 @@ class Rocblas(CMakePackage):
     patch("offload_bundler_path.patch", when="@7.0:7.1 +tensile", working_dir="Tensile")
     # from 7.2 the source is the rocm-libraries monorepo, which ships Tensile in shared/tensile
     patch("offload_bundler_path.patch", when="@7.2: +tensile", working_dir="shared/tensile")
+    patch("0010-disable-tensile-co-compression.patch", when="@7.2: +tensile")
 
     @property
     def root_cmakelists_dir(self):

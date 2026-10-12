@@ -1,0 +1,12 @@
+diff --git a/shared/tensile/Tensile/BuildCommands/AssemblyCommands.py b/shared/tensile/Tensile/BuildCommands/AssemblyCommands.py
+--- a/shared/tensile/Tensile/BuildCommands/AssemblyCommands.py
++++ b/shared/tensile/Tensile/BuildCommands/AssemblyCommands.py
+@@ -142,7 +142,7 @@ def buildAssemblyCodeObjectFiles(
+ 
+                 _linkIntoCodeObject(objFiles, coFileRaw, writer, maxLineLength)
+                 coFile = destDir / coFileRaw.name.replace(extCoRaw, extCo)
+-                compressCodeObject(coFileRaw, coFile, gfx, bundler)
++                shutil.copyfile(coFileRaw, coFile)
+                 coFiles.append(coFile)
+ 
+          else:
