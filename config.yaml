@@ -184,6 +184,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "2026.2":
+      recipes:
+        gh200: 2026.2/gh200
+        zen2: 2026.2/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   icon-wcp:
     "v1":
       recipes:
