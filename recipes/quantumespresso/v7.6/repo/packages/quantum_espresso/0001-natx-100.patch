@@ -1,0 +1,25 @@
+From ae1b131558ebd51f5eb6209d2fe685a7da272d09 Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Tue, 7 Apr 2026 18:13:50 +0200
+Subject: [PATCH] natx=100
+
+---
+ Modules/parameters.f90 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Modules/parameters.f90 b/Modules/parameters.f90
+index 25a7b6e..d0419b0 100644
+--- a/Modules/parameters.f90
++++ b/Modules/parameters.f90
+@@ -19,7 +19,7 @@ MODULE parameters
+   !! max number of different types of atom
+   INTEGER, PARAMETER :: nsx = ntypx
+   !! max number of atomic species (CP)
+-  INTEGER, PARAMETER :: natx = 50
++  INTEGER, PARAMETER :: natx = 100
+   !! max number of atoms for DFT+U+V calculations
+   INTEGER, PARAMETER :: sc_size = 1
+   !! Defines the supercell in DFT+U+V as composed by the unit cells located
+-- 
+2.53.0
+

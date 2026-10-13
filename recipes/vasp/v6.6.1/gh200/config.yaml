@@ -1,0 +1,10 @@
+name: vasp
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: v2026.03.0
+store: /user-environment
+description: VASP
+version: 2

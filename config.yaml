@@ -97,6 +97,13 @@ clusters:
           SLURM_CPUS_PER_TASK: '64'
     runner: f7t
 uenvs:
+  amber:
+    "26":
+      recipes:
+        gh200: "26/gh200"
+      deploy:
+        daint: [gh200]
+      mount: "/user-environment"
   editors:
     "24.7":
       recipes:
@@ -115,6 +122,13 @@ uenvs:
       deploy:
         eiger: [zen2]
       mount: "/user-tools"
+  esmf:
+    "26.07":
+      recipes:
+        zen2: "26.07"
+      deploy:
+        eiger: [zen2]
+      mount: "/user-environment"
   gromacs:
     "2023":
       recipes:
@@ -360,7 +374,6 @@ uenvs:
         clariden: [gh200]
         daint: [gh200]
         santis: [gh200]
-        bristen: [a100]
         eiger: [zen2]
   prgenv-gnu-openmpi:
     "25.12":
@@ -473,6 +486,13 @@ uenvs:
         santis: [gh200]
         daint: [gh200]
         eiger: [zen2]
+    "v7.6":
+      recipes:
+        gh200: v7.6/gh200
+        zen2: v7.6/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   sirius:
     "v7.5":
       recipes:
@@ -540,6 +560,13 @@ uenvs:
       recipes:
         zen2: v6.6.0/mc
         gh200: v6.6.0/gh200
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+    "v6.6.1":
+      recipes:
+        zen2: v6.6.1/mc
+        gh200: v6.6.1/gh200
       deploy:
         eiger: [zen2]
         daint: [gh200]
