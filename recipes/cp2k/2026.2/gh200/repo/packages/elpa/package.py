@@ -95,7 +95,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     # Suppress debug output to stderr for non-debug builds
     patch("elpa-2026.02.001-wantDebug.patch", when="@2026.02.001:")
     # Free leaked per-node MPI communicator created during GPU setup
-    patch("elpa-2025.06.001-mpi-comm-leak.patch", when="@2025.06.001:")
+    patch("elpa-2026.02.002-mpi-comm-leak.patch", when="@2026:02:002")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
