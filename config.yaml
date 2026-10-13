@@ -311,6 +311,22 @@ uenvs:
         bristen: [a100]
         beverin: [mi200, mi300]
       mount: "/user-tools"
+    "26.10":
+      recipes:
+        a100: "26.10"
+        gh200: "26.10"
+        mi200: "26.10"
+        mi300: "26.10"
+        zen2: "26.10"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+        starlex: [gh200]
+        bristen: [a100]
+        beverin: [mi200, mi300]
+      mount: "/user-tools"
   # OpenFOAM Foundation
   openfoam-org:
     "8":
