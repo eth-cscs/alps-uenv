@@ -1,0 +1,10 @@
+name: esmf
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2026.06
+store: /user-environment
+description: GNU Compiler toolchain with ESMF for CESM on multicore
+version: 3
