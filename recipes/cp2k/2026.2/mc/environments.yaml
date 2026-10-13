@@ -15,7 +15,7 @@ cp2k:
   - plumed
   - libvori
   # py-torch
-  - py-torch@2.11 ~distributed +custom-protobuf
+  - py-torch +custom-protobuf ~distributed ~fbgemm ~kineto ~qnnpack
   - protobuf
   - py-protobuf
   # libint
