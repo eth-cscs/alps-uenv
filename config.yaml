@@ -319,6 +319,19 @@ uenvs:
         bristen: [a100]
         beverin: [mi300]
       mount: "/user-tools"
+    "26.0.3":
+      recipes:
+        a100: "26.0.3/cscs"
+        gh200: "26.0.3/cscs"
+        mi300: "26.0.3/cscs"
+        zen2: "26.0.3/cscs"
+        # zen3 is only on MCH systems, so it uses the MCH license
+        zen3: "26.0.3/mch"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        linard: [zen3]
+      mount: "/user-tools"
   namd:
     "3.0":
       recipes:
