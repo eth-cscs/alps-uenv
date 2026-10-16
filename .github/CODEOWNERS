@@ -2,6 +2,7 @@
 recipes/ascent/ @albestro
 recipes/cp2k/ @RMeli @abussy @mtaillefumier
 recipes/gromacs/ @kanduri @RMeli
+recipes/hpctoolkit @jgphpc
 recipes/lammps/ @nickjbrowning @RMeli
 recipes/linalg-complex/ @finkandreas @msimberg
 recipes/linalg/ @finkandreas @msimberg
