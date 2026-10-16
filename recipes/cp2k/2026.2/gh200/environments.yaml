@@ -62,7 +62,7 @@ cp2k:
     - cuda_arch=90
     - build_type=Release
   network:
-    mpi: cray-mpich@9.1.0 +cuda
+    mpi: cray-mpich@9.2.1 +cuda
     specs:
       - libfabric@2.6.0 +gdrcopy
   views:

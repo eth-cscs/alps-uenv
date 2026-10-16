@@ -60,7 +60,7 @@ cp2k:
     - ~rocm
     - build_type=Release
   network:
-    mpi: cray-mpich@9.1.0
+    mpi: cray-mpich@9.2.1
     specs:
       - libfabric@2.6
   views:
