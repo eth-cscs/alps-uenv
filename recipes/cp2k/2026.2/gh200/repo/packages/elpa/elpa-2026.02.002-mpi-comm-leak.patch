@@ -1,5 +1,3 @@
-diff --git a/src/GPU/check_for_gpu_template.F90 b/src/GPU/check_for_gpu_template.F90
-index 21ea58e7..cf27df95 100644
 --- a/src/GPU/check_for_gpu_template.F90
 +++ b/src/GPU/check_for_gpu_template.F90
 @@ -301,6 +301,8 @@
