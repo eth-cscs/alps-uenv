@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+uv="${CSCS_AGENT_UV:-}"
+if [[ -z "${uv}" ]]; then
+  uv="$(command -v uv || true)"
+fi
+if [[ -z "${uv}" || ! -x "${uv}" ]]; then
+  printf 'error: uv is required to run cscs-agent-model-config\n' >&2
+  exit 1
+fi
+
+python_version="${CSCS_AGENT_PYTHON_VERSION:-3.13}"
+exec env UV_PYTHON_PREFERENCE=only-managed \
+  "${uv}" run --no-project --python "${python_version}" \
+  python "@CSCS_MODELS_SCRIPT@" "$@"
