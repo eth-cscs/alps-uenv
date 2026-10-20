@@ -17,4 +17,3 @@ modules:
       exclude: []
       projections:
         all: '{name}/{version}'
-        gcc@15: '{name}/{version}'
