@@ -444,7 +444,8 @@ class CheckpointStore:
         self.persistent_config = persistent_config
         self.persistent_data = persistent_data
         self.persistent_state = persistent_state
-        self.store = persistent_data / ".cscs-agent-storage" / kind
+        namespace = "opencode-v2" if kind == "opencode" else kind
+        self.store = persistent_data / ".cscs-agent-storage" / namespace
         self.generations = self.store / "generations"
         self.current = self.store / "current"
 
@@ -469,6 +470,7 @@ class CheckpointStore:
         os.chmod(self.local_root, 0o700)
         if self.kind == "opencode":
             remove_sqlite(self.opencode_db)
+            shutil.rmtree(self.local_root / "opencode-runtime", ignore_errors=True)
             return
         for name in ("data", "state", "cache"):
             shutil.rmtree(self.local_root / name, ignore_errors=True)

@@ -11,7 +11,7 @@ case "${LAUNCHER_NAME}" in
     AGENT_LABEL=OpenCode
     REAL_AGENT="@OPENCODE@"
     AGENT_BIN="@OPENCODE_BIN@"
-    XDG_STEM=opencode-cscs-agents-26.10
+    XDG_STEM=opencode-v2-cscs-agents-26.10
     ;;
   omp-bwrap)
     AGENT_KIND=omp
@@ -34,6 +34,11 @@ case "${LAUNCHER_NAME}" in
     ;;
 esac
 
+PROFILE_NAMESPACE="${AGENT_KIND}"
+if [[ "${AGENT_KIND}" == opencode ]]; then
+  PROFILE_NAMESPACE=opencode-v2
+fi
+
 BWRAP="@BWRAP@"
 CSCS_MODEL_CONFIG="@CSCS_MODEL_CONFIG@"
 CSCS_MODEL_DEFAULTS="@CSCS_MODEL_DEFAULTS@"
@@ -54,8 +59,9 @@ HOST_XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
 HOST_XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
 HOST_XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
 HOST_XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
-TOOLS_DIR="${CSCS_AGENT_TOOLS_DIR:-${HOST_XDG_DATA_HOME}/cscs-agent-tools}"
-TOOLS_CACHE_DIR="${CSCS_AGENT_TOOLS_CACHE_DIR:-${HOST_XDG_CACHE_HOME}/cscs-agent-tools/uv}"
+LOCAL_STORAGE_PARENT="${CSCS_AGENT_LOCAL_STORAGE_DIR:-/dev/shm/cscs-agent-storage-$(id -u)}"
+TOOLS_DIR="${CSCS_AGENT_TOOLS_DIR:-${LOCAL_STORAGE_PARENT}/tools}"
+TOOLS_CACHE_DIR="${CSCS_AGENT_TOOLS_CACHE_DIR:-${LOCAL_STORAGE_PARENT}/uv-cache}"
 AGENT_PYTHON_VERSION="${CSCS_AGENT_PYTHON_VERSION:-3.13}"
 AGENT_UV_VERSION="${CSCS_AGENT_UV_VERSION:-0.12.7}"
 AGENT_UV_INSTALL_URL="${CSCS_AGENT_UV_INSTALL_URL:-https://astral.sh/uv/${AGENT_UV_VERSION}/install.sh}"
@@ -74,6 +80,15 @@ Usage:
 Launcher options:
   --project-dir PATH
       Project directory to expose read-write. Default: current directory.
+
+  --project-local
+      Keep an independent harness profile under the selected project's
+      .cscs-agents/26.10 directory instead of the home XDG roots.
+      Cannot be combined with explicit config/data/cache/state directory options.
+
+  --instance NAME
+      Select a named project-local instance. Requires --project-local.
+      Default: default. Use distinct names to run agents in the same project.
 
   --config-dir PATH
       XDG config root for this launcher. Default: ${HOST_XDG_CONFIG_HOME}/${XDG_STEM}
@@ -141,9 +156,13 @@ Behavior:
   - PID and IPC namespaces are isolated unless --share-ipc is passed.
   - Existing default ${AGENT_LABEL} config directories are not used unless
     explicitly selected with the XDG directory options above.
-  - uv and its private managed Python live under ${TOOLS_DIR} and are shared by
-    all harnesses. Project Python follows the inherited uenv PATH, while the
-    CSCS model generator explicitly selects the managed interpreter.
+  - uv, managed Python, uv tools, and their cache use node-local storage shared
+    by all harnesses. Tools: ${TOOLS_DIR}; cache: ${TOOLS_CACHE_DIR}.
+    Clearing this storage requires reinstallation, not session recovery.
+  - CSCS_AGENT_TOOLS_DIR and CSCS_AGENT_TOOLS_CACHE_DIR may override these
+    locations, but must be owned, non-symlink directories on a local filesystem.
+    Project Python follows the inherited uenv PATH; the CSCS model generator
+    explicitly selects the managed interpreter.
   - Prime Agent uses a persistent daemon in a separate sandbox with the same
     project and launcher options. Run \`prime-agent-bwrap shutdown\` with the
     same launcher options to stop it.
@@ -177,7 +196,7 @@ abspath_existing_dir() {
 require_node_local_filesystem() {
   local path="$1" filesystem
 
-  filesystem="$(stat -f -c '%T' "${path}")"
+  filesystem="$(stat -f -c '%T' "${path}")" || return 1
   case "${filesystem}" in
     nfs|nfs4|cifs|smb2|lustre|gpfs|ceph|fuse.ceph)
       printf 'error: node-local agent storage cannot use %s: %s\n' \
@@ -185,6 +204,44 @@ require_node_local_filesystem() {
       exit 1
       ;;
   esac
+}
+
+prepare_tools_directory() {
+  local path="$1"
+
+  [[ ! -L "${path}" ]] || fail_usage "node-local tools directory must not be a symlink: ${path}"
+  mkdir -p "${path}" || return 1
+  [[ "$(stat -c '%u' "${path}")" == "$(id -u)" ]] || \
+    fail_usage "node-local tools directory is not owned by the current user: ${path}"
+  require_node_local_filesystem "${path}" || return 1
+  chmod 700 "${path}" || return 1
+  abspath_existing_dir "${path}"
+}
+
+configure_project_profile() {
+  local root="${PROJECT_DIR}/.cscs-agents" profile_root directory
+
+  profile_root="${root}/26.10/${PROFILE_NAMESPACE}/${PROFILE_INSTANCE}"
+  for directory in \
+    "${root}" "${root}/26.10" "${root}/26.10/${PROFILE_NAMESPACE}" "${profile_root}"; do
+    [[ ! -L "${directory}" ]] || \
+      fail_usage "project-local profile directory must not be a symlink: ${directory}"
+    mkdir -p "${directory}"
+  done
+
+  # These profiles can contain credentials and session transcripts. Do not
+  # overwrite existing rules; noclobber also handles concurrent first launches.
+  if [[ ! -e "${root}/.gitignore" && ! -L "${root}/.gitignore" ]]; then
+    if ! (set -o noclobber; printf '*\n' > "${root}/.gitignore") 2>/dev/null; then
+      [[ -f "${root}/.gitignore" && ! -L "${root}/.gitignore" ]] || \
+        fail_usage "could not create project-local profile ignore rules: ${root}/.gitignore"
+    fi
+  fi
+
+  CONFIG_DIR="${profile_root}/config"
+  DATA_DIR="${profile_root}/data"
+  CACHE_DIR="${profile_root}/cache"
+  STATE_DIR="${profile_root}/state"
 }
 
 paths_overlap() {
@@ -684,7 +741,7 @@ sync_packaged_skills() {
 }
 
 initialize_opencode() {
-  local config_home model_target model_marker model_stamp skills_home tui_target
+  local config_home model_target model_marker model_stamp skills_home cli_target directory
 
   SANDBOX_HOME="${CONFIG_DIR}/home"
   SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
@@ -693,10 +750,14 @@ initialize_opencode() {
   model_marker="${config_home}/.opencode-bwrap-cscs-models.sha256"
   model_stamp="${config_home}/.opencode-bwrap-cscs-models.refresh"
   skills_home="${config_home}/skills"
-  tui_target="${config_home}/tui.json"
+  cli_target="${config_home}/cli.json"
 
   if [[ "${INITIALIZATION_READ_ONLY}" == false ]]; then
     mkdir -p "${SANDBOX_HOME}" "${config_home}" "${skills_home}"
+    for directory in locks pty latest/locks; do
+      mkdir -p "${STATE_DIR}/opencode/${directory}" \
+        "${LOCAL_STORAGE_ROOT}/opencode-runtime/${directory}"
+    done
     sync_packaged_skills "${skills_home}" .opencode-bwrap-packaged-skill
 
     # OpenCode merges opencode.json and opencode.jsonc. Manage only our JSON file,
@@ -707,12 +768,23 @@ initialize_opencode() {
     refresh_managed_model_config \
       opencode opencode.json "${model_target}" "${model_marker}" "${model_stamp}"
 
-    if [[ ! -f "${tui_target}" && ! -f "${config_home}/tui.jsonc" ]]; then
-      install -m 600 "${LAUNCHER_DEFAULTS}/opencode-tui.json" "${tui_target}"
+    if [[ ! -f "${cli_target}" ]]; then
+      install -m 600 "${LAUNCHER_DEFAULTS}/opencode-cli.json" "${cli_target}"
+    fi
+    # This file is also bound read-only below: enabling a detached service
+    # would outlive the foreground writer lease and its final checkpoint.
+    if [[ ! -e "${config_home}/service.json" ]]; then
+      install -m 600 "${LAUNCHER_DEFAULTS}/opencode-service.json" "${config_home}/service.json"
     fi
   fi
 
+  for directory in locks pty latest/locks; do
+    INTERNAL_BIND_SOURCES+=("${LOCAL_STORAGE_ROOT}/opencode-runtime/${directory}")
+    INTERNAL_BIND_DESTINATIONS+=("${STATE_DIR}/opencode/${directory}")
+  done
+
   APP_ENV_ARGS=(
+    --unsetenv OPENCODE_CONFIG_DIR
     --setenv OPENCODE_DISABLE_AUTOUPDATE true
     --setenv OPENCODE_DB "${LOCAL_STORAGE_ROOT}/opencode.db"
   )
@@ -1071,6 +1143,10 @@ CONFIG_DIR="${HOST_XDG_CONFIG_HOME}/${XDG_STEM}"
 DATA_DIR="${HOST_XDG_DATA_HOME}/${XDG_STEM}"
 CACHE_DIR="${HOST_XDG_CACHE_HOME}/${XDG_STEM}"
 STATE_DIR="${HOST_XDG_STATE_HOME}/${XDG_STEM}"
+PROJECT_LOCAL=false
+PROFILE_INSTANCE=default
+INSTANCE_SELECTED=false
+EXPLICIT_PROFILE_DIRS=false
 
 GPU_DEVICES=true
 PODMAN_MODE=false
@@ -1099,17 +1175,22 @@ PRIME_AGENT_NEEDS_DAEMON=false
 
 while (($#)); do
   case "$1" in
-    --project-dir|--config-dir|--data-dir|--cache-dir|--state-dir|--ro-bind|--bind|--hide-path)
+    --project-dir|--config-dir|--data-dir|--cache-dir|--state-dir|--instance|--ro-bind|--bind|--hide-path)
       option="$1"
       require_value "${option}" "${2-}"
       value="$2"
       shift 2
       ;;
-    --project-dir=*|--config-dir=*|--data-dir=*|--cache-dir=*|--state-dir=*|--ro-bind=*|--bind=*|--hide-path=*)
+    --project-dir=*|--config-dir=*|--data-dir=*|--cache-dir=*|--state-dir=*|--instance=*|--ro-bind=*|--bind=*|--hide-path=*)
       option="${1%%=*}"
       value="${1#*=}"
       require_value "${option}" "${value}"
       shift
+      ;;
+    --project-local)
+      PROJECT_LOCAL=true
+      shift
+      continue
       ;;
     --no-default-hide-paths)
       USE_DEFAULT_HIDE_PATHS=false
@@ -1170,10 +1251,16 @@ while (($#)); do
 
   case "${option}" in
     --project-dir) PROJECT_DIR="${value}" ;;
-    --config-dir) CONFIG_DIR="${value}" ;;
-    --data-dir) DATA_DIR="${value}" ;;
-    --cache-dir) CACHE_DIR="${value}" ;;
-    --state-dir) STATE_DIR="${value}" ;;
+    --config-dir) CONFIG_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
+    --data-dir) DATA_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
+    --cache-dir) CACHE_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
+    --state-dir) STATE_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
+    --instance)
+      [[ "${value}" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || \
+        fail_usage "--instance requires a name starting with a letter or digit, followed by letters, digits, '.', '_', or '-'"
+      PROFILE_INSTANCE="${value}"
+      INSTANCE_SELECTED=true
+      ;;
     --ro-bind) add_extra_bind --ro-bind "${value}" ;;
     --bind) add_extra_bind --bind "${value}" ;;
     --hide-path)
@@ -1182,6 +1269,13 @@ while (($#)); do
       ;;
   esac
 done
+
+if [[ "${INSTANCE_SELECTED}" == true && "${PROJECT_LOCAL}" == false ]]; then
+  fail_usage "--instance requires --project-local"
+fi
+if [[ "${PROJECT_LOCAL}" == true && "${EXPLICIT_PROFILE_DIRS}" == true ]]; then
+  fail_usage "--project-local cannot be combined with --config-dir, --data-dir, --cache-dir, or --state-dir"
+fi
 
 if [[ "${RUN_SHELL}" == false && ! -x "${REAL_AGENT}" ]]; then
   printf 'error: packaged %s executable is missing: %s\n' \
@@ -1209,19 +1303,19 @@ fi
 SANDBOX_COMMAND+=("${COMMAND_ARGS[@]}")
 
 PROJECT_DIR="$(abspath_existing_dir "${PROJECT_DIR}")"
+if [[ "${PROJECT_LOCAL}" == true ]]; then
+  configure_project_profile
+fi
 CONFIG_DIR="$(abspath_existing_dir "${CONFIG_DIR}")"
 DATA_DIR="$(abspath_existing_dir "${DATA_DIR}")"
 CACHE_DIR="$(abspath_existing_dir "${CACHE_DIR}")"
 STATE_DIR="$(abspath_existing_dir "${STATE_DIR}")"
-TOOLS_DIR="$(abspath_existing_dir "${TOOLS_DIR}")"
-TOOLS_CACHE_DIR="$(abspath_existing_dir "${TOOLS_CACHE_DIR}")"
 
 STORAGE_PROFILE_ID="$({
   printf 'agent\0%s\0config\0%s\0data\0%s\0state\0%s\0' \
-    "${AGENT_KIND}" "${CONFIG_DIR}" "${DATA_DIR}" "${STATE_DIR}"
+    "${PROFILE_NAMESPACE}" "${CONFIG_DIR}" "${DATA_DIR}" "${STATE_DIR}"
 } | sha256sum | cut -c1-16)"
 HOST_BOOT_ID="$(</proc/sys/kernel/random/boot_id)"
-LOCAL_STORAGE_PARENT="${CSCS_AGENT_LOCAL_STORAGE_DIR:-/dev/shm/cscs-agent-storage-$(id -u)}"
 if [[ -L "${LOCAL_STORAGE_PARENT}" ]]; then
   printf 'error: local storage parent must not be a symlink: %s\n' \
     "${LOCAL_STORAGE_PARENT}" >&2
@@ -1234,10 +1328,13 @@ chmod 700 "${LOCAL_STORAGE_PARENT}"
     "${LOCAL_STORAGE_PARENT}" >&2
   exit 1
 }
-LOCAL_STORAGE_ROOT="$(abspath_existing_dir "${LOCAL_STORAGE_PARENT}/${AGENT_KIND}-${STORAGE_PROFILE_ID}")"
+LOCAL_STORAGE_ROOT="$(abspath_existing_dir "${LOCAL_STORAGE_PARENT}/${PROFILE_NAMESPACE}-${STORAGE_PROFILE_ID}")"
 require_node_local_filesystem "${LOCAL_STORAGE_ROOT}"
-PROFILE_LEASE_DIR="${DATA_DIR}/.cscs-agent-storage/${AGENT_KIND}.lease"
-MAINTENANCE_LEASE_DIR="${DATA_DIR}/.cscs-agent-storage/${AGENT_KIND}.maintenance.lease"
+# Both uv's cache lock and managed-Python installation lock must stay off NFS.
+TOOLS_DIR="$(prepare_tools_directory "${TOOLS_DIR}")"
+TOOLS_CACHE_DIR="$(prepare_tools_directory "${TOOLS_CACHE_DIR}")"
+PROFILE_LEASE_DIR="${DATA_DIR}/.cscs-agent-storage/${PROFILE_NAMESPACE}.lease"
+MAINTENANCE_LEASE_DIR="${DATA_DIR}/.cscs-agent-storage/${PROFILE_NAMESPACE}.maintenance.lease"
 SANDBOX_DATA_DIR="${DATA_DIR}"
 SANDBOX_CACHE_DIR="${CACHE_DIR}"
 SANDBOX_STATE_DIR="${STATE_DIR}"
@@ -1250,6 +1347,10 @@ if [[ "${AGENT_KIND}" == omp ]]; then
     "${SANDBOX_CACHE_DIR}/omp/natives" \
     "${SANDBOX_STATE_DIR}/omp"
 fi
+if [[ "${AGENT_KIND}" == opencode ]]; then
+  SANDBOX_CACHE_DIR="${LOCAL_STORAGE_ROOT}/cache"
+  mkdir -p "${SANDBOX_CACHE_DIR}/opencode"
+fi
 
 if [[ "${AGENT_KIND}" == prime-agent ]]; then
   # Prime scopes daemon discovery to TMPDIR/prime-agent-<uid>. Give each
@@ -1259,7 +1360,7 @@ if [[ "${AGENT_KIND}" == prime-agent ]]; then
   SANDBOX_XDG_RUNTIME_DIR="${SANDBOX_TMPDIR}/prime-agent-$(id -u)"
 else
   SANDBOX_TMPDIR=/tmp
-  SANDBOX_XDG_RUNTIME_DIR="/tmp/${LAUNCHER_NAME}-runtime-$(id -u)"
+  SANDBOX_XDG_RUNTIME_DIR="/tmp/${LAUNCHER_NAME}-runtime-$(id -u)-${STORAGE_PROFILE_ID}"
 fi
 if [[ -L "${SANDBOX_XDG_RUNTIME_DIR}" ]]; then
   printf 'error: XDG runtime directory must not be a symlink: %s\n' \
@@ -1275,6 +1376,8 @@ chmod 700 "${SANDBOX_XDG_RUNTIME_DIR}"
 }
 for destination in "${EXTRA_BIND_DESTINATIONS[@]}"; do
   if paths_overlap "${destination}" "${LOCAL_STORAGE_ROOT}" || \
+     paths_overlap "${destination}" "${TOOLS_DIR}" || \
+     paths_overlap "${destination}" "${TOOLS_CACHE_DIR}" || \
      paths_overlap "${destination}" "${SANDBOX_XDG_RUNTIME_DIR}"; then
     fail_usage "extra bind destination overlaps protected node-local agent storage: ${destination}"
   fi
@@ -1464,6 +1567,12 @@ for ((i = 0; i < ${#INTERNAL_BIND_SOURCES[@]}; i++)); do
     "${INTERNAL_BIND_DESTINATIONS[i]}"
   )
 done
+if [[ "${AGENT_KIND}" == opencode ]]; then
+  BWRAP_ARGS+=(
+    --ro-bind "${LAUNCHER_DEFAULTS}/opencode-service.json"
+    "${SANDBOX_XDG_CONFIG_HOME}/opencode/service.json"
+  )
+fi
 
 if [[ "${AGENT_KIND}" == prime-agent && "${RUN_SHELL}" == false && \
       "${PRIME_AGENT_NEEDS_DAEMON}" == true ]]; then

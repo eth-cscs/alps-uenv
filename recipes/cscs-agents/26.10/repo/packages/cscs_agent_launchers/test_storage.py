@@ -113,6 +113,48 @@ class CheckpointTests(unittest.TestCase):
             restored.restore()
             self.assertEqual(database_values(restored.opencode_db), ["first"])
 
+    def test_opencode_v2_does_not_import_or_replace_v1_checkpoints(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            legacy = root / "data/.cscs-agent-storage/opencode"
+            generation = legacy / "generations/v1"
+            create_database(generation / "opencode.db", "v1-only")
+            storage.atomic_json(
+                generation / "manifest.json",
+                {"version": 2, "kind": "opencode", "files": storage.file_inventory(generation)},
+            )
+            (legacy / "current").write_text("v1\n")
+
+            store = self.make_store(root, "opencode")
+            store.restore()
+            self.assertFalse(store.opencode_db.exists())
+            create_database(store.opencode_db, "v2-only")
+            store.checkpoint()
+            restored = self.make_store(root, "opencode", "restored")
+            restored.restore()
+            self.assertEqual(database_values(restored.opencode_db), ["v2-only"])
+            self.assertEqual(database_values(generation / "opencode.db"), ["v1-only"])
+            self.assertEqual((legacy / "current").read_text(), "v1\n")
+
+    def test_opencode_restarts_with_fresh_runtime_and_retains_preferences(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            store = self.make_store(root, "opencode")
+            store.restore()
+            runtime = store.local_root / "opencode-runtime/locks/stale-owner"
+            runtime.mkdir(parents=True)
+            (runtime / "owner").write_text("dead process")
+            preferences = root / "state/opencode/latest/tui/highlights.json"
+            preferences.parent.mkdir(parents=True)
+            preferences.write_text('{"theme":"user-choice"}\n')
+            create_database(store.opencode_db, "saved")
+            store.checkpoint()
+
+            store.restore()
+            self.assertFalse(runtime.exists())
+            self.assertEqual(database_values(store.opencode_db), ["saved"])
+            self.assertEqual(json.loads(preferences.read_text()), {"theme": "user-choice"})
+
     def test_omp_keeps_bulk_data_live_and_checkpoints_sqlite_state(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

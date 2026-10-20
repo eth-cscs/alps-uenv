@@ -1,11 +1,17 @@
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://opencode.ai/v2/config.json",
   "model": "cscs/moonshotai/Kimi-K2.7-Code",
-  "provider": {
+  "agents": {
+    "title": {"model": "cscs/moonshotai/Kimi-K2.7-Code"}
+  },
+  "permissions": [
+    {"action": "external_directory", "resource": "*", "effect": "ask"}
+  ],
+  "providers": {
     "cscs": {
-      "npm": "@ai-sdk/anthropic",
+      "package": "@opencode/ai/providers/anthropic",
       "name": "CSCS Inference",
-      "options": {
+      "settings": {
         "baseURL": "https://api.inference.cscs.ch/v1",
         "systemMessageMode": "system",
         "apiKey": "{env:CSCS_INFERENCE_API_KEY}"
@@ -17,7 +23,8 @@
             "context": 262144,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "moonshotai/Kimi-K2.7-Code": {
           "name": "Kimi K2.7 Code [CSCS]",
@@ -25,7 +32,8 @@
             "context": 262144,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16": {
           "name": "NVIDIA Nemotron 3 Super 120B A12B BF16 [CSCS]",
@@ -33,7 +41,8 @@
             "context": 262144,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "swiss-ai/Apertus-70B-Instruct-2509": {
           "name": "Apertus 70B Instruct 2509 [CSCS]",
@@ -41,7 +50,8 @@
             "context": 64000,
             "output": 32000
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "swiss-ai/Apertus-8B-Instruct-2509": {
           "name": "Apertus 8B Instruct 2509 [CSCS]",
@@ -49,7 +59,8 @@
             "context": 32768,
             "output": 16384
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "swiss-ai/Apertus-v1.5-70B": {
           "name": "Apertus v1.5 70B [CSCS]",
@@ -57,7 +68,8 @@
             "context": 262144,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "swiss-ai/Apertus-v1.5-8B": {
           "name": "Apertus v1.5 8B [CSCS]",
@@ -65,7 +77,8 @@
             "context": 262144,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         },
         "zai-org/GLM-5.2": {
           "name": "GLM 5.2 [CSCS]",
@@ -73,7 +86,8 @@
             "context": 976000,
             "output": 32768
           },
-          "tool_call": true
+          "capabilities": {"tools": true, "input": ["text"], "output": ["text"]},
+          "variants": []
         }
       }
     }

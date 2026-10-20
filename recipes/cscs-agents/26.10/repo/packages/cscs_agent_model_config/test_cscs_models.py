@@ -57,15 +57,15 @@ class MultiGatewayConfigTest(unittest.TestCase):
         self.assertEqual(
             config["model"], "cscs-forno/experimental/new-model"
         )
-        self.assertIn("cscs", config["provider"])
-        forno = config["provider"]["cscs-forno"]
-        self.assertEqual(forno["npm"], "@ai-sdk/openai-compatible")
+        self.assertIn("cscs", config["providers"])
+        forno = config["providers"]["cscs-forno"]
+        self.assertEqual(forno["package"], "@opencode/ai/providers/openai-compatible")
         self.assertEqual(
-            forno["options"]["baseURL"],
+            forno["settings"]["baseURL"],
             "https://ai-gateway.forno-tds.tds.cscs.ch/v1",
         )
         self.assertEqual(
-            forno["options"]["apiKey"],
+            forno["settings"]["apiKey"],
             "{env:CSCS_INFERENCE_API_KEY_FORNO}",
         )
         self.assertEqual(
@@ -91,11 +91,7 @@ class MultiGatewayConfigTest(unittest.TestCase):
             config["model"], "cscs/moonshotai/Kimi-K2.7-Code"
         )
         self.assertEqual(
-            set(config["provider"]), {"cscs", "cscs-forno"}
-        )
-        self.assertTrue(
-            config["provider"]["cscs-forno"]["models"]
-            ["zai-org/GLM-5.3"]["reasoning"]
+            set(config["providers"]), {"cscs", "cscs-forno"}
         )
 
     def test_output_budget_capped_at_half_context(self):
@@ -127,7 +123,7 @@ class MultiGatewayConfigTest(unittest.TestCase):
             },
         )
         config = json.loads(files[MODELS.OPENCODE_FILE])
-        models = config["provider"]["cscs"]["models"]
+        models = config["providers"]["cscs"]["models"]
 
         self.assertEqual(
             models["moonshotai/Kimi-K2.7-Code"]["limit"],

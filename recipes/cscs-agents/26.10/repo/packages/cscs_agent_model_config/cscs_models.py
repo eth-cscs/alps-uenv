@@ -110,7 +110,7 @@ class Gateway:
     key_env: str
     label_suffix: str
     api: str
-    opencode_npm: str
+    opencode_package: str
     reasoning_default: bool = False
 
 
@@ -122,7 +122,7 @@ def production_gateway(args) -> Gateway:
         key_env=KEY_ENV,
         label_suffix=args.label_suffix,
         api="anthropic-messages",
-        opencode_npm="@ai-sdk/anthropic",
+        opencode_package="@opencode/ai/providers/anthropic",
     )
 
 
@@ -133,7 +133,7 @@ FORNO_GATEWAY = Gateway(
     key_env=FORNO_KEY_ENV,
     label_suffix=FORNO_LABEL_SUFFIX,
     api="openai-completions",
-    opencode_npm="@ai-sdk/openai-compatible",
+    opencode_package="@opencode/ai/providers/openai-compatible",
     reasoning_default=True,
 )
 
@@ -434,7 +434,7 @@ def describe(
         "base_url": gateway.base_url,
         "api_key_env": gateway.key_env,
         "api": gateway.api,
-        "opencode_npm": gateway.opencode_npm,
+        "opencode_package": gateway.opencode_package,
         "label_suffix": gateway.label_suffix,
         "credential_available": bool(model.get("_credential_available", True)),
         "id": repo,
@@ -668,7 +668,7 @@ PRIME_FILE = "prime-agent-models.json"
 # opencode
 # --------------------------------------------------------------------------- #
 def build_opencode(rows: list[dict], default: dict | None, args) -> dict:
-    """Build OpenCode provider blocks for both CSCS gateways."""
+    """Build native OpenCode v2 providers with explicit gateway compatibility."""
     providers: dict[str, dict] = {}
     for gateway, gateway_rows in gateway_groups(rows):
         models: dict[str, dict] = {}
@@ -678,17 +678,21 @@ def build_opencode(rows: list[dict], default: dict | None, args) -> dict:
             if ctx is not None:
                 # OpenCode requires both fields when `limit` is present.
                 entry["limit"] = {"context": ctx, "output": out}
-            entry["tool_call"] = bool(row["tool_call"] and args.tool_call)
-            if row["reasoning"]:
-                entry["reasoning"] = True
-            if row["vision"]:
-                entry["modalities"] = {"input": modalities(row), "output": ["text"]}
-                entry["attachment"] = True
+            entry["capabilities"] = {
+                "tools": bool(row["tool_call"] and args.tool_call),
+                "input": modalities(row),
+                "output": ["text"],
+            }
+            # The gateways apply their own thinking defaults. Inferring effort
+            # variants from the adapter adds unsupported adaptive-thinking
+            # parameters even to background title-generation requests.
+            entry["variants"] = []
             if row["chf_per_mtok_in"] is not None:
                 # OpenCode reads `cost` as per-1M-token; CSCS bills in CHF, not USD.
                 entry["cost"] = {
                     "input": round(row["chf_per_mtok_in"], 6),
                     "output": round(row["chf_per_mtok_out"], 6),
+                    "cache": {"read": 0, "write": 0},
                 }
             models[row["id"]] = entry
 
@@ -699,16 +703,26 @@ def build_opencode(rows: list[dict], default: dict | None, args) -> dict:
         if gateway["api"] == "anthropic-messages":
             options["systemMessageMode"] = "system"
         providers[gateway["provider_key"]] = {
-            "npm": gateway["opencode_npm"],
+            "package": gateway["opencode_package"],
             "name": gateway["provider_name"],
-            "options": options,
+            "settings": options,
             "models": models,
         }
+        if gateway["api"] == "openai-completions":
+            providers[gateway["provider_key"]]["compatibility"] = {
+                "maxTokensField": "max_tokens",
+            }
 
-    config = {"$schema": "https://opencode.ai/config.json"}
+    config = {
+        "$schema": "https://opencode.ai/v2/config.json",
+        "permissions": [
+            {"action": "external_directory", "resource": "*", "effect": "ask"},
+        ],
+    }
     if default is not None:
         config["model"] = f"{default['provider_key']}/{default['id']}"
-    config["provider"] = providers
+        config["agents"] = {"title": {"model": config["model"]}}
+    config["providers"] = providers
     return config
 
 

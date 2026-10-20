@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import glob
+import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -10,67 +10,60 @@ from spack.package import *
 
 
 class Opencode(Package):
-    """
-    opencode is an open-source AI coding agent for the terminal, running as a TUI or as a
-    headless CLI against MCP servers and LLM providers.
-    """
+    """OpenCode terminal agent, packaged from upstream's native npm artifacts."""
 
     homepage = "https://opencode.ai"
-    url = "https://github.com/anomalyco/opencode/archive/refs/tags/v1.19.0.tar.gz"
+    url = "https://raw.githubusercontent.com/anomalyco/opencode/v2.1.0/LICENSE"
     supplier = "Organization: Anomaly Innovations"
 
     maintainers("aprozo")
 
     license("MIT", checked_by="aprozo")
 
-    sanity_check_is_file = ["bin/opencode"]
+    version(
+        "2.1.0",
+        sha256="625f0f619133f89bbbb2abe37369613dfa1885eba1e50d02170deb62bb42cb6b",
+        expand=False,
+    )
 
-    version("1.19.0", sha256="5dfcfffdf1df64d4a2e8e0e034b5128eb2376cab6d6d34ed808108aac4ce0d78")
-    version("1.18.30", sha256="d54574de6a2b02d58fe4d403035103a08bdca0f4eafac63d3681cda774e85cd9")
-    version("1.18.25", sha256="44e9530d7be172005c7d60aef317440eecb85d557d94cce7fa35c5a7b9d9da0b")
-
-    depends_on("bun@1.3.14:1", type="build")
-    depends_on("node-js@22.12:22", type="build")
+    conflicts("platform=darwin")
     depends_on("ripgrep", type="run")
 
-    phases = ["build", "install"]
+    resource(
+        name="opencode-linux-arm64",
+        url="https://registry.npmjs.org/@opencode/cli-linux-arm64/-/cli-linux-arm64-2.1.0.tgz",
+        sha256="07cc6b6bd7178b45c9916c4ab8a038951d304753bdf798cd7a63d69b22eed326",
+        placement="release",
+        when="@2.1.0 platform=linux target=aarch64:",
+    )
+    resource(
+        name="opencode-linux-x64",
+        url="https://registry.npmjs.org/@opencode/cli-linux-x64/-/cli-linux-x64-2.1.0.tgz",
+        sha256="da129a76ade124babf84f3932bf6080edf14b94d40f1953fdbb057e88b5252ee",
+        placement="release",
+        when="@2.1.0 platform=linux target=x86_64:",
+    )
 
-    def setup_build_environment(self, env):
-        # the build scripts read both from git, which a release archive has not
-        env.set("OPENCODE_VERSION", self.spec.version.string)
-        env.set("OPENCODE_CHANNEL", "latest")
-        env.set("HOME", self.stage.path)
-        env.set("BUN_INSTALL_CACHE_DIR", join_path(self.stage.path, "bun-cache"))
-
-    def build(self, spec, prefix):
-        bun = which("bun", required=True)
-
-        bun(
-            "install",
-            "--cpu=*",
-            "--os=*",
-            "--frozen-lockfile",
-            "--ignore-scripts",
-            "--no-progress",
-            "--filter",
-            "./",
-            "--filter",
-            "./packages/app",
-            "--filter",
-            "./packages/desktop",
-            "--filter",
-            "./packages/opencode",
-        )
-
-        with working_dir(join_path("packages", "opencode")):
-            bun("--bun", "./script/build.ts", "--single", "--skip-install")
+    phases = ["install"]
+    sanity_check_is_file = ["bin/opencode"]
 
     def install(self, spec, prefix):
-        (binary,) = glob.glob(join_path("packages", "opencode", "dist", "*", "bin", "opencode"))
+        if not (
+            spec.satisfies("platform=linux target=aarch64:")
+            or spec.satisfies("platform=linux target=x86_64:")
+        ):
+            raise InstallError("opencode only packages upstream Linux x86_64 and arm64 archives")
+
+        binary = join_path(self.stage.source_path, "release", "bin", "opencode")
+        if not os.path.isfile(binary):
+            raise InstallError("expected OpenCode npm artifact was not staged")
 
         mkdirp(prefix.bin)
         install(binary, prefix.bin)
         set_executable(join_path(prefix.bin, "opencode"))
+        licenses = join_path(prefix.share, "licenses", "opencode")
+        mkdirp(licenses)
+        install(join_path(self.stage.source_path, "LICENSE"), licenses)
 
     def setup_run_environment(self, env):
         env.set("OPENCODE_DISABLE_AUTOUPDATE", "true")

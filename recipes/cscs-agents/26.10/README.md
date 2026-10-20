@@ -1,6 +1,6 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 1.19.0, Oh-My-Pi (OMP) 18.10.3, and Prime Agent 0.10.0 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 2.1.0, Oh-My-Pi (OMP) 18.10.3, and Prime Agent 0.10.0 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 
@@ -39,6 +39,39 @@ prime-agent-bwrap -- <prime-agent arguments>
 
 The current directory is the default writable project directory. Run any launcher with `--help` for project/XDG directory overrides, extra bind mounts, SSH-agent forwarding, GPU control, and a sandbox shell.
 
+## Concurrent agents and project-local profiles
+
+Use `--project-local` to give a project its own harness settings, sessions, and checkpoints instead of sharing the default home profile:
+
+```bash
+cd /path/to/project
+omp-bwrap --project-local
+```
+
+Different projects can run independently. To run multiple agents of the same harness in one project, use distinct instance names in separate terminals:
+
+```bash
+omp-bwrap --project-local --instance implementer
+omp-bwrap --project-local --instance reviewer
+```
+
+The same options work with `opencode-bwrap` and `prime-agent-bwrap`. Each harness and instance has a separate persistent profile at `.cscs-agents/26.10/<harness>/<instance>/`, containing `config`, `data`, `cache`, and `state` roots. The harness directory is `opencode-v2`, `omp`, or `prime-agent`; the new OpenCode namespace leaves v1 profiles untouched. Omitting `--instance` selects `default`. Names must start with an ASCII letter or digit and contain only ASCII letters, digits, `.`, `_`, or `-`.
+
+The selected project is `--project-dir PATH`, or the current directory if omitted; the launcher does not search for a Git repository root. Use the same project directory and instance name to resume work:
+
+```bash
+omp-bwrap --project-dir /path/to/project --project-local --instance reviewer -- --continue
+prime-agent-bwrap --project-dir /path/to/project --project-local --instance reviewer -- shutdown --force
+```
+
+Project-local mode starts with a fresh profile and packaged CSCS defaults; it does not copy or change your home profile. Continue exporting the inference keys in your shell. It cannot be combined with explicit `--config-dir`, `--data-dir`, `--cache-dir`, or `--state-dir` options. Without `--project-local`, the default home profiles are used; OpenCode v2 has its own new home namespace.
+
+Only persistent harness data moves into the project. SQLite databases, runtime directories, and file-lock-sensitive state remain on validated node-local storage. Each instance retains its single-writer lease: a second OpenCode or OMP writer to the same instance is refused, while Prime Agent clients can reconnect to that instance's existing daemon. For stale-lease recovery, select the same profile, for example `omp-bwrap --project-local --instance reviewer --recover-storage`.
+
+New `.cscs-agents` directories receive a `.gitignore` excluding all their contents, because profiles may contain credentials and conversation transcripts. Existing ignore rules are preserved; do not force-add these profiles to Git. The launcher rejects symlinked project-profile directories.
+
+**Working files are still shared.** Named instances isolate harness state, not concurrent source edits or Git operations. Use separate worktrees/projects when agents must edit independently.
+
 ## CSCS inference configuration
 
 The image contains static production model defaults, so the `cscs` provider is available before the first successful metadata refresh. On every harness launch, the wrapper checks whether a refresh is due:
@@ -69,19 +102,44 @@ Launcher-owned files use SHA-256 sidecars. Editing a managed model, provider, or
 
 OpenCode manages `opencode.json` and leaves `opencode.jsonc` user-owned; OpenCode merges both files. For OMP, a user-created `models.yaml` takes precedence and disables launcher management of `models.yml`. Prime Agent manages its native `models.json` and seeds `settings.json`; editing either file transfers ownership to the user.
 
+Default home-profile locations (project-local profiles use the instance's `config` root instead):
+
 | Harness | Host configuration directory |
 |---|---|
-| OpenCode | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode-cscs-agents-26.10/xdg/opencode` |
+| OpenCode | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode-v2-cscs-agents-26.10/xdg/opencode` |
 | OMP | `${XDG_CONFIG_HOME:-$HOME/.config}/omp-cscs-agents-26.10/home/.omp/agent` |
 | Prime Agent | `${XDG_CONFIG_HOME:-$HOME/.config}/prime-agent-cscs-agents-26.10/home/.prime/agent` |
 
 To force the next refresh without changing ownership, delete only the relevant refresh stamp:
 
 ```bash
-rm "${XDG_CONFIG_HOME:-$HOME/.config}/opencode-cscs-agents-26.10/xdg/opencode/.opencode-bwrap-cscs-models.refresh"
+rm "${XDG_CONFIG_HOME:-$HOME/.config}/opencode-v2-cscs-agents-26.10/xdg/opencode/.opencode-bwrap-cscs-models.refresh"
 rm "${XDG_CONFIG_HOME:-$HOME/.config}/omp-cscs-agents-26.10/home/.omp/agent/.omp-bwrap-cscs-models.refresh"
 rm "${XDG_CONFIG_HOME:-$HOME/.config}/prime-agent-cscs-agents-26.10/home/.prime/agent/.prime-agent-bwrap-cscs-models.refresh"
 ```
+
+## OpenCode 2 migration
+
+OpenCode uses a private server owned by each foreground invocation, not a persistent background service. No separate daemon or uenv is needed. The launcher binds its `service.json` read-only with `disabled: true`, so enabling the managed background service cannot bypass the writer lease and final checkpoint. An inherited `OPENCODE_CONFIG_DIR` is unset to preserve profile isolation. Use `--project-local --instance NAME` for concurrent agents.
+
+Terminal settings now live in the profile's `xdg/opencode/cli.json`; `mouse: false` is seeded only when that file is absent. Generated native v2 providers keep the existing gateway routes and credential variables, explicitly retain Forno's `max_tokens` parameter, and leave thinking defaults to the gateway rather than inferring unsupported effort variants. The title agent uses the selected CSCS default model. Outside-project file access requires approval by default.
+
+**Upstream capability changes:** v2.1.0 does not run language servers or provide LSP tools/diagnostics. Use project compiler, typecheck, and lint commands instead. V1 plugins and server API integrations need porting, and project guidance should use `AGENTS.md`, not the removed `CLAUDE.md` fallback. See the [upstream v1 migration guide](https://github.com/anomalyco/opencode/blob/v2.1.0/services/www/src/docs/content/migrate-v1.mdx).
+
+Home roots are now `opencode-v2-cscs-agents-26.10`; project roots use `opencode-v2/<instance>`. Checkpoints and leases use `.cscs-agent-storage/opencode-v2*` even with explicit directory overrides. V1 profiles and checkpoint generations are not imported or modified automatically, so the old image remains usable with its original state.
+
+To import history, stop the old writer and copy a healthy, immutable v1 checkpoint **before the first v2 session**. For default home profiles:
+
+```bash
+old="${XDG_DATA_HOME:-$HOME/.local/share}/opencode-cscs-agents-26.10/.cscs-agent-storage/opencode"
+new="${XDG_DATA_HOME:-$HOME/.local/share}/opencode-v2-cscs-agents-26.10"
+generation="$(cat "${old}/current")"
+install -Dm600 "${old}/generations/${generation}/opencode.db" "${new}/opencode/opencode.db"
+opencode-bwrap
+```
+
+For project profiles, substitute the old `opencode/<instance>/data` and new `opencode-v2/<instance>/data` roots. The launcher byte-stages the copied database locally; upstream then migrates history to v2, and subsequent checkpoints go only to the v2 namespace. Keep the original backup: rich-history migration and downgrade compatibility need validation on your own data. Review custom settings and plugins rather than copying an entire v1 configuration tree.
+
 
 ## Prime Agent background service
 
@@ -91,9 +149,9 @@ Sessions and the Python kernel environment live under `${XDG_DATA_HOME:-$HOME/.l
 
 ## Persistent storage and recovery
 
-The default CSCS home filesystem is NFSv3 and cannot safely host SQLite WAL databases or process-local lock state. The launchers therefore enforce one active writer for each harness profile, where a profile is identified by its launcher-specific config, data, and state roots.
+The default CSCS home filesystem is NFSv3 and cannot safely host SQLite WAL databases or process-local lock state. The launchers therefore enforce one active writer for each harness profile, where a profile is identified by its config, data, and state roots, whether selected from home XDG directories or a project-local instance.
 
-OpenCode keeps its SQLite database under `/dev/shm` and publishes a validated SQLite backup to immutable generations under its persistent data root. OMP keeps XDG data, state, cache, SQLite databases, and runtime locks under `/dev/shm`; its large sessions, blobs, plugins, worktrees, and similar durable directories remain directly on persistent storage under the single-writer lease. OMP data and state not covered by those direct persistent directories are included in the same generation mechanism. Prime Agent keeps sessions, settings, credentials, and its kernel environment persistent while its session leases, worker registry, sockets, and PID state stay node-local.
+OpenCode keeps its SQLite database under `/dev/shm` and publishes a validated SQLite backup to immutable generations under its persistent data root. Its cache is disposable node-local state; writable overlays keep `state/opencode/locks`, `state/opencode/pty`, and `state/opencode/latest/locks` local while durable preferences remain persistent. These runtime overlays start fresh under each writer lease. OMP keeps XDG data, state, cache, SQLite databases, and runtime locks under `/dev/shm`; its large sessions, blobs, plugins, worktrees, and similar durable directories remain directly on persistent storage under the single-writer lease. OMP data and state not covered by those direct persistent directories are included in the same generation mechanism. Prime Agent keeps sessions, settings, credentials, and its kernel environment persistent while its session leases, worker registry, sockets, and PID state stay node-local.
 
 OpenCode and OMP checkpoint every 30 seconds by default and again after a clean exit. A node failure or `SIGKILL` can therefore lose at most the changes since the last successful periodic checkpoint; the previous complete generation is retained and used automatically when the current generation fails its SQLite integrity check. Override the interval with `CSCS_AGENT_CHECKPOINT_SECONDS`.
 
@@ -144,7 +202,13 @@ An isolated uv project environment does not automatically inherit packages from 
 
 ## uv and mutable tools
 
-On first launch, the wrapper installs uv and a private managed Python under version-specific directories in `${XDG_DATA_HOME:-$HOME/.local/share}/cscs-agent-tools`. This requires host `curl`, network access, and can take about a minute; it is noninteractive. An atomic bootstrap directory serializes installation, and later launches validate both uv's reported version and the managed interpreter links. Prime Agent uses that uv installation to create its kernel environment on first use of the Python tool.
+On first launch on each node, the wrapper installs uv and a private managed Python under `${CSCS_AGENT_LOCAL_STORAGE_DIR:-/dev/shm/cscs-agent-storage-$(id -u)}/tools`; the uv cache lives in the sibling `uv-cache` directory. These directories are shared by all harness profiles on that node. Both must stay on a local filesystem: uv takes file locks in its cache and Python installation directories, and those operations can hang on NFS before the normal lock timeout applies.
+
+Bootstrap requires host `curl` and network access and is noninteractive. An atomic bootstrap directory serializes installation, and later launches validate both uv's reported version and the managed interpreter links. Prime Agent uses that uv installation to create its kernel environment on first use of the Python tool.
+
+`CSCS_AGENT_TOOLS_DIR` and `CSCS_AGENT_TOOLS_CACHE_DIR` can select other owned, non-symlink directories on local filesystems. Network-backed overrides are rejected before uv starts, and extra bind mounts cannot mask the tools or cache paths. Old tools under the XDG data/cache roots are not imported or deleted automatically.
+
+uv, managed Python, the cache, and `uv tool` installations are node-local and are not checkpointed. They must be reinstalled on another node or after this storage is cleared; bootstrap handles uv and managed Python automatically. Agent configuration and sessions remain persistent.
 
 Use uv normally for project-local dependencies and tools:
 

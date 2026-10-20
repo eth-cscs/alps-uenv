@@ -18,14 +18,14 @@ class CscsAgentLaunchers(Package):
 
     license("MIT")
 
-    version("2026.10.13")
+    version("2026.10.20")
 
-    depends_on("opencode@1.19.0", type="run", when="@2026.10.13")
-    depends_on("oh-my-pi@18.10.3", type="run", when="@2026.10.13")
-    depends_on("prime-agent@0.10.0", type="run", when="@2026.10.13")
+    depends_on("opencode@2.1.0", type="run", when="@2026.10.20")
+    depends_on("oh-my-pi@18.10.3", type="run", when="@2026.10.20")
+    depends_on("prime-agent@0.10.0", type="run", when="@2026.10.20")
     depends_on("ripgrep", type="run")
     depends_on("bubblewrap", type="run")
-    depends_on("cscs-agent-model-config", type="run")
+    depends_on("cscs-agent-model-config@2026.10.20", type="run")
     depends_on("cscs-agent-skills", type="run")
     depends_on("crun", type="run")
     depends_on("catatonit", type="run")
