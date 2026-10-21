@@ -2,6 +2,7 @@ cp2k:
   compiler: [gcc]
   unify: true
   specs:
+  - gcc # Add GCC explicitly so it is picked up as a module
   - cmake
   - ninja
   - libtool@2.4.6
