@@ -27,17 +27,8 @@ editors:
   - tmux
   # cmdline fuzzy finder
   - fzf
-  # process viewer
-  - btop
   # disk usage
   - dust
-  packages:
-  # libvterm does not build with libtool pulled from a build cache
-  - libtool
-  - curl
-  - gmake
-  - perl
-  - git
   views:
     ed:
       link: roots
