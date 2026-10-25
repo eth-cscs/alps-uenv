@@ -8,3 +8,4 @@ spack:
     commit: releases/v2026.10
 description: text editors and handy command line tools
 version: 3
+cleanup: runtime
