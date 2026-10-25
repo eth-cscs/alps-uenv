@@ -1,0 +1,42 @@
+editors:
+  compiler: [gcc]
+  unify: true
+  network:
+    mpi: null
+  specs:
+  # the editors
+  - emacs +treesitter +native
+  - nano
+  - vim +python +lua
+  - neovim
+  # additional tools that integrate well with tools
+  - direnv
+  - fd
+  - go
+  - lazygit
+  - lua
+  - node-js
+  - python
+  - ripgrep
+  - screen
+  - rust
+  - tree-sitter
+  # filebrowser
+  - py-ranger-fm
+  - nnn
+  - tmux
+  # cmdline fuzzy finder
+  - fzf
+  packages:
+  # libvterm does not build with libtool pulled from a build cache
+  - libtool
+  - curl
+  - gmake
+  - perl
+  - git
+  views:
+    ed:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
