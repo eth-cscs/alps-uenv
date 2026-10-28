@@ -1,7 +1,7 @@
 nvhpc-env:
   compiler: [gcc, nvhpc]
   network:
-      mpi: cray-mpich@9.1.0+cuda %c,cxx,fortran=nvhpc
+      mpi: cray-mpich@9.2.1+cuda %c,cxx,fortran=nvhpc
   unify: when_possible
   specs:
     # current QE + gipaw doesn't compile
