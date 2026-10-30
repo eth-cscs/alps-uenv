@@ -1,20 +1,42 @@
 clusters:
+  #
+  # MCH systems
+  #
   balfrin:
     targets:
       -
         uarch: 'a100'
-        # ~use postproc for building, because it is usually less busy~
-        # use normal for building, because postproc does not give enough resources
-        partition: 'postproc'
+        partition: 'normal'
         variables:
-          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
-          SLURM_CPUS_PER_TASK: '128'
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
       -
         uarch: 'zen3'
         partition: 'postproc'
         variables:
-          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v1'
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
+          SLURM_EXCLUSIVE: ''
+          SLURM_NODES: '1'
+          SLURM_CPU_BIND: 'none'
     runner: f7t
+  linard:
+    targets:
+      -
+        uarch: 'a100'
+        partition: 'normal'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
+      -
+        uarch: 'zen3'
+        partition: 'postproc'
+        variables:
+          F7T_URL: 'https://api.cscs.ch/mch/firecrest/v2'
+          SLURM_EXCLUSIVE: ''
+          SLURM_NODES: '1'
+          SLURM_CPU_BIND: 'none'
+    runner: f7t
+  #
+  # MLP systems
+  #
   bristen:
     targets:
       -
@@ -33,6 +55,9 @@ clusters:
           F7T_URL: "https://api.cscs.ch/ml/firecrest/v2"
           SLURM_ACCOUNT: 'csstaff'
     runner: f7t
+  #
+  # HPCP systems
+  #
   daint:
     targets:
       -
@@ -52,6 +77,9 @@ clusters:
           F7T_URL: "https://api.cscs.ch/hpc/firecrest/v2"
           SLURM_ACCOUNT: 'csstaff'
     runner: f7t
+  #
+  # CWP systems
+  #
   santis:
     targets:
       -
@@ -61,6 +89,9 @@ clusters:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
           SLURM_ACCOUNT: 'csstaff'
     runner: f7t
+  #
+  # TDS and development systems
+  #
   starlex:
     targets:
       -
@@ -184,6 +215,13 @@ uenvs:
       deploy:
         daint: [gh200]
         eiger: [zen2]
+    "2026.2":
+      recipes:
+        gh200: 2026.2/gh200
+        zen2: 2026.2/mc
+      deploy:
+        daint: [gh200]
+        eiger: [zen2]
   icon-wcp:
     "v1":
       recipes:
@@ -287,6 +325,19 @@ uenvs:
         starlex: [gh200]
         bristen: [a100]
         beverin: [mi300]
+      mount: "/user-tools"
+    "26.0.3":
+      recipes:
+        a100: "26.0.3/cscs"
+        gh200: "26.0.3/cscs"
+        mi300: "26.0.3/cscs"
+        zen2: "26.0.3/cscs"
+        # zen3 is only on MCH systems, so it uses the MCH license
+        zen3: "26.0.3/mch"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+        linard: [zen3]
       mount: "/user-tools"
   namd:
     "3.0":

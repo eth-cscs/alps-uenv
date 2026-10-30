@@ -1,0 +1,72 @@
+cp2k:
+  compiler: [gcc]
+  unify: true
+  specs:
+  - gcc # Add GCC explicitly so it is picked up as a module
+  - cmake
+  - ninja
+  - libtool@2.4.6
+  - openblas threads=openmp
+  - netlib-scalapack
+  - fftw
+  - libxc
+  - spglib
+  - spla
+  - elpa
+  - plumed
+  - libvori
+  # py-torch
+  - py-torch +custom-protobuf ~distributed ~fbgemm ~kineto ~qnnpack
+  - protobuf
+  - py-protobuf
+  # libint
+  - libint
+  - eigen@3
+  # pika
+  - pika@0.34.0 malloc=mimalloc +stdexec
+  - stdexec@=25.03.rc1
+  - mimalloc
+  - boost
+  - fmt
+  - spdlog
+  - hwloc
+  - whip
+  # Umpire
+  - umpire +fortran
+  - blt
+  - camp
+  # DLA-Future
+  - dla-future@0.10.0 +scalapack +miniapps +hdf5
+  - blaspp
+  - lapackpp
+  - dla-future-fortran@0.5.0
+  # DFTD4
+  - dftd4
+  - multicharge
+  - mctc-lib~openmp
+  # COSMA
+  - costa
+  - cosma
+  # SIRIUS
+  - hdf5
+  - spfft
+  - sirius@7.11.1 +dlaf +elpa +scalapack
+  # CP2K
+  - dbcsr@2.10.0 +mpi_f08
+  - cp2k@2026.2 +libxc +libint +spglib +cosma +spla +elpa +dlaf +sirius +plumed +dftd4 +libvori +pytorch lmax=5 +mpi_f08 build_system=cmake
+  variants:
+    - +mpi
+    - +openmp
+    - ~cuda
+    - ~rocm
+    - build_type=Release
+  network:
+    mpi: cray-mpich@9.2.1
+    specs:
+      - libfabric@2.6
+  views:
+    develop:
+      link: roots
+      exclude: ["cp2k"]
+    cp2k:
+      link: roots
