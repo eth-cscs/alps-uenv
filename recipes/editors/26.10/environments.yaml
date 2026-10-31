@@ -35,5 +35,6 @@ editors:
     ed:
       link: roots
       uenv:
+        add_compilers: false
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
