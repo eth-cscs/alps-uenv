@@ -21,6 +21,12 @@ Overrides from 7.2.3 that were dropped:
 - `libdrm`: capped the version at 2.4.124, but upstream `amdsmi@7.13:` requires
   `libdrm@2.4.131:`.
 
+Removed from `environments.yaml`:
+
+- `rocm-openmp-extras`: AMD has no 7.14 release (`aomp`, `aomp-extras` and `flang`
+  stop at `rocm-7.2.4`), so it concretized to 7.2.3 and pulled in
+  `llvm-amdgpu@7.2.3`. `llvm-amdgpu@7.13:` builds OpenMP and offload itself.
+
 ## amdsmi
 
 - `depends_on("python@3.6:")` → `depends_on("python@3.6:", type=("build", "run"))`.
