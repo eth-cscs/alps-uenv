@@ -269,12 +269,18 @@ To run the pipeline that will automatically build and test your uenv, first crea
 1. Push your changes to a branch (preferably in a fork of the main [alps-uenv](https://github.com/eth-cscs/alps-uenv) repository).
 2. Open a PR with your changes.
 
-Once the PR is created, the pipeline has to be triggered for each individual combination of uenv/version/uarch/vCluster by using a specially formatted
+Once the PR is created, the pipeline has to be triggered for each individual combination of uenv/version/uarch/vCluster by posting a specially formatted comment on the PR, with one comment per combination:
 
 ```
 cscs-ci run alps;system=eiger;uarch=zen2;uenv=arbor:v0.9
+```
+
+```
 cscs-ci run alps;system=santis;uarch=gh200;uenv=arbor:v0.9
 ```
+
+The `uenv` and `uarch` values must match an entry in `config.yaml`, and `system` must be listed under `deploy` for that entry.
+Post the comment again to rerun the build.
 
 ### Checking the build
 
