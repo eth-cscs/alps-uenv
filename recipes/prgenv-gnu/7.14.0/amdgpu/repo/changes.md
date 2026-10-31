@@ -34,15 +34,6 @@ be suppressed to get 7.2.3 to build.
 Why: likely 2.4.131 didn't build/resolve correctly for this stack, so it was
 pinned back to the last known-good version (2.4.124).
 
-## llvm_amdgpu
-
-- `depends_on("python", type="build")` → `depends_on("python@3.12.13", type="build")`.
-
-Why: pins the exact Python version used at build time instead of letting
-Spack's concretizer pick one, presumably to match the Python already selected
-elsewhere in this environment and avoid a second/incompatible Python being
-pulled in.
-
 ## miopen_hip
 
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`
