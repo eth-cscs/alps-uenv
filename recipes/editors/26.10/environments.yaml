@@ -29,6 +29,8 @@ editors:
   - fzf
   # disk usage
   - dust
+  # github
+  - gh
   views:
     ed:
       link: roots
