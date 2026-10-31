@@ -8,72 +8,93 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 - repo: https://github.com/spack/spack-packages.git
 - commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
 
-Only `zstd` has been re-checked against this commit so far. The other sections
-are carried over from the 7.2.3 recipe, which was compared against
-`236a1bf4c0d3418f050915eea4c815061f3d7e81` (develop, 2026-05-28).
+Each override is the upstream recipe at this commit with the tweaks from the
+7.2.3 recipe re-applied. Nothing below has been confirmed by a complete build
+of 7.14.0 yet.
 
-## hipdnn
+Overrides from 7.2.3 that were dropped:
 
-- Adds a second patch, `0002-disable-clang-tidy-checks.patch`, applied
-  `when="@7.2.3"` with `working_dir="projects/hipdnn"`.
-- The patch extends `.clang-tidy`'s disabled-checks list with
-  `-portability-avoid-pragma-once`, `-modernize-use-scoped-lock`, and
-  `-readability-use-concise-preprocessor-directives`.
+- `composable_kernel`: installed a pre-built 7.2.3 binary; upstream's source
+  build is used instead.
+- `hipdnn`: its only tweak was a patch for `@7.2.3`. Upstream disables
+  clang-tidy for `@7.13.0:`.
+- `libdrm`: capped the version at 2.4.124, but upstream `amdsmi@7.13:` requires
+  `libdrm@2.4.131:`.
 
-Why: hipdnn builds with `WarningsAsErrors: "*"` in `.clang-tidy`, so any
-clang-tidy diagnostic fails the build. These three checks were apparently
-firing (likely due to compiler/clang-tidy version differences) and needed to
-be suppressed to get 7.2.3 to build.
+## amdsmi
 
-## libdrm
+- `depends_on("python@3.6:")` → `depends_on("python@3.6:", type=("build", "run"))`.
+- Adds `setup_run_environment()`, prepending `share/amd_smi` to `PYTHONPATH`.
 
-- Drops `version("2.4.131", ...)`; only `2.4.124` and older remain.
-- (Trivial) local file lacks the trailing newline upstream has — no functional
-  effect.
+Why: the amdsmi Python module is installed outside site-packages, so only the
+`amd-smi` CLI finds it without this.
 
-Why: likely 2.4.131 didn't build/resolve correctly for this stack, so it was
-pinned back to the last known-good version (2.4.124).
+## aws_ofi_nccl
+
+- Adds version `1.20.0`.
+- Adds `conflicts` for `+rocm` with `@1.18:1.19` and for `+tests` with `+rocm`.
+- `depends_on("hip", when="+rocm")` → `depends_on("hip +rocm", when="+rocm")`.
+- Adds HSA include and library paths in `setup_build_environment()`, and passes
+  `--without-cuda` for `+rocm` builds.
+
+Why: the 1.18/1.19 tarballs are missing `nccl_ofi_rocm.h`, and without the HSA
+paths configure silently compiles out DMA-BUF support for Spack-built ROCm.
+
+## llvm_amdgpu
+
+- `depends_on("python", type="build")` → `depends_on("python@3.12.13", type="build")`.
+
+Why: added to build llvm-amdgpu only once (commit `Added dependency to
+python@3.12.13 to llvm-amdgpu to built it only once`). Note that
+`environments.yaml` uses `^python@3.12.12`.
 
 ## miopen_hip
 
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`
   at the end of `cmake_args()`.
 
-Why: matches this repo's commit `miopen-hip, set GPU_TARGETS` — upstream never
-forwards the `amdgpu_target` variant to CMake's `GPU_TARGETS`, so without this
-the build would fall back to MIOpen's default target list instead of the
-gfx90a/gfx942 targets this stack builds for.
+Why: upstream does not forward the `amdgpu_target` variant to CMake's
+`GPU_TARGETS`, which MIOpen uses to select its per-architecture kernels.
 
 ## py_barectf
 
 - Switches from a PyPI release (`barectf-3.1.2.tar.gz`) to a **git checkout**
   of a specific commit on `master`
   (`e16d289546bb4f6b0d909f79b8d6188eabe32640`, labeled version `3.1.2-fix`).
+- Drops upstream's `fix-pkg-resources.patch`, which covers the same problem.
 - Adds `homepage`/`git` attributes (upstream only has `pypi`).
 - Broadens `depends_on("py-poetry-core", type="build")` to
   `type=("build", "run")`.
-- Adds new runtime/build deps not present upstream: `py-setuptools`,
-  `py-termcolor@1.1:`, `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
+- Adds deps not present upstream: `py-setuptools`, `py-termcolor@1.1:`,
+  `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
 
-Why: the `-fix` version suffix and the pin to a specific unreleased commit
-indicate the 3.1.2 PyPI release had a bug that's fixed on `master` but not yet
-tagged/released; building from source also exposed missing runtime deps that
-the sdist install had been hiding, so they were added explicitly.
+Why: the 3.1.2 release imports `pkg_resources`, which fails on Python 3.12. The
+commit replaces it with `importlib.resources`.
+
+## rocblas
+
+- Adds `offload_bundler_path.patch` (`@7.0:7.1` in `Tensile`, `@7.2:` in
+  `shared/tensile`) and passes `Tensile_OFFLOADBUNDLER`.
+- Adds `0010-disable-tensile-co-compression.patch` for `@7.2: +tensile`.
+
+Why: the first patch points Tensile at the `clang-offload-bundler` from
+llvm-amdgpu. The commit that added the second records no reason. Both apply to
+the `therock-7.14` sources, the second with an offset and fuzz.
 
 ## rocprofiler_systems
 
 - Adds a new variant `internal-boost` (default `True`, "build internal
   boost").
-- The two existing external `boost@:1.88...` dependencies are now gated with
-  `~internal-boost` (only pulled in when internal boost is *not* used).
+- The two external `boost@:1.88...` dependencies are gated with
+  `~internal-boost`.
 - When `+internal-boost`, passes
   `self.define_from_variant("ROCPROFSYS_BUILD_BOOST", "internal-boost")` to
-  CMake so rocprofiler-systems builds its own bundled Boost instead.
+  CMake.
 - (Trivial) local file lacks the trailing newline upstream has.
 
-Why: avoids depending on Spack's external `boost` package (version/variant
-conflicts are a common pain point for Boost in large environments) by letting
-rocprofiler-systems build its own internal Boost by default.
+Why: avoids Spack's `boost` for this package. `ROCPROFSYS_BUILD_BOOST` was not
+found in the rocprofiler-systems CMake files checked at `therock-7.14`, so this
+variant may only remove the `boost` dependency.
 
 ## zstd
 
@@ -87,5 +108,4 @@ rocprofiler-systems build its own internal Boost by default.
 Why: switches zstd to build via CMake by default (rather than the Makefile
 build) and forces `-fPIC`. The commit that added this (`Trying to build zstd
 with -fPIC`) does not record what failed; a likely reason is that a static
-zstd is linked into a shared library elsewhere in the stack. The override
-still applies unchanged on top of the current upstream recipe.
+zstd is linked into a shared library elsewhere in the stack.
