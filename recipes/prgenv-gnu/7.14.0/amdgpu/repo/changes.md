@@ -42,11 +42,12 @@ paths configure silently compiles out DMA-BUF support for Spack-built ROCm.
 
 ## llvm_amdgpu
 
-- `depends_on("python", type="build")` → `depends_on("python@3.12.13", type="build")`.
+- `depends_on("python", type="build")` → `depends_on("python@3.12.15", type="build")`.
 
 Why: added to build llvm-amdgpu only once (commit `Added dependency to
-python@3.12.13 to llvm-amdgpu to built it only once`). Note that
-`environments.yaml` uses `^python@3.12.12`.
+python@3.12.13 to llvm-amdgpu to built it only once`). 3.12.15 is the only
+Python 3.12 at the pinned commit, and matches `^python@3.12.15` in
+`environments.yaml`.
 
 ## miopen_hip
 
