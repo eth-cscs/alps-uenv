@@ -1,42 +1,16 @@
 Changelog created by claude
 
-# Tweaked package recipes — prgenv-gnu 7.2.3 amdgpu
+# Tweaked package recipes — prgenv-gnu 7.14.0 amdgpu
 
 Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 `spack-packages` recipes at the commit pinned in `config.yaml`:
 
 - repo: https://github.com/spack/spack-packages.git
-- commit: `236a1bf4c0d3418f050915eea4c815061f3d7e81` (develop, 2026-05-28)
+- commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
 
-## composable_kernel
-
-Completely rewritten, not just patched. Upstream builds composable_kernel
-from source as a `CMakePackage`/`ROCmLibrary` (with dozens of versions and a
-large kernel-instantiation build). The local recipe instead:
-
-- Switches the base class to `Package` (generic) and installs a **pre-built
-  binary tarball** (`file:///capstor/scratch/cscs/simonpi/binary-packages/
-  composable-kernel-7.2.3-1-x86_64.pkg.tar.gz`) via `install_tree("opt/rocm",
-  prefix)` instead of compiling.
-- Only version `7.2.3` is defined (all older upstream versions dropped).
-- `amdgpu_targets` is now a hardcoded tuple (copied from `ROCmPackage`) instead
-  of referencing `ROCmPackage.amdgpu_targets`, since the package no longer
-  inherits from `ROCmPackage`.
-- Still declares `depends_on("hip+rocm@7.2.3")` / `depends_on("llvm-amdgpu@7.2.3")`
-  for consistency with dependents, even though nothing is actually compiled.
-- All CMake args, `root_cmakelists_dir`, `setup_build_environment`, and the
-  `0001-mark-kernels-maybe-unused.patch` are gone (no longer relevant to a
-  binary install).
-
-Why: git history on this directory (`use binary package for composable-kernel`,
-plus several earlier "Trying to fix amdgpu_targets" / patch commits) shows the
-from-source build was repeatedly broken/unworkable for the full multi-arch
-target set, so it was replaced with a binary package built out-of-band and
-installed verbatim. The untracked `package_orig.py` left in the directory is
-the last from-source attempt before that switch (it only differs from
-upstream by one extra patch, `0002-multi-gpu-arch.patch`, applied to
-`projects/composablekernel` for `@7.2.3` — that patch file no longer exists in
-the repo).
+Only `zstd` has been re-checked against this commit so far. The other sections
+are carried over from the 7.2.3 recipe, which was compared against
+`236a1bf4c0d3418f050915eea4c815061f3d7e81` (develop, 2026-05-28).
 
 ## hipdnn
 
@@ -116,8 +90,11 @@ rocprofiler-systems build its own internal Boost by default.
   `default="cmake"`.
 - Adds `args.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", True))` in
   `CMakeBuilder.cmake_args()`.
-- (Trivial) one added blank/whitespace-only line — no functional effect.
+- (Trivial) one added whitespace-only line at the end of `cmake_args()` — no
+  functional effect.
 
 Why: switches zstd to build via CMake by default (rather than the Makefile
-build) and forces `-fPIC`, most likely because zstd is linked into a shared
-library elsewhere in the stack and needed position-independent code.
+build) and forces `-fPIC`. The commit that added this (`Trying to build zstd
+with -fPIC`) does not record what failed; a likely reason is that a static
+zstd is linked into a shared library elsewhere in the stack. The override
+still applies unchanged on top of the current upstream recipe.
