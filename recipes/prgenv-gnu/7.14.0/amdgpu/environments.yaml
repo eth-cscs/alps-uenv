@@ -63,7 +63,7 @@ gcc-env:
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
   - aws-ofi-nccl~cuda
-  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop +mpi %cxx=llvm-amdgpu@7.14.0 ^cray-mpich@9.2.1 +rocm %c,cxx,fortran=gcc
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop +mpi %cxx=llvm-amdgpu@7.14.0 ^cray-mpich@9.2.1 +rocm %gcc
   variants:
   - +mpi
   - +rocm
