@@ -14,8 +14,8 @@ of 7.14.0 yet.
 
 Overrides from 7.2.3 that were dropped:
 
-- `composable_kernel`: installed a pre-built 7.2.3 binary; upstream's source
-  build is used instead.
+- `composable_kernel`: installed a pre-built 7.2.3 binary. It now builds from
+  source, see the `composable_kernel` section below.
 - `hipdnn`: its only tweak was a patch for `@7.2.3`. Upstream disables
   clang-tidy for `@7.13.0:`.
 - `libdrm`: capped the version at 2.4.124, but upstream `amdsmi@7.13:` requires
@@ -87,6 +87,26 @@ commit replaces it with `importlib.resources`.
 Why: the first patch points Tensile at the `clang-offload-bundler` from
 llvm-amdgpu. The commit that added the second records no reason. Both apply to
 the `therock-7.14` sources, the second with an offset and fuzz.
+
+## composable_kernel
+
+- Subclasses the builtin package. Sets `MIOPEN_REQ_LIBS_ONLY=ON` and
+  `CK_PARALLEL_COMPILE_JOBS=24`.
+
+Why: the full build for `gfx90a;gfx942` has 2345 objects and reached about 612
+in 9 hours, then a compile was OOM-killed on a 502 GB node at `-j64`. Only
+`miopen-hip` depends on it, and MIOpen needs only `device_conv_operations`. The
+installed package therefore has no GEMM, MHA, contraction or reduction
+instances.
+
+## rocprofiler_compute
+
+- Subclasses the builtin package. Sets `ROCM_PATH` to the `rocprofiler-sdk`
+  prefix during the build.
+
+Why: its CMake does `set(CMAKE_PREFIX_PATH $ENV{ROCM_PATH} "/opt/rocm/")`, so it
+picks up the older SDK in `/opt/rocm` on the build node, which lacks
+`rocprofiler_counter_config_id_t`.
 
 ## rocprofiler_systems
 
