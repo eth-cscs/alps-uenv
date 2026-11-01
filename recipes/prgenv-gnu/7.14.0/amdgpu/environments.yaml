@@ -37,7 +37,7 @@ gcc-env:
   - amdsmi
   - rocprofiler-dev
   - rocprofiler-sdk
-  - rocprofiler-systems@7.14.0 +internal-dyninst
+  - rocprofiler-systems@7.14.0 +internal-dyninst +rocm
   - rocprofiler-compute
   - rocrand
   - rocsolver
