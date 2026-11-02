@@ -43,7 +43,7 @@ paraview:
   - netcdf-c +mpi
   - lz4
   - conduit
-  - adios2 +python +hdf5 +libcatalyst
+  - adios2 +python +hdf5 +libcatalyst ~mgard
 
   # multithreading
   - tbb
