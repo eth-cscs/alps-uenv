@@ -1,0 +1,63 @@
+diff --git c/nvshmem4py/MANIFEST.in i/nvshmem4py/MANIFEST.in
+index 6e7f7ce..9d1ae9c 100644
+--- c/nvshmem4py/MANIFEST.in
++++ i/nvshmem4py/MANIFEST.in
+@@ -2,7 +2,6 @@ include pyproject.toml
+ include setup.py
+ include README.md
+ include License.txt
+-include requirements_cuda11.txt
+ include requirements_cuda12.txt
+ include requirements_cuda13.txt
+ include nvshmem/bindings/_internal/*.pyx
+diff --git c/nvshmem4py/nvshmem/core/interop/__init__.py i/nvshmem4py/nvshmem/core/interop/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git c/nvshmem4py/requirements_build.txt i/nvshmem4py/requirements_build.txt
+index e07ecbe..97ca522 100644
+--- c/nvshmem4py/requirements_build.txt
++++ i/nvshmem4py/requirements_build.txt
+@@ -12,4 +12,3 @@ wheel
+ auditwheel
+ patchelf
+ # The following are Numbast requirements for header search
+-cuda-toolkit[cudart,nvcc,curand,cccl,nvvm]==13.*
+diff --git c/nvshmem4py/requirements_cuda12.txt i/nvshmem4py/requirements_cuda12.txt
+index 7ad0c1c..9e95c24 100644
+--- c/nvshmem4py/requirements_cuda12.txt
++++ i/nvshmem4py/requirements_cuda12.txt
+@@ -1,6 +1,5 @@
+ # These are the run-time dependencies of nvshmem4py
+ # They are non-negotiables
+-nvidia-nvshmem-cu12
+ cuda-python>=12.0,<=12.9
+ cuda.core>=0.5.0
+ cuda.pathfinder>=1.2.3
+diff --git c/nvshmem4py/requirements_cuda13.txt i/nvshmem4py/requirements_cuda13.txt
+index b7c22e1..3e92351 100644
+--- c/nvshmem4py/requirements_cuda13.txt
++++ i/nvshmem4py/requirements_cuda13.txt
+@@ -1,6 +1,5 @@
+ # These are the run-time dependencies of nvshmem4py
+ # They are non-negotiables
+-nvidia-nvshmem-cu13
+ cuda-python>=13.0,<14.0
+ cuda.core>=0.5.0
+ cuda.pathfinder>=1.2.3
+diff --git c/nvshmem4py/scripts/generate_pyproject_toml.py i/nvshmem4py/scripts/generate_pyproject_toml.py
+index ebc804e..bf8c242 100755
+--- c/nvshmem4py/scripts/generate_pyproject_toml.py
++++ i/nvshmem4py/scripts/generate_pyproject_toml.py
+@@ -31,9 +31,12 @@ dependencies = [
+ packages = [
+     "nvshmem",
+     "nvshmem.bindings",
++    "nvshmem.bindings._internal",
+     "nvshmem.bindings.device",
+     "nvshmem.bindings.device.numba",
++    "nvshmem.bindings.device.cute",
+     "nvshmem.core",
++    "nvshmem.core.interop",
+     "nvshmem.core.device",
+     "nvshmem.core.device.numba",
+     "nvshmem.core.device.cute"
