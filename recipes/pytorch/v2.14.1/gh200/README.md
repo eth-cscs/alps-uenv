@@ -124,13 +124,13 @@ The low 4-node all-reduce is a launch setting, not a defect of the stack (see "L
 
 Torch/NCCL jobs on Alps must run with the Slingshot network option `disable_rdzv_get` (a CSCS requirement for torch/NCCL; the view's `FI_CXI_RDZV_PROTO=alt_read` relies on it).
 
-- The default view sets `SLURM_NETWORK=disable_rdzv_get`, so every `srun` started *inside* the view uses it: batch scripts with `#SBATCH --uenv=...` / `#SBATCH --view=default`, and `uenv start` sessions.
-- A direct `srun --uenv=<image> --view=default ...` from outside the uenv starts the step before the view is applied, so it needs the flag explicitly:
+- The `torch` view (the default view) sets `SLURM_NETWORK=disable_rdzv_get`, so every `srun` started *inside* the view uses it: batch scripts with `#SBATCH --uenv=...` / `#SBATCH --view=torch`, and `uenv start` sessions.
+- A direct `srun --uenv=<image> --view=torch ...` from outside the uenv starts the step before the view is applied, so it needs the flag explicitly:
   ```bash
-  srun --network=disable_rdzv_get --uenv=pytorch/v2.14.1 --view=default python train.py
+  srun --network=disable_rdzv_get --uenv=pytorch/v2.14.1 --view=torch python train.py
   ```
 - Measured without it: 4-node NCCL all-reduce 74 GB/s instead of 93 GB/s (data below).
-- Verified (job 5254387): a batch script with `#SBATCH --uenv=<image>` / `#SBATCH --view=default` sees `SLURM_NETWORK=disable_rdzv_get`, and a plain inner `srun` (no `--network` flag) reaches 93 GB/s on 4 nodes.
+- Verified (job 5254387, when the view was still named `default`): a batch script with `#SBATCH --uenv=<image>` / `#SBATCH --view=default` sees `SLURM_NETWORK=disable_rdzv_get`, and a plain inner `srun` (no `--network` flag) reaches 93 GB/s on 4 nodes.
 
 ### Measurements
 
