@@ -1,0 +1,15 @@
+diff --git a/Tensile/cmake/TensileConfig.cmake b/Tensile/cmake/TensileConfig.cmake
+index 62682d74..9d52403a 100644
+--- a/Tensile/cmake/TensileConfig.cmake
++++ b/Tensile/cmake/TensileConfig.cmake
+@@ -194,6 +194,10 @@ function(TensileCreateLibraryFiles
+     set(Options ${Options} "--cxx-compiler=${Tensile_COMPILER}")
+   endif()
+ 
++  if(Tensile_OFFLOADBUNDLER)
++    set(Options ${Options} "--offload-bundler=${Tensile_OFFLOADBUNDLER}")
++  endif()
++
+   if(Tensile_COMPILER_PATH)
+     set(Options ${Options} "--cmake-cxx-compiler=${Tensile_COMPILER_PATH}")
+   endif()
