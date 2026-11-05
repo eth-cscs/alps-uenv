@@ -4,15 +4,15 @@ Build log for the next build of this recipe; not user-facing documentation.
 The recipe started from `alps-uenv/recipes/pytorch/v2.9.1/gh200`, ported to stackinator v7 (`version: 3`, spack v1.2.2, spack-packages `be3466d5`).
 The package set follows the Alps `pytorch-cuda:26.07-py3` container (NGC `nvcr.io/nvidia/pytorch:26.07-py3` plus the alps-extended-images network stack); `ngc-26.07-packages.txt` lists the Python packages in the NGC image.
 
-## User readme (`pytorch-readme`)
+## User readme (the `readme` command)
 
-The user-facing documentation is a readme shown by the `pytorch-readme` command in the `torch` view.
+The user-facing documentation is a readme shown by the `readme` command in the `torch` view.
 
 | File | Purpose |
 |---|---|
 | `make-readme.py` | source of the readme text (simple line markup) and an ANSI renderer; run `python3 make-readme.py` after editing |
 | `extra/readme.txt` | the generated, ANSI-coloured readme (commit it with `make-readme.py`) |
-| `extra/bin/pytorch-readme` | the command: `less -RFX` on a terminal, plain text when piped or with `NO_COLOR` set |
+| `extra/bin/readme` | the command: `less -RFX` on a terminal, plain text when piped or with `NO_COLOR` set |
 | `extra/megatron/*.patch` | the two swiss-ai Megatron-LM fork fixes, referenced by the readme (installed as `/user-environment/meta/extra/megatron/`) |
 | `post-install` | installs `meta/extra/readme.txt` as `/user-environment/readme` and `extra/bin/*` into `env/torch/bin` |
 
@@ -187,7 +187,7 @@ Report: https://claude.ai/artifact/GMoXGo9xZ5NiaUzdHBCn3y. Scripts, logs and par
 - **Mid-size NCCL messages across nodes are 2x slower on a few nodes** (1 MiB all-reduce 15.3 -> 6.8 GB/s on 2 nodes, all-gather/reduce-scatter -35 to -40%).
   Cause: `NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1` in the view (taken from the alps-extended-images settings; v2.9.1 has `NCCL_CROSS_NIC=1`, PXN enabled).
   With both as in v2.9.1: 2-node all-reduce at 1 MiB 6.7 -> 15.7 GB/s, all-gather 5.0 -> 11.5 GB/s, all-reduce 64 MiB 108 -> 114 GB/s; all-reduce 1 GiB 154 -> 149 GB/s.
-  Decision (2026-11-05): keep `NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1`, which are useful for larger runs; the user readme (`pytorch-readme`, "Environment set by the view") documents them and the `NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0` override for small jobs dominated by mid-size collectives, with these numbers.
+  Decision (2026-11-05): keep `NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1`, which are useful for larger runs; the user readme (`readme`, "Environment set by the view") documents them and the `NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0` override for small jobs dominated by mid-size collectives, with these numbers.
   The Megatron results above were measured with the view defaults.
 - `FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD` and `FI_MR_CACHE_MAX_SIZE/COUNT` (only in this view) make no measurable difference.
 - MPI `osu_alltoall` with GPU buffers: small messages slower (32 B on 2 nodes 25 -> 92 us), large ones faster (4 MiB on 4 nodes -15%); not caused by the environment, so cray-mpich 9.1 or libfabric 2.6.0; not investigated further.

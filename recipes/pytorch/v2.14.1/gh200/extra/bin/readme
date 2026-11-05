@@ -4,7 +4,7 @@
 # Piped, redirected, or with NO_COLOR set: plain text.
 README=/user-environment/readme
 if [ ! -r "$README" ]; then
-    echo "pytorch-readme: $README not found (is the pytorch uenv mounted?)" >&2
+    echo "readme: $README not found (is the pytorch uenv mounted?)" >&2
     exit 1
 fi
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
