@@ -9,8 +9,10 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 - commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
 
 Each override is the upstream recipe at this commit with the tweaks from the
-7.2.3 recipe re-applied. Nothing below has been confirmed by a complete build
-of 7.14.0 yet.
+7.2.3 recipe re-applied, plus the overrides marked "new in 7.14.0". The recipe
+builds completely: the CI build passes on `fc0e50d` for `gfx90a` and `gfx942`.
+In the CI tests, 52 of 56 pass. `RocHPL_medium`, `RocHPL_large` and the
+`rccl-tests` `all_reduce` and `sendrecv` tests still fail, cause unknown.
 
 Overrides from 7.2.3 that were dropped:
 
@@ -26,6 +28,22 @@ Removed from `environments.yaml`:
 - `rocm-openmp-extras`: AMD has no 7.14 release (`aomp`, `aomp-extras` and `flang`
   stop at `rocm-7.2.4`), so it concretized to 7.2.3 and pulled in
   `llvm-amdgpu@7.2.3`. `llvm-amdgpu@7.13:` builds OpenMP and offload itself.
+
+Changed in `environments.yaml`:
+
+- `rocprofiler-systems@7.14.0 +internal-dyninst +rocm`: the global `+rocm` in
+  `variants:` is only a preference, and the solver picked `~rocm`, which drops
+  the `rocprofiler-sdk` dependency, so the build failed. `@7.14.0` keeps it on
+  the ROCm release. Upstream `10.0.0` also declares the dependency, so the
+  version was not the cause (commit `a280001` says otherwise).
+- `rccl-tests ... +mpi`: same problem with the global `+mpi`. With `~mpi` each
+  Slurm task ran as its own rank 0 and reported bogus bandwidths.
+- `rccl-tests ... ^cray-mpich@9.2.1 +rocm %gcc`: without it, `+mpi` adds a
+  second `cray-mpich@8.1.32` built with `rocmcc`, which fails to install
+  ("Unsupported toolchain"). `%c,cxx,fortran=gcc` does not concretize, while
+  `%gcc` does and gives `%fortran=gcc`. This still installs a second
+  `cray-mpich@9.2.1` prefix (`%fortran=gcc %c,cxx=rocmcc`), used only by
+  `rccl-tests`.
 
 ## amdsmi
 
@@ -45,6 +63,17 @@ Why: the amdsmi Python module is installed outside site-packages, so only the
 
 Why: the 1.18/1.19 tarballs are missing `nccl_ofi_rocm.h`, and without the HSA
 paths configure silently compiles out DMA-BUF support for Spack-built ROCm.
+
+## composable_kernel (new in 7.14.0)
+
+- Subclasses the builtin package. Sets `MIOPEN_REQ_LIBS_ONLY=ON` and
+  `CK_PARALLEL_COMPILE_JOBS=24`.
+
+Why: the full build for `gfx90a;gfx942` has 2345 objects and reached about 612
+in 9 hours, then a compile was OOM-killed on a 502 GB node at `-j64`. Only
+`miopen-hip` depends on it, and MIOpen needs only `device_conv_operations`. The
+installed package therefore has no GEMM, MHA, contraction or reduction
+instances.
 
 ## llvm_amdgpu
 
@@ -86,20 +115,10 @@ commit replaces it with `importlib.resources`.
 
 Why: the first patch points Tensile at the `clang-offload-bundler` from
 llvm-amdgpu. The commit that added the second records no reason. Both apply to
-the `therock-7.14` sources, the second with an offset and fuzz.
+the `therock-7.14` sources, the second with an offset and fuzz, and rocblas
+builds with both.
 
-## composable_kernel
-
-- Subclasses the builtin package. Sets `MIOPEN_REQ_LIBS_ONLY=ON` and
-  `CK_PARALLEL_COMPILE_JOBS=24`.
-
-Why: the full build for `gfx90a;gfx942` has 2345 objects and reached about 612
-in 9 hours, then a compile was OOM-killed on a 502 GB node at `-j64`. Only
-`miopen-hip` depends on it, and MIOpen needs only `device_conv_operations`. The
-installed package therefore has no GEMM, MHA, contraction or reduction
-instances.
-
-## rocprofiler_compute
+## rocprofiler_compute (new in 7.14.0)
 
 - Subclasses the builtin package. Sets `ROCM_PATH` to the `rocprofiler-sdk`
   prefix during the build.
@@ -121,7 +140,8 @@ picks up the older SDK in `/opt/rocm` on the build node, which lacks
 
 Why: avoids Spack's `boost` for this package. `ROCPROFSYS_BUILD_BOOST` was not
 found in the rocprofiler-systems CMake files checked at `therock-7.14`, so this
-variant may only remove the `boost` dependency.
+variant may only remove the `boost` dependency. The package builds with
+`+internal-boost`.
 
 ## zstd
 
