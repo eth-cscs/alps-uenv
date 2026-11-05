@@ -24,9 +24,11 @@ class LinaroForge(Package):
     maintainers("kenche-linaro")
 
     if platform.machine() == "aarch64":
+        version("26.0.3", sha256="b76137ec53b265ae597c8b764237fcb5f2598bf1179b598179f40be2f074f47d")
         version("26.0", sha256="e1510c0377bbc49821ba9758c8ed5563fe3e08dc072860319ea0ac5cb088c7c8")
         version("25.1.2", sha256="4bd7928dae0d9e3f01c6cecc671ad31b957731a1f137c81993b7b20373c5623d")
     elif platform.machine() == "x86_64":
+        version("26.0.3", sha256="a141a0acf89c6bd5ada44f9045933eaeb874d9526f2873111459636cb36aa0a3")
         version("26.0", sha256="060b44e014b13632f1d56386acd3bbbbd7d07b5033dbb2af264bd91c5ac23e1e")
         version("25.1.2", sha256="277f810b6cb52428a10c3317d07d0887140b8dbe5269485ba6715e23be3b55bb")
 
@@ -37,6 +39,14 @@ class LinaroForge(Package):
     )
 
     variant("accept-eula", default=False, description="Accept the EULA")
+
+    variant(
+        "license",
+        default="cscs",
+        values=("cscs", "mch"),
+        multi=False,
+        description="Site license to install in prefix/licences/License",
+    )
 
     # forge-probe executes with "/usr/bin/env python"
     depends_on("python@2.7:", type="build", when="+probe")
@@ -74,13 +84,9 @@ class LinaroForge(Package):
         env.prepend_path("PATH", join_path(self.prefix, "bin"))
 
     @run_after("install")
-    def cscs_license(self):
-        cscs_license = join_path(self.prefix, "licences", "License")
-        with open(cscs_license, "w") as f:
-            # will expire end of May/2026
-            f.write("type=2\n")
-            f.write("serial_number=17741\n")
-            f.write("hostname=velan.cscs.ch\n")
-            f.write("serverport=4241\n")
-            f.write("features=ddt,map,perf-report,cuda,metrics-pack\n")
-            f.write("hash2=b013e17d168ebec7291c66401832d113963c0cb5\n")
+    def install_license(self):
+        # copy license.<site> from the package directory into the location Forge reads
+        site = self.spec.variants["license"].value
+        licence_dir = join_path(self.prefix, "licences")
+        mkdirp(licence_dir)
+        install(join_path(self.package_dir, f"license.{site}"), join_path(licence_dir, "License"))

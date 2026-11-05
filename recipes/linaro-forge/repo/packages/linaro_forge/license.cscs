@@ -1,0 +1,6 @@
+type=2
+serial_number=17741
+hostname=velan.cscs.ch
+serverport=4241
+features=ddt,map,perf-report,cuda,metrics-pack
+hash2=b013e17d168ebec7291c66401832d113963c0cb5
