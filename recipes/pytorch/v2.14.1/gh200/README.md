@@ -4,6 +4,21 @@ Build log for the next build of this recipe; not user-facing documentation.
 The recipe started from `alps-uenv/recipes/pytorch/v2.9.1/gh200`, ported to stackinator v7 (`version: 3`, spack v1.2.2, spack-packages `be3466d5`).
 The package set follows the Alps `pytorch-cuda:26.07-py3` container (NGC `nvcr.io/nvidia/pytorch:26.07-py3` plus the alps-extended-images network stack); `ngc-26.07-packages.txt` lists the Python packages in the NGC image.
 
+## User readme (`pytorch-readme`)
+
+The user-facing documentation is a readme shown by the `pytorch-readme` command in the `torch` view.
+
+| File | Purpose |
+|---|---|
+| `make-readme.py` | source of the readme text (simple line markup) and an ANSI renderer; run `python3 make-readme.py` after editing |
+| `extra/readme.txt` | the generated, ANSI-coloured readme (commit it with `make-readme.py`) |
+| `extra/bin/pytorch-readme` | the command: `less -RFX` on a terminal, plain text when piped or with `NO_COLOR` set |
+| `extra/megatron/*.patch` | the two swiss-ai Megatron-LM fork fixes, referenced by the readme (installed as `/user-environment/meta/extra/megatron/`) |
+| `post-install` | installs `meta/extra/readme.txt` as `/user-environment/readme` and `extra/bin/*` into `env/torch/bin` |
+
+Stackinator copies `extra/` to `/user-environment/meta/extra`. Keep numbers in the readme consistent with the results below when they change.
+The renderer is taken from the vllm uenv recipe (`make-guide.py`).
+
 ## Open items
 
 ### MAGMA: concretized with 2.10.0, NGC uses 2.6.2
@@ -202,6 +217,45 @@ bf16 and fp8 (`--fp8-format hybrid --fp8-recipe tensorwise`), both stacks in one
 
 The uenv is 1.6% (bf16) and 2.3% (fp8) faster than the container for the same Megatron code and flags.
 bf16 loss curves of the two stacks agree (10.545 -> 2.32 after 30 iterations); the fp8 curves of the two stacks agree with each other.
+
+Best settings, both stacks in one allocation (job 5256738): `--fp8-format hybrid --fp8-recipe tensorwise --fp8-param-gather`, `MBS=2`, `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`:
+
+| Run | ms/iter | TFLOP/s/GPU | vs container bf16 | host RAM increase/node | GPU memory/node |
+|---|---|---|---|---|---|
+| container bf16 (test defaults) | 2305 | 349.1 | | 105 GiB | 229 GiB |
+| container, best settings | 1974 | 407.6 | +16.8% | 137 GiB | 283 GiB |
+| uenv, best settings | 1858 | 433.0 | +24.0% | 124 GiB | 284 GiB |
+
+With the same settings the uenv is 6.2% faster than the container. MBS=2 helps the uenv slightly but makes the container slower than its plain fp8 run (407.6 vs 428.0 TFLOP/s/GPU in job 5256518).
+
+Delayed fp8 recipe and TP comm overlap, one allocation (job 5256768); all runs `MBS=2`, `expandable_segments:True`, `--fp8-format hybrid --fp8-recipe delayed --fp8-amax-history-len 1024 --fp8-amax-compute-algo max --fp8-param-gather`:
+
+| Run | ms/iter | TFLOP/s/GPU | host RAM increase/node | GPU memory/node |
+|---|---|---|---|---|
+| container | 1872 | 429.9 | 130 GiB | 289 GiB |
+| uenv | 1776 | 453.2 (+5.4%) | 126 GiB | 292 GiB |
+| uenv + `--sequence-parallel --tp-comm-overlap --tp-comm-bootstrap-backend nccl`, `UB_SKIPMC=1` | 1710 | 470.7 (+9.5%) | 123 GiB | 273 GiB |
+
+The best uenv configuration is ~34% faster than the container with the test's default (bf16) settings (349-353 TFLOP/s/GPU).
+
+Both stacks with TP comm overlap (same settings as the last row above), one allocation (job 5256869): container 1857 ms/iter, 433.6 TFLOP/s/GPU (144 GiB host RAM increase/node, 270 GiB GPU); uenv 1765 ms/iter, 456.1 TFLOP/s/GPU (+5.2%; 132 GiB, 271 GiB).
+The uenv's absolute number differs by 3% between allocations (470.7 vs 456.1); within each allocation the uenv leads by 5-6% with tuned settings.
+
+Summary (4 nodes x 4 GH200, same Megatron code and flags in both stacks):
+
+| Settings | uenv vs container |
+|---|---|
+| test defaults (bf16) | +0.6-1.6% |
+| fp8 tensorwise | +2.3% |
+| fp8 tensorwise + param gather + MBS=2 | +6.2% |
+| fp8 delayed + param gather + MBS=2 | +5.4% |
+| same + sequence parallel + TP comm overlap | +5.2% |
+
+Host RAM per node (increase during training, excluding GPU memory) is 2-14 GiB lower with the uenv in every same-allocation comparison.
+Loss curves of the three runs agree (10.565 -> 2.07-2.17 after 30 iterations).
+
+uenv tuning (job 5256611, against fp8 tensorwise at 429.4 TFLOP/s/GPU): delayed recipe (`--fp8-recipe delayed --fp8-amax-history-len 1024 --fp8-amax-compute-algo max`) 441.4 (+2.8%); `MBS=2` 439.6 (+2.4%, +78 GiB GPU/node); `--fp8-param-gather` 431.1 (+0.4%, -27 GiB GPU/node).
+`--tp-comm-overlap` (TE userbuffers) fails: `CUDA device, driver and/or toolkit version does not support comm+GEMM overlap with CUDA Multicast` (no NVLS multicast on these nodes); `UB_SKIPMC=1` selects CUDA IPC instead.
 
 Per-process memory (1 node, 16-layer variant, TP=2, peak sample of `/proc/<pid>/smaps_rollup`; `megatron-bench/rss3/`):
 
