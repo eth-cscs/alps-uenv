@@ -28,6 +28,29 @@ Options:
 
 Changing magma changes the py-torch hash, so it means rebuilding torch and its dependents.
 
+### Image size: fixes found in the a100 recipe, not applied here yet
+
+The a100 port (`../a100/README.md`, 2026-11-04) found package problems that apply to this recipe too.
+On a100 they took the image from 10.1 to 8.9 GB (21.3 to 18.4 GB unpacked); the gh200 sizes have not been measured.
+To apply them, copy the package files from `../a100/repo/packages/`:
+
+- **cutlass** (`cutlass/package.py`): set `CUTLASS_ENABLE_HEADERS_ONLY=ON`.
+  The default build compiles the CUTLASS kernel library and profiler (965 MB on a100) and installs the unit tests (593 MB).
+  The only consumer, nvidia-mathdx, needs only the headers and CMake config.
+  This also makes the build much shorter. It changes the cutlass hash, so nvidia-mathdx and py-transformer-engine rebuild.
+- **dynolog** (`dynolog/package.py`): change to `depends_on("rust", type="build")`.
+  The link dependency keeps rust (1.3 GB) in the image after `cleanup: runtime`, but the dynolog/dyno binaries do not link any rust library.
+- **py-torchao** (`py_torchao/package.py`): `setup.py` builds `_C_cutlass_90a` (sm_90a) and `_C_mxfp8` (sm_100) whenever CUDA >= 12.8, ignoring `TORCH_CUDA_ARCH_LIST`.
+  The a100 `patch()` builds each one only when `cuda_arch` matches.
+  Here that keeps `_C_cutlass_90a` and drops `_C_mxfp8` (~3 MB, sm_100 SASS + compute_120 PTX, cannot run on sm_90).
+  The a100 package also derives `TORCH_CUDA_ARCH_LIST` from `cuda_arch` instead of hardcoding `9.0a`; for `cuda_arch=90a` the value is the same.
+- **py-flash-attn** (`py_flash_attn/package.py`): the a100 package derives `FLASH_ATTN_CUDA_ARCHS` from `cuda_arch` instead of hardcoding `90`.
+  This makes no difference here, but keeps the two recipes' packages identical.
+- **py-torch-nvidia-apex**: the a100 `patch()` skips `group_norm_v2_cuda` (hardcoded sm_90/sm_100/compute_120) when no `cuda_arch` is >= 90.
+  This does not change gh200, where the extension is built and usable; it carries sm_100 SASS and compute_120 PTX (~39 MB in total on a100) that could only be removed by patching its `arch_flags`.
+
+The a100 recipe also has a script that lists the shared objects containing CUDA code for archs other than the target (`/scratch/mch/bcumming/torch-uenv-a100/tests/arch_scan.sh` on linard; change `sm_80` and `linux-zen3` for gh200).
+
 ## Build fixes
 
 Several fixes come from the vllm uenv recipe (`/users/bcumming/uenv/vllm/recipe`, see its README).

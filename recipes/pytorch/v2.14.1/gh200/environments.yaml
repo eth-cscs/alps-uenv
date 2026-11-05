@@ -162,7 +162,7 @@ pytorch-env:
   - cuda_arch=90a
   - +ipo
   views:
-    default:
+    torch:
       link: all
       exclude: [squashfs]
       uenv:
