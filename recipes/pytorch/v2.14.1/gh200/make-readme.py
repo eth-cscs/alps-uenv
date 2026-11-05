@@ -104,6 +104,14 @@ $ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True    # -8 GiB GPU memory
 |  CUDA_HOME, PYTHONUSERBASE        the view; nvcc is available for JIT/extension builds
 ! Do not point the JIT caches at a shared filesystem with several nodes:
 ! concurrent writers fail with `[Errno 116] Stale file handle`.
+`NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1` are set for large runs. On a few nodes they halve
+NCCL bandwidth for mid-size messages (measured on 2 nodes, bus bandwidth):
+|                                         all-reduce 1 MiB  all-gather 1 MiB  all-reduce 1 GiB
+|  view defaults                                  6.7 GB/s          5.0 GB/s          154 GB/s
+|  NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0           15.7 GB/s         11.3 GB/s          150 GB/s
+For small jobs dominated by mid-size collectives, try overriding them:
+$ export NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0
+> Measure with your own workload: the large-message bandwidth is unchanged or slightly lower.
 
 # Benchmarks included
 |  all_reduce_perf, all_gather_perf, reduce_scatter_perf, alltoall_perf, ...   (nccl-tests)

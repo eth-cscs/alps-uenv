@@ -178,6 +178,21 @@ Effect of the flag on other traffic (job 5254306, one 4-node allocation; single 
 - Setting `SLURM_NETWORK` in the environment before `srun` works as well as the flag.
 - Decision (2026-11-04): the flag is a requirement for torch/NCCL jobs; document it and set `SLURM_NETWORK` in the view (above).
 
+## Communication benchmarks against pytorch/v2.9.1 (2026-11-05)
+
+The benchmarks of the v2.9.1 PR (alps-uenv PR #281: OSU `osu_bw` H-H/D-D, `osu_alltoall` with GPU buffers, nccl-tests, NVSHMEM device `alltoall_latency`), extended to all four NCCL collectives up to 4 GiB and 4 nodes, run on `pytorch/v2.9.1:v2` and this recipe's image in the same allocations (jobs 5262875, 5262878; investigation 5262892, 5262918).
+Report: https://claude.ai/artifact/GMoXGo9xZ5NiaUzdHBCn3y. Scripts, logs and parsed data: `/ritom/scratch/cscs/bcumming/torch-uenv/comm-bench/` (`comm.sbatch`, `parse.py`, `make_report.py`, `results2/`, `data.json`).
+
+- Large messages: equal or better (NCCL 4 GiB all-reduce 341 / 161 / 93 GB/s on 1 / 2 / 4 nodes; 2 nodes +6%); 4-node all-to-all at 4 GiB is 8% lower. MPI point-to-point and torch.distributed (92.8 GB/s, 16 ranks) are equal.
+- **Mid-size NCCL messages across nodes are 2x slower on a few nodes** (1 MiB all-reduce 15.3 -> 6.8 GB/s on 2 nodes, all-gather/reduce-scatter -35 to -40%).
+  Cause: `NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1` in the view (taken from the alps-extended-images settings; v2.9.1 has `NCCL_CROSS_NIC=1`, PXN enabled).
+  With both as in v2.9.1: 2-node all-reduce at 1 MiB 6.7 -> 15.7 GB/s, all-gather 5.0 -> 11.5 GB/s, all-reduce 64 MiB 108 -> 114 GB/s; all-reduce 1 GiB 154 -> 149 GB/s.
+  Decision (2026-11-05): keep `NCCL_CROSS_NIC=0` and `NCCL_PXN_DISABLE=1`, which are useful for larger runs; the user readme (`pytorch-readme`, "Environment set by the view") documents them and the `NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0` override for small jobs dominated by mid-size collectives, with these numbers.
+  The Megatron results above were measured with the view defaults.
+- `FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD` and `FI_MR_CACHE_MAX_SIZE/COUNT` (only in this view) make no measurable difference.
+- MPI `osu_alltoall` with GPU buffers: small messages slower (32 B on 2 nodes 25 -> 92 us), large ones faster (4 MiB on 4 nodes -15%); not caused by the environment, so cray-mpich 9.1 or libfabric 2.6.0; not investigated further.
+- Launch note: an `srun -N <n> --ntasks-per-node=<k>` inside an `sbatch` job without `--ntasks` silently ran on one node (`can't run 1 processes on 2 nodes, setting nnodes to 1`); pass `-n` explicitly.
+
 ## Megatron-LM (2026-11-04)
 
 Tested with the alps-extended-images apertus-1p5 test (`Alps-Images/apps/apertus-1p5/tests/megatron_pretrain.sh`): swiss-ai Megatron-LM `multimodality/main` at `c3d83c5a0` plus NVIDIA PR 1871, mock data, Apertus features (xIELU, AdEMAMix, goldfish loss, apex QK-norm).

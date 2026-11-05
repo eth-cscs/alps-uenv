@@ -90,6 +90,14 @@ Recommended environment for Megatron runs:
     [38;5;80m CUDA_HOME, PYTHONUSERBASE        the view; nvcc is available for JIT/extension builds[0m
   [38;5;203m! Do not point the JIT caches at a shared filesystem with several nodes:[0m
   [38;5;203m! concurrent writers fail with [1m[Errno 116] Stale file handle[0m[38;5;203m.[0m
+[1mNCCL_CROSS_NIC=0[0m and [1mNCCL_PXN_DISABLE=1[0m are set for large runs. On a few nodes they halve
+NCCL bandwidth for mid-size messages (measured on 2 nodes, bus bandwidth):
+    [38;5;80m                                        all-reduce 1 MiB  all-gather 1 MiB  all-reduce 1 GiB[0m
+    [38;5;80m view defaults                                  6.7 GB/s          5.0 GB/s          154 GB/s[0m
+    [38;5;80m NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0           15.7 GB/s         11.3 GB/s          150 GB/s[0m
+For small jobs dominated by mid-size collectives, try overriding them:
+  [2m$[0m [38;5;114mexport NCCL_CROSS_NIC=1 NCCL_PXN_DISABLE=0[0m
+  [38;5;221m▸ Measure with your own workload: the large-message bandwidth is unchanged or slightly lower.[0m
 
 [1;38;5;45mBenchmarks included[0m
 [2m───────────────────[0m
