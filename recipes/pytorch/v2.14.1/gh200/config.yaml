@@ -1,0 +1,12 @@
+name: pytorch
+store: /user-environment
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: v1.2.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: be3466d565af6e655977039109840607aa1b5314
+description: "pytorch 2.14.1 and friends, with the package set of the Alps NGC pytorch 26.07 container"
+default-view: torch
+cleanup: runtime
+version: 3
