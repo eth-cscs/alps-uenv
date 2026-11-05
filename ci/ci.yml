@@ -10,7 +10,7 @@ pipeline-configure:
     JWT_CICD_EXT_MW:
       aud: "https://cicd-ext-mw.cscs.ch"
   script:
-    - git clone https://github.com/eth-cscs/uenv-pipeline.git
+    - git clone --branch alby/use-new-cscs-rfm-tests-pyproject https://github.com/albestro/uenv-pipeline.git
     - ./uenv-pipeline/configure-pipeline -c./config.yaml -r./recipes -s$system -u$uenv -a$uarch -o./pipeline.yml
   artifacts:
     paths:
