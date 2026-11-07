@@ -396,9 +396,9 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
-    "26.5":
+    "26.9":
       recipes:
-        gh200: 26.5/gh200
+        gh200: 26.9/gh200
       deploy:
         daint: [gh200]
         santis: [gh200]
