@@ -1,0 +1,38 @@
+nvfortran:
+  compiler: [gcc, nvhpc]
+  network:
+      mpi: cray-mpich@9.1.0+cuda %c,cxx,fortran=nvhpc
+      specs: [ 'libfabric@2.3 +gdrcopy %c=gcc' ]
+  unify: true
+  specs:
+  - aws-ofi-nccl
+  - cmake
+  - cuda@13
+  - fftw +openmp
+  - fmt
+  - hdf5 +cxx+fortran+threadsafe+hl
+  - libtree
+  - lua
+  - libtree
+  - lz4
+  - meson
+  - nccl
+  - nccl-tests
+  - ninja
+  - nvpl-blas threads=openmp
+  - nvpl-lapack threads=openmp
+  - osu-micro-benchmarks
+  - python
+  - zlib-ng
+  - netcdf-c
+  - netcdf-fortran %fortran=nvhpc
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=90
+  views:
+    nvfort:
+      link: roots
+      uenv:
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
