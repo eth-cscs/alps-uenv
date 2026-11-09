@@ -11,6 +11,7 @@ gromacs:
   - cuda@13.3.0
   - fftw
   - gromacs@2025.4 +cuda +hwloc +cufftmp
+  - cufftmp
   variants:
   - +openmp
   - +mpi
