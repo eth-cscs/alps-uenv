@@ -10,7 +10,7 @@ gromacs:
   - python@3.12
   - fftw
   - plumed
-  - gromacs@2025.0 +plumed +hwloc
+  - gromacs@2026.3 +plumed +hwloc
   variants:
   - +openmp
   - +mpi
