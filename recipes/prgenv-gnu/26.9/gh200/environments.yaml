@@ -36,6 +36,8 @@ gcc-env:
   - xcb-util-cursor
   - aws-ofi-nccl
   - superlu
+  - cufftmp
+  - nvshmem +cuda +mpi +nccl
   variants:
   - +mpi
   - +cuda
