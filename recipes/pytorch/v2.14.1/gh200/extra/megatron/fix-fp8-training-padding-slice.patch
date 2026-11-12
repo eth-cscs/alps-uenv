@@ -1,0 +1,18 @@
+diff --git a/megatron/core/transformer/attention.py b/megatron/core/transformer/attention.py
+index 2ad4dc67e..20eb825d7 100644
+--- a/megatron/core/transformer/attention.py
++++ b/megatron/core/transformer/attention.py
+@@ -1060,8 +1060,11 @@ class Attention(MegatronModule, ABC):
+                     core_attn_out = rearrange(core_attn_out, 's b h d -> s b (h d)')
+ 
+                 # Clear the outputs for padding tokens when using quantization scales
+-                # to avoid corrupting amax calculations
+-                if is_using_quantization_scales(self.config):
++                # to avoid corrupting amax calculations.
++                # Only applies to dynamic-batching inference: in this fork the block sits at the
++                # level of the training/static branch too, where inference_context is None, so
++                # fp8 training crashed ('NoneType' object has no attribute 'padding_slice').
++                if inference_context is not None and is_using_quantization_scales(self.config):
+                     core_attn_out[inference_context.padding_slice] = 0.0
+ 
+         if packed_seq_params is not None and packed_seq_params.qkv_format == 'thd':
