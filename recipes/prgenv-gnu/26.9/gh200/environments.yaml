@@ -49,3 +49,8 @@ gcc-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - NVSHMEM_REMOTE_TRANSPORT: "libfabric"
+          - NVSHMEM_LIBFABRIC_PROVIDER: "cxi"
+          - NVSHMEM_DISABLE_CUDA_VMM: "1"
