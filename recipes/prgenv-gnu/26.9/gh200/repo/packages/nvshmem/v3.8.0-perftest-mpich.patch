@@ -1,0 +1,42 @@
+diff --git i/perftest/common/utils.cu w/perftest/common/utils.cu
+index 5e925a8b..87e9a5b3 100644
+--- i/perftest/common/utils.cu
++++ w/perftest/common/utils.cu
+@@ -357,8 +357,22 @@ void init_wrapper(int *c, char ***v) {
+ 
+         mpi_fn_table.fn_MPI_Init(c, v);
+ 
+-        MPI_COMM_WORLD_PLACEHOLDER = (MPI_Comm)dlsym(nvshmemi_mpi_handle, "ompi_mpi_comm_world");
+-        MPI_UINT8_T_PLACEHOLDER = (MPI_Datatype)dlsym(nvshmemi_mpi_handle, "ompi_mpi_uint8_t");
++#if defined(NVSHMEM_MPI_IS_OMPI) && NVSHMEM_MPI_IS_OMPI
++        {
++            void *sym = nullptr;
++            sym = dlsym(nvshmemi_mpi_handle, "ompi_mpi_comm_world");
++            if (!sym) { fprintf(stderr, "dlsym ompi_mpi_comm_world failed\\n"); abort(); }
++            MPI_COMM_WORLD_PLACEHOLDER = *(MPI_Comm*)sym;
++
++            sym = dlsym(nvshmemi_mpi_handle, "ompi_mpi_uint8_t");
++            if (!sym) { fprintf(stderr, "dlsym ompi_mpi_uint8_t failed\\n"); abort(); }
++            MPI_UINT8_T_PLACEHOLDER = *(MPI_Datatype*)sym;
++        }
++#else
++        /* Non-OpenMPI (MPICH, Cray-MPICH, Intel MPI, etc.) */
++        MPI_COMM_WORLD_PLACEHOLDER = MPI_COMM_WORLD;
++        MPI_UINT8_T_PLACEHOLDER    = MPI_UINT8_T;
++#endif
+ 
+         mpi_fn_table.fn_MPI_Comm_rank(MPI_COMM_WORLD_PLACEHOLDER, &rank);
+         mpi_fn_table.fn_MPI_Comm_size(MPI_COMM_WORLD_PLACEHOLDER, &nranks);
+@@ -370,7 +384,11 @@ void init_wrapper(int *c, char ***v) {
+         // node-local rank from a shared-memory communicator split.
+         MPI_Comm node_comm;
+         int local_rank, dev_count;
++#if defined(NVSHMEM_MPI_IS_OMPI) && NVSHMEM_MPI_IS_OMPI
+         MPI_Info info_null = (MPI_Info)dlsym(nvshmemi_mpi_handle, "ompi_mpi_info_null");
++#else
++        MPI_Info info_null = MPI_INFO_NULL;
++#endif
+         mpi_fn_table.fn_MPI_Comm_split_type(MPI_COMM_WORLD_PLACEHOLDER, MPI_COMM_TYPE_SHARED, rank,
+                                             info_null, &node_comm);
+         mpi_fn_table.fn_MPI_Comm_rank(node_comm, &local_rank);
+

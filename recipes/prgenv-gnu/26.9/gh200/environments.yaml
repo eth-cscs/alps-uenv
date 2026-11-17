@@ -37,7 +37,7 @@ gcc-env:
   - aws-ofi-nccl
   - superlu
   - cufftmp
-  - nvshmem +cuda +mpi +nccl
+  - nvshmem@3.8.0-0 +cuda +mpi +nccl ~ucx +libfabric +gpu_initiated_support
   variants:
   - +mpi
   - +cuda
