@@ -11,7 +11,7 @@ from spack.package import *
 
 
 class CscsAgentLaunchers(Package):
-    """Bubblewrap launchers for OpenCode, Oh-My-Pi, and Prime Agent."""
+    """Bubblewrap launchers for CSCS coding agents and Paseo."""
 
     homepage = "https://docs.cscs.ch"
     has_code = False
@@ -23,6 +23,7 @@ class CscsAgentLaunchers(Package):
     depends_on("opencode@2.1.0", type="run", when="@2026.10.20")
     depends_on("oh-my-pi@18.10.3", type="run", when="@2026.10.20")
     depends_on("prime-agent@0.10.0", type="run", when="@2026.10.20")
+    depends_on("paseo@0.12.0", type="run")
     depends_on("ripgrep", type="run")
     depends_on("bubblewrap", type="run")
     depends_on("cscs-agent-model-config@2026.10.20", type="run")
@@ -35,6 +36,7 @@ class CscsAgentLaunchers(Package):
         "bin/opencode-bwrap",
         "bin/omp-bwrap",
         "bin/prime-agent-bwrap",
+        "bin/paseo-bwrap",
     ]
 
     def content_hash(self, content=None):
@@ -45,6 +47,7 @@ class CscsAgentLaunchers(Package):
         paths = [
             join_path(self.package_dir, "agent-bwrap.in"),
             join_path(self.package_dir, "storage.py"),
+            join_path(self.package_dir, "paseo.py"),
         ]
         defaults_dir = join_path(self.package_dir, "files")
         for root, _, filenames in os.walk(defaults_dir):
@@ -69,6 +72,9 @@ class CscsAgentLaunchers(Package):
         install_tree(join_path(self.package_dir, "files"), defaults)
         install(join_path(self.package_dir, "storage.py"), storage_helper)
         set_executable(storage_helper)
+        paseo_helper = join_path(prefix.share, "cscs-agent-launchers", "paseo.py")
+        install(join_path(self.package_dir, "paseo.py"), paseo_helper)
+        set_executable(paseo_helper)
 
         with open(join_path(self.package_dir, "agent-bwrap.in"), "r", encoding="utf-8") as f:
             script = f.read()
@@ -77,6 +83,9 @@ class CscsAgentLaunchers(Package):
             "@OPENCODE@": str(spec["opencode"].prefix.bin.opencode),
             "@OMP@": str(spec["oh-my-pi"].prefix.bin.omp),
             "@PRIME_AGENT@": join_path(spec["prime-agent"].prefix.bin, "prime-agent"),
+            "@PASEO@": str(spec["paseo"].prefix.bin.paseo),
+            "@PASEO_BIN@": str(spec["paseo"].prefix.bin),
+            "@PASEO_HELPER@": paseo_helper,
             "@BWRAP@": str(spec["bubblewrap"].prefix.bin.bwrap),
             "@CSCS_MODEL_CONFIG@": join_path(
                 spec["cscs-agent-model-config"].prefix.bin,
@@ -115,7 +124,7 @@ class CscsAgentLaunchers(Package):
                 "unresolved launcher template tokens: {0}".format(", ".join(unresolved))
             )
 
-        for name in ("opencode-bwrap", "omp-bwrap", "prime-agent-bwrap"):
+        for name in ("opencode-bwrap", "omp-bwrap", "prime-agent-bwrap", "paseo-bwrap"):
             launcher = join_path(prefix.bin, name)
             with open(launcher, "w", encoding="utf-8") as f:
                 f.write(script)

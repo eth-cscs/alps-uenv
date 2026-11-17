@@ -55,6 +55,10 @@ OMP_PERSISTENT_DATA_DIRS = (
     "wt",
 )
 OMP_VOLATILE_STATE_DIRS = {"browser-profiles", "run", "ssh-control"}
+PASEO_PERSISTENT_DATA_DIRS = ("agents", "projects", "schedules", "plugin-settings", "worktrees")
+# Only identity and configuration belong in generations. In particular, never
+# restore a daemon PID/lock, credentials, logs, caches, or runtime plugins.
+PASEO_CHECKPOINT_FILES = ("config.json", "daemon-keypair.json", "server-id")
 SQLITE_SIDECARS = ("-journal", "-shm", "-wal")
 
 
@@ -103,6 +107,13 @@ def boot_id() -> str:
         return Path("/proc/sys/kernel/random/boot_id").read_text(encoding="ascii").strip()
     except OSError:
         return "unknown"
+
+
+def pid_namespace() -> str | None:
+    try:
+        return os.readlink("/proc/self/ns/pid")
+    except OSError:
+        return None
 
 
 def process_start(pid: int) -> str | None:
@@ -157,6 +168,7 @@ class ProfileLease:
             "token": self.token,
             "hostname": socket.gethostname(),
             "boot_id": boot_id(),
+            "pid_namespace": pid_namespace(),
             "pid": os.getpid(),
             "process_start": process_start(os.getpid()),
             "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
@@ -175,7 +187,16 @@ class ProfileLease:
         hostname = owner.get("hostname")
         owner_boot = owner.get("boot_id")
         owner_pid = owner.get("pid")
-        if hostname == socket.gethostname() and owner_boot == boot_id():
+        namespace = pid_namespace()
+        # A PID only identifies the same process within the same namespace.
+        # Legacy owners without this field cannot safely be probed via /proc;
+        # retain Slurm evidence (or require explicit recovery) instead.
+        if (
+            hostname == socket.gethostname()
+            and owner_boot == boot_id()
+            and namespace is not None
+            and owner.get("pid_namespace") == namespace
+        ):
             try:
                 pid = int(owner_pid)
             except (TypeError, ValueError):
@@ -465,12 +486,20 @@ class CheckpointStore:
     def omp_cache(self) -> Path:
         return self.local_root / "cache" / "omp"
 
+    @property
+    def paseo_home(self) -> Path:
+        return self.local_root / "paseo"
+
     def _reset_local(self) -> None:
         self.local_root.mkdir(parents=True, exist_ok=True)
         os.chmod(self.local_root, 0o700)
         if self.kind == "opencode":
             remove_sqlite(self.opencode_db)
             shutil.rmtree(self.local_root / "opencode-runtime", ignore_errors=True)
+            return
+        if self.kind == "paseo":
+            shutil.rmtree(self.paseo_home, ignore_errors=True)
+            self.paseo_home.mkdir(mode=0o700)
             return
         for name in ("data", "state", "cache"):
             shutil.rmtree(self.local_root / name, ignore_errors=True)
@@ -502,6 +531,9 @@ class CheckpointStore:
             if source.is_file():
                 copy_regular_stable(source, self.opencode_db)
                 validate_tree(self.local_root)
+            return
+        if self.kind == "paseo":
+            self._copy_paseo_identity(generation / "paseo", self.paseo_home)
             return
         copy_tree(generation / "data", self.omp_data, sqlite_safe=False)
         copy_tree(generation / "state", self.omp_state, sqlite_safe=False)
@@ -563,12 +595,28 @@ class CheckpointStore:
                 shutil.copytree(source, target, symlinks=True)
                 warn(f"migrated legacy OMP {name} directory from {source}")
 
-    def _prepare_omp_links(self) -> None:
-        persistent_data = self.persistent_data / "omp"
+    def _copy_paseo_identity(self, source: Path, target: Path) -> None:
+        target.mkdir(parents=True, exist_ok=True)
+        for name in PASEO_CHECKPOINT_FILES:
+            path = source / name
+            if path.is_file() and not path.is_symlink():
+                copy_regular_stable(path, target / name)
+
+    def _prepare_persistent_links(self) -> None:
+        if self.kind == "paseo":
+            persistent_data = self.persistent_data / "paseo"
+            local_data = self.paseo_home
+            directories = PASEO_PERSISTENT_DATA_DIRS
+            label = "Paseo"
+        else:
+            persistent_data = self.persistent_data / "omp"
+            local_data = self.omp_data
+            directories = OMP_PERSISTENT_DATA_DIRS
+            label = "OMP"
         persistent_data.mkdir(parents=True, exist_ok=True)
-        for name in OMP_PERSISTENT_DATA_DIRS:
+        for name in directories:
             persistent = persistent_data / name
-            local = self.omp_data / name
+            local = local_data / name
             persistent.mkdir(parents=True, exist_ok=True)
             if local.is_symlink():
                 local.unlink()
@@ -576,7 +624,7 @@ class CheckpointStore:
                 if local.is_dir() and not any(local.iterdir()):
                     local.rmdir()
                 else:
-                    raise RuntimeError(f"checkpoint conflicts with persistent OMP directory: {local}")
+                    raise RuntimeError(f"checkpoint conflicts with persistent {label} directory: {local}")
             local.symlink_to(persistent, target_is_directory=True)
 
     def restore(self) -> None:
@@ -594,10 +642,10 @@ class CheckpointStore:
         if not restored:
             if self.kind == "opencode":
                 self._legacy_opencode()
-            else:
+            elif self.kind == "omp":
                 self._legacy_omp()
-        if self.kind == "omp":
-            self._prepare_omp_links()
+        if self.kind in ("omp", "paseo"):
+            self._prepare_persistent_links()
 
     def checkpoint(self) -> bool:
         if self.kind == "opencode" and not self.opencode_db.is_file():
@@ -614,6 +662,8 @@ class CheckpointStore:
                     temporary / "opencode.db",
                     self.local_root,
                 )
+            elif self.kind == "paseo":
+                self._copy_paseo_identity(self.paseo_home, temporary / "paseo")
             else:
                 sqlite_export = lambda source, target: export_sqlite(
                     source, target, self.local_root
@@ -834,7 +884,7 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--lease-dir", required=True)
         command.add_argument("--label", required=True)
         if action == "supervise":
-            command.add_argument("--kind", choices=("opencode", "omp"), required=True)
+            command.add_argument("--kind", choices=("opencode", "omp", "paseo"), required=True)
             command.add_argument("--local-root", required=True)
             command.add_argument("--persistent-config", required=True)
             command.add_argument("--persistent-data", required=True)

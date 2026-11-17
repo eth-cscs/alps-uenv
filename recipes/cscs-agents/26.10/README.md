@@ -1,6 +1,6 @@
 # CSCS coding agents uenv
 
-This uenv provides isolated OpenCode 2.1.0, Oh-My-Pi (OMP) 18.10.3, and Prime Agent 0.10.0 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
+This uenv provides isolated OpenCode 2.1.0, Oh-My-Pi (OMP) 18.10.3, Prime Agent 0.10.0, and Paseo 0.12.0 launchers with CSCS production and experimental Forno inference discovery, packaged CSCS skills, ripgrep, ShellCheck, jq, and yq.
 
 ## Quick start
 
@@ -55,7 +55,7 @@ omp-bwrap --project-local --instance implementer
 omp-bwrap --project-local --instance reviewer
 ```
 
-The same options work with `opencode-bwrap` and `prime-agent-bwrap`. Each harness and instance has a separate persistent profile at `.cscs-agents/26.10/<harness>/<instance>/`, containing `config`, `data`, `cache`, and `state` roots. The harness directory is `opencode-v2`, `omp`, or `prime-agent`; the new OpenCode namespace leaves v1 profiles untouched. Omitting `--instance` selects `default`. Names must start with an ASCII letter or digit and contain only ASCII letters, digits, `.`, `_`, or `-`.
+The same options work with `opencode-bwrap`, `prime-agent-bwrap`, and `paseo-bwrap`. Each harness and instance has a separate persistent profile at `.cscs-agents/26.10/<harness>/<instance>/`, containing `config`, `data`, `cache`, and `state` roots. The harness directory is `opencode-v2`, `omp`, `prime-agent`, or `paseo`; the new OpenCode namespace leaves v1 profiles untouched. Omitting `--instance` selects `default`. Names must start with an ASCII letter or digit and contain only ASCII letters, digits, `.`, `_`, or `-`.
 
 The selected project is `--project-dir PATH`, or the current directory if omitted; the launcher does not search for a Git repository root. Use the same project directory and instance name to resume work:
 
@@ -71,6 +71,76 @@ Only persistent harness data moves into the project. SQLite databases, runtime d
 New `.cscs-agents` directories receive a `.gitignore` excluding all their contents, because profiles may contain credentials and conversation transcripts. Existing ignore rules are preserved; do not force-add these profiles to Git. The launcher rejects symlinked project-profile directories.
 
 **Working files are still shared.** Named instances isolate harness state, not concurrent source edits or Git operations. Use separate worktrees/projects when agents must edit independently.
+
+## Paseo: one UI, multiple execution hosts
+
+`paseo-bwrap` runs a per-user Paseo daemon in the foreground, with its bundled web UI enabled. It uses the native uenv on its execution host; one UI can connect to several daemons on ARM64 and x86-64 hosts. There is no automatic host discovery, Hub enrollment, remote daemon startup, or Slurm allocation.
+
+Start a long-lived tmux session, then run the uenv command **inside its pane**:
+
+```bash
+tmux new -s paseo-arm
+export PASEO_PASSWORD='choose-a-private-daemon-password'
+# Also export the CSCS inference keys as above.
+uenv run cscs-agents/26.10 -- paseo-bwrap \
+  --project-dir /path/to/project --project-local --instance arm \
+  --listen 127.0.0.1:6767
+```
+
+Detach with the normal tmux key sequence. Reattach with `tmux attach -t paseo-arm`; stop the foreground daemon with Ctrl-C so its harnesses checkpoint cleanly. If the `agents` view is already active, invoke `paseo-bwrap` directly. Use another instance and port for another daemon on the same host. Home-backed Paseo profiles are available by omitting `--project-local --instance arm`.
+
+For compute execution, obtain an interactive Slurm allocation from the tmux pane and run the command on the allocated node. Load the architecture-compatible image there. tmux survives client disconnects but does not extend allocation wall time. Login-node agents must obey site workload policy; put expensive commands in allocations.
+
+### Connecting the UI
+
+The launcher prints its configured endpoint, hostname, architecture, Slurm job ID, and exposed project. It does not print the password or register itself centrally.
+
+- The served UI is at the printed HTTP endpoint and connects to its serving daemon.
+- In Paseo's **Add host** interface, add other execution daemons explicitly.
+- Desktop/CLI SSH connections require an already-running remote daemon and can follow your SSH configuration.
+- A browser needs reachable HTTP/WebSocket endpoints, through SSH forwarding or an authenticated HTTPS proxy. It cannot initiate SSH itself.
+
+For a daemon on a login host, a workstation tunnel can use:
+
+```bash
+ssh -N -L 17677:127.0.0.1:6767 user@login-host
+# Open http://127.0.0.1:17677 on the workstation.
+```
+
+A compute daemon's loopback endpoint needs a tunnel terminating on that compute node, subject to site policy; forwarding only to login-node loopback will not reach it. Separate-origin proxies must configure Paseo's allowed origins/hosts and forward WebSocket upgrades. Do not expose an unencrypted endpoint publicly. Password authentication is required even on loopback because nodes are shared.
+
+When an allocation or daemon ends, that host goes offline. A new allocation requires a new connection or updated forwarding; no live process/session migration is implied. Stable tunnel ports are convenient names, not a discovery service.
+
+### Native providers and existing sessions
+
+Paseo is sandboxed itself, including its terminals, file/Git operations, and provider processes. Its local OpenCode and OMP providers launch through the existing guarded wrappers. OpenCode v2's plugin directory is exposed read-only to its native helper; version probes bypass mutable-profile initialization so cold startup cannot make Paseo misidentify v2 as v1.
+
+By default, harness profiles are **isolated within the selected Paseo profile**:
+
+- OpenCode uses one profile/helper for multiple concurrent sessions.
+- Every new OMP session gets a separate writer profile. Its persistent JSONL path identifies that same profile on resume; changing nodes does not derive a new profile from a transient PID.
+- Other built-in CLI providers are disabled initially. Prime Agent has no packaged Paseo adapter.
+
+To work with existing home history, choose a separate Paseo instance:
+
+```bash
+paseo-bwrap --project-dir /path/to/project \
+  --project-local --instance existing-home --harness-profile home
+```
+
+For an existing named project-local harness instance, use `--harness-profile project:reviewer` instead. This selects the native `opencode-v2/reviewer` and `omp/reviewer` profiles under the exact project directory. Stop existing native writers first. Existing sessions become available to Paseo's native-session import/resume support; they are not automatically added as Paseo agent records. With these shared existing profiles, OMP still permits only one active writer; OpenCode sessions can share Paseo's single helper.
+
+Reuse the same profile-selection flags on restart. A Paseo profile refuses to silently switch between isolated, home, and project-native history owners. To make another selection, use another Paseo instance. Named profiles isolate harness state, not source edits; use separate worktrees for independent edits.
+
+**Approval modes:** upstream Paseo defaults OMP to **Full**, which maps to OMP's `yolo` mode. Select **Ask** or **Write** explicitly when creating agents if you want approval prompts. Bubblewrap restrictions remain enforced regardless of the provider mode. A daemon password grants its owner's authority; this is not a shared multi-user service.
+
+### State and configuration
+
+Paseo's home is node-local. Its PID lock, local credential, logs, generated runtime plugins, helper working directory, and model caches are disposable. A distributed writer lease protects the profile. Identity and configuration use the same periodic/final checkpoint mechanism as the native harnesses; agent records, projects, schedules, plugin settings, and worktrees remain directly persistent. Native harnesses retain their own leases and checkpoints.
+
+Configure through Paseo, or stop the daemon and use the same profile with `paseo-bwrap ... --shell` to edit `$PASEO_HOME/config.json`. Exit the shell to checkpoint the edit. Provider wrapper commands, OMP session discovery, worktree routing, and disabled public relay are launcher-managed; other configuration is retained. Voice/dictation are disabled for this deployment. Set `PASEO_WEB_UI_ENABLED=false` to omit serving the UI.
+
+Recover a stale Paseo lease with the same profile selection and `--recover-storage`, only after verifying that the old process/allocation is gone. Default home roots are `paseo-cscs-agents-26.10`; project-local roots use `.cscs-agents/26.10/paseo/<instance>/`.
 
 ## CSCS inference configuration
 

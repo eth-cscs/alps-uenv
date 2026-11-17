@@ -5,6 +5,7 @@ import os
 import shlex
 import stat
 import sqlite3
+import signal
 import subprocess
 import sys
 import tempfile
@@ -70,6 +71,9 @@ class LauncherArgumentsTest(unittest.TestCase):
             "@OPENCODE@": str(fake_agent),
             "@OMP@": str(fake_agent),
             "@PRIME_AGENT@": str(fake_agent),
+            "@PASEO@": str(fake_agent),
+            "@PASEO_BIN@": str(self.bin),
+            "@PASEO_HELPER@": str(PACKAGE_DIR / "paseo.py"),
             "@BWRAP@": str(fake_bwrap),
             "@CSCS_MODEL_CONFIG@": "/bin/false",
             "@CSCS_MODEL_DEFAULTS@": str(MODEL_DEFAULTS),
@@ -88,7 +92,7 @@ class LauncherArgumentsTest(unittest.TestCase):
         for token, value in replacements.items():
             launcher = launcher.replace(token, value)
         self.launchers = {}
-        for name in ("opencode-bwrap", "omp-bwrap", "prime-agent-bwrap"):
+        for name in ("opencode-bwrap", "omp-bwrap", "prime-agent-bwrap", "paseo-bwrap"):
             target = self.bin / name
             executable(target, launcher)
             self.launchers[name] = target
@@ -258,6 +262,8 @@ class LauncherArgumentsTest(unittest.TestCase):
         for name in self.launchers:
             with self.subTest(harness=name):
                 command = ["model", "list"] if name == "prime-agent-bwrap" else []
+                if name == "paseo-bwrap":
+                    command = ["--version"]
                 first, roots = self.run_launcher(
                     name, command, project_local=True, instance="implementer",
                 )
@@ -426,6 +432,87 @@ class LauncherArgumentsTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 1)
         self.assertIn("not started by the profile storage supervisor", result.stderr)
+
+    def test_missing_paseo_password_refuses_daemon_before_creating_profile(self) -> None:
+        command, environment, roots = self.launcher_invocation("paseo-bwrap")
+        environment.pop("PASEO_PASSWORD", None)
+        result = subprocess.run(
+            command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(roots["data"].exists())
+        self.assertFalse(self.capture.exists())
+
+    def test_paseo_recovery_without_password_preserves_quarantined_owner(self) -> None:
+        command, environment, roots = self.launcher_invocation(
+            "paseo-bwrap", options=["--recover-storage"],
+        )
+        environment.pop("PASEO_PASSWORD", None)
+        lease = roots["data"] / ".cscs-agent-storage/paseo.lease"
+        lease.mkdir(parents=True)
+        owner = {"hostname": "previous-host", "boot_id": "previous-boot", "pid": 999999999}
+        (lease / "owner.json").write_text(json.dumps(owner))
+        result = subprocess.run(
+            command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr.decode())
+        self.assertFalse(lease.exists())
+        quarantined = list(lease.parent.glob("paseo.lease.recovered.*"))
+        self.assertEqual(len(quarantined), 1)
+        self.assertEqual(json.loads((quarantined[0] / "owner.json").read_text()), owner)
+        self.assertFalse(self.capture.exists())
+
+    def test_paseo_interrupt_drains_child_before_monitor_exit_and_checkpoint(self) -> None:
+        ready = self.root / "daemon-ready"
+        complete = self.root / "daemon-drained"
+        executable(
+            self.bin / "agent",
+            f"#!{sys.executable}\n"
+            "import signal,time\n"
+            "from pathlib import Path\n"
+            "def stop(signum, frame):\n"
+            "    time.sleep(0.2)\n"
+            f"    Path({str(complete)!r}).write_text('drained')\n"
+            "    raise SystemExit(0)\n"
+            "signal.signal(signal.SIGINT, stop)\n"
+            "signal.signal(signal.SIGTERM, stop)\n"
+            f"Path({str(ready)!r}).touch()\n"
+            "while True: time.sleep(1)\n",
+        )
+        # Model the namespace monitor: if signalled before the daemon drains,
+        # it tears down its child. Ignoring signals must survive exec.
+        executable(
+            self.bin / "bwrap",
+            f"#!{sys.executable}\n"
+            "import subprocess,sys\n"
+            "child=subprocess.Popen(sys.argv[sys.argv.index('--')+1:])\n"
+            "try:\n"
+            "    raise SystemExit(child.wait())\n"
+            "finally:\n"
+            "    if child.poll() is None:\n"
+            "        child.kill(); child.wait()\n",
+        )
+        command, environment, roots = self.launcher_invocation(
+            "paseo-bwrap", environment_overrides={"PASEO_PASSWORD": "test-only"},
+        )
+        child = subprocess.Popen(
+            command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+        try:
+            deadline = time.monotonic() + 15
+            while not ready.exists() and child.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.05)
+            self.assertTrue(ready.exists())
+            child.send_signal(signal.SIGINT)
+            _, errors = child.communicate(timeout=15)
+            self.assertEqual(child.returncode, 0, errors.decode())
+            self.assertEqual(complete.read_text(), "drained")
+            self.assertTrue((roots["data"] / ".cscs-agent-storage/paseo/current").is_file())
+            self.assertFalse((roots["data"] / ".cscs-agent-storage/paseo.lease").exists())
+        finally:
+            if child.poll() is None:
+                child.terminate()
+                child.communicate(timeout=15)
 
 
 if __name__ == "__main__":

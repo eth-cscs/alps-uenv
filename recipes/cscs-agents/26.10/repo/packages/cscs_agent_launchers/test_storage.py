@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import signal
 import sqlite3
 import subprocess
@@ -40,6 +41,9 @@ class LeaseTests(unittest.TestCase):
             first = storage.ProfileLease(lease_path, "test")
             first.acquire()
             try:
+                owner = json.loads((lease_path / "owner.json").read_text())
+                self.assertEqual(owner["pid_namespace"], storage.pid_namespace())
+                self.assertIsNotNone(owner["pid_namespace"])
                 with self.assertRaisesRegex(RuntimeError, "already owned"):
                     storage.ProfileLease(lease_path, "test").acquire()
             finally:
@@ -54,6 +58,7 @@ class LeaseTests(unittest.TestCase):
                     {
                         "hostname": storage.socket.gethostname(),
                         "boot_id": storage.boot_id(),
+                        "pid_namespace": storage.pid_namespace(),
                         "pid": 999999999,
                         "process_start": "missing",
                     }
@@ -67,6 +72,68 @@ class LeaseTests(unittest.TestCase):
             self.assertEqual(storage.recover(recovery), 0)
             lease.acquire()
             lease.release()
+
+    def test_foreign_pid_namespace_uses_slurm_not_local_process_ids(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            lease = storage.ProfileLease(Path(root) / "profile.lease", "test")
+            owner = dict(
+                lease.metadata,
+                pid_namespace="pid:[foreign]",
+                pid=999999999,
+                process_start="namespace-local-start",
+                slurm_job_id=None,
+            )
+            with (
+                mock.patch.object(storage, "pid_namespace", return_value="pid:[current]"),
+                mock.patch.object(
+                    storage, "process_start",
+                    side_effect=AssertionError("foreign PID must not be probed"),
+                ),
+            ):
+                self.assertEqual(lease._owner_state(owner), "unknown")
+                owner["slurm_job_id"] = "12345"
+                for active, expected in ((True, "active"), (False, "stale"), (None, "unknown")):
+                    with self.subTest(active=active), mock.patch.object(
+                        storage, "slurm_job_active", return_value=active
+                    ) as probe:
+                        self.assertEqual(lease._owner_state(owner), expected)
+                        probe.assert_called_once_with("12345")
+
+    def test_legacy_lease_without_namespace_does_not_assume_host_pid(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            lease = storage.ProfileLease(Path(root) / "profile.lease", "test")
+            owner = dict(lease.metadata, pid=999999999, slurm_job_id=None)
+            owner.pop("pid_namespace")
+            with mock.patch.object(
+                storage, "process_start",
+                side_effect=AssertionError("legacy namespace is unknown"),
+            ):
+                self.assertEqual(lease._owner_state(owner), "unknown")
+                owner["slurm_job_id"] = "12345"
+                with mock.patch.object(storage, "slurm_job_active", return_value=True):
+                    self.assertEqual(lease._owner_state(owner), "active")
+
+    def test_recovery_refuses_slurm_active_foreign_namespace_owner(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            lease_path = Path(root) / "profile.lease"
+            lease = storage.ProfileLease(lease_path, "test")
+            owner = dict(
+                lease.metadata,
+                pid_namespace="pid:[foreign]",
+                pid=999999999,
+                process_start="namespace-local-start",
+                slurm_job_id="12345",
+            )
+            storage.atomic_json(lease_path / "owner.json", owner)
+            recovery = type("Recovery", (), {"lease_dir": str(lease_path), "force": True})()
+            with (
+                mock.patch.object(storage, "pid_namespace", return_value="pid:[current]"),
+                mock.patch.object(storage, "slurm_job_active", return_value=True),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "recorded owner is active"):
+                    storage.recover(recovery)
+            self.assertEqual(json.loads((lease_path / "owner.json").read_text()), owner)
+            self.assertFalse(lease.recovery_path.exists())
 
 
 class CheckpointTests(unittest.TestCase):
@@ -154,6 +221,199 @@ class CheckpointTests(unittest.TestCase):
             self.assertFalse(runtime.exists())
             self.assertEqual(database_values(store.opencode_db), ["saved"])
             self.assertEqual(json.loads(preferences.read_text()), {"theme": "user-choice"})
+
+    def test_paseo_identity_and_config_survive_local_root_loss(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            store = self.make_store(root, "paseo")
+            identity = {
+                "config.json": '{"listen":"127.0.0.1:6767","relay":{"enabled":false}}\n',
+                "daemon-keypair.json": '{"publicKey":"public","privateKey":"private"}\n',
+                "server-id": "stable-daemon-id\n",
+            }
+            harness = root / "data/harnesses/claude/settings.json"
+            harness.parent.mkdir(parents=True)
+            harness.write_text('{"native":"profile"}\n')
+            with mock.patch.object(
+                storage.sqlite3, "connect", side_effect=AssertionError("Paseo must not open SQLite")
+            ):
+                store.restore()
+                self.assertEqual(store.paseo_home, store.local_root / "paseo")
+                for name, content in identity.items():
+                    (store.paseo_home / name).write_text(content)
+                self.assertTrue(store.checkpoint())
+                generation = store.generations / store.current.read_text().strip()
+                inventory = json.loads((generation / "manifest.json").read_text())["files"]
+                self.assertEqual(
+                    {item["path"] for item in inventory},
+                    {f"paseo/{name}" for name in identity},
+                )
+                shutil.rmtree(store.local_root)
+                restored = self.make_store(root, "paseo")
+                restored.restore()
+            for name, content in identity.items():
+                self.assertEqual((restored.paseo_home / name).read_text(), content)
+            self.assertEqual(harness.read_text(), '{"native":"profile"}\n')
+
+    def test_paseo_excludes_volatile_state_and_runtime_plugins(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            store = self.make_store(root, "paseo")
+            store.restore()
+            (store.paseo_home / "server-id").write_text("identity")
+            volatile = (
+                "daemon.pid",
+                "daemon.lock",
+                "local-credentials.json",
+                "runtime/process.json",
+                "logs/daemon.log",
+                "cache/models/weights",
+                "plugins/opencode/package.json",
+                "opencode-helper-cwd/package.json",
+            )
+            for name in volatile:
+                path = store.paseo_home / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("stale runtime state")
+            store.checkpoint()
+            generation = store.generations / store.current.read_text().strip()
+            self.assertEqual(
+                {item["path"] for item in storage.file_inventory(generation)},
+                {"paseo/server-id"},
+            )
+            store.restore()
+            self.assertEqual((store.paseo_home / "server-id").read_text(), "identity")
+            for name in volatile:
+                self.assertFalse((store.paseo_home / name).exists(), name)
+
+            # Even an inventoried older snapshot must not resurrect process
+            # metadata or plugins that do not belong to the durable contract.
+            for name in volatile:
+                path = generation / "paseo" / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("old snapshot")
+            manifest_path = generation / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["files"] = storage.file_inventory(generation)
+            storage.atomic_json(manifest_path, manifest)
+            restored = self.make_store(root, "paseo", "restored")
+            restored.restore()
+            self.assertEqual((restored.paseo_home / "server-id").read_text(), "identity")
+            for name in volatile:
+                self.assertFalse((restored.paseo_home / name).exists(), name)
+
+    def test_paseo_bulk_directories_remain_live_outside_checkpoints(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            names = ("agents", "projects", "schedules", "plugin-settings", "worktrees")
+            for name in names:
+                persistent = root / "data/paseo" / name
+                persistent.mkdir(parents=True)
+                (persistent / "saved.json").write_text(f"existing {name}")
+            store = self.make_store(root, "paseo")
+            store.restore()
+            for name in names:
+                local = store.paseo_home / name
+                self.assertTrue(local.is_symlink())
+                self.assertEqual(local.resolve(), root / "data/paseo" / name)
+                self.assertEqual((local / "saved.json").read_text(), f"existing {name}")
+                (local / "saved.json").write_text(f"checkpoint {name}")
+            store.checkpoint()
+            for name in names:
+                (store.paseo_home / name / "saved.json").write_text(f"latest {name}")
+            generation = store.generations / store.current.read_text().strip()
+            self.assertEqual(storage.file_inventory(generation), [])
+            shutil.rmtree(store.local_root)
+            restored = self.make_store(root, "paseo")
+            restored.restore()
+            for name in names:
+                self.assertTrue((restored.paseo_home / name).is_symlink())
+                self.assertEqual(
+                    (restored.paseo_home / name / "saved.json").read_text(),
+                    f"latest {name}",
+                )
+
+    def test_paseo_rolls_back_corrupt_or_incomplete_identity_generation(self) -> None:
+        for damage in ("corrupt", "missing"):
+            with self.subTest(damage=damage), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                store = self.make_store(root, "paseo")
+                store.restore()
+                names = ("config.json", "daemon-keypair.json", "server-id")
+                for value in ("first", "second"):
+                    for name in names:
+                        (store.paseo_home / name).write_text(f"{value} {name}")
+                    store.checkpoint()
+                generation = store.generations / store.current.read_text().strip()
+                damaged = generation / "paseo/daemon-keypair.json"
+                if damage == "corrupt":
+                    damaged.write_text("truncated keypair")
+                else:
+                    damaged.unlink()
+                restored = self.make_store(root, "paseo", "restored")
+                restored.restore()
+                for name in names:
+                    self.assertEqual(
+                        (restored.paseo_home / name).read_text(), f"first {name}"
+                    )
+
+    def test_paseo_does_not_reset_or_import_omp_state(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            store = self.make_store(root, "paseo")
+            for name in ("data/omp/sentinel", "state/omp/sentinel", "cache/omp/sentinel"):
+                path = store.local_root / name
+                path.parent.mkdir(parents=True)
+                path.write_text(name)
+            legacy = root / "data/omp/agent.db"
+            legacy.parent.mkdir(parents=True)
+            legacy.write_bytes(b"not a Paseo database")
+            store.restore()
+            store.checkpoint()
+            store.restore()
+            for name in ("data/omp/sentinel", "state/omp/sentinel", "cache/omp/sentinel"):
+                self.assertEqual((store.local_root / name).read_text(), name)
+            self.assertFalse((store.paseo_home / "agent.db").exists())
+
+    def test_paseo_supervisor_owns_profile_before_restoring_and_checkpoints_on_exit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local = root / "local"
+            lease_path = root / "data/.cscs-agent-storage/paseo.lease"
+            args = storage.parser().parse_args(
+                [
+                    "supervise",
+                    "--kind", "paseo",
+                    "--lease-dir", str(lease_path),
+                    "--label", "Paseo test",
+                    "--local-root", str(local),
+                    "--persistent-config", str(root / "config"),
+                    "--persistent-data", str(root / "data"),
+                    "--persistent-state", str(root / "state"),
+                    "--",
+                    sys.executable,
+                    "-c",
+                    "import pathlib,sys; pathlib.Path(sys.argv[1]).write_text('saved identity')",
+                    str(local / "paseo/server-id"),
+                ]
+            )
+            sentinel = local / "paseo/daemon.pid"
+            sentinel.parent.mkdir(parents=True)
+            sentinel.write_text("active owner")
+            owner = storage.ProfileLease(lease_path, "Paseo test")
+            owner.acquire()
+            try:
+                with self.assertRaisesRegex(RuntimeError, "already owned"):
+                    storage.supervise(args, checkpoint=True)
+                self.assertEqual(sentinel.read_text(), "active owner")
+            finally:
+                owner.release()
+            self.assertEqual(storage.supervise(args, checkpoint=True), 0)
+            self.assertFalse(lease_path.exists())
+            restored = self.make_store(root, "paseo", "restored")
+            restored.restore()
+            self.assertEqual((restored.paseo_home / "server-id").read_text(), "saved identity")
+            self.assertFalse((restored.paseo_home / "daemon.pid").exists())
 
     def test_omp_keeps_bulk_data_live_and_checkpoints_sqlite_state(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

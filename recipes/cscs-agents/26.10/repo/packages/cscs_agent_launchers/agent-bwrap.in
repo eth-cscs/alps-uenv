@@ -27,8 +27,15 @@ case "${LAUNCHER_NAME}" in
     AGENT_BIN="@PRIME_AGENT_BIN@"
     XDG_STEM=prime-agent-cscs-agents-26.10
     ;;
+  paseo-bwrap)
+    AGENT_KIND=paseo
+    AGENT_LABEL=Paseo
+    REAL_AGENT="@PASEO@"
+    AGENT_BIN="@PASEO_BIN@"
+    XDG_STEM=paseo-cscs-agents-26.10
+    ;;
   *)
-    printf 'error: launcher must be invoked as opencode-bwrap, omp-bwrap, or prime-agent-bwrap, not %s\n' \
+    printf 'error: launcher must be invoked as opencode-bwrap, omp-bwrap, prime-agent-bwrap, or paseo-bwrap, not %s\n' \
       "${LAUNCHER_NAME}" >&2
     exit 2
     ;;
@@ -45,6 +52,7 @@ CSCS_MODEL_DEFAULTS="@CSCS_MODEL_DEFAULTS@"
 LAUNCHER_DEFAULTS="@LAUNCHER_DEFAULTS@"
 PACKAGED_CSCS_SKILLS="@CSCS_SKILLS@"
 STORAGE_HELPER="@STORAGE_HELPER@"
+PASEO_HELPER="@PASEO_HELPER@"
 SANDBOX_BASE_PATH="${AGENT_BIN}:@RIPGREP_BIN@"
 
 if [[ -n "${CSCS_AGENT_STORAGE_CHILD-}" || -n "${CSCS_AGENT_MAINTENANCE_CHILD-}" ]]; then
@@ -174,6 +182,23 @@ Behavior:
   - If uv is absent, the launcher installs uv ${AGENT_UV_VERSION} from
     ${AGENT_UV_INSTALL_URL} using the host curl.
 EOF
+  if [[ "${AGENT_KIND}" == paseo ]]; then
+    cat <<EOF
+
+Paseo options:
+  --listen HOST:PORT
+      Bind the daemon here. Default: PASEO_LISTEN or 127.0.0.1:6767.
+  --harness-profile isolated|home|project:NAME
+      Default: isolated. Keep OpenCode in this Paseo profile and give each
+      OMP session its own profile. Select home or project:NAME to resume
+      existing harness history; those profiles retain their writer leases.
+
+Paseo runs 'daemon run' in the foreground by default, suitable for tmux or
+an existing Slurm allocation. Export PASEO_PASSWORD before starting it.
+The bundled web UI is enabled unless PASEO_WEB_UI_ENABLED=false. Public relay
+is disabled. Add this daemon explicitly as a host in your Paseo client.
+EOF
+  fi
 }
 
 fail_usage() {
@@ -740,6 +765,68 @@ sync_packaged_skills() {
   done
 }
 
+initialize_paseo() {
+  local root option index
+  local -a preparation native_options roots
+  SANDBOX_HOME="${CONFIG_DIR}/home"
+  SANDBOX_XDG_CONFIG_HOME="${CONFIG_DIR}/xdg"
+  mkdir -p "${SANDBOX_HOME}" "${SANDBOX_XDG_CONFIG_HOME}"
+  preparation=(
+    "${STORAGE_PYTHON}" "${PASEO_HELPER}" prepare
+    --home "${LOCAL_STORAGE_ROOT}/paseo"
+    --profiles "${DATA_DIR}/harnesses"
+    --project "${PROJECT_DIR}"
+    --launchers "$(dirname "${LAUNCHER_PATH}")"
+    --omp "@OMP@" --opencode "@OPENCODE@"
+    --local-storage "${LOCAL_STORAGE_ROOT}/harness-local"
+    --context "${LOCAL_STORAGE_ROOT}/paseo-context.json"
+    --selection "${CONFIG_DIR}/harness-profile.json"
+    --mode "${PASEO_HARNESS_PROFILE}"
+    --host-roots "${HOST_XDG_CONFIG_HOME}" "${HOST_XDG_DATA_HOME}"
+    "${HOST_XDG_CACHE_HOME}" "${HOST_XDG_STATE_HOME}"
+  )
+  native_options=()
+  [[ "${SSH_AGENT}" == false ]] || native_options+=(--ssh-agent)
+  [[ "${SHARE_IPC}" == false ]] || native_options+=(--share-ipc)
+  [[ "${GPU_DEVICES}" == true ]] || native_options+=(--no-gpu-devices)
+  [[ "${USE_DEFAULT_HIDE_PATHS}" == true ]] || native_options+=(--no-default-hide-paths)
+  for root in "${EXTRA_HIDE_PATHS[@]}"; do
+    native_options+=(--hide-path "${root}")
+  done
+  for ((index = 0; index < ${#EXTRA_BIND_MODES[@]}; index++)); do
+    option=--bind
+    [[ "${EXTRA_BIND_MODES[index]}" != --ro-bind ]] || option=--ro-bind
+    native_options+=("${option}" "${EXTRA_BIND_SOURCES[index]}:${EXTRA_BIND_DESTINATIONS[index]}")
+  done
+  for option in "${native_options[@]}"; do
+    preparation+=("--native-option=${option}")
+  done
+  if [[ "${INITIALIZATION_READ_ONLY}" == false ]]; then
+    "${preparation[@]}" > "${LOCAL_STORAGE_ROOT}/paseo-mounts"
+  fi
+  mapfile -d '' -t roots < "${LOCAL_STORAGE_ROOT}/paseo-mounts"
+  for root in "${roots[@]}"; do
+    INTERNAL_BIND_SOURCES+=("${root}")
+    INTERNAL_BIND_DESTINATIONS+=("${root}")
+  done
+  APP_ENV_ARGS=(
+    --setenv PASEO_HOME "${LOCAL_STORAGE_ROOT}/paseo"
+    --setenv PASEO_LISTEN "${PASEO_LISTEN_ADDRESS}"
+    --setenv PASEO_RELAY_ENABLED false
+    --setenv PASEO_WEB_UI_ENABLED "${PASEO_WEB_UI_ENABLED:-true}"
+    --setenv PASEO_DICTATION_ENABLED 0
+    --setenv PASEO_VOICE_MODE_ENABLED 0
+    --setenv CSCS_PASEO_CONTEXT "${LOCAL_STORAGE_ROOT}/paseo-context.json"
+    --setenv CSCS_AGENT_TOOLS_DIR "${TOOLS_DIR}"
+    --setenv CSCS_AGENT_TOOLS_CACHE_DIR "${TOOLS_CACHE_DIR}"
+  )
+  if [[ "${INITIALIZATION_READ_ONLY}" == true && "${RUN_SHELL}" == false && \
+        "${COMMAND_ARGS[0]-}" == daemon && "${COMMAND_ARGS[1]-}" == run ]]; then
+    printf 'Paseo configured endpoint: http://%s\nHost: %s (%s), Slurm job: %s\nProject: %s\nAdd this endpoint explicitly in your Paseo client; compute nodes may require a tunnel.\n' \
+      "${PASEO_LISTEN_ADDRESS}" "$(hostname)" "$(uname -m)" "${SLURM_JOB_ID:-none}" "${PROJECT_DIR}" >&2
+  fi
+}
+
 initialize_opencode() {
   local config_home model_target model_marker model_stamp skills_home cli_target directory
 
@@ -1147,6 +1234,8 @@ PROJECT_LOCAL=false
 PROFILE_INSTANCE=default
 INSTANCE_SELECTED=false
 EXPLICIT_PROFILE_DIRS=false
+PASEO_LISTEN_ADDRESS="${PASEO_LISTEN:-127.0.0.1:6767}"
+PASEO_HARNESS_PROFILE=isolated
 
 GPU_DEVICES=true
 PODMAN_MODE=false
@@ -1175,13 +1264,13 @@ PRIME_AGENT_NEEDS_DAEMON=false
 
 while (($#)); do
   case "$1" in
-    --project-dir|--config-dir|--data-dir|--cache-dir|--state-dir|--instance|--ro-bind|--bind|--hide-path)
+    --project-dir|--config-dir|--data-dir|--cache-dir|--state-dir|--instance|--ro-bind|--bind|--hide-path|--listen|--harness-profile)
       option="$1"
       require_value "${option}" "${2-}"
       value="$2"
       shift 2
       ;;
-    --project-dir=*|--config-dir=*|--data-dir=*|--cache-dir=*|--state-dir=*|--instance=*|--ro-bind=*|--bind=*|--hide-path=*)
+    --project-dir=*|--config-dir=*|--data-dir=*|--cache-dir=*|--state-dir=*|--instance=*|--ro-bind=*|--bind=*|--hide-path=*|--listen=*|--harness-profile=*)
       option="${1%%=*}"
       value="${1#*=}"
       require_value "${option}" "${value}"
@@ -1255,6 +1344,14 @@ while (($#)); do
     --data-dir) DATA_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
     --cache-dir) CACHE_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
     --state-dir) STATE_DIR="${value}"; EXPLICIT_PROFILE_DIRS=true ;;
+    --listen|--harness-profile)
+      [[ "${AGENT_KIND}" == paseo ]] || fail_usage "${option} is only supported by paseo-bwrap"
+      if [[ "${option}" == --listen ]]; then
+        PASEO_LISTEN_ADDRESS="${value}"
+      else
+        PASEO_HARNESS_PROFILE="${value}"
+      fi
+      ;;
     --instance)
       [[ "${value}" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || \
         fail_usage "--instance requires a name starting with a letter or digit, followed by letters, digits, '.', '_', or '-'"
@@ -1275,6 +1372,20 @@ if [[ "${INSTANCE_SELECTED}" == true && "${PROJECT_LOCAL}" == false ]]; then
 fi
 if [[ "${PROJECT_LOCAL}" == true && "${EXPLICIT_PROFILE_DIRS}" == true ]]; then
   fail_usage "--project-local cannot be combined with --config-dir, --data-dir, --cache-dir, or --state-dir"
+fi
+
+if [[ "${AGENT_KIND}" == paseo ]]; then
+  if [[ "${RUN_SHELL}" == false && ${#COMMAND_ARGS[@]} == 0 ]]; then
+    COMMAND_ARGS=(daemon run)
+  fi
+  if [[ "${COMMAND_ARGS[0]-}" == daemon && \
+        ( "${COMMAND_ARGS[1]-}" == start || "${COMMAND_ARGS[1]-}" == restart ) ]]; then
+    fail_usage "paseo-bwrap runs in the foreground; use daemon run inside tmux or your Slurm allocation"
+  fi
+  if [[ "${STORAGE_RECOVERY}" == false && "${RUN_SHELL}" == false && "${COMMAND_ARGS[0]-}" == daemon && \
+        "${COMMAND_ARGS[1]-}" == run && -z "${PASEO_PASSWORD-}" ]]; then
+    fail_usage "export PASEO_PASSWORD before starting the daemon, including on shared-node loopback"
+  fi
 fi
 
 if [[ "${RUN_SHELL}" == false && ! -x "${REAL_AGENT}" ]]; then
@@ -1431,6 +1542,7 @@ case "${AGENT_KIND}" in
   opencode) initialize_opencode ;;
   omp) initialize_omp ;;
   prime-agent) initialize_prime_agent ;;
+  paseo) initialize_paseo ;;
 esac
 
 if [[ "${PODMAN_MODE}" == true ]]; then
@@ -1580,6 +1692,13 @@ if [[ "${AGENT_KIND}" == prime-agent && "${RUN_SHELL}" == false && \
 fi
 
 FINAL_COMMAND=("${BWRAP}" --die-with-parent "${BWRAP_ARGS[@]}" -- "${SANDBOX_COMMAND[@]}")
+if [[ "${AGENT_KIND}" == paseo && "${RUN_SHELL}" == false && \
+      "${COMMAND_ARGS[0]-}" == daemon && "${COMMAND_ARGS[1]-}" == run ]]; then
+  # The storage guard signals the whole foreground group. Keep bubblewrap's
+  # monitor alive while Node handles shutdown and drains the native guards.
+  # Parent death still kills the sandbox through --die-with-parent.
+  FINAL_COMMAND=(/bin/bash -c 'trap "" INT TERM HUP; exec "$@"' "${LAUNCHER_NAME}" "${FINAL_COMMAND[@]}")
+fi
 if [[ "${PRINT_BWRAP}" == true ]]; then
   print_invocation "${FINAL_COMMAND[@]}"
 fi
