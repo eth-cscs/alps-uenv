@@ -1,0 +1,5 @@
+{
+  "defaultProvider": "cscs",
+  "defaultModel": "moonshotai/Kimi-K2.7-Code",
+  "quietStartup": true
+}
