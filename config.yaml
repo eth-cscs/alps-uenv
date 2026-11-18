@@ -311,14 +311,17 @@ uenvs:
         daint: [gh200]
         eiger: [zen2]
   linaro-forge:
-    "26.0":
+    "26.1":
       recipes:
-        a100: "26.0"
-        gh200: "26.0"
-        mi300: "26.0"
-        zen2: "26.0"
+        a100: "26.1/cscs"
+        gh200: "26.1/cscs"
+        mi300: "26.1/cscs"
+        zen2: "26.1/cscs"
+        # zen3 is only on MCH systems, so it uses the MCH license
+        zen3: "26.1/mch"
       deploy:
         eiger: [zen2]
+        linard: [zen3]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
@@ -336,8 +339,13 @@ uenvs:
         zen3: "26.0.3/mch"
       deploy:
         eiger: [zen2]
-        daint: [gh200]
         linard: [zen3]
+        daint: [gh200]
+        santis: [gh200]
+        clariden: [gh200]
+        starlex: [gh200]
+        bristen: [a100]
+        beverin: [mi300]
       mount: "/user-tools"
   namd:
     "3.0":
