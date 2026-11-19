@@ -37,7 +37,7 @@ gcc-env:
   - aws-ofi-nccl
   - superlu
   - cufftmp
-  - nvshmem +cuda +mpi +nccl
+  - nvshmem@3.8.0-0 +cuda +mpi +nccl ~ucx +libfabric +gpu_initiated_support
   variants:
   - +mpi
   - +cuda
@@ -49,3 +49,8 @@ gcc-env:
         add_compilers: true
         prefix_paths:
           LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          - NVSHMEM_REMOTE_TRANSPORT: "libfabric"
+          - NVSHMEM_LIBFABRIC_PROVIDER: "cxi"
+          - NVSHMEM_DISABLE_CUDA_VMM: "1"
