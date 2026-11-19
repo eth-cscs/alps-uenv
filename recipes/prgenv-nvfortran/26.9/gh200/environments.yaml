@@ -20,7 +20,7 @@ nvfortran:
   - ninja
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
-  - nvpl-scalapck
+  - nvpl-scalapack
   - osu-micro-benchmarks
   - python
   - zlib-ng
