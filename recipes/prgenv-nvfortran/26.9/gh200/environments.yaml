@@ -2,7 +2,6 @@ nvfortran:
   compiler: [gcc, nvhpc]
   network:
       mpi: cray-mpich@9.2.1+cuda %c,cxx,fortran=nvhpc
-      specs: [ 'libfabric@2.3 +gdrcopy %c=gcc' ]
   unify: true
   specs:
   - aws-ofi-nccl
