@@ -479,6 +479,7 @@ uenvs:
       deploy:
         daint: [gh200]
         santis: [gh200]
+        clariden: [gh200]
   prgenv-intel:
     "2022.1":
       recipes:
