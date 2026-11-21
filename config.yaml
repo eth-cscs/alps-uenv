@@ -321,12 +321,10 @@ uenvs:
         zen3: "26.1/mch"
       deploy:
         eiger: [zen2]
-        linard: [zen3]
         daint: [gh200]
         santis: [gh200]
         clariden: [gh200]
         starlex: [gh200]
-        bristen: [a100]
         beverin: [mi300]
       mount: "/user-tools"
     "26.0.3":
