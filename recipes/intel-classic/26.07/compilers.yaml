@@ -1,0 +1,4 @@
+gcc:
+  version: "system"
+intel-classic:
+  version: "2021.10.0"
