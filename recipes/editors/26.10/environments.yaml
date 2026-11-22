@@ -1,0 +1,40 @@
+editors:
+  compiler: [gcc]
+  unify: true
+  network:
+    mpi: null
+  specs:
+  # the editors
+  - emacs +treesitter
+  - nano
+  - vim +python +lua
+  - neovim
+  # additional tools that integrate well with tools
+  - direnv
+  - fd
+  - go
+  - lazygit
+  - lua
+  - node-js
+  - python
+  - ripgrep
+  - screen
+  - rust
+  - tree-sitter
+  # filebrowser
+  - py-ranger-fm
+  - nnn
+  - tmux
+  # cmdline fuzzy finder
+  - fzf
+  # disk usage
+  - dust
+  # github
+  - gh
+  views:
+    ed:
+      link: roots
+      uenv:
+        add_compilers: false
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]

@@ -153,6 +153,15 @@ uenvs:
       deploy:
         eiger: [zen2]
       mount: "/user-tools"
+    "26.10":
+      recipes:
+        zen2: "26.10"
+        zen3: "26.10"
+        gh200: "26.10"
+      deploy:
+        eiger: [zen2]
+        daint: [gh200]
+      mount: "/user-tools"
   esmf:
     "26.07":
       recipes:
