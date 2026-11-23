@@ -5,28 +5,74 @@
 # The prompt and checklist are taken from THIS checkout (including uncommitted
 # edits); the PR is fetched from GitHub. Nothing is posted, the review is printed.
 #
-# usage: .github/ai-review/run-local.sh <pr-number> [owner/repo]
+# usage: .github/ai-review/run-local.sh [--backend cscs|anthropic] <pr-number> [owner/repo]
 #
-# API key: $CSCS_INFERENCE_API_KEY (required)
-# Model:   $AI_REVIEW_MODEL (default zai-org/GLM-5.3-Flash)
+# Backends:
+#   cscs       CSCS Inference Service, as in the workflow (default).
+#              Key:   $CSCS_INFERENCE_API_KEY (required)
+#              Model: $AI_REVIEW_MODEL (default zai-org/GLM-5.3-Flash)
+#   anthropic  native Claude.
+#              Auth:  $ANTHROPIC_API_KEY, or $CLAUDE_CODE_OAUTH_TOKEN for a Claude
+#                     subscription (create it once with `claude setup-token`)
+#              Model: $AI_REVIEW_MODEL (default: Claude Code's default model)
+# Keys come only from the environment: as arguments they would show up in ps and
+# the shell history. The run uses an isolated Claude Code config dir, so your
+# normal `claude` login is not used.
+#
 # Claude:  $CLAUDE (default: claude from PATH)
 # Workdir: $AI_REVIEW_WORKDIR (default: a new temp dir, kept for inspection)
 set -euo pipefail
 
-PR=${1:?usage: $0 <pr-number> [owner/repo]}
+usage() {
+  echo "usage: $0 [--backend cscs|anthropic] <pr-number> [owner/repo]" >&2
+  exit 2
+}
+
+BACKEND=cscs
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -b | --backend) [ $# -ge 2 ] || usage; BACKEND=$2; shift 2 ;;
+    --backend=*) BACKEND=${1#*=}; shift ;;
+    -h | --help) usage ;;
+    -*) usage ;;
+    *) break ;;
+  esac
+done
+PR=${1:-}
+[ -n "$PR" ] || usage
 REPO=${2:-eth-cscs/alps-uenv}
-MODEL=${AI_REVIEW_MODEL:-zai-org/GLM-5.3-Flash}
+
+# backend-specific environment for run-review.sh
+case "$BACKEND" in
+  cscs)
+    if [ -z "${CSCS_INFERENCE_API_KEY:-}" ]; then
+      echo "error: set CSCS_INFERENCE_API_KEY" >&2
+      exit 1
+    fi
+    MODEL=${AI_REVIEW_MODEL:-zai-org/GLM-5.3-Flash}
+    backend_env=(
+      ANTHROPIC_BASE_URL=https://api.inference.cscs.ch
+      ANTHROPIC_AUTH_TOKEN="$CSCS_INFERENCE_API_KEY"
+      MODEL="$MODEL"
+    )
+    ;;
+  anthropic)
+    if [ -z "${ANTHROPIC_API_KEY:-}" ] && [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+      echo "error: set ANTHROPIC_API_KEY, or CLAUDE_CODE_OAUTH_TOKEN (create it with \`claude setup-token\`)" >&2
+      exit 1
+    fi
+    MODEL=${AI_REVIEW_MODEL:-}
+    # a CSCS setup in the calling shell must not redirect the requests
+    backend_env=(-u ANTHROPIC_BASE_URL -u ANTHROPIC_AUTH_TOKEN -u MODEL)
+    [ -z "$MODEL" ] || backend_env+=(MODEL="$MODEL")
+    ;;
+  *) usage ;;
+esac
+
 BASE=$(cd "$(dirname "$0")/../.." && pwd)
 WORK=${AI_REVIEW_WORKDIR:-$(mktemp -d -t ai-review.XXXXXX)}
 mkdir -p "$WORK"
-
-# the key comes only from the environment: as an argument it would show up in
-# ps and the shell history
-KEY=${CSCS_INFERENCE_API_KEY:-}
-if [ -z "$KEY" ]; then
-  echo "error: set CSCS_INFERENCE_API_KEY" >&2
-  exit 1
-fi
+echo "backend: $BACKEND, model: ${MODEL:-Claude Code default}" >&2
 
 echo "workdir: $WORK" >&2
 cd "$WORK"
@@ -61,11 +107,9 @@ echo "claude: $("$CLAUDE" --version)" >&2
 # isolated config dir: no personal settings, hooks, plugins or MCP servers
 mkdir -p claude-config
 cd pr
-CLAUDE="$CLAUDE" \
-CLAUDE_CONFIG_DIR="$WORK/claude-config" \
-ANTHROPIC_BASE_URL=https://api.inference.cscs.ch \
-ANTHROPIC_AUTH_TOKEN="$KEY" \
-MODEL="$MODEL" \
+env "${backend_env[@]}" \
+  CLAUDE="$CLAUDE" \
+  CLAUDE_CONFIG_DIR="$WORK/claude-config" \
   "$BASE/.github/ai-review/run-review.sh" "$WORK"
 
 echo >&2

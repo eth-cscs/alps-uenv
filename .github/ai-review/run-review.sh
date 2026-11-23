@@ -10,8 +10,11 @@
 #   ../cscs-reframe-tests   eth-cscs/cscs-reframe-tests main
 # and a git ref "pr-base" for the base branch.
 #
-# Environment: ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN, MODEL.
-# Optional:    CLAUDE (path to the claude binary), AI_REVIEW_MAX_DIFF_BYTES.
+# Environment: the Claude Code backend and auth, e.g. ANTHROPIC_BASE_URL and
+#              ANTHROPIC_AUTH_TOKEN for the CSCS Inference Service, or
+#              ANTHROPIC_API_KEY / CLAUDE_CODE_OAUTH_TOKEN for native Claude.
+# Optional:    MODEL (pins all model roles to it; unset = Claude Code's default),
+#              CLAUDE (path to the claude binary), AI_REVIEW_MAX_DIFF_BYTES.
 #
 # Writes to <outdir>:
 #   prompt.md     the assembled prompt
@@ -26,12 +29,13 @@ set -euo pipefail
 out=${1:?usage: $0 <outdir>}
 CLAUDE=${CLAUDE:-claude}
 max_diff=${AI_REVIEW_MAX_DIFF_BYTES:-100000}
-: "${MODEL:?MODEL is not set}"
 
-export ANTHROPIC_MODEL="$MODEL"
-export ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL"
+if [ -n "${MODEL:-}" ]; then
+  export ANTHROPIC_MODEL="$MODEL"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL"
+fi
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_AUTOUPDATER=1
 
