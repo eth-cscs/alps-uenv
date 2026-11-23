@@ -127,6 +127,9 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     # nvshmem4py packaging fix, same as the Alps NGC containers (alps-extended-images)
     patch("requirements-v3.6.5-0.patch", when="@3.6.5-0 +python")
 
+    # fix for hangs when using libfabric
+    patch("v3.8.0-libfabric-fix.patch", when="@3.6.5-0,3.8.0-0 +libfabric")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("NVSHMEM_REMOTE_TRANSPORT", "libfabric")
         env.set("NVSHMEM_LIBFABRIC_PROVIDER", "cxi")
