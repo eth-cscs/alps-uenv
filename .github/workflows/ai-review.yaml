@@ -1,0 +1,178 @@
+name: AI recipe review
+
+# Maintainers trigger a review by commenting "/ai-review" on a pull request.
+# The review runs Claude Code against the CSCS Inference Service and posts the
+# result as a PR comment. It is advisory only.
+#
+# Security notes:
+# - issue_comment runs in the context of the base repository, so the secret is
+#   available for fork PRs too. Only OWNER/MEMBER/COLLABORATOR can trigger it.
+# - The PR code is checked out into a separate directory and is only read, never
+#   executed. Prompt and checklist are taken from the base branch, and any Claude
+#   Code project configuration in the PR (.claude/, CLAUDE.md, .mcp.json) is
+#   removed and ignored.
+# - Stackinator (main = v7 for version 3 recipes, releases/v6 for version 2) and
+#   cscs-reframe-tests are checked out as trusted reference material.
+# - The model gets read-only tools and no GitHub token; the workflow posts the comment.
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: >-
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/ai-review') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.issue.number }}
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch PR head into a separate worktree
+        id: pr
+        run: |
+          base_ref=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json baseRefName -q .baseRefName)
+          git -C base fetch --no-tags origin "pull/$PR/head:pr-head" "$base_ref:pr-base"
+          git -C base worktree add ../pr pr-head
+          # never load Claude Code configuration supplied by the PR
+          rm -rf pr/.claude pr/CLAUDE.md pr/CLAUDE.local.md pr/.mcp.json
+          if git -C pr diff --name-only pr-base...HEAD | grep -q '^recipes/'; then
+            echo "recipes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "recipes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: No recipe changes
+        if: steps.pr.outputs.recipes != 'true'
+        run: |
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" \
+            --body "AI review: this PR does not change anything under \`recipes/\`, nothing to review."
+
+      # Trusted reference material for the review (read-only).
+      - name: Checkout Stackinator v7 (version 3 recipes)
+        if: steps.pr.outputs.recipes == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: eth-cscs/stackinator
+          ref: main
+          path: stackinator-v7
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout Stackinator v6 (version 2 recipes)
+        if: steps.pr.outputs.recipes == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: eth-cscs/stackinator
+          ref: releases/v6
+          path: stackinator-v6
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout CSCS ReFrame tests
+        if: steps.pr.outputs.recipes == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: eth-cscs/cscs-reframe-tests
+          ref: main
+          path: cscs-reframe-tests
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.pr.outputs.recipes == 'true'
+        with:
+          node-version: 22
+
+      - name: Install Claude Code
+        if: steps.pr.outputs.recipes == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.330
+
+      - name: Run review
+        if: steps.pr.outputs.recipes == 'true'
+        working-directory: pr
+        env:
+          ANTHROPIC_BASE_URL: https://api.inference.cscs.ch
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3' }}
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          DISABLE_AUTOUPDATER: "1"
+        run: |
+          export ANTHROPIC_MODEL="$MODEL"
+          export ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL"
+          export ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL"
+          export ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL"
+          {
+            cat ../base/.github/ai-review/prompt.md
+            # strip the frontmatter of the checklist
+            sed '1{/^---$/!q};1,/^---$/d' ../base/.github/instructions/recipes.instructions.md
+            echo
+            echo "## Stackinator reference (v7, version 3 recipes)"
+            echo
+            echo "Contents of ../stackinator-v7/CLAUDE.md:"
+            echo
+            cat ../stackinator-v7/CLAUDE.md
+            echo
+            echo "## alps-uenv recipe guide (base branch)"
+            echo
+            echo "Contents of \$ALPS_UENV_DOCS/pkg-application-tutorial.md:"
+            echo
+            cat ../base/docs/pkg-application-tutorial.md
+            echo
+            echo "## Locations"
+            echo
+            echo "BASE_REF=pr-base"
+            echo "STACKINATOR_V7=../stackinator-v7"
+            echo "STACKINATOR_V6=../stackinator-v6"
+            echo "REFRAME_TESTS=../cscs-reframe-tests"
+            echo "ALPS_UENV_DOCS=../base/docs"
+          } > "$RUNNER_TEMP/prompt.md"
+          claude -p "$(cat "$RUNNER_TEMP/prompt.md")" \
+            --setting-sources user \
+            --strict-mcp-config \
+            --add-dir ../stackinator-v7 ../stackinator-v6 ../cscs-reframe-tests ../base/docs \
+            --max-turns 40 \
+            --allowedTools "Read" "Grep" "Glob" "Bash(git diff:*)" "Bash(git log:*)" "Bash(git show:*)" \
+            --disallowedTools "Write" "Edit" "NotebookEdit" "WebFetch" "WebSearch" "Task" \
+            --output-format text > "$RUNNER_TEMP/review.md"
+
+      - name: Post review
+        if: steps.pr.outputs.recipes == 'true'
+        env:
+          SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3' }}
+        run: |
+          review="$RUNNER_TEMP/review.md"
+          if [ -n "$SECRET" ] && grep -qF "$SECRET" "$review"; then
+            echo "::error::review output contains the API key, not posting"
+            exit 1
+          fi
+          if [ ! -s "$review" ]; then
+            echo "::error::empty review output"
+            exit 1
+          fi
+          {
+            echo "### AI review (CSCS Inference, \`$MODEL\`)"
+            echo "_Advisory only, may be wrong. Triggered by @${{ github.event.comment.user.login }}._"
+            echo
+            cat "$review"
+          } > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
