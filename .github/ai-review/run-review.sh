@@ -7,7 +7,6 @@
 # Run from the PR checkout. Expects next to it:
 #   ../base                 trusted base checkout (prompt, checklist, docs)
 #   ../stackinator          eth-cscs/stackinator main
-#   ../stackinator-v6       eth-cscs/stackinator releases/v6
 #   ../cscs-reframe-tests   eth-cscs/cscs-reframe-tests main
 # and a git ref "pr-base" for the base branch.
 #
@@ -59,7 +58,6 @@ diff=$(git diff pr-base...HEAD -- recipes/)
   echo
   echo "BASE_REF=pr-base"
   echo "STACKINATOR=../stackinator"
-  echo "STACKINATOR_V6=../stackinator-v6"
   echo "REFRAME_TESTS=../cscs-reframe-tests"
   echo "ALPS_UENV_DOCS=../base/docs"
   echo
@@ -97,7 +95,7 @@ run_claude() {
   timeout "$t" "$CLAUDE" "$@" \
     --setting-sources user \
     --strict-mcp-config \
-    --add-dir ../stackinator ../stackinator-v6 ../cscs-reframe-tests ../base/docs \
+    --add-dir ../stackinator ../cscs-reframe-tests ../base/docs \
     --allowedTools "Read" "Grep" "Glob" \
     --disallowedTools "Bash" "Write" "Edit" "NotebookEdit" "WebFetch" "WebSearch" "Task" \
     --output-format stream-json --verbose \

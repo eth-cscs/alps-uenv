@@ -47,7 +47,6 @@ fi
 # trusted reference material, same refs as the workflow
 clone() { [ -d "$2" ] || git clone -q --depth 1 --branch "$3" "https://github.com/$1.git" "$2"; }
 clone eth-cscs/stackinator stackinator main
-clone eth-cscs/stackinator stackinator-v6 releases/v6
 clone eth-cscs/cscs-reframe-tests cscs-reframe-tests main
 
 # Claude Code from $CLAUDE or PATH; the workflow pins a version, a local

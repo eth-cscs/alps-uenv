@@ -32,15 +32,15 @@ If a rule here and the Stackinator docs disagree, Stackinator wins for syntax an
      in `environments.yaml` (or `modules`/`spack`).
    - Otherwise `default-view` is optional; don't require it.
 
-2. **Stackinator format** (error unless noted, [stackinator]). Check against the docs for
-   the recipe's `version`:
-   - `version: 3` recipes use Stackinator `main` (v7) and Spack ≥ 1.2. `version: 2` recipes
-     use Stackinator v6 and Spack 1.0/1.1. Flag a `version` that doesn't match `spack.commit`.
-   - New recipes and new version directories must use the latest recipe version: the
+2. **Stackinator format** (error unless noted, [stackinator]). Check against Stackinator
+   `main`:
+   - Every recipe the PR adds or changes must use the latest recipe version: the
      `maximum` of `version` in `STACKINATOR/stackinator/schema/config.json` (currently
-     `3`). Flag an older `version` as an error. This often happens when the previous
-     version's `config.yaml` was copied unchanged. Fixes to an already deployed older
-     recipe may keep its `version`.
+     `3`, built with Stackinator `main` (v7) and Spack ≥ 1.2). Flag an older `version`
+     as an error, also for changes to an already deployed recipe: it has to be ported
+     first. This often happens when the previous version's `config.yaml` was copied
+     unchanged.
+   - Flag a `spack.commit` older than Spack 1.2.
    - `compilers.yaml` versions must be quoted strings (`"14"`, not `14`). A compiler
      `spec:` field replaces the default variants, so the defaults that are still wanted
      must be restated.

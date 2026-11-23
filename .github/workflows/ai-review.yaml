@@ -16,7 +16,7 @@ name: AI recipe review
 #   executed. Prompt and checklist are taken from the base branch, and any Claude
 #   Code project configuration in the PR (.claude/, CLAUDE.md, .mcp.json) is
 #   removed and ignored.
-# - Stackinator (main for the latest recipe version, releases/v6 for version 2) and
+# - Stackinator (main, the latest recipe version) and
 #   cscs-reframe-tests are checked out as trusted reference material.
 # - The model gets read-only tools and no GitHub token; the workflow posts the comment.
 
@@ -82,7 +82,7 @@ jobs:
 
       # Trusted reference material for the review (read-only).
       # main, not the latest release tag: releases can lag behind the latest recipe
-      # version (v6.0 only supports version 2).
+      # version. Only the latest recipe version is accepted.
       - name: Checkout Stackinator main (latest recipe version)
         if: steps.pr.outputs.recipes == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -90,16 +90,6 @@ jobs:
           repository: eth-cscs/stackinator
           ref: main
           path: stackinator
-          fetch-depth: 1
-          persist-credentials: false
-
-      - name: Checkout Stackinator v6 (version 2 recipes)
-        if: steps.pr.outputs.recipes == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: eth-cscs/stackinator
-          ref: releases/v6
-          path: stackinator-v6
           fetch-depth: 1
           persist-credentials: false
 
