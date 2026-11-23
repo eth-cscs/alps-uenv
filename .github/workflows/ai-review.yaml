@@ -46,7 +46,9 @@ jobs:
        !github.event.pull_request.draft &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association))
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # the review is capped at 20 + 5 min (timeouts in run-review.sh), so the
+    # job has time left to report a timeout on the PR
+    timeout-minutes: 30
     env:
       GH_TOKEN: ${{ github.token }}
       PR: ${{ github.event.pull_request.number || github.event.issue.number }}
@@ -121,72 +123,73 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code@2.1.330
 
       - name: Run review
+        id: review
         if: steps.pr.outputs.recipes == 'true'
         working-directory: pr
         env:
           ANTHROPIC_BASE_URL: https://api.inference.cscs.ch
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.CSCS_INFERENCE_API_KEY }}
-          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3' }}
-          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
-          DISABLE_AUTOUPDATER: "1"
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3-Flash' }}
+        # the script is taken from the base branch, never from the PR
         run: |
-          export ANTHROPIC_MODEL="$MODEL"
-          export ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL"
-          export ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL"
-          export ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL"
-          {
-            cat ../base/.github/ai-review/prompt.md
-            # strip the frontmatter of the checklist
-            sed '1{/^---$/!q};1,/^---$/d' ../base/.github/instructions/recipes.instructions.md
-            echo
-            echo "## Stackinator reference (main, latest recipe version)"
-            echo
-            echo "Contents of ../stackinator/CLAUDE.md:"
-            echo
-            cat ../stackinator/CLAUDE.md
-            echo
-            echo "## alps-uenv recipe guide (base branch)"
-            echo
-            echo "Contents of \$ALPS_UENV_DOCS/pkg-application-tutorial.md:"
-            echo
-            cat ../base/docs/pkg-application-tutorial.md
-            echo
-            echo "## Locations"
-            echo
-            echo "BASE_REF=pr-base"
-            echo "STACKINATOR=../stackinator"
-            echo "STACKINATOR_V6=../stackinator-v6"
-            echo "REFRAME_TESTS=../cscs-reframe-tests"
-            echo "ALPS_UENV_DOCS=../base/docs"
-          } > "$RUNNER_TEMP/prompt.md"
-          claude -p "$(cat "$RUNNER_TEMP/prompt.md")" \
-            --setting-sources user \
-            --strict-mcp-config \
-            --add-dir ../stackinator ../stackinator-v6 ../cscs-reframe-tests ../base/docs \
-            --max-turns 40 \
-            --allowedTools "Read" "Grep" "Glob" "Bash(git diff:*)" "Bash(git log:*)" "Bash(git show:*)" \
-            --disallowedTools "Write" "Edit" "NotebookEdit" "WebFetch" "WebSearch" "Task" \
-            --output-format text > "$RUNNER_TEMP/review.md"
+          ../base/.github/ai-review/run-review.sh "$RUNNER_TEMP"
+          for f in status subtype wrapup; do
+            echo "$f=$(cat "$RUNNER_TEMP/$f")" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Check review log for the API key
+        if: always() && steps.pr.outputs.recipes == 'true'
+        env:
+          SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+        run: |
+          log="$RUNNER_TEMP/review.jsonl"
+          if [ -f "$log" ] && [ -n "$SECRET" ] && grep -qF "$SECRET" "$log"; then
+            echo "::error::review log contains the API key, not uploading"
+            rm -f "$log"
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && steps.pr.outputs.recipes == 'true'
+        with:
+          name: ai-review-log
+          path: ${{ runner.temp }}/review.jsonl
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Post review
         if: steps.pr.outputs.recipes == 'true'
         env:
           SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
-          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3' }}
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3-Flash' }}
           TRIGGER: ${{ github.event_name == 'issue_comment' && format('Triggered by @{0}.', github.event.comment.user.login) || 'Triggered automatically, comment `/ai-review` to re-run.' }}
+          STATUS: ${{ steps.review.outputs.status }}
+          SUBTYPE: ${{ steps.review.outputs.subtype }}
+          WRAPUP: ${{ steps.review.outputs.wrapup }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           review="$RUNNER_TEMP/review.md"
           if [ -n "$SECRET" ] && grep -qF "$SECRET" "$review"; then
             echo "::error::review output contains the API key, not posting"
             exit 1
           fi
-          if [ ! -s "$review" ]; then
-            echo "::error::empty review output"
+          if [ "$STATUS" != 0 ] || [ "$SUBTYPE" != success ] || [ ! -s "$review" ]; then
+            case "$STATUS/$SUBTYPE" in
+              124/*) reason="timed out" ;;
+              */error_max_turns) reason="hit the turn limit" ;;
+              *) reason="failed (exit status ${STATUS:-?}, result ${SUBTYPE:-none})" ;;
+            esac
+            echo "::error::AI review $reason"
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body \
+              "AI review (\`$MODEL\`) $reason, no review posted. Log: $RUN_URL"
             exit 1
           fi
           {
             echo "### AI review (CSCS Inference, \`$MODEL\`)"
             echo "_Advisory only, may be wrong. ${TRIGGER}_"
+            if [ "$WRAPUP" = true ]; then
+              echo
+              echo "_The review hit its turn limit and was written from a partial check._"
+            fi
             echo
             cat "$review"
           } > "$RUNNER_TEMP/comment.md"

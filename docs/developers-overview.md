@@ -15,5 +15,5 @@ and posts the result as a PR comment.
 The review checks the rules in `.github/instructions/recipes.instructions.md` (for example a missing `default-view`, or settings dropped compared to the previous version of a recipe); extend that file when you find a new class of mistake.
 
 The review is advisory only. PRs and comments from other users do not trigger it.
-The API key is stored in the repository secret `CSCS_INFERENCE_API_KEY`; the model can be changed with the repository variable `AI_REVIEW_MODEL` (default `zai-org/GLM-5.3`).
+The API key is stored in the repository secret `CSCS_INFERENCE_API_KEY`; the model can be changed with the repository variable `AI_REVIEW_MODEL` (default `zai-org/GLM-5.3-Flash`).
 As reference material the review reads the Stackinator `CLAUDE.md`, docs and schemas (`main` for version 3 recipes, `releases/v6` for version 2 recipes) and the [cscs-reframe-tests](https://github.com/eth-cscs/cscs-reframe-tests) repository, to check the features in `extra/reframe.yaml`.
