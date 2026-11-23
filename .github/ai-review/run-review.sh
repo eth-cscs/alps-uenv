@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Run the AI recipe review. Shared by .github/workflows/ai-review.yaml and
-# run-local.sh, so both build the same prompt and call Claude Code the same way.
+# Run the AI recipe review. Called by .github/workflows/ai-review.yaml; can also
+# be run locally with the same layout to build the same prompt and call Claude
+# Code the same way.
 #
 # usage: run-review.sh <outdir>
 #
