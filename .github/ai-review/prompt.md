@@ -15,9 +15,11 @@ Apply the checklist below to every recipe touched by the PR.
 
 Paths are given under "Locations" at the end of this prompt.
 
-- The `version` in a recipe's `config.yaml` selects the Stackinator version:
-  `version: 3` → `STACKINATOR_V7` (its CLAUDE.md is included below),
-  `version: 2` → `STACKINATOR_V6` (read its `CLAUDE.md` first).
+- The `version` in a recipe's `config.yaml` selects the Stackinator checkout:
+  - the latest recipe version (the `maximum` of `version` in
+    `STACKINATOR/stackinator/schema/config.json`) → `STACKINATOR`, Stackinator `main`
+    (its CLAUDE.md is included below);
+  - `version: 2` → `STACKINATOR_V6`, the `releases/v6` branch (read its `CLAUDE.md` first).
 - In order of authority:
   1. Stackinator JSON schemas (`stackinator/schema/*.json`) and docs (`docs/`)
      for which keys and values are valid and what they mean;

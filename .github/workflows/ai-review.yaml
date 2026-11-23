@@ -1,43 +1,55 @@
 name: AI recipe review
 
-# Maintainers trigger a review by commenting "/ai-review" on a pull request.
+# A review runs automatically when an owner/member/collaborator opens a PR (or
+# marks a draft ready) that changes recipes/. Maintainers can also trigger a
+# review on any PR, including fork PRs, by commenting "/ai-review".
 # The review runs Claude Code against the CSCS Inference Service and posts the
 # result as a PR comment. It is advisory only.
 #
 # Security notes:
-# - issue_comment runs in the context of the base repository, so the secret is
-#   available for fork PRs too. Only OWNER/MEMBER/COLLABORATOR can trigger it.
+# - issue_comment and pull_request_target run in the context of the base
+#   repository, so the secret is available for fork PRs too. Only
+#   OWNER/MEMBER/COLLABORATOR can trigger it (as commenter or as PR author).
+# - pull_request_target always uses this workflow file from the base branch;
+#   changes to it take effect only after merging.
 # - The PR code is checked out into a separate directory and is only read, never
 #   executed. Prompt and checklist are taken from the base branch, and any Claude
 #   Code project configuration in the PR (.claude/, CLAUDE.md, .mcp.json) is
 #   removed and ignored.
-# - Stackinator (main = v7 for version 3 recipes, releases/v6 for version 2) and
+# - Stackinator (main for the latest recipe version, releases/v6 for version 2) and
 #   cscs-reframe-tests are checked out as trusted reference material.
 # - The model gets read-only tools and no GitHub token; the workflow posts the comment.
 
 on:
   issue_comment:
     types: [created]
+  pull_request_target:
+    types: [opened, ready_for_review]
+    paths: ['recipes/**']
 
 permissions:
   contents: read
   pull-requests: write
 
 concurrency:
-  group: ai-review-${{ github.event.issue.number }}
+  group: ai-review-${{ github.event.pull_request.number || github.event.issue.number }}
   cancel-in-progress: true
 
 jobs:
   review:
     if: >-
-      github.event.issue.pull_request &&
-      startsWith(github.event.comment.body, '/ai-review') &&
-      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       startsWith(github.event.comment.body, '/ai-review') &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
+      (github.event_name == 'pull_request_target' &&
+       !github.event.pull_request.draft &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       GH_TOKEN: ${{ github.token }}
-      PR: ${{ github.event.issue.number }}
+      PR: ${{ github.event.pull_request.number || github.event.issue.number }}
     steps:
       - name: Checkout base branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -61,19 +73,21 @@ jobs:
           fi
 
       - name: No recipe changes
-        if: steps.pr.outputs.recipes != 'true'
+        if: steps.pr.outputs.recipes != 'true' && github.event_name == 'issue_comment'
         run: |
           gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" \
             --body "AI review: this PR does not change anything under \`recipes/\`, nothing to review."
 
       # Trusted reference material for the review (read-only).
-      - name: Checkout Stackinator v7 (version 3 recipes)
+      # main, not the latest release tag: releases can lag behind the latest recipe
+      # version (v6.0 only supports version 2).
+      - name: Checkout Stackinator main (latest recipe version)
         if: steps.pr.outputs.recipes == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: eth-cscs/stackinator
           ref: main
-          path: stackinator-v7
+          path: stackinator
           fetch-depth: 1
           persist-credentials: false
 
@@ -125,11 +139,11 @@ jobs:
             # strip the frontmatter of the checklist
             sed '1{/^---$/!q};1,/^---$/d' ../base/.github/instructions/recipes.instructions.md
             echo
-            echo "## Stackinator reference (v7, version 3 recipes)"
+            echo "## Stackinator reference (main, latest recipe version)"
             echo
-            echo "Contents of ../stackinator-v7/CLAUDE.md:"
+            echo "Contents of ../stackinator/CLAUDE.md:"
             echo
-            cat ../stackinator-v7/CLAUDE.md
+            cat ../stackinator/CLAUDE.md
             echo
             echo "## alps-uenv recipe guide (base branch)"
             echo
@@ -140,7 +154,7 @@ jobs:
             echo "## Locations"
             echo
             echo "BASE_REF=pr-base"
-            echo "STACKINATOR_V7=../stackinator-v7"
+            echo "STACKINATOR=../stackinator"
             echo "STACKINATOR_V6=../stackinator-v6"
             echo "REFRAME_TESTS=../cscs-reframe-tests"
             echo "ALPS_UENV_DOCS=../base/docs"
@@ -148,7 +162,7 @@ jobs:
           claude -p "$(cat "$RUNNER_TEMP/prompt.md")" \
             --setting-sources user \
             --strict-mcp-config \
-            --add-dir ../stackinator-v7 ../stackinator-v6 ../cscs-reframe-tests ../base/docs \
+            --add-dir ../stackinator ../stackinator-v6 ../cscs-reframe-tests ../base/docs \
             --max-turns 40 \
             --allowedTools "Read" "Grep" "Glob" "Bash(git diff:*)" "Bash(git log:*)" "Bash(git show:*)" \
             --disallowedTools "Write" "Edit" "NotebookEdit" "WebFetch" "WebSearch" "Task" \
@@ -159,6 +173,7 @@ jobs:
         env:
           SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
           MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3' }}
+          TRIGGER: ${{ github.event_name == 'issue_comment' && format('Triggered by @{0}.', github.event.comment.user.login) || 'Triggered automatically, comment `/ai-review` to re-run.' }}
         run: |
           review="$RUNNER_TEMP/review.md"
           if [ -n "$SECRET" ] && grep -qF "$SECRET" "$review"; then
@@ -171,7 +186,7 @@ jobs:
           fi
           {
             echo "### AI review (CSCS Inference, \`$MODEL\`)"
-            echo "_Advisory only, may be wrong. Triggered by @${{ github.event.comment.user.login }}._"
+            echo "_Advisory only, may be wrong. ${TRIGGER}_"
             echo
             cat "$review"
           } > "$RUNNER_TEMP/comment.md"
