@@ -316,3 +316,26 @@ Tuning (uenv, each against a baseline in the same allocation, jobs 5256254/52562
   Nothing in the stack depends on numba (Megatron-LM does not use it), and Spack's py-llvmlite builds a full llvm@22.
   Users can `pip install numba` on top of the uenv; the aarch64 llvmlite wheels link LLVM statically.
 - Not included: torchaudio (not in NGC 26.07; 2.11 is the newest release, older than torch 2.14), TensorRT / torch-tensorrt / DALI / nvimgcodec / cutlass-dsl (binary-only wheels), Jupyter and the long tail.
+
+## ReFrame tests (2026-11-24)
+
+Image v7 (`$SCRATCH/torch-uenv/pytorch-v2.14.1-gh200-v7.squashfs`) on daint, cscs-reframe-tests `main` at a5cd74c2, ReFrame 4.10.4, `CSCS_RFM_UENV=<path to squashfs>` with `meta/` extracted beside it, `-p '(?!PrgEnv-.*|builtin)' -S build_locally=0`.
+Stage directories and logs: `$SCRATCH/torch-uenv/reframe/run-*`.
+
+The features in `extra/reframe.yaml` select 20 tests; 19 were run (ICON4PyBenchmarks, which matches any `+uenv +cuda` environment, was left out): 9 pass, 6 fail, 4 are skipped.
+
+- Pass (9): StreamTest, cscs_gpu_burn_check, NCCLTestsUENV all_reduce (145.8 GB/s) and sendrecv (23.4 GB/s) on 2 nodes, OSUBandwidthCuda, osu_pt2pt_check osu_bw and osu_latency (CPU build), osu_collective_check alltoall and allreduce (CPU build, 6 nodes).
+- OSULatency, OSUBandwidth, OSULatencyCuda fail the 256 byte reference and pass the 4 MiB one (10.9 us vs 2.3 us; 275 MB/s vs 600 MB/s; 11.7 us vs 3.75 us).
+  Cause: the view sets `FI_CXI_RDZV_EAGER_SIZE=0`, `FI_CXI_RDZV_GET_MIN=0`, `FI_CXI_RDZV_THRESHOLD=0` (alps-extended-images NCCL settings; also in v2.9.1), so MPI messages of 256 bytes and more use the rendezvous protocol.
+  Unsetting the three variables in a copy of the job gives 4.4 us at 256 bytes instead of 17 us on the same nodes (job 5444930, `reframe/osu-check/`). Open decision: keep the settings (NCCL) or drop them (small MPI messages).
+  Measured on 4 nodes, 2 interleaved repetitions (job 5445432, `$SCRATCH/torch-uenv/reframe/rdzv-eval/`), all three 0 (view) against all three unset:
+  MPI host and GPU latency for 256 B to 16 KiB is 14 us against 4.2-5.5 us, and `osu_bw D D` at 4-16 KiB is 2.3x lower; from 32 KiB there is no difference.
+  NCCL all-reduce on 16 GPUs is 37% slower up to 64 KiB (0.55 against 0.88 GB/s at 16 KiB), 15% faster at 256 KiB-1 MiB, 18% faster at 16 MiB (25.6 against 21.6 GB/s) and 13% faster at 64 MiB (86 against 76 GB/s); from 256 MiB, NCCL send-receive from 64 KiB, and the 1 GiB torch.distributed all-reduce are the same.
+  Only `FI_CXI_RDZV_EAGER_SIZE=0` (the other two unset) restores the small messages and keeps the 64 MiB gain, but not the 16 MiB one, and is the slowest at 1 MiB (3.8 against 4.7 GB/s).
+  The settings are also the CSCS workaround for NCCL hangs and watchdog timeouts (docs.cscs.ch NCCL known issues), which this benchmark cannot evaluate.
+- build_osu_benchmarks (CUDA build) fails to compile: OSU 7.2 calls `cudaMemPrefetchAsync` with the CUDA 12 signature. The four OSU CUDA tests that use it are skipped. A fault of the test with CUDA 13.
+- CXIGPU2GPULoopbackBW: 175.1 Gb/s vs 183.3 Gb/s minimum on nid006022. A test of the node (`cxi_gpu_loopback_bw`) that does not use the image.
+- PyTorchMegatronLM_UENV llama3-8b (16 nodes) and llama3-70b (32 nodes) fail, not resolved:
+    - as shipped (Megatron `de14c22`, 2025-03): `ValueError: apply_rope_fusion is not available`; that commit does not work with the Transformer Engine of the image;
+    - with `-S megatron_release=c3d83c5a0` (the commit used in the Megatron section above): `TypeError` in `get_train_valid_test_num_samples`, as the test passes no `--eval-interval`;
+    - with `--eval-interval 1000` added to the test (local branch `pytorch-uenv-megatron-update` of cscs-reframe-tests, not committed): llama3-8b stops with CUDA out of memory on 22 of 64 ranks, on GPUs where another process holds about 30 GiB, which suggests that two ranks share a GPU with the launch of the test; llama3-70b (TP 4, PP 8) stops after 13 minutes with `ncclInternalError` and a watchdog timeout in the pipeline-parallel group. The test sets `NCCL_CROSS_NIC=1` and other libfabric variables over those of the view. Neither was investigated further.
