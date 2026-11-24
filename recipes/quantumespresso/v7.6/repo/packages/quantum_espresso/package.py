@@ -226,7 +226,8 @@ class QuantumEspresso(CMakePackage, CudaPackage, Package):
     variant(
         "wannier90_external", default=False, description="Enable external wannier90"
     )
-    depends_on("wannier90", when="+wannier90_external")
+    # QE 7.6 uses the 3.x library API (libwannier, w90_io.mod, wannier_setup/run)
+    depends_on("wannier90@3", when="+wannier90_external")
 
     # Versions of HDF5 prior to 1.8.16 lead to QE runtime errors
     depends_on("hdf5@1.8.16:+fortran+hl+mpi", when="hdf5=parallel")

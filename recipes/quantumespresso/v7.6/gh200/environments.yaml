@@ -7,7 +7,7 @@ nvhpc-env:
     # current QE + gipaw doesn't compile
   - quantum-espresso@7.6  +libxc +cuda +scalapack +elpa +openmp +mpigpu ~gipaw +oscdft +wannier90_external hdf5=parallel %c,cxx,fortran=nvhpc
   - nvpl-scalapack
-  - wannier90
+  - wannier90@3.1.0
   - fftw%nvhpc
   - nvpl-blas threads=openmp
   - nvpl-lapack threads=openmp
