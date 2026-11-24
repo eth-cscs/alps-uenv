@@ -19,10 +19,10 @@ therefore `comgr`) is built without zstd. MIOpen links these bundles
 statically, so the first CK convolution kernel fails to unbundle and the
 process segfaults ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
 Building with the stack's own toolchain fixes this. Offload compression stays
-on: `llvm-amdgpu` has zlib but not zstd, so the bundles are zlib-compressed,
-which comgr can read. Without compression the fat binaries push
-`libMIOpen.so` past 2 GiB and its link fails with `relocation R_X86_64_PC32
-out of range` against the static `librockCompiler.a`. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
+on: without it the fat binaries push `libMIOpen.so` past 2 GiB and its link
+fails with `relocation R_X86_64_PC32 out of range` against the static
+`librockCompiler.a`. This needs `llvm-amdgpu` built with zstd (see below), since
+the bundler's zlib fallback produces bundles that fail to decompress. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
 recipe: without it the full build for `gfx90a;gfx942` takes far too long. Only
 `miopen-hip` depends on CK, and it needs only `device_conv_operations`, so the
 installed package has no GEMM, MHA, contraction or reduction instances.
@@ -57,6 +57,16 @@ Why: pins the exact Python version used at build time instead of letting
 Spack's concretizer pick one, presumably to match the Python already selected
 elsewhere in this environment and avoid a second/incompatible Python being
 pulled in.
+
+- Adds `depends_on("zstd", type="link")` and sets `LLVM_ENABLE_ZSTD=FORCE_ON`.
+
+Why: without zstd, `clang-offload-bundler --compress` falls back to zlib, and
+on this stack those bundles fail to decompress (`zlib error: Z_DATA_ERROR`,
+[ROCm/rocm-libraries#6085](https://github.com/ROCm/rocm-libraries/issues/6085)).
+That broke rocblas's Tensile kernels, and is what the rocblas patch
+`0010-disable-tensile-co-compression.patch` works around. comgr gets its
+decompression from these LLVM libraries, so without zstd it also cannot read
+zstd-compressed bundles ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
 
 ## miopen_hip
 

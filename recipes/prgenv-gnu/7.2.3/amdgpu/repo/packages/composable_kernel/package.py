@@ -18,8 +18,7 @@ class ComposableKernel(BuiltinComposableKernel):
         # Keep --offload-compress (CK's default). Uncompressed, the fat
         # binaries in libdevice_conv_operations.a push libMIOpen.so past 2 GiB
         # and the link fails with "relocation R_X86_64_PC32 out of range".
-        # llvm-amdgpu is built with zlib but not zstd, so the bundles are
-        # zlib-compressed and comgr can read them (unlike the zstd bundles of
-        # the old prebuilt package, see
-        # https://github.com/eth-cscs/alps-uenv/issues/387).
+        # This relies on llvm-amdgpu being built with zstd (LLVM_ENABLE_ZSTD):
+        # its zlib fallback produces bundles that fail to decompress, see
+        # https://github.com/ROCm/rocm-libraries/issues/6085
         return args
