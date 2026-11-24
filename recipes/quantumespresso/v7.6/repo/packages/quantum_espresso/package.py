@@ -555,6 +555,11 @@ class QuantumEspresso(CMakePackage, CudaPackage, Package):
     # set natx=100
     patch("0001-natx-100.patch")
 
+    # diropn/davcio: use stream access with 64-bit offsets instead of
+    # direct access (nvfortran corrupts direct-access records > 2 GiB
+    # or located beyond 4 GiB in the file)
+    patch("0001-davcio-stream-access.patch", when="@7.6")
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):

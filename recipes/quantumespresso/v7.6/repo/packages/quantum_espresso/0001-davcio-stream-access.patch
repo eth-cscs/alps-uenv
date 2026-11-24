@@ -1,0 +1,202 @@
+diff --git a/Modules/io_files.f90 b/Modules/io_files.f90
+index 41101359b..588ffb2f2 100644
+--- a/Modules/io_files.f90
++++ b/Modules/io_files.f90
+@@ -22,7 +22,15 @@ MODULE io_files
+   !
+   SAVE
+   PUBLIC :: create_directory, check_tempdir, clean_tempdir, check_file_exist, &
+-       delete_if_present, check_writable, restart_dir, xmlfile
++       delete_if_present, check_writable, restart_dir, xmlfile, &
++       diropn_recl
++  !
++  ! ... Record lengths (in real(dp) words) of the units opened by diropn.
++  ! ... diropn opens files with stream access, so davcio needs them to
++  ! ... compute the file offset of a record.
++  !
++  INTEGER, ALLOCATABLE, PRIVATE :: diropn_units(:)
++  INTEGER, ALLOCATABLE, PRIVATE :: diropn_recls(:)
+   !
+   CHARACTER(len=256) :: tmp_dir = './'
+   !! directory for all temporary files
+@@ -397,7 +405,6 @@ subroutine diropn (unit, extension, recl, exst, tmp_dir_)
+   !! If \(\text{recl}=-1\), the file existence is checked, nothing else
+   !! is done.
+   !
+-  USE kinds, ONLY: i8b
+   implicit none
+   !
+   !    first the input variables
+@@ -417,10 +424,7 @@ subroutine diropn (unit, extension, recl, exst, tmp_dir_)
+   !
+   character(len=320) :: tempfile
+   ! complete file name
+-  real(dp):: dummy
+-  integer(kind=i8b) :: unf_recl
+-  ! double precision to prevent integer overflow
+-  integer :: ios, direct_io_factor
++  integer :: ios
+   logical :: opnd
+   !
+   !    initial checks
+@@ -445,23 +449,79 @@ subroutine diropn (unit, extension, recl, exst, tmp_dir_)
+   inquire (file = tempfile, exist = exst)
+   if (recl == -1) RETURN
+   !
+-  ! the  record length in direct-access I/O is given by the number of
+-  ! real*8 words times direct_io_factor (may depend on the compiler)
++  if (recl <= 0) call errore ('diropn', 'wrong record length', 3)
+   !
+-  INQUIRE (IOLENGTH=direct_io_factor) dummy
+-  unf_recl = direct_io_factor * int(recl, kind=kind(unf_recl))
+-  if (unf_recl <= 0) call errore ('diropn', 'wrong record length', 3)
++  ! The file is opened with stream access, and davcio computes the
++  ! offset of each record in 64-bit arithmetic. Some compilers (e.g.
++  ! nvfortran, at least up to 26.5) silently corrupt direct-access
++  ! records larger than 2 GiB or located beyond 4 GiB in the file.
++  ! The byte layout is the same as for a direct-access file with
++  ! record length recl real(dp) words, so files remain compatible.
+   !
+   open (unit, file=trim(adjustl(tempfile)), iostat=ios, form='unformatted', &
+-       status = 'unknown', access = 'direct', recl = unf_recl)
++       status = 'unknown', access = 'stream')
+ 
+   if (ios /= 0) call errore ('diropn', 'error opening '//trim(tempfile), unit)
++  call set_diropn_recl (unit, recl)
+   return
+   !-----------------------------------------------------------------------
+ end subroutine diropn
+ !-----------------------------------------------------------------------
+ !
+ !-----------------------------------------------------------------------
++subroutine set_diropn_recl (unit, recl)
++  !-----------------------------------------------------------------------
++  !! Stores the record length (in real(dp) words) of a unit opened by
++  !! diropn. An existing entry for the same unit is overwritten.
++  !
++  implicit none
++  integer, intent(in) :: unit, recl
++  integer, allocatable :: tmp(:)
++  integer :: i, n
++  !
++  if (.not. allocated(diropn_units)) then
++     allocate (diropn_units(0), diropn_recls(0))
++  end if
++  do i = 1, size(diropn_units)
++     if (diropn_units(i) == unit) then
++        diropn_recls(i) = recl
++        return
++     end if
++  end do
++  n = size(diropn_units)
++  allocate (tmp(n+1))
++  tmp(1:n) = diropn_units; tmp(n+1) = unit
++  call move_alloc (tmp, diropn_units)
++  allocate (tmp(n+1))
++  tmp(1:n) = diropn_recls; tmp(n+1) = recl
++  call move_alloc (tmp, diropn_recls)
++  !-----------------------------------------------------------------------
++end subroutine set_diropn_recl
++!-----------------------------------------------------------------------
++!
++!-----------------------------------------------------------------------
++integer function diropn_recl (unit)
++  !-----------------------------------------------------------------------
++  !! Record length (in real(dp) words) given to diropn when it last
++  !! opened this unit, or -1 if diropn never opened it.
++  !
++  implicit none
++  integer, intent(in) :: unit
++  integer :: i
++  !
++  diropn_recl = -1
++  if (.not. allocated(diropn_units)) return
++  do i = 1, size(diropn_units)
++     if (diropn_units(i) == unit) then
++        diropn_recl = diropn_recls(i)
++        return
++     end if
++  end do
++  !-----------------------------------------------------------------------
++end function diropn_recl
++!-----------------------------------------------------------------------
++!
++!-----------------------------------------------------------------------
+ subroutine seqopn (unit, extension, formatt, exst, tmp_dir_)
+   !-----------------------------------------------------------------------
+   !! This routine opens a file named "prefix"."extension"
+@@ -547,7 +607,9 @@ SUBROUTINE davcio( vect, nword, unit, nrec, io )
+   !! read/write \(\text{nword}\) words starting from the address specified by
+   !! \(\text{vect}\).
+   !
+-  USE kinds ,     ONLY : DP
++  USE kinds ,     ONLY : DP, i8b
++  USE io_files,   ONLY : diropn_recl
++  USE, INTRINSIC :: iso_fortran_env, ONLY : file_storage_size
+   !
+   IMPLICIT NONE
+   !
+@@ -564,8 +626,13 @@ SUBROUTINE davcio( vect, nword, unit, nrec, io )
+   !
+   INTEGER :: ios
+     ! integer variable for I/O control
+-  LOGICAL :: opnd
++  INTEGER :: recl
++    ! record length in real(DP) words (stream access only)
++  INTEGER(i8b) :: pos
++    ! position of the record in file storage units (stream access only)
++  LOGICAL :: opnd, stream
+   CHARACTER*256 :: name
++  CHARACTER(LEN=16) :: acc
+   !
+   !
+   CALL start_clock( 'davcio' )
+@@ -575,22 +642,45 @@ SUBROUTINE davcio( vect, nword, unit, nrec, io )
+   IF ( nword <= 0 ) CALL errore(  'davcio', 'wrong record length', 3 )
+   IF ( io    == 0 ) CALL infomsg( 'davcio', 'nothing to do?' )
+   !
+-  INQUIRE( UNIT = unit, OPENED = opnd, NAME = name )
++  INQUIRE( UNIT = unit, OPENED = opnd, NAME = name, ACCESS = acc )
+   !
+   IF ( .NOT. opnd ) &
+      CALL errore(  'davcio', 'unit is not opened', unit )
+   !
++  ! ... Units opened by diropn use stream access: the position of the
++  ! ... record is computed here in 64-bit arithmetic (see diropn).
++  ! ... Units opened elsewhere with direct access use REC= as before.
++  !
++  stream = ( TRIM(acc) == 'STREAM' )
++  IF ( stream ) THEN
++     recl = diropn_recl( unit )
++     IF ( recl <= 0 ) CALL errore( 'davcio', &
++         & 'stream unit not opened by diropn: "' // TRIM(name) // '"', unit )
++     IF ( nword > recl ) CALL errore( 'davcio', &
++         & 'record too long for file "' // TRIM(name) // '"', unit )
++     pos = ( INT(nrec, i8b) - 1 ) * INT(recl, i8b) * &
++           INT(STORAGE_SIZE(vect(1)) / file_storage_size, i8b) + 1
++  END IF
++  !
+   ios = 0
+   !
+   IF ( io < 0 ) THEN
+      !
+-     READ( UNIT = unit, REC = nrec, IOSTAT = ios ) vect
++     IF ( stream ) THEN
++        READ( UNIT = unit, POS = pos, IOSTAT = ios ) vect
++     ELSE
++        READ( UNIT = unit, REC = nrec, IOSTAT = ios ) vect
++     END IF
+      IF ( ios /= 0 ) CALL errore( 'davcio', &
+          & 'error reading file "' // TRIM(name) // '"', unit )
+      !
+   ELSE IF ( io > 0 ) THEN
+      !
+-     WRITE( UNIT = unit, REC = nrec, IOSTAT = ios ) vect
++     IF ( stream ) THEN
++        WRITE( UNIT = unit, POS = pos, IOSTAT = ios ) vect
++     ELSE
++        WRITE( UNIT = unit, REC = nrec, IOSTAT = ios ) vect
++     END IF
+      IF ( ios /= 0 ) CALL errore( 'davcio', &
+          & 'error writing file "' // TRIM(name) // '"', unit )
+      !
