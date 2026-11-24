@@ -4,7 +4,7 @@ linaro-env:
   network:
     mpi: null
   specs:
-  - linaro-forge@26.0 +accept-eula
+  - linaro-forge@26.1 +accept-eula license=mch
   views:
     forge:
       link: roots
@@ -12,4 +12,4 @@ linaro-env:
         add_compilers: false
         env_vars:
           set:
-            - DDT_VERSION: '26.0'
+            - DDT_VERSION: '26.1'
