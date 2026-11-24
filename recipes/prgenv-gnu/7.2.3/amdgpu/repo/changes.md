@@ -11,16 +11,18 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 ## composable_kernel
 
 - Subclasses the builtin package and builds from source. Sets
-  `MIOPEN_REQ_LIBS_ONLY=ON`, `CK_PARALLEL_COMPILE_JOBS=24` and
-  `DISABLE_OFFLOAD_COMPRESS=ON`.
+  `MIOPEN_REQ_LIBS_ONLY=ON` and `CK_PARALLEL_COMPILE_JOBS=24`.
 
 Why: this recipe used to install a prebuilt 7.2.3 package taken from Arch
 Linux. Its code-object bundles are zstd-compressed, but `llvm-amdgpu` (and
 therefore `comgr`) is built without zstd. MIOpen links these bundles
 statically, so the first CK convolution kernel fails to unbundle and the
 process segfaults ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
-Building with the stack's own toolchain fixes this. Compression is turned off,
-as for Tensile in `rocblas`. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
+Building with the stack's own toolchain fixes this. Offload compression stays
+on: `llvm-amdgpu` has zlib but not zstd, so the bundles are zlib-compressed,
+which comgr can read. Without compression the fat binaries push
+`libMIOpen.so` past 2 GiB and its link fails with `relocation R_X86_64_PC32
+out of range` against the static `librockCompiler.a`. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
 recipe: without it the full build for `gfx90a;gfx942` takes far too long. Only
 `miopen-hip` depends on CK, and it needs only `device_conv_operations`, so the
 installed package has no GEMM, MHA, contraction or reduction instances.

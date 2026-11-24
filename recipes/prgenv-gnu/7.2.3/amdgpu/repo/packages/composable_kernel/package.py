@@ -15,8 +15,11 @@ class ComposableKernel(BuiltinComposableKernel):
         # Only build the instances MIOpen links (device_conv_operations).
         args.append(self.define("MIOPEN_REQ_LIBS_ONLY", True))
         args.append(self.define("CK_PARALLEL_COMPILE_JOBS", 24))
-        # Do not compress the offload bundles (--offload-compress), same as
-        # 0010-disable-tensile-co-compression.patch in rocblas. See
-        # https://github.com/eth-cscs/alps-uenv/issues/387
-        args.append(self.define("DISABLE_OFFLOAD_COMPRESS", True))
+        # Keep --offload-compress (CK's default). Uncompressed, the fat
+        # binaries in libdevice_conv_operations.a push libMIOpen.so past 2 GiB
+        # and the link fails with "relocation R_X86_64_PC32 out of range".
+        # llvm-amdgpu is built with zlib but not zstd, so the bundles are
+        # zlib-compressed and comgr can read them (unlike the zstd bundles of
+        # the old prebuilt package, see
+        # https://github.com/eth-cscs/alps-uenv/issues/387).
         return args
