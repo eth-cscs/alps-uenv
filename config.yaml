@@ -88,6 +88,9 @@ clusters:
         variables:
           F7T_URL: "https://api.cscs.ch/cw/firecrest/v2"
           SLURM_ACCOUNT: 'csstaff'
+          SLURM_GPUS_PER_NODE: '4'
+          SLURM_EXCLUSIVE: ''
+          SLURM_NODES: '1'
     runner: f7t
   #
   # TDS and development systems
