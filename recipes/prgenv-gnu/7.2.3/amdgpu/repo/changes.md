@@ -10,33 +10,20 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 
 ## composable_kernel
 
-Completely rewritten, not just patched. Upstream builds composable_kernel
-from source as a `CMakePackage`/`ROCmLibrary` (with dozens of versions and a
-large kernel-instantiation build). The local recipe instead:
+- Subclasses the builtin package and builds from source. Sets
+  `MIOPEN_REQ_LIBS_ONLY=ON`, `CK_PARALLEL_COMPILE_JOBS=24` and
+  `DISABLE_OFFLOAD_COMPRESS=ON`.
 
-- Switches the base class to `Package` (generic) and installs a **pre-built
-  binary tarball** (`file:///capstor/scratch/cscs/simonpi/binary-packages/
-  composable-kernel-7.2.3-1-x86_64.pkg.tar.gz`) via `install_tree("opt/rocm",
-  prefix)` instead of compiling.
-- Only version `7.2.3` is defined (all older upstream versions dropped).
-- `amdgpu_targets` is now a hardcoded tuple (copied from `ROCmPackage`) instead
-  of referencing `ROCmPackage.amdgpu_targets`, since the package no longer
-  inherits from `ROCmPackage`.
-- Still declares `depends_on("hip+rocm@7.2.3")` / `depends_on("llvm-amdgpu@7.2.3")`
-  for consistency with dependents, even though nothing is actually compiled.
-- All CMake args, `root_cmakelists_dir`, `setup_build_environment`, and the
-  `0001-mark-kernels-maybe-unused.patch` are gone (no longer relevant to a
-  binary install).
-
-Why: git history on this directory (`use binary package for composable-kernel`,
-plus several earlier "Trying to fix amdgpu_targets" / patch commits) shows the
-from-source build was repeatedly broken/unworkable for the full multi-arch
-target set, so it was replaced with a binary package built out-of-band and
-installed verbatim. The untracked `package_orig.py` left in the directory is
-the last from-source attempt before that switch (it only differs from
-upstream by one extra patch, `0002-multi-gpu-arch.patch`, applied to
-`projects/composablekernel` for `@7.2.3` — that patch file no longer exists in
-the repo).
+Why: this recipe used to install a prebuilt 7.2.3 package taken from Arch
+Linux. Its code-object bundles are zstd-compressed, but `llvm-amdgpu` (and
+therefore `comgr`) is built without zstd. MIOpen links these bundles
+statically, so the first CK convolution kernel fails to unbundle and the
+process segfaults ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
+Building with the stack's own toolchain fixes this. Compression is turned off,
+as for Tensile in `rocblas`. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
+recipe: without it the full build for `gfx90a;gfx942` takes far too long. Only
+`miopen-hip` depends on CK, and it needs only `device_conv_operations`, so the
+installed package has no GEMM, MHA, contraction or reduction instances.
 
 ## hipdnn
 
