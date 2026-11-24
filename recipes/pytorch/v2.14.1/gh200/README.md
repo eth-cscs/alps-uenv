@@ -327,13 +327,24 @@ The features in `extra/reframe.yaml` select 20 tests; 19 were run (ICON4PyBenchm
 - Pass (9): StreamTest, cscs_gpu_burn_check, NCCLTestsUENV all_reduce (145.8 GB/s) and sendrecv (23.4 GB/s) on 2 nodes, OSUBandwidthCuda, osu_pt2pt_check osu_bw and osu_latency (CPU build), osu_collective_check alltoall and allreduce (CPU build, 6 nodes).
 - OSULatency, OSUBandwidth, OSULatencyCuda fail the 256 byte reference and pass the 4 MiB one (10.9 us vs 2.3 us; 275 MB/s vs 600 MB/s; 11.7 us vs 3.75 us).
   Cause: the view sets `FI_CXI_RDZV_EAGER_SIZE=0`, `FI_CXI_RDZV_GET_MIN=0`, `FI_CXI_RDZV_THRESHOLD=0` (alps-extended-images NCCL settings; also in v2.9.1), so MPI messages of 256 bytes and more use the rendezvous protocol.
-  Unsetting the three variables in a copy of the job gives 4.4 us at 256 bytes instead of 17 us on the same nodes (job 5444930, `reframe/osu-check/`). Open decision: keep the settings (NCCL) or drop them (small MPI messages).
+  Unsetting the three variables in a copy of the job gives 4.4 us at 256 bytes instead of 17 us on the same nodes (job 5444930, `reframe/osu-check/`).
+  That pair of nodes was in two dragonfly groups (`nid005617` in group19, `nid006348` in group26), which is why 4.4 us is still above the 3.68 us limit of the test: see "Node placement" below.
+  Decision (2026-11-24): keep `FI_CXI_RDZV_*=0` in the view. The OSU uenv tests are changed to use a second set of references when the environment turns the eager protocol off (cscs-reframe-tests branch `osu-uenv-eager-references`, commit 326e8758, not pushed).
+  Only `FI_CXI_RDZV_THRESHOLD=0` and `FI_CXI_RDZV_GET_MIN=0` together turn it off for 256 byte messages; each variable alone, and `FI_CXI_RDZV_EAGER_SIZE=0`, have no effect at that size (jobs 5446410-5446418 and 5446437, `reframe/eager-ref/`).
+  Same-group pairs with the view: `osu_latency` 8.9-10.9 us (host) and 9.6-11.6 us (GPU), `osu_bw` 268-303 MB/s (host) and 226-251 MB/s (GPU) at 256 bytes; with the variables unset 2.7-3.2 us, 3.5-3.9 us, 527-625 MB/s and 384-457 MB/s.
+  With the change, the four OSU uenv tests pass for this image and for `prgenv-gnu/25.11:v1` (`reframe/run-osu-rdzv/`, run with `-J switches=1`).
+- Node placement: the latency between two nodes depends on the dragonfly group of each. Slurm's topology on daint has one "switch" per group (`scontrol show topology`, `group16`-`group27`, about 110 nodes each).
+  `osu_latency` with the eager protocol on, twelve 2-node jobs (5446022-5446033, `reframe/switches/`): 1.9 us or 2.2 us at 8 bytes and 2.7 us or 3.0 us at 256 bytes inside one group, 3.35 us and 4.2 us across two groups.
+  `--switches=1` kept all six jobs that used it in one group; one of six jobs without it spanned two groups.
+  Decision (2026-11-24): `--switches=1` is not added to the tests. A 2-node latency test can therefore fail when its nodes are in two groups: check the node list of a failing run before blaming the image.
   Measured on 4 nodes, 2 interleaved repetitions (job 5445432, `$SCRATCH/torch-uenv/reframe/rdzv-eval/`), all three 0 (view) against all three unset:
   MPI host and GPU latency for 256 B to 16 KiB is 14 us against 4.2-5.5 us, and `osu_bw D D` at 4-16 KiB is 2.3x lower; from 32 KiB there is no difference.
   NCCL all-reduce on 16 GPUs is 37% slower up to 64 KiB (0.55 against 0.88 GB/s at 16 KiB), 15% faster at 256 KiB-1 MiB, 18% faster at 16 MiB (25.6 against 21.6 GB/s) and 13% faster at 64 MiB (86 against 76 GB/s); from 256 MiB, NCCL send-receive from 64 KiB, and the 1 GiB torch.distributed all-reduce are the same.
   Only `FI_CXI_RDZV_EAGER_SIZE=0` (the other two unset) restores the small messages and keeps the 64 MiB gain, but not the 16 MiB one, and is the slowest at 1 MiB (3.8 against 4.7 GB/s).
   The settings are also the CSCS workaround for NCCL hangs and watchdog timeouts (docs.cscs.ch NCCL known issues), which this benchmark cannot evaluate.
 - build_osu_benchmarks (CUDA build) fails to compile: OSU 7.2 calls `cudaMemPrefetchAsync` with the CUDA 12 signature. The four OSU CUDA tests that use it are skipped. A fault of the test with CUDA 13.
+  Fix (2026-11-24, cscs-reframe-tests branch `osu-bump-version`, not committed): the test downloads OSU 7.5.2, the version in the image, and passes the message size as `-m <size>:<size>`, because the 7.5.2 executables crash with a segmentation fault when `-m` has a single value.
+  With it, the CUDA build compiles and all eight tests of `osu_tests.py` pass for this image and for `prgenv-gnu/25.11:v1` (21 of 21 test cases, `reframe/run-osu-752b/`).
 - CXIGPU2GPULoopbackBW: 175.1 Gb/s vs 183.3 Gb/s minimum on nid006022. A test of the node (`cxi_gpu_loopback_bw`) that does not use the image.
 - PyTorchMegatronLM_UENV llama3-8b (16 nodes) and llama3-70b (32 nodes) fail, not resolved:
     - as shipped (Megatron `de14c22`, 2025-03): `ValueError: apply_rope_fusion is not available`; that commit does not work with the Transformer Engine of the image;
