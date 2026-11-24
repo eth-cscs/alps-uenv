@@ -1,0 +1,81 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "cscs/moonshotai/Kimi-K2.7-Code",
+  "provider": {
+    "cscs": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "CSCS Inference",
+      "options": {
+        "baseURL": "https://api.inference.cscs.ch/v1",
+        "systemMessageMode": "system",
+        "apiKey": "{env:CSCS_INFERENCE_API_KEY}"
+      },
+      "models": {
+        "google/gemma-4-31B-it": {
+          "name": "Gemma 4 31B It [CSCS]",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "tool_call": true
+        },
+        "moonshotai/Kimi-K2.7-Code": {
+          "name": "Kimi K2.7 Code [CSCS]",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "tool_call": true
+        },
+        "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16": {
+          "name": "NVIDIA Nemotron 3 Super 120B A12B BF16 [CSCS]",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "tool_call": true
+        },
+        "swiss-ai/Apertus-70B-Instruct-2509": {
+          "name": "Apertus 70B Instruct 2509 [CSCS]",
+          "limit": {
+            "context": 64000,
+            "output": 32000
+          },
+          "tool_call": true
+        },
+        "swiss-ai/Apertus-8B-Instruct-2509": {
+          "name": "Apertus 8B Instruct 2509 [CSCS]",
+          "limit": {
+            "context": 32768,
+            "output": 16384
+          },
+          "tool_call": true
+        },
+        "swiss-ai/Apertus-v1.5-70B": {
+          "name": "Apertus v1.5 70B [CSCS]",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "tool_call": true
+        },
+        "swiss-ai/Apertus-v1.5-8B": {
+          "name": "Apertus v1.5 8B [CSCS]",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "tool_call": true
+        },
+        "zai-org/GLM-5.2": {
+          "name": "GLM 5.2 [CSCS]",
+          "limit": {
+            "context": 976000,
+            "output": 32768
+          },
+          "tool_call": true
+        }
+      }
+    }
+  }
+}

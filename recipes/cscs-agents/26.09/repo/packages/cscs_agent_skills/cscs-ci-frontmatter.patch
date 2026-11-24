@@ -1,0 +1,10 @@
+--- a/skills/cscs-ci/SKILL.md
++++ b/skills/cscs-ci/SKILL.md
+@@ -1,6 +1,6 @@
+ ---
+ name: cscs-ci
+-description: Load when dealing with CSCS CI: checking status, fetching CI logs, triggering pipelines (cscs-ci run), writing CI config, or encountering GitLab mirror URLs.
++description: "Load when dealing with CSCS CI: checking status, fetching CI logs, triggering pipelines (cscs-ci run), writing CI config, or encountering GitLab mirror URLs."
+ ---
+ 
+ ## What CSCS CI is
