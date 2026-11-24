@@ -1,0 +1,105 @@
+diff -ruN a/c/xccl/collective/osu_xccl_allgather.c b/c/xccl/collective/osu_xccl_allgather.c
+--- a/c/xccl/collective/osu_xccl_allgather.c
++++ b/c/xccl/collective/osu_xccl_allgather.c
+@@ -107,7 +107,7 @@
+             t_start = MPI_Wtime();
+             NCCL_CHECK(omb_xccl_interface->ncclAllGather(
+                 sendbuf, recvbuf, size, ncclChar, nccl_comm, nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+ 
+             if (i >= options.skip) {
+diff -ruN a/c/xccl/collective/osu_xccl_allreduce.c b/c/xccl/collective/osu_xccl_allreduce.c
+--- a/c/xccl/collective/osu_xccl_allreduce.c
++++ b/c/xccl/collective/osu_xccl_allreduce.c
+@@ -113,7 +113,7 @@
+             NCCL_CHECK(omb_xccl_interface->ncclAllReduce(
+                 sendbuf, recvbuf, size, ncclFloat, ncclSum, nccl_comm,
+                 nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+ 
+             if (i >= options.skip) {
+diff -ruN a/c/xccl/collective/osu_xccl_alltoall.c b/c/xccl/collective/osu_xccl_alltoall.c
+--- a/c/xccl/collective/osu_xccl_alltoall.c
++++ b/c/xccl/collective/osu_xccl_alltoall.c
+@@ -117,7 +117,7 @@
+             NCCL_CHECK(omb_xccl_interface->ncclAllToAll(
+                 (char *)sendbuf, (char *)recvbuf, size, ncclChar, nccl_comm,
+                 nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+             MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD));
+ 
+diff -ruN a/c/xccl/collective/osu_xccl_bcast.c b/c/xccl/collective/osu_xccl_bcast.c
+--- a/c/xccl/collective/osu_xccl_bcast.c
++++ b/c/xccl/collective/osu_xccl_bcast.c
+@@ -101,7 +101,7 @@
+             t_start = MPI_Wtime();
+             NCCL_CHECK(omb_xccl_interface->ncclBroadcast(
+                 buffer, buffer, size, ncclChar, 0, nccl_comm, nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+ 
+             if (i >= options.skip) {
+diff -ruN a/c/xccl/collective/osu_xccl_reduce.c b/c/xccl/collective/osu_xccl_reduce.c
+--- a/c/xccl/collective/osu_xccl_reduce.c
++++ b/c/xccl/collective/osu_xccl_reduce.c
+@@ -115,7 +115,7 @@
+             NCCL_CHECK(omb_xccl_interface->ncclReduce(sendbuf, recvbuf, size,
+                                                       ncclFloat, ncclSum, 0,
+                                                       nccl_comm, nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+ 
+             if (i >= options.skip) {
+diff -ruN a/c/xccl/collective/osu_xccl_reduce_scatter.c b/c/xccl/collective/osu_xccl_reduce_scatter.c
+--- a/c/xccl/collective/osu_xccl_reduce_scatter.c
++++ b/c/xccl/collective/osu_xccl_reduce_scatter.c
+@@ -122,7 +122,7 @@
+             NCCL_CHECK(omb_xccl_interface->ncclReduceScatter(
+                 sendbuf, recvbuf, recvcount, ncclFloat, ncclSum, nccl_comm,
+                 nccl_stream));
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             t_stop = MPI_Wtime();
+ 
+             if (i >= options.skip) {
+diff -ruN a/c/xccl/pt2pt/osu_xccl_bibw.c b/c/xccl/pt2pt/osu_xccl_bibw.c
+--- a/c/xccl/pt2pt/osu_xccl_bibw.c
++++ b/c/xccl/pt2pt/osu_xccl_bibw.c
+@@ -138,7 +138,7 @@
+                     r_buf, size, ncclChar, peer, nccl_comm, nccl_stream));
+             }
+             omb_xccl_interface->ncclGroupEnd();
+-            omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++            omb_xccl_interface->synchronize_xccl_stream();
+             if (i >= options.skip) {
+                 t_end = MPI_Wtime();
+                 t_total += t_end - t_start;
+diff -ruN a/c/xccl/pt2pt/osu_xccl_bw.c b/c/xccl/pt2pt/osu_xccl_bw.c
+--- a/c/xccl/pt2pt/osu_xccl_bw.c
++++ b/c/xccl/pt2pt/osu_xccl_bw.c
+@@ -135,7 +135,7 @@
+                     NCCL_CHECK(omb_xccl_interface->ncclSend(
+                         s_buf, size, ncclChar, peer, nccl_comm, nccl_stream));
+                 }
+-                omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++                omb_xccl_interface->synchronize_xccl_stream();
+                 NCCL_CHECK(omb_xccl_interface->ncclRecv(
+                     r_buf, 1, ncclChar, peer, nccl_comm, nccl_stream));
+                 if (i >= options.skip) {
+@@ -155,7 +155,7 @@
+                     NCCL_CHECK(omb_xccl_interface->ncclRecv(
+                         r_buf, size, ncclChar, peer, nccl_comm, nccl_stream));
+                 }
+-                omb_xccl_interface->synchronize_xccl_stream(nccl_stream);
++                omb_xccl_interface->synchronize_xccl_stream();
+                 NCCL_CHECK(omb_xccl_interface->ncclSend(
+                     s_buf, 1, ncclChar, peer, nccl_comm, nccl_stream));
+             }
