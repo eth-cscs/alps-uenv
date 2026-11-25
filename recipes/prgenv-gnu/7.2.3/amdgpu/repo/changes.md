@@ -6,7 +6,41 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 `spack-packages` recipes at the commit pinned in `config.yaml`:
 
 - repo: https://github.com/spack/spack-packages.git
-- commit: `236a1bf4c0d3418f050915eea4c815061f3d7e81` (develop, 2026-05-28)
+- commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
+
+The recipe uses the v3 recipe format (Stackinator 7, Spack `releases/v1.2`).
+Each override is the upstream recipe at this commit with the earlier tweaks
+re-applied, the same pin and rebase as the 7.14.0 recipe.
+
+Changed in `environments.yaml`, as in the 7.14.0 recipe:
+
+- `rocprofiler-systems@7.2.3 +internal-dyninst +rocm`: the global `+rocm` in
+  `variants:` is only a preference, and with `~rocm` the build fails.
+- `rccl-tests ... +mpi %cxx=llvm-amdgpu@7.2.3 ^cray-mpich@9.2.1 +rocm %gcc`:
+  same problem with the global `+mpi`, and without the `cray-mpich` constraint
+  a second `cray-mpich@8.1.32` built with `rocmcc` fails to install.
+- `rocblas +tensile`: dropped `^py-msgpack %cxx=gcc`, py-msgpack no longer
+  depends on cxx.
+- `^python@3.12.15`: the only Python 3.12 at the pinned commit.
+
+## amdsmi
+
+- `depends_on("python@3.6:")` → `depends_on("python@3.6:", type=("build", "run"))`.
+- Adds `setup_run_environment()`, prepending `share/amd_smi` to `PYTHONPATH`.
+
+Why: the amdsmi Python module is installed outside site-packages, so only the
+`amd-smi` CLI finds it without this.
+
+## aws_ofi_nccl
+
+- Adds version `1.20.0`.
+- Adds `conflicts` for `+rocm` with `@1.18:1.19` and for `+tests` with `+rocm`.
+- `depends_on("hip", when="+rocm")` → `depends_on("hip +rocm", when="+rocm")`.
+- Adds HSA include and library paths in `setup_build_environment()`, and passes
+  `--without-cuda` for `+rocm` builds.
+
+Why: the 1.18/1.19 tarballs are missing `nccl_ofi_rocm.h`, and without the HSA
+paths configure silently compiles out DMA-BUF support for Spack-built ROCm.
 
 ## composable_kernel
 
@@ -42,16 +76,16 @@ be suppressed to get 7.2.3 to build.
 
 ## libdrm
 
-- Drops `version("2.4.131", ...)`; only `2.4.124` and older remain.
-- (Trivial) local file lacks the trailing newline upstream has — no functional
-  effect.
+- Drops `version("2.4.134", ...)` and `version("2.4.131", ...)`; only
+  `2.4.124` and older remain.
 
-Why: likely 2.4.131 didn't build/resolve correctly for this stack, so it was
-pinned back to the last known-good version (2.4.124).
+Why: `amdsmi@:7.2` needs `libdrm@:2.4.124`
+([ROCm/amdsmi#167](https://github.com/ROCm/amdsmi/issues/167)); upstream now
+says so too. Removing the newer versions keeps a single libdrm in the stack.
 
 ## llvm_amdgpu
 
-- `depends_on("python", type="build")` → `depends_on("python@3.12.13", type="build")`.
+- `depends_on("python", type="build")` → `depends_on("python@3.12.15", type="build")`.
 
 Why: pins the exact Python version used at build time instead of letting
 Spack's concretizer pick one, presumably to match the Python already selected
@@ -63,8 +97,8 @@ pulled in.
 Why: without zstd, `clang-offload-bundler --compress` falls back to zlib, and
 on this stack those bundles fail to decompress (`zlib error: Z_DATA_ERROR`,
 [ROCm/rocm-libraries#6085](https://github.com/ROCm/rocm-libraries/issues/6085)).
-That broke rocblas's Tensile kernels, and is what the rocblas patch
-`0010-disable-tensile-co-compression.patch` works around. comgr gets its
+That broke rocblas's Tensile kernels, and was worked around by disabling
+compression there. comgr gets its
 decompression from these LLVM libraries, so without zstd it also cannot read
 zstd-compressed bundles ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
 
@@ -83,16 +117,25 @@ gfx90a/gfx942 targets this stack builds for.
 - Switches from a PyPI release (`barectf-3.1.2.tar.gz`) to a **git checkout**
   of a specific commit on `master`
   (`e16d289546bb4f6b0d909f79b8d6188eabe32640`, labeled version `3.1.2-fix`).
+- Drops upstream's `fix-pkg-resources.patch`, which covers the same problem.
 - Adds `homepage`/`git` attributes (upstream only has `pypi`).
 - Broadens `depends_on("py-poetry-core", type="build")` to
   `type=("build", "run")`.
-- Adds new runtime/build deps not present upstream: `py-setuptools`,
-  `py-termcolor@1.1:`, `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
+- Adds deps not present upstream: `py-setuptools`, `py-termcolor@1.1:`,
+  `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
 
-Why: the `-fix` version suffix and the pin to a specific unreleased commit
-indicate the 3.1.2 PyPI release had a bug that's fixed on `master` but not yet
-tagged/released; building from source also exposed missing runtime deps that
-the sdist install had been hiding, so they were added explicitly.
+Why: the 3.1.2 release imports `pkg_resources`, which fails on Python 3.12. The
+commit replaces it with `importlib.resources`.
+
+## rocblas
+
+- Adds `offload_bundler_path.patch` (`@7.0:7.1` in `Tensile`, `@7.2:` in
+  `shared/tensile`) and passes `Tensile_OFFLOADBUNDLER`.
+
+Why: points Tensile at the `clang-offload-bundler` from llvm-amdgpu.
+`0010-disable-tensile-co-compression.patch` was removed: with llvm-amdgpu built
+with zstd (see `llvm_amdgpu`), Tensile's compressed code objects are
+zstd-compressed, like those in AMD's own packages.
 
 ## rocprofiler_systems
 

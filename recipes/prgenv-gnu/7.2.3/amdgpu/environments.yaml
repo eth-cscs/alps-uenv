@@ -28,7 +28,7 @@ gcc-env:
   - hipcub
   - llvm-amdgpu
   # rocm packages
-  - rocblas +tensile ^py-msgpack %cxx=gcc
+  - rocblas +tensile
   - rocfft
   - rocm-cmake %cxx=gcc
   - rocm-openmp-extras
@@ -38,7 +38,7 @@ gcc-env:
   - amdsmi
   - rocprofiler-dev
   - rocprofiler-sdk
-  - rocprofiler-systems +internal-dyninst
+  - rocprofiler-systems@7.2.3 +internal-dyninst +rocm
   - rocprofiler-compute
   - rocrand
   - rocsolver
@@ -64,13 +64,13 @@ gcc-env:
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
   - aws-ofi-nccl~cuda
-  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop %cxx=llvm-amdgpu
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop +mpi %cxx=llvm-amdgpu@7.2.3 ^cray-mpich@9.2.1 +rocm %gcc
   variants:
   - +mpi
   - +rocm
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
-  - ^python@3.12.12
+  - ^python@3.12.15
   views:
     default:
       link: roots
