@@ -12,6 +12,15 @@ The recipe uses the v3 recipe format (Stackinator 7, Spack `releases/v1.2`).
 Each override is the upstream recipe at this commit with the earlier tweaks
 re-applied, the same pin and rebase as the 7.14.0 recipe.
 
+Changed in `compilers.yaml`:
+
+- `llvm-amdgpu: spec: "%c,cxx=gcc@13"`. Without it the llvm-amdgpu group is
+  built with the system gcc 12, and `clang++.cfg` sets
+  `--gcc-install-dir=/usr/lib64/gcc/x86_64-suse-linux/12`. With the gcc 12
+  libstdc++ headers, `-x hip` fails to compile `nlohmann/json.hpp`
+  (`cannot convert 'const nlohmann::basic_json<>' to 'value_t'`), which broke
+  miopen-hip. The 7.2.3 recipe on main had the compiler built with gcc 13.
+
 Changed in `environments.yaml`:
 
 - `unify: true` instead of `unify: when_possible` with `duplicates: full`.
