@@ -6,11 +6,11 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 `spack-packages` recipes at the commit pinned in `config.yaml`:
 
 - repo: https://github.com/spack/spack-packages.git
-- commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
+- commit: `988fbd949391fbde8381451c868dd39510aaebf9` (develop, 2026-11-25)
 
 The recipe uses the v3 recipe format (Stackinator 7, Spack `releases/v1.2`).
 Each override is the upstream recipe at this commit with the earlier tweaks
-re-applied, the same pin and rebase as the 7.14.0 recipe.
+re-applied.
 
 Changed in `compilers.yaml`:
 
