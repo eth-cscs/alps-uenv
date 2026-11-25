@@ -346,7 +346,23 @@ The features in `extra/reframe.yaml` select 20 tests; 19 were run (ICON4PyBenchm
   Fix (2026-11-24, cscs-reframe-tests branch `osu-bump-version`, not committed): the test downloads OSU 7.5.2, the version in the image, and passes the message size as `-m <size>:<size>`, because the 7.5.2 executables crash with a segmentation fault when `-m` has a single value.
   With it, the CUDA build compiles and all eight tests of `osu_tests.py` pass for this image and for `prgenv-gnu/25.11:v1` (21 of 21 test cases, `reframe/run-osu-752b/`).
 - CXIGPU2GPULoopbackBW: 175.1 Gb/s vs 183.3 Gb/s minimum on nid006022. A test of the node (`cxi_gpu_loopback_bw`) that does not use the image.
-- PyTorchMegatronLM_UENV llama3-8b (16 nodes) and llama3-70b (32 nodes) fail, not resolved:
-    - as shipped (Megatron `de14c22`, 2025-03): `ValueError: apply_rope_fusion is not available`; that commit does not work with the Transformer Engine of the image;
-    - with `-S megatron_release=c3d83c5a0` (the commit used in the Megatron section above): `TypeError` in `get_train_valid_test_num_samples`, as the test passes no `--eval-interval`;
-    - with `--eval-interval 1000` added to the test (local branch `pytorch-uenv-megatron-update` of cscs-reframe-tests, not committed): llama3-8b stops with CUDA out of memory on 22 of 64 ranks, on GPUs where another process holds about 30 GiB, which suggests that two ranks share a GPU with the launch of the test; llama3-70b (TP 4, PP 8) stops after 13 minutes with `ncclInternalError` and a watchdog timeout in the pipeline-parallel group. The test sets `NCCL_CROSS_NIC=1` and other libfabric variables over those of the view. Neither was investigated further.
+- PyTorchMegatronLM_UENV llama3-8b (16 nodes) and llama3-70b (32 nodes) fail as shipped, for three reasons in the test and in the Megatron fork, not in the image:
+    - the test pins Megatron `de14c22` (2025-03), which stops with `ValueError: apply_rope_fusion is not available` with the Transformer Engine of the image;
+    - a newer commit (`c3d83c5a0`, the one used in the Megatron section above) needs `--eval-interval`, which the test does not pass (`TypeError` in `get_train_valid_test_num_samples`);
+    - the fork deadlocks with TP > 1 (`assistant_mask` broadcast, see the Megatron section), which stops llama3-70b (TP 4, PP 8) with `ncclInternalError` and a watchdog timeout. Fork `main` (`04edde000`) still has the fault.
+- llama3-8b (TP 1, sequence length 8192) fills the GPU: 87 GiB of 95 GiB with the old Megatron on `pytorch/v2.9.1`, about 6 GiB more with `c3d83c5a0` (CUDA out of memory on v2.9.1), and with this image 97 GiB plus 876 GiB of host memory with the 32 data workers per rank of the test, so the kernel kills the job.
+  An earlier note here that two ranks shared a GPU was wrong: there is one process per GPU.
+- Draft fix (2026-11-25, cscs-reframe-tests branch `pytorch-uenv-megatron-update`, not committed): Megatron `c3d83c5a0`, `--eval-interval`, a `sed` that applies the TP fix, 8 data workers per rank and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+  Results at the size of the test (`reframe/run-v8/`, `reframe/run-v291-megatron/`; reference in brackets, the test accepts 10% less):
+
+    | test | image | tokens/s/GPU | TFLOP/s/GPU | result |
+    |------|-------|--------------|-------------|--------|
+    | llama3-70b | this image | 890 (870) | 400 (420) | pass |
+    | llama3-70b | pytorch/v2.9.1:v2 | 885 (870) | 398 (420) | pass |
+    | llama3-8b | this image | 7451 (7600) | 384 (440) | fail on TFLOP |
+    | llama3-8b | pytorch/v2.9.1:v2 | 7428 (7600) | 383 (440) | fail on TFLOP |
+
+  The two images give the same figures, so the llama3-8b failure is not a property of this image.
+  The newer Megatron reports fewer TFLOP for the same tokens per second (old Megatron on v2.9.1: 7762 tokens/s and 450 TFLOP; new: 7772 tokens/s and 401 TFLOP in a run by hand), so the 440 TFLOP reference of llama3-8b is no longer correct for it.
+  Not resolved: the llama3-8b runs under ReFrame were 4% slower than the run by hand (7451 against 7772 tokens/s), and it is not known which of the two memory settings is necessary.
+- nid005669: a 32-node llama3-70b run that included this node stopped on GPU 0 of the node with `CUDA error: an illegal memory access`, with both images (2026-11-24 17:40); without the node both pass. See the node history in `reframe/node-check/`. The runs above exclude the node.

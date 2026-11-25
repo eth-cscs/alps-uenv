@@ -12,11 +12,12 @@ class PyOnnxscript(PythonPackage):
 
     homepage = "https://github.com/microsoft/onnxscript"
     git = "https://github.com/microsoft/onnxscript.git"
-    url = "https://github.com/microsoft/onnxscript/archive/refs/tags/v0.5.6.tar.gz"
+    # PyPI sdist: the GitHub repository (and its tag tarballs) returned 404 on 2026-11-25
+    pypi = "onnxscript/onnxscript-0.5.6.tar.gz"
 
     license("MIT")
 
-    version("0.5.6", sha256="63d2fd27c05dc0f8f483ffc21f239f0c600ad7dc152acdbc2d151e88583f6a91")
+    version("0.5.6", sha256="cc3338b2976daffd2af0bb6ac4866a4dca76aefface1666a0d7bc65ad9850822")
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@70:", type="build")
@@ -27,3 +28,7 @@ class PyOnnxscript(PythonPackage):
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-typing-extensions@4.10:", type=("build", "run"))
     depends_on("py-ml-dtypes", type=("build", "run"))
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Otherwise setup.py appends a ".dev<date>" suffix to the version
+        env.set("ONNX_SCRIPT_RELEASE", "1")
