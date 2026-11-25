@@ -84,6 +84,16 @@ python@3.12.13 to llvm-amdgpu to built it only once`). 3.12.15 is the only
 Python 3.12 at the pinned commit, and matches `^python@3.12.15` in
 `environments.yaml`.
 
+- Adds `depends_on("zstd", type="link")` and sets `LLVM_ENABLE_ZSTD=FORCE_ON`.
+
+Why: without zstd, `clang-offload-bundler --compress` falls back to zlib, and
+on this stack those bundles fail to decompress (`zlib error: Z_DATA_ERROR`,
+[ROCm/rocm-libraries#6085](https://github.com/ROCm/rocm-libraries/issues/6085)).
+composable-kernel compresses its bundles, so MIOpen's CK kernels would not
+load. AMD's own packages compress with zstd. comgr gets its decompression from
+these LLVM libraries, so it needs zstd to read them
+([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
+
 ## miopen_hip
 
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`

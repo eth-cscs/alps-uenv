@@ -119,6 +119,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("python@3.12.15", type="build")
     depends_on("z3", type="link")
     depends_on("zlib-api", type="link")
+    # zstd for compressed offload bundles, see the
+    # LLVM_ENABLE_ZSTD comment in cmake_args
+    depends_on("zstd", type="link")
     depends_on("ncurses+termlib", type="link")
     depends_on("libxml2", type="link")
     depends_on("pkgconfig", type="build")
@@ -345,6 +348,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         args = [
             self.define("LLVM_ENABLE_Z3_SOLVER", "OFF"),
             self.define("LLVM_ENABLE_ZLIB", "ON"),
+            # Without zstd, clang-offload-bundler --compress falls back to zlib,
+            # and those bundles fail to decompress on this stack
+            # (Z_DATA_ERROR, https://github.com/ROCm/rocm-libraries/issues/6085).
+            # comgr also needs zstd to read zstd-compressed bundles
+            # (https://github.com/eth-cscs/alps-uenv/issues/387).
+            self.define("LLVM_ENABLE_ZSTD", "FORCE_ON"),
             self.define("LLVM_ENABLE_BINDINGS", "OFF"),  # prevent OCaml build errors
             self.define("CLANG_DEFAULT_LINKER", "lld"),
             self.define("LIBCXXABI_INSTALL_STATIC_LIBRARY", "OFF"),
