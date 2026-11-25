@@ -1,0 +1,180 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
+
+from spack.package import *
+
+
+def submodules(package):
+    submodules = [
+        "projects/rocprofiler-compute/src/lib/external/googletest",
+        "projects/rocprofiler-compute/src/lib/external/fmt",
+        "projects/rocprofiler-compute/src/lib/external/json",
+    ]
+    return submodules
+
+
+class RocprofilerCompute(ROCmLibrary, CMakePackage):
+    """Advanced Profiling and Analytics for AMD Hardware"""
+
+    homepage = "https://github.com/ROCm/rocm-systems"
+    git = "https://github.com/ROCm/rocm-systems.git"
+
+    tags = ["rocm"]
+    maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["rocprof-compute"]
+
+    license("MIT")
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocprofiler-compute/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
+    version(
+        "7.14.0",
+        tag="therock-7.14",
+        commit="2b22ab0195cc1461cd9abf3b969e9dd7c10af350",
+        submodules=submodules,
+    )
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    version("7.1.1", sha256="cf5d577edc1bed185f9c424868ec42952ccd2f9c2679e6daeb3bc788536cf182")
+    version("7.1.0", sha256="11a65dac6e4099b4f2bb438320ef8206bb130a8a31bba52e90b594cdc235969b")
+    version("7.0.2", sha256="b56ab5c57883e2c3d75b7cc584279eb91157de195722f90c09cad51701ef4650")
+    version("7.0.0", sha256="0ef46ee668b6ee6936911ecd70947abb4e501ced1c4f87d8001a6e35b9781705")
+    version("6.4.3", sha256="d5005322dbfdd0feccd619d8fb6665f8631d74be1d6345be8726eff76829747b")
+    version("6.4.2", sha256="0a0c5cbcc6d54881c58899d2f0db7feaa0d5665bf13e19f0715cb22f54b11187")
+    version("6.4.1", sha256="a48837861dad010516f579ba627b1cf49469c56d74787f7b0883c5198de6e2a7")
+    version("6.4.0", sha256="484a8974ebf973fa00241bf3665eac790b3c317aa36b794cc2998f892b3036fc")
+    version("6.3.3", sha256="0f563874f71b593cbdcdf0eea58b08c7437f1abf807f0886a3a30afa9e7f4953")
+    version("6.3.2", sha256="317f19acfa6e6780923e6c8144c3c223b523c382588df528b6df001fae38d13d")
+
+    depends_on("python@3.8:")
+    depends_on("py-pip", type="run")
+    depends_on("py-astunparse@1.6.2", type=("build", "run"))  # wants exact version
+    depends_on("py-colorlover", type=("build", "run"))
+    depends_on("py-pyyaml")
+    depends_on("py-matplotlib")
+    depends_on("py-pandas@1.4.3:")
+    depends_on("py-numpy@1.17.5:")
+    depends_on("py-pymongo")
+    depends_on("py-tabulate")
+    depends_on("py-tqdm")
+    depends_on("py-kaleido")
+    depends_on("py-plotille")
+    depends_on("py-dash-svg", type=("build", "run"))
+    depends_on("py-dash", type=("build", "run"))
+    depends_on("py-dash@3:", type=("build", "run"), when="@7.0:")
+    depends_on("py-dash-bootstrap-components", type=("build", "run"))
+    depends_on("py-textual", when="@7.0:")
+    depends_on("py-textual-plotext", when="@7.0:")
+    depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
+    depends_on("py-textual-fspicker@0.4.3:", when="@7.1:")
+    # only the 7.13+ sources build against fmt (src/lib/external)
+    depends_on("fmt@12.1", when="@7.13:")
+    # nlohmann-json and googletest are needed for tarball releases that don't include submodules
+    # Version 7.14.0 uses git with submodules, so it doesn't need these
+    depends_on("nlohmann-json", when="@7.13,10:")
+    depends_on("googletest", when="@7.13,10:")
+    for ver in [
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
+    ]:
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
+    ]:
+        depends_on("rocprofiler-sdk", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocprofiler-compute"
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("@:7.0"):
+            env.set("CXX", self.spec["hip"].hipcc)
+        else:
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+
+        if self.spec.satisfies("@7.13,10:"):
+            env.append_flags("CXXFLAGS", f"-I{self.spec['nlohmann-json'].prefix.include}")
+            env.append_flags("CFLAGS", f"-I{self.spec['nlohmann-json'].prefix.include}")
+
+    def cmake_args(self):
+        args = [self.define("ENABLE_TESTS", self.run_tests)]
+        if self.spec.satisfies("@7.13,10:"):
+            args.append(self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"))
+            args.append(self.define("nlohmann_json_DIR", self.spec["nlohmann-json"].prefix))
+        return args
+
+    @run_before("cmake")
+    def before_cmake(self):
+        if self.spec.satisfies("@:7.1"):
+            touch(join_path(self.stage.source_path, "VERSION.sha"))
+
+        # For version 7.2+, create the pyyaml vendored directory structure
+        # to prevent git submodule initialization
+        if self.spec.satisfies("@7.2:"):
+            pyyaml_vendor_path = join_path(
+                self.stage.source_path, "projects/rocprofiler-compute/src/vendored/pyyaml/lib/yaml"
+            )
+            mkdirp(pyyaml_vendor_path)
+            # Create a dummy __init__.py to make it a valid Python package
+            touch(join_path(pyyaml_vendor_path, "__init__.py"))
+
+            # For tarball versions (7.13, 10.0+), create external submodule directories
+            # to replace missing git submodules with system packages
+            # Version 7.14.0 uses git with submodules, so skip it
+            if self.spec.satisfies("@7.13,10:"):
+                external_base = join_path(
+                    self.stage.source_path, "projects/rocprofiler-compute/src/lib/external"
+                )
+
+                # For googletest and fmt, create dummy directories
+                for submod in ["googletest", "fmt"]:
+                    submod_path = join_path(external_base, submod)
+                    mkdirp(submod_path)
+                    touch(join_path(submod_path, "CMakeLists.txt"))
+
+                # For nlohmann_json, create a CMakeLists.txt that sets up an interface library
+                json_path = join_path(external_base, "json")
+                mkdirp(json_path)
+                json_cmake = join_path(json_path, "CMakeLists.txt")
+                with open(json_cmake, "w") as f:
+                    f.write(
+                        """# Wrapper to use system nlohmann_json as header-only
+add_library(nlohmann_json INTERFACE)
+target_include_directories(nlohmann_json INTERFACE {})
+target_compile_features(nlohmann_json INTERFACE cxx_std_11)
+""".format(self.spec["nlohmann-json"].prefix.include)
+                    )

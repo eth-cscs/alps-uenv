@@ -87,7 +87,9 @@ class MiopenHip(ROCmLibrary, CMakePackage):
     # for instance depends_on('boost +filesystem')
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
-    depends_on("boost@1.67.0:1.73.0")
+    depends_on("boost@1.67.0:1.73.0", when="@:7.1")
+    # MIOpen 7.2 builds against boost 1.83 (requirements.txt)
+    depends_on("boost@1.83:", when="@7.2:")
     depends_on("bzip2")
     depends_on("sqlite")
     depends_on("half@1")

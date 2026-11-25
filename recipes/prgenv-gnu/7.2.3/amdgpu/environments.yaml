@@ -2,14 +2,12 @@ gcc-env:
   compiler: [gcc, llvm-amdgpu]
   network:
       mpi: cray-mpich@9.2.1+rocm
-  unify: when_possible
-  duplicates:
-    strategy: full
+  unify: true
   specs:
   - boost@1.88.0 +chrono +filesystem +iostreams ~mpi +python +regex +serialization +shared +system +timer
   - cmake
   - fftw
-  - fmt
+  - fmt@11.1.3
   - gsl
   - hdf5+cxx+hl+fortran
   - netlib-scalapack
@@ -20,7 +18,7 @@ gcc-env:
   - ninja
   - openblas threads=openmp
   - osu-micro-benchmarks ~xccl
-  - python@3
+  - python@3.12
   - zlib-ng
   # add GPU-specific packages here, for easier comparison with mc version
   - hip@7.2.3 ^mesa
@@ -30,21 +28,21 @@ gcc-env:
   # rocm packages
   - rocblas +tensile
   - rocfft
-  - rocm-cmake %cxx=gcc
+  - rocm-cmake
   - rocm-openmp-extras
-  - rocm-core %cxx=gcc
+  - rocm-core
   - rocminfo
   - rocprim
   - amdsmi
   - rocprofiler-dev
-  - rocprofiler-sdk
-  - rocprofiler-systems@7.2.3 +internal-dyninst +rocm
+  - rocprofiler-sdk +internal-fmt
+  - rocprofiler-systems +internal-dyninst +rocm
   - rocprofiler-compute
   - rocrand
   - rocsolver
   - rocsparse
   - rocthrust
-  - roctracer-dev-api %cxx=gcc
+  - roctracer-dev-api
   - roctracer-dev
   - rocm-gdb
   - rocm-debug-agent
@@ -64,13 +62,12 @@ gcc-env:
   - rccl
   # commits pinned for reproducibility, not bugs; update when updating recipe
   - aws-ofi-nccl~cuda
-  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop +mpi %cxx=llvm-amdgpu@7.2.3 ^cray-mpich@9.2.1 +rocm %gcc
+  - rccl-tests@git.6405c76e6826663bbb67bd40aeee8c70aa5d3094=develop +mpi %cxx=llvm-amdgpu@7.2.3
   variants:
   - +mpi
   - +rocm
   - amdgpu_target=gfx942,gfx90a
   - amdgpu_target_sram_ecc=gfx942,gfx90a
-  - ^python@3.12.15
   views:
     default:
       link: roots

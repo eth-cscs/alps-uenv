@@ -12,16 +12,27 @@ The recipe uses the v3 recipe format (Stackinator 7, Spack `releases/v1.2`).
 Each override is the upstream recipe at this commit with the earlier tweaks
 re-applied, the same pin and rebase as the 7.14.0 recipe.
 
-Changed in `environments.yaml`, as in the 7.14.0 recipe:
+Changed in `environments.yaml`:
 
-- `rocprofiler-systems@7.2.3 +internal-dyninst +rocm`: the global `+rocm` in
+- `unify: true` instead of `unify: when_possible` with `duplicates: full`.
+  With `when_possible` the root `hipblaslt` concretized to 10.0.0 and pulled in
+  a second ROCm stack (hip, hsa-rocr-dev, llvm-amdgpu, comgr, ... @10.0.0),
+  while rocblas and miopen-hip silently fell back to `~hipblaslt`. The env
+  now has a single version of every package.
+- `python@3.12`: the `^python@3.12.15` entry under `variants:` had no effect
+  (the env used python 3.14.9).
+- `fmt@11.1.3`: the version rocroller (hipblaslt) 7.2.3 fetches itself.
+- `rocprofiler-sdk +internal-fmt`: rocprofiler-sdk 7.2 needs `fmt@:10`
+  otherwise.
+- `rocprofiler-systems +internal-dyninst +rocm`: the global `+rocm` in
   `variants:` is only a preference, and with `~rocm` the build fails.
-- `rccl-tests ... +mpi %cxx=llvm-amdgpu@7.2.3 ^cray-mpich@9.2.1 +rocm %gcc`:
-  same problem with the global `+mpi`, and without the `cray-mpich` constraint
-  a second `cray-mpich@8.1.32` built with `rocmcc` fails to install.
+- `rccl-tests ... +mpi %cxx=llvm-amdgpu@7.2.3`: same problem with the global
+  `+mpi`. The `^cray-mpich@9.2.1 +rocm %gcc` constraint is not needed with
+  `unify: true`, which allows only one cray-mpich.
+- `rocm-cmake`, `rocm-core`, `roctracer-dev-api`: dropped `%cxx=gcc`, gcc is
+  already preferred. Without it the concretization is the same.
 - `rocblas +tensile`: dropped `^py-msgpack %cxx=gcc`, py-msgpack no longer
   depends on cxx.
-- `^python@3.12.15`: the only Python 3.12 at the pinned commit.
 
 ## amdsmi
 
@@ -61,6 +72,16 @@ recipe: without it the full build for `gfx90a;gfx942` takes far too long. Only
 `miopen-hip` depends on CK, and it needs only `device_conv_operations`, so the
 installed package has no GEMM, MHA, contraction or reduction instances.
 
+## hipblaslt
+
+- `depends_on("spdlog@:1.14", when="@7.1:7.2")` and
+  `depends_on("spdlog", when="@7.13:")` → `depends_on("spdlog", when="@7.1:")`.
+
+Why: `spdlog@:1.14` needs `fmt@:10`, and the same recipe needs `fmt@11.1:`,
+so upstream `hipblaslt@7.2.3` cannot be concretized. The cap was added in
+spack/spack-packages#5309. rocroller 7.2.3 itself fetches fmt 11.1.3 and
+spdlog `v1.x`.
+
 ## hipdnn
 
 - Adds a second patch, `0002-disable-clang-tidy-checks.patch`, applied
@@ -87,10 +108,9 @@ says so too. Removing the newer versions keeps a single libdrm in the stack.
 
 - `depends_on("python", type="build")` → `depends_on("python@3.12.15", type="build")`.
 
-Why: pins the exact Python version used at build time instead of letting
-Spack's concretizer pick one, presumably to match the Python already selected
-elsewhere in this environment and avoid a second/incompatible Python being
-pulled in.
+Why: llvm-amdgpu is built in its own spec group, before the env. Without the
+pin it builds with the newest Python (3.15.1), with the pin it uses the same
+Python as the env. Either way llvm-amdgpu is built only once.
 
 - Adds `depends_on("zstd", type="link")` and sets `LLVM_ENABLE_ZSTD=FORCE_ON`.
 
@@ -103,6 +123,13 @@ decompression from these LLVM libraries, so without zstd it also cannot read
 zstd-compressed bundles ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
 
 ## miopen_hip
+
+- `depends_on("boost@1.67.0:1.73.0")` → only `when="@:7.1"`, and
+  `depends_on("boost@1.83:", when="@7.2:")`.
+
+Why: with `unify: true` the cap conflicts with the root `boost@1.88.0`.
+MIOpen 7.2.3 itself builds against boost 1.83 (`requirements.txt`), and
+only needs `filesystem`, found with `find_package(Boost CONFIG)`.
 
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`
   at the end of `cmake_args()`.
@@ -136,6 +163,14 @@ Why: points Tensile at the `clang-offload-bundler` from llvm-amdgpu.
 `0010-disable-tensile-co-compression.patch` was removed: with llvm-amdgpu built
 with zstd (see `llvm_amdgpu`), Tensile's compressed code objects are
 zstd-compressed, like those in AMD's own packages.
+
+## rocprofiler_compute
+
+- `depends_on("fmt@12.1", when="@7.1:")` → `when="@7.13:"`.
+
+Why: only the 7.13+ sources build against fmt (`src/lib/external`, see
+`patch()`). The 7.2.3 CMake does not use fmt, and the pin conflicts with
+`fmt@11.1.3`.
 
 ## rocprofiler_systems
 
