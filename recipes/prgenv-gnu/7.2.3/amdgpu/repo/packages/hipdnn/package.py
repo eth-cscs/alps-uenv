@@ -55,7 +55,8 @@ class Hipdnn(ROCmLibrary, CMakePackage):
     depends_on("cmake@3.13.4:", type="build")
     depends_on("nlohmann-json")
     depends_on("flatbuffers")
-    depends_on("flatbuffers@25.9.23~shared", when="@7.13:")
+    # sdk/CMakeLists.txt links flatbuffers::flatbuffers, only exported by ~shared
+    depends_on("flatbuffers@25.9.23~shared", when="@7.2:")
     depends_on("spdlog")
     depends_on("googletest")
 
@@ -156,6 +157,9 @@ class Hipdnn(ROCmLibrary, CMakePackage):
             self.define("HIP_DNN_SPDLOG_INCLUDE_DIR", "{0}/include".format(spec["spdlog"].prefix)),
             self.define("HIPDNN_NO_DOWNLOAD", "ON"),
             self.define("HIP_DNN_SKIP_TESTS", not self.run_tests),
+            # the generated flatbuffers headers are shipped; regenerating them
+            # needs the in-tree flatc target, which is absent with spack's flatbuffers
+            self.define("HIP_DNN_GENERATE_SDK_HEADERS", False),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))

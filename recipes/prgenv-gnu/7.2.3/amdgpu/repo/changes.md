@@ -104,6 +104,18 @@ clang-tidy diagnostic fails the build. These three checks were apparently
 firing (likely due to compiler/clang-tidy version differences) and needed to
 be suppressed to get 7.2.3 to build.
 
+- `depends_on("flatbuffers@25.9.23~shared", when="@7.13:")` → `when="@7.2:"`.
+
+Why: 7.2.3's `sdk/CMakeLists.txt` links `flatbuffers::flatbuffers`; a
+`+shared` flatbuffers only exports `flatbuffers::flatbuffers_shared`.
+
+- Passes `HIP_DNN_GENERATE_SDK_HEADERS=OFF`.
+
+Why: with spack's `flatbuffers` found via `find_package`, there is no in-tree
+`flatc` target and `sdk/CMakeLists.txt` fails at
+`set_target_properties(flatc ...)`. The generated `*_generated.h` headers are
+already in the 7.2.3 sources.
+
 ## libdrm
 
 - Drops `version("2.4.134", ...)` and `version("2.4.131", ...)`; only
@@ -163,6 +175,16 @@ gfx90a/gfx942 targets this stack builds for.
 Why: the 3.1.2 release imports `pkg_resources`, which fails on Python 3.12. The
 commit replaces it with `importlib.resources`.
 
+## rccl_tests
+
+- The previous `ROCm/rccl-tests` package (versions `develop`/`master`,
+  unversioned `hip`/`rccl` deps), as in spack-packages 1d20553a.
+
+Why: upstream rewrote it for the `rocm-systems` monorepo with only
+`7.14.0:` versions, and `hip`/`rccl` deps are conditional on those versions.
+The pinned `@git.6405c76e...=develop` commit is from the old repository, and
+with the new package `spec["rccl"]` fails in `cmake_args`.
+
 ## rocblas
 
 - Adds `offload_bundler_path.patch` (`@7.0:7.1` in `Tensile`, `@7.2:` in
@@ -195,6 +217,12 @@ Why: only the 7.13+ sources build against fmt (`src/lib/external`, see
 Why: avoids depending on Spack's external `boost` package (version/variant
 conflicts are a common pain point for Boost in large environments) by letting
 rocprofiler-systems build its own internal Boost by default.
+
+- `flag_handler` adds `-lintl` for `@6.3:7.2` (upstream: `@6.3:7.1`).
+
+Why: the bundled binutils (`libbfd.a`) is configured against spack's gettext
+and references `libintl_*`; linking `rocprof-sys-run` etc. fails with
+"DSO missing from command line" otherwise.
 
 ## zstd
 
