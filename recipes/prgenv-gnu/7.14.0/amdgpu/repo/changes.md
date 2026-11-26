@@ -6,22 +6,43 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 `spack-packages` recipes at the commit pinned in `config.yaml`:
 
 - repo: https://github.com/spack/spack-packages.git
-- commit: `1d20553aa70019bb6c46cfecc5d7b6bf1e0dc5d3` (develop, 2026-10-31)
+- commit: `988fbd949391fbde8381451c868dd39510aaebf9` (develop, 2026-11-25)
 
-Each override is the upstream recipe at this commit with the tweaks from the
-7.2.3 recipe re-applied, plus the overrides marked "new in 7.14.0". The recipe
-builds completely: the CI build passes on `fc0e50d` for `gfx90a` and `gfx942`.
-In the CI tests, 52 of 56 pass. `RocHPL_medium`, `RocHPL_large` and the
-`rccl-tests` `all_reduce` and `sendrecv` tests still fail, cause unknown.
+The pin, the recipe settings and the overrides follow the v3 recipe of
+prgenv-gnu 7.2.3 (#391). The overrides shared with 7.2.3 are copied from that
+recipe, which rebased them on this commit; their 7.2-only tweaks have no
+effect here. The overrides marked "new in 7.14.0" are specific to this recipe.
+
+On the previous pin (`1d20553`, `unify: when_possible`), the CI build passed on
+`fc0e50d` for `gfx90a` and `gfx942`, and 52 of 56 CI tests passed.
+`RocHPL_medium`, `RocHPL_large` and the `rccl-tests` `all_reduce` and
+`sendrecv` tests failed, cause unknown. The current state is not yet built.
+
+Changed in `compilers.yaml`:
+
+- `llvm-amdgpu: spec: "%c,cxx=gcc@13"`. Without it the llvm-amdgpu group is
+  built with the system gcc 12, and its `clang++.cfg` points HIP compiles at
+  the gcc 12 libstdc++. On 7.2.3 this broke miopen-hip on `nlohmann/json.hpp`.
+  Stackinator compiler groups get only `needs: [gcc]`, so they don't inherit
+  the gcc 13 preference.
 
 Overrides from 7.2.3 that were dropped:
 
 - `composable_kernel`: installed a pre-built 7.2.3 binary. It now builds from
   source, see the `composable_kernel` section below.
 - `hipdnn`: its only tweak was a patch for `@7.2.3`. Upstream disables
-  clang-tidy for `@7.13.0:`.
+  clang-tidy for `@7.13.0:`. The 7.2.3 recipe has a new `hipdnn` override, but
+  upstream already uses `flatbuffers~shared` for `@7.13:`, and the 7.14 build
+  passed without `HIP_DNN_GENERATE_SDK_HEADERS=OFF`.
 - `libdrm`: capped the version at 2.4.124, but upstream `amdsmi@7.13:` requires
   `libdrm@2.4.131:`.
+
+Overrides in the 7.2.3 recipe that are not used here:
+
+- `hipblaslt`: drops `spdlog@:1.14` for `@7.1:7.2` only.
+- `rccl_tests`: restores the old `ROCm/rccl-tests` package because upstream
+  now has only rocm-systems versions from 7.14.0 on. This recipe uses upstream
+  `rccl-tests@7.14.0` instead of the `git.6405c76...=develop` commit.
 
 Removed from `environments.yaml`:
 
@@ -31,19 +52,28 @@ Removed from `environments.yaml`:
 
 Changed in `environments.yaml`:
 
-- `rocprofiler-systems@7.14.0 +internal-dyninst +rocm`: the global `+rocm` in
+- `unify: true` instead of `unify: when_possible` with `duplicates: full`, as
+  in 7.2.3. There, `when_possible` pulled in a second ROCm stack and silently
+  dropped hipblaslt from rocblas and miopen-hip. With `unify: true` every
+  package has one version, and `hip@7.14.0` pins the whole ROCm stack, so
+  `rocprofiler-systems` no longer needs `@7.14.0`.
+- `python@3.12` as a root spec: the `^python@3.12.15` entry under `variants:`
+  had no effect on 7.2.3 (the env used python 3.14).
+- `fmt@12.1`: `rocprofiler-compute@7.13:` requires exactly this version, so
+  with `unify: true` it is the only possible one. It also fits
+  `rocprofiler-sdk@7.14:` (`fmt@:12.1`) and `hipblaslt` (`fmt@11.1:`), so
+  `rocprofiler-sdk` does not need `+internal-fmt` as on 7.2.3.
+- `rocprofiler-systems +internal-dyninst +rocm`: the global `+rocm` in
   `variants:` is only a preference, and the solver picked `~rocm`, which drops
-  the `rocprofiler-sdk` dependency, so the build failed. `@7.14.0` keeps it on
-  the ROCm release. Upstream `10.0.0` also declares the dependency, so the
-  version was not the cause (commit `a280001` says otherwise).
-- `rccl-tests ... +mpi`: same problem with the global `+mpi`. With `~mpi` each
-  Slurm task ran as its own rank 0 and reported bogus bandwidths.
-- `rccl-tests ... ^cray-mpich@9.2.1 +rocm %gcc`: without it, `+mpi` adds a
-  second `cray-mpich@8.1.32` built with `rocmcc`, which fails to install
-  ("Unsupported toolchain"). `%c,cxx,fortran=gcc` does not concretize, while
-  `%gcc` does and gives `%fortran=gcc`. This still installs a second
-  `cray-mpich@9.2.1` prefix (`%fortran=gcc %c,cxx=rocmcc`), used only by
-  `rccl-tests`.
+  the `rocprofiler-sdk` dependency, so the build failed.
+- `rccl-tests +mpi`: same problem with the global `+mpi`. With `~mpi` each
+  Slurm task ran as its own rank 0 and reported bogus bandwidths. The upstream
+  package requires `%cxx=llvm-amdgpu`, and `unify: true` allows only one
+  cray-mpich, so the earlier `%cxx=llvm-amdgpu@7.14.0 ^cray-mpich@9.2.1 +rocm
+  %gcc` is dropped. With `when_possible` that constraint was needed to avoid a
+  second `cray-mpich@8.1.32` built with `rocmcc`.
+- `rocm-cmake`, `rocm-core`, `roctracer-dev-api`: dropped `%cxx=gcc`, gcc is
+  already preferred.
 
 ## amdsmi
 
@@ -96,6 +126,13 @@ these LLVM libraries, so it needs zstd to read them
 
 ## miopen_hip
 
+- `depends_on("boost@1.67.0:1.73.0")` → only `when="@:7.1"`, and
+  `depends_on("boost@1.83:", when="@7.2:")`.
+
+Why: with `unify: true` the cap conflicts with the root `boost@1.88.0`.
+MIOpen 7.2 builds against boost 1.83 (`requirements.txt`). Upstream lifts the
+cap only for `@10.1:`.
+
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`
   at the end of `cmake_args()`.
 
@@ -121,12 +158,11 @@ commit replaces it with `importlib.resources`.
 
 - Adds `offload_bundler_path.patch` (`@7.0:7.1` in `Tensile`, `@7.2:` in
   `shared/tensile`) and passes `Tensile_OFFLOADBUNDLER`.
-- Adds `0010-disable-tensile-co-compression.patch` for `@7.2: +tensile`.
 
-Why: the first patch points Tensile at the `clang-offload-bundler` from
-llvm-amdgpu. The commit that added the second records no reason. Both apply to
-the `therock-7.14` sources, the second with an offset and fuzz, and rocblas
-builds with both.
+Why: points Tensile at the `clang-offload-bundler` from llvm-amdgpu.
+`0010-disable-tensile-co-compression.patch` was removed, as in 7.2.3: with
+llvm-amdgpu built with zstd (see `llvm_amdgpu`), Tensile's code objects are
+zstd-compressed, like those in AMD's own packages.
 
 ## rocprofiler_compute (new in 7.14.0)
 
@@ -146,7 +182,8 @@ picks up the older SDK in `/opt/rocm` on the build node, which lacks
 - When `+internal-boost`, passes
   `self.define_from_variant("ROCPROFSYS_BUILD_BOOST", "internal-boost")` to
   CMake.
-- (Trivial) local file lacks the trailing newline upstream has.
+- `-lintl` for `@6.3:7.2` instead of `@6.3:7.1` (from 7.2.3; 7.14 is covered
+  upstream by `@7.14:`).
 
 Why: avoids Spack's `boost` for this package. `ROCPROFSYS_BUILD_BOOST` was not
 found in the rocprofiler-systems CMake files checked at `therock-7.14`, so this
