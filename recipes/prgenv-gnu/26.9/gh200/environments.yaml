@@ -54,3 +54,4 @@ gcc-env:
           - NVSHMEM_REMOTE_TRANSPORT: "libfabric"
           - NVSHMEM_LIBFABRIC_PROVIDER: "cxi"
           - NVSHMEM_DISABLE_CUDA_VMM: "1"
+          - NVSHMEM_BOOTSTRAP: "mpi"

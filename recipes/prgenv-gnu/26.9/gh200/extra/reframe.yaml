@@ -5,6 +5,7 @@ default:
     - cray-mpich
     - nccl
     - nccl-tests
+    - nvshmem
     - openmp
     - osu-micro-benchmarks
     - prgenv
