@@ -16,7 +16,26 @@ effect here. The overrides marked "new in 7.14.0" are specific to this recipe.
 On the previous pin (`1d20553`, `unify: when_possible`), the CI build passed on
 `fc0e50d` for `gfx90a` and `gfx942`, and 52 of 56 CI tests passed.
 `RocHPL_medium`, `RocHPL_large` and the `rccl-tests` `all_reduce` and
-`sendrecv` tests failed, cause unknown. The current state is not yet built.
+`sendrecv` tests failed, cause unknown.
+
+`8596d30` built locally on beverin (2026-11-26): 381 specs, one
+`llvm-amdgpu@7.14.0`, and a 7.6 GB image. In the default view `hipcc`
+(HIP 7.14, AMD clang 23), `mpicc` and `all_reduce_perf` run, and `rocminfo`
+sees the gfx90a GPU. The CI tests have not run on it yet.
+
+Added `packages.yaml`:
+
+- `openssl: require: ["certs=system"]`. Without it the gcc-env group picks
+  `certs=system`, and the llvm-amdgpu compiler group keeps the default
+  `certs=mozilla`. Every python and cmake above openssl then differs, so
+  gcc-env builds its own second `llvm-amdgpu`. Upstream `rccl-tests` requires
+  `%cxx=llvm-amdgpu`, and a compiler has to be concrete, i.e. the group's
+  copy. With `unify: true` gcc-env can hold only one `llvm-amdgpu`, so
+  concretization fails with *"Only external, or concrete, compilers are
+  allowed for the cxx language"*. Requiring `certs=mozilla` instead also
+  fails: something in gcc-env forces `certs=system`, and what is not known.
+  To debug a split like this, compare the two `llvm-amdgpu` hashes in
+  `spack.lock` and diff their dependency trees.
 
 Changed in `compilers.yaml`:
 
@@ -141,9 +160,15 @@ Why: upstream does not forward the `amdgpu_target` variant to CMake's
 
 ## py_barectf
 
-- Switches from a PyPI release (`barectf-3.1.2.tar.gz`) to a **git checkout**
-  of a specific commit on `master`
+- Switches from a PyPI release (`barectf-3.1.2.tar.gz`) to the GitHub
+  archive of a specific commit on `master`
   (`e16d289546bb4f6b0d909f79b8d6188eabe32640`, labeled version `3.1.2-fix`).
+  It is an archive (`url` + `sha256`), not a git checkout as in 7.2.3:
+  py-poetry-core's `setup_dependent_build_environment` sets `GIT_DIR` to the
+  dependent's stage, and Spack 1.2 fetches inside that environment, so
+  `git -C py-barectf checkout <commit>` fails with status 128 during `make`.
+  A git version worked only when fetched beforehand with
+  `spack -e env fetch /<hash>`.
 - Drops upstream's `fix-pkg-resources.patch`, which covers the same problem.
 - Adds `homepage`/`git` attributes (upstream only has `pypi`).
 - Broadens `depends_on("py-poetry-core", type="build")` to
