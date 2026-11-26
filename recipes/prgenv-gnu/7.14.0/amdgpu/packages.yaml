@@ -1,0 +1,6 @@
+packages:
+  # the gcc-env group picks certs=system, while the llvm-amdgpu compiler group
+  # keeps the default certs=mozilla. The two llvm-amdgpu then differ, and with
+  # unify: true rccl-tests (which requires %cxx=llvm-amdgpu) cannot concretize
+  openssl:
+    require: ["certs=system"]

@@ -1,0 +1,7 @@
+gcc:
+  version: "13"
+llvm-amdgpu:
+  version: "7.14.0"
+  # without this llvm-amdgpu is built with the system gcc 12, and its
+  # clang++.cfg points --gcc-install-dir at gcc 12
+  spec: "%c,cxx=gcc@13"
