@@ -6,37 +6,90 @@ Comparison of `repo/packages/*/package.py` in this recipe against the upstream
 `spack-packages` recipes at the commit pinned in `config.yaml`:
 
 - repo: https://github.com/spack/spack-packages.git
-- commit: `236a1bf4c0d3418f050915eea4c815061f3d7e81` (develop, 2026-05-28)
+- commit: `988fbd949391fbde8381451c868dd39510aaebf9` (develop, 2026-11-25)
+
+The recipe uses the v3 recipe format (Stackinator 7, Spack `releases/v1.2`).
+Each override is the upstream recipe at this commit with the earlier tweaks
+re-applied.
+
+Changed in `compilers.yaml`:
+
+- `llvm-amdgpu: spec: "%c,cxx=gcc@13"`. Without it the llvm-amdgpu group is
+  built with the system gcc 12, and `clang++.cfg` sets
+  `--gcc-install-dir=/usr/lib64/gcc/x86_64-suse-linux/12`. With the gcc 12
+  libstdc++ headers, `-x hip` fails to compile `nlohmann/json.hpp`
+  (`cannot convert 'const nlohmann::basic_json<>' to 'value_t'`), which broke
+  miopen-hip. The 7.2.3 recipe on main had the compiler built with gcc 13.
+
+Changed in `environments.yaml`:
+
+- `unify: true` instead of `unify: when_possible` with `duplicates: full`.
+  With `when_possible` the root `hipblaslt` concretized to 10.0.0 and pulled in
+  a second ROCm stack (hip, hsa-rocr-dev, llvm-amdgpu, comgr, ... @10.0.0),
+  while rocblas and miopen-hip silently fell back to `~hipblaslt`. The env
+  now has a single version of every package.
+- `python@3.12`: the `^python@3.12.15` entry under `variants:` had no effect
+  (the env used python 3.14.9).
+- `fmt@11.1.3`: the version rocroller (hipblaslt) 7.2.3 fetches itself.
+- `rocprofiler-sdk +internal-fmt`: rocprofiler-sdk 7.2 needs `fmt@:10`
+  otherwise.
+- `rocprofiler-systems +internal-dyninst +rocm`: the global `+rocm` in
+  `variants:` is only a preference, and with `~rocm` the build fails.
+- `rccl-tests ... +mpi %cxx=llvm-amdgpu@7.2.3`: same problem with the global
+  `+mpi`. The `^cray-mpich@9.2.1 +rocm %gcc` constraint is not needed with
+  `unify: true`, which allows only one cray-mpich.
+- `rocm-cmake`, `rocm-core`, `roctracer-dev-api`: dropped `%cxx=gcc`, gcc is
+  already preferred. Without it the concretization is the same.
+- `rocblas +tensile`: dropped `^py-msgpack %cxx=gcc`, py-msgpack no longer
+  depends on cxx.
+
+## amdsmi
+
+- `depends_on("python@3.6:")` → `depends_on("python@3.6:", type=("build", "run"))`.
+- Adds `setup_run_environment()`, prepending `share/amd_smi` to `PYTHONPATH`.
+
+Why: the amdsmi Python module is installed outside site-packages, so only the
+`amd-smi` CLI finds it without this.
+
+## aws_ofi_nccl
+
+- Adds version `1.20.0`.
+- Adds `conflicts` for `+rocm` with `@1.18:1.19` and for `+tests` with `+rocm`.
+- `depends_on("hip", when="+rocm")` → `depends_on("hip +rocm", when="+rocm")`.
+- Adds HSA include and library paths in `setup_build_environment()`, and passes
+  `--without-cuda` for `+rocm` builds.
+
+Why: the 1.18/1.19 tarballs are missing `nccl_ofi_rocm.h`, and without the HSA
+paths configure silently compiles out DMA-BUF support for Spack-built ROCm.
 
 ## composable_kernel
 
-Completely rewritten, not just patched. Upstream builds composable_kernel
-from source as a `CMakePackage`/`ROCmLibrary` (with dozens of versions and a
-large kernel-instantiation build). The local recipe instead:
+- Subclasses the builtin package and builds from source. Sets
+  `MIOPEN_REQ_LIBS_ONLY=ON` and `CK_PARALLEL_COMPILE_JOBS=24`.
 
-- Switches the base class to `Package` (generic) and installs a **pre-built
-  binary tarball** (`file:///capstor/scratch/cscs/simonpi/binary-packages/
-  composable-kernel-7.2.3-1-x86_64.pkg.tar.gz`) via `install_tree("opt/rocm",
-  prefix)` instead of compiling.
-- Only version `7.2.3` is defined (all older upstream versions dropped).
-- `amdgpu_targets` is now a hardcoded tuple (copied from `ROCmPackage`) instead
-  of referencing `ROCmPackage.amdgpu_targets`, since the package no longer
-  inherits from `ROCmPackage`.
-- Still declares `depends_on("hip+rocm@7.2.3")` / `depends_on("llvm-amdgpu@7.2.3")`
-  for consistency with dependents, even though nothing is actually compiled.
-- All CMake args, `root_cmakelists_dir`, `setup_build_environment`, and the
-  `0001-mark-kernels-maybe-unused.patch` are gone (no longer relevant to a
-  binary install).
+Why: this recipe used to install a prebuilt 7.2.3 package taken from Arch
+Linux. Its code-object bundles are zstd-compressed, but `llvm-amdgpu` (and
+therefore `comgr`) is built without zstd. MIOpen links these bundles
+statically, so the first CK convolution kernel fails to unbundle and the
+process segfaults ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
+Building with the stack's own toolchain fixes this. Offload compression stays
+on: without it the fat binaries push `libMIOpen.so` past 2 GiB and its link
+fails with `relocation R_X86_64_PC32 out of range` against the static
+`librockCompiler.a`. This needs `llvm-amdgpu` built with zstd (see below), since
+the bundler's zlib fallback produces bundles that fail to decompress. `MIOPEN_REQ_LIBS_ONLY` is taken from the 7.14.0
+recipe: without it the full build for `gfx90a;gfx942` takes far too long. Only
+`miopen-hip` depends on CK, and it needs only `device_conv_operations`, so the
+installed package has no GEMM, MHA, contraction or reduction instances.
 
-Why: git history on this directory (`use binary package for composable-kernel`,
-plus several earlier "Trying to fix amdgpu_targets" / patch commits) shows the
-from-source build was repeatedly broken/unworkable for the full multi-arch
-target set, so it was replaced with a binary package built out-of-band and
-installed verbatim. The untracked `package_orig.py` left in the directory is
-the last from-source attempt before that switch (it only differs from
-upstream by one extra patch, `0002-multi-gpu-arch.patch`, applied to
-`projects/composablekernel` for `@7.2.3` — that patch file no longer exists in
-the repo).
+## hipblaslt
+
+- `depends_on("spdlog@:1.14", when="@7.1:7.2")` and
+  `depends_on("spdlog", when="@7.13:")` → `depends_on("spdlog", when="@7.1:")`.
+
+Why: `spdlog@:1.14` needs `fmt@:10`, and the same recipe needs `fmt@11.1:`,
+so upstream `hipblaslt@7.2.3` cannot be concretized. The cap was added in
+spack/spack-packages#5309. rocroller 7.2.3 itself fetches fmt 11.1.3 and
+spdlog `v1.x`.
 
 ## hipdnn
 
@@ -51,25 +104,53 @@ clang-tidy diagnostic fails the build. These three checks were apparently
 firing (likely due to compiler/clang-tidy version differences) and needed to
 be suppressed to get 7.2.3 to build.
 
+- `depends_on("flatbuffers@25.9.23~shared", when="@7.13:")` → `when="@7.2:"`.
+
+Why: 7.2.3's `sdk/CMakeLists.txt` links `flatbuffers::flatbuffers`; a
+`+shared` flatbuffers only exports `flatbuffers::flatbuffers_shared`.
+
+- Passes `HIP_DNN_GENERATE_SDK_HEADERS=OFF`.
+
+Why: with spack's `flatbuffers` found via `find_package`, there is no in-tree
+`flatc` target and `sdk/CMakeLists.txt` fails at
+`set_target_properties(flatc ...)`. The generated `*_generated.h` headers are
+already in the 7.2.3 sources.
+
 ## libdrm
 
-- Drops `version("2.4.131", ...)`; only `2.4.124` and older remain.
-- (Trivial) local file lacks the trailing newline upstream has — no functional
-  effect.
+- Drops `version("2.4.134", ...)` and `version("2.4.131", ...)`; only
+  `2.4.124` and older remain.
 
-Why: likely 2.4.131 didn't build/resolve correctly for this stack, so it was
-pinned back to the last known-good version (2.4.124).
+Why: `amdsmi@:7.2` needs `libdrm@:2.4.124`
+([ROCm/amdsmi#167](https://github.com/ROCm/amdsmi/issues/167)); upstream now
+says so too. Removing the newer versions keeps a single libdrm in the stack.
 
 ## llvm_amdgpu
 
-- `depends_on("python", type="build")` → `depends_on("python@3.12.13", type="build")`.
+- `depends_on("python", type="build")` → `depends_on("python@3.12.15", type="build")`.
 
-Why: pins the exact Python version used at build time instead of letting
-Spack's concretizer pick one, presumably to match the Python already selected
-elsewhere in this environment and avoid a second/incompatible Python being
-pulled in.
+Why: llvm-amdgpu is built in its own spec group, before the env. Without the
+pin it builds with the newest Python (3.15.1), with the pin it uses the same
+Python as the env. Either way llvm-amdgpu is built only once.
+
+- Adds `depends_on("zstd", type="link")` and sets `LLVM_ENABLE_ZSTD=FORCE_ON`.
+
+Why: without zstd, `clang-offload-bundler --compress` falls back to zlib, and
+on this stack those bundles fail to decompress (`zlib error: Z_DATA_ERROR`,
+[ROCm/rocm-libraries#6085](https://github.com/ROCm/rocm-libraries/issues/6085)).
+That broke rocblas's Tensile kernels, and was worked around by disabling
+compression there. comgr gets its
+decompression from these LLVM libraries, so without zstd it also cannot read
+zstd-compressed bundles ([#387](https://github.com/eth-cscs/alps-uenv/issues/387)).
 
 ## miopen_hip
+
+- `depends_on("boost@1.67.0:1.73.0")` → only `when="@:7.1"`, and
+  `depends_on("boost@1.83:", when="@7.2:")`.
+
+Why: with `unify: true` the cap conflicts with the root `boost@1.88.0`.
+MIOpen 7.2.3 itself builds against boost 1.83 (`requirements.txt`), and
+only needs `filesystem`, found with `find_package(Boost CONFIG)`.
 
 - Adds `args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))`
   at the end of `cmake_args()`.
@@ -84,16 +165,43 @@ gfx90a/gfx942 targets this stack builds for.
 - Switches from a PyPI release (`barectf-3.1.2.tar.gz`) to a **git checkout**
   of a specific commit on `master`
   (`e16d289546bb4f6b0d909f79b8d6188eabe32640`, labeled version `3.1.2-fix`).
+- Drops upstream's `fix-pkg-resources.patch`, which covers the same problem.
 - Adds `homepage`/`git` attributes (upstream only has `pypi`).
 - Broadens `depends_on("py-poetry-core", type="build")` to
   `type=("build", "run")`.
-- Adds new runtime/build deps not present upstream: `py-setuptools`,
-  `py-termcolor@1.1:`, `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
+- Adds deps not present upstream: `py-setuptools`, `py-termcolor@1.1:`,
+  `py-pyyaml@6.0:`, `py-jsonschema@3.2:`, `py-jinja2@3.0:`.
 
-Why: the `-fix` version suffix and the pin to a specific unreleased commit
-indicate the 3.1.2 PyPI release had a bug that's fixed on `master` but not yet
-tagged/released; building from source also exposed missing runtime deps that
-the sdist install had been hiding, so they were added explicitly.
+Why: the 3.1.2 release imports `pkg_resources`, which fails on Python 3.12. The
+commit replaces it with `importlib.resources`.
+
+## rccl_tests
+
+- The previous `ROCm/rccl-tests` package (versions `develop`/`master`,
+  unversioned `hip`/`rccl` deps), as in spack-packages 1d20553a.
+
+Why: upstream rewrote it for the `rocm-systems` monorepo with only
+`7.14.0:` versions, and `hip`/`rccl` deps are conditional on those versions.
+The pinned `@git.6405c76e...=develop` commit is from the old repository, and
+with the new package `spec["rccl"]` fails in `cmake_args`.
+
+## rocblas
+
+- Adds `offload_bundler_path.patch` (`@7.0:7.1` in `Tensile`, `@7.2:` in
+  `shared/tensile`) and passes `Tensile_OFFLOADBUNDLER`.
+
+Why: points Tensile at the `clang-offload-bundler` from llvm-amdgpu.
+`0010-disable-tensile-co-compression.patch` was removed: with llvm-amdgpu built
+with zstd (see `llvm_amdgpu`), Tensile's compressed code objects are
+zstd-compressed, like those in AMD's own packages.
+
+## rocprofiler_compute
+
+- `depends_on("fmt@12.1", when="@7.1:")` → `when="@7.13:"`.
+
+Why: only the 7.13+ sources build against fmt (`src/lib/external`, see
+`patch()`). The 7.2.3 CMake does not use fmt, and the pin conflicts with
+`fmt@11.1.3`.
 
 ## rocprofiler_systems
 
@@ -109,6 +217,12 @@ the sdist install had been hiding, so they were added explicitly.
 Why: avoids depending on Spack's external `boost` package (version/variant
 conflicts are a common pain point for Boost in large environments) by letting
 rocprofiler-systems build its own internal Boost by default.
+
+- `flag_handler` adds `-lintl` for `@6.3:7.2` (upstream: `@6.3:7.1`).
+
+Why: the bundled binutils (`libbfd.a`) is configured against spack's gettext
+and references `libintl_*`; linking `rocprof-sys-run` etc. fails with
+"DSO missing from command line" otherwise.
 
 ## zstd
 
