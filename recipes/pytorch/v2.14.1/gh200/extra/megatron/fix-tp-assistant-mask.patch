@@ -1,0 +1,18 @@
+diff --git a/megatron/training/utils.py b/megatron/training/utils.py
+index 0a41f6467..3e434a5dd 100644
+--- a/megatron/training/utils.py
++++ b/megatron/training/utils.py
+@@ -547,8 +547,12 @@ def get_batch_on_this_tp_rank(data_iterator):
+                 else data["attention_mask"].cuda(non_blocking=True)
+             ),
+             'position_ids': data["position_ids"].cuda(non_blocking=True),
++            # Only broadcast assistant_mask when the other TP ranks expect it (they allocate a
++            # receive buffer only with --ap-sft). The GPT dataset also returns it for plain
++            # pretraining; broadcasting it then deadlocks TP>1 (rank 0 issues one extra
++            # broadcast while the other TP ranks move on to the next collective).
+             'assistant_mask': (
+-                None if "assistant_mask" not in data
++                None if (not args.ap_sft or "assistant_mask" not in data)
+                 else data["assistant_mask"].float().cuda(non_blocking=True)
+             ),
+         }

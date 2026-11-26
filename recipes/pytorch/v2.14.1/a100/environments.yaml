@@ -1,0 +1,223 @@
+pytorch-env:
+  compiler: [gcc]
+  network:
+    mpi: cray-mpich@9.1.0 +cuda
+    specs:
+    # network stack: versions follow the Alps NGC 26.07 container (alps-extended-images)
+    - libfabric@2.6.0 +gdrcopy +uring fabrics=cxi,rxm,tcp,udp,lnx
+    - xpmem@2.9.6 ~kernel-module
+  unify: true
+  specs:
+  # --- CUDA toolkit and libraries (versions from NGC pytorch 26.07)
+  - cuda@13.3.1
+  - cudnn@9.24.0.43-13
+  - cusparselt@0.9.1-13
+  - cublasmp@0.9.1.3056
+  - cutensor
+  - cutlass
+  - nvidia-mathdx
+  - magma ~ipo
+  # --- network stack, built with spack (versions from the Alps 26.07 container)
+  - nccl@2.30.7-1
+  - nccl-tests@2.18.2
+  - aws-ofi-nccl@1.20.0
+  - nvshmem@3.6.5-0 ~ucx +nccl +gdrcopy +libfabric +mpi ~python +gpu_initiated_support
+  - gdrcopy@2.5.1
+  # ucx/ucc (in pytorch/v2.9.1 and the Alps container) are not included: nothing in this
+  # stack uses them (py-torch ~ucc, nvshmem ~ucx), and UCX has no Slingshot transport.
+  - osu-micro-benchmarks@7.5.2
+  - rdma-core-mock ~ipo
+  # --- general purpose libraries and tools (kept from pytorch/v2.9.1)
+  - boost +chrono +filesystem +iostreams +mpi +python +regex +serialization +shared +system +timer
+  - cmake
+  - ninja
+  - meson
+  - fftw
+  - fmt
+  - gsl
+  - hdf5 +cxx +hl +fortran
+  - netcdf-c
+  - netcdf-cxx
+  - netcdf-fortran
+  - lua
+  - libtree
+  - lz4
+  - zlib-ng
+  - openblas threads=openmp
+  - papi
+  - libunwind +pic ~tests components=coredump,ptrace,setjmp +xz +zlib
+  - hydra
+  - swig
+  - libaio
+  - xcb-util-cursor
+  - dynolog +use-prometheus +with-unwind +with-gflags
+  - faiss +python
+  # packages which don't compile with +ipo
+  - libjpeg-turbo ~ipo
+  - libpng ~ipo
+  - protobuf ~ipo
+  # squashfs is needed to create the image: list it explicitly so that `cleanup: runtime`
+  # does not garbage collect it (it is excluded from the view below)
+  - squashfs
+  # --- python and the torch stack
+  - python@3.12
+  - python-venv
+  - py-pip
+  # +fbgemm: x86 CPU quantization kernels (the gh200 recipe is ~fbgemm, which fails to link on aarch64)
+  # ~mkldnn: spack's py-torch adds a dependency on mkl for +mkldnn; kept off as in gh200
+  - py-torch@2.14.1 +caffe2 +cudnn +cusparselt +custom-protobuf +distributed +flash_attention +gloo +kineto +magma ~mkldnn +fbgemm +nccl +xnnpack +numpy +numa +openmp +qnnpack +tensorpipe +valgrind
+  - py-triton@3.8.0
+  - py-triton-kernels@3.8.0
+  - py-torchvision@0.29.1
+  # --- NVIDIA / torch ecosystem from NGC 26.07 (custom packages in repo/)
+  - py-transformer-engine@2.17
+  - py-torch-nvidia-apex@26.09
+  - py-flash-attn@2.8.3
+  - py-torchao@0.18.0
+  - py-torchdata@0.11.0
+  - py-torchtitan@0.2.2
+  - py-nvidia-resiliency-ext@0.6.0
+  - py-nvidia-modelopt@0.44.0
+  - py-nvdlfw-inspect@0.2.2
+  - py-tyro@1.0.15
+  - py-cuda-python@13.3.1
+  - py-cuda-bindings@13.3.1
+  - py-cuda-core@1.0.1
+  - py-cuda-pathfinder@1.6.0
+  # --- python packages from the NGC 26.07 container
+  - py-numpy
+  - py-scipy
+  - py-pandas
+  - py-matplotlib
+  # py-numba is in NGC 26.07, but nothing in this stack needs it, and through py-llvmlite it
+  # pulls in a full llvm@22 build (which also failed to link in the first build attempt).
+  # Megatron-LM does not use it. Re-enable it if the uenv should support numba users
+  # out of the box: audio/speech via librosa (NeMo ASR/TTS), numba-cuda kernels (NeMo
+  # RNN-T loss, cuDF UDFs), or vLLM n-gram speculative decoding. If re-enabled, consider
+  # restricting llvm to what llvmlite needs (e.g. llvm ~clang ~lld targets=aarch64).
+  # Until then: `pip install numba` in a venv on top of the uenv (wheels bundle LLVM).
+  # - py-numba
+  # arrow defaults to ~parquet, which breaks `import datasets` ("pyarrow ... not built with
+  # support for the Parquet file format"); enable what the PyPI pyarrow wheel (NGC) provides
+  # (~lz4: arrow 24 cmake finds liblz4 via pkg-config but then fails "Could NOT find
+  #  lz4Alt (missing: LZ4_LIB)"; not investigated, lz4 parquet files are rare)
+  - arrow +parquet +dataset +snappy +zstd +brotli
+  - py-pyarrow
+  - py-sympy
+  - py-networkx
+  - py-pillow
+  - py-einops
+  - py-optree
+  - py-ml-dtypes
+  - py-safetensors
+  - py-tokenizers
+  - py-huggingface-hub
+  - py-hf-xet
+  - py-datasets@5.0.0
+  - py-transformers
+  # Megatron-LM extras, as installed by the Alps apertus-1p5 (Megatron) container:
+  # tokenizers used by Megatron's SentencePiece/Tiktoken tokenizer types, and the REST
+  # inference server (flask-restful)
+  - py-sentencepiece
+  - py-tiktoken
+  - py-flask-restful
+  - py-regex
+  - py-protobuf
+  - py-onnx
+  - py-onnx-ir
+  - py-onnxscript
+  - py-tensorboard
+  - py-psutil
+  - py-pydantic
+  - py-rich
+  - py-tqdm
+  - py-pyyaml
+  - py-packaging
+  - py-omegaconf
+  - py-python-hostlist
+  - py-pulp
+  - py-tabulate
+  - py-xxhash
+  - py-aiohttp
+  - py-absl-py
+  - py-nvtx
+  - py-nvidia-ml-py
+  - py-cython
+  - py-pybind11
+  - py-pytest
+  # Python build backends: explicit roots so that `cleanup: runtime` (spack gc) keeps them.
+  # Users build CUDA extensions against the uenv's torch with `pip install
+  # --no-build-isolation` (mamba-ssm, causal-conv1d, vllm, ...), which needs the package's
+  # backend to be installed. gc removed these from the first images (only needed to build
+  # the stack). maturin/setuptools-rust are not kept: they need rust, which is also removed.
+  - py-wheel
+  - py-setuptools-scm
+  - py-hatchling
+  - py-hatch-vcs
+  - py-poetry-core
+  - py-scikit-build-core
+  - py-flit-core
+  variants:
+  - +mpi
+  - +cuda
+  - cuda_arch=80
+  - +ipo
+  views:
+    torch:
+      link: all
+      exclude: [squashfs]
+      uenv:
+        add_compilers: true
+        prefix_paths:
+          LD_LIBRARY_PATH: [lib, lib64]
+        env_vars:
+          set:
+          # runtime settings follow alps-extended-images:
+          #   common/alps-runtime.common.env, common/alps-runtime.nccl-like.env, NGC/alps-runtime.cuda.env
+          - CUDA_CACHE_DISABLE: "1"
+          - CUPY_CACHE_IN_MEMORY: "1"
+          - NCCL_NET: "AWS Libfabric"
+          - NCCL_SOCKET_IFNAME: "hsn"
+          - NCCL_CROSS_NIC: "0"
+          - NCCL_PROTO: "^LL128"
+          - NCCL_NCHANNELS_PER_NET_PEER: "4"
+          - NCCL_SOCKET_NTHREADS: "4"
+          - NCCL_NSOCKS_PERTHREAD: "1"
+          - NCCL_PXN_DISABLE: "1"
+          - NCCL_P2P_LEVEL: "NVL"
+          - NCCL_NET_GDR_LEVEL: "PHB"
+          - NCCL_NET_GDR_READ: "1"
+          - FI_PROVIDER: "cxi"
+          - FI_CXI_DEFAULT_CQ_SIZE: "131072"
+          - FI_CXI_DEFAULT_TX_SIZE: "16384"
+          - FI_CXI_DISABLE_HOST_REGISTER: "1"
+          - FI_CXI_RDZV_PROTO: "alt_read"
+          - FI_CXI_RDZV_EAGER_SIZE: "0"
+          - FI_CXI_RDZV_GET_MIN: "0"
+          - FI_CXI_RDZV_THRESHOLD: "0"
+          - FI_CXI_RX_MATCH_MODE: "hybrid"
+          - FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD: "16777216"
+          - FI_MR_CACHE_MONITOR: "userfaultfd"
+          - FI_MR_CACHE_MAX_SIZE: "-1"
+          - FI_MR_CACHE_MAX_COUNT: "524288"
+          - NVSHMEM_REMOTE_TRANSPORT: "libfabric"
+          - NVSHMEM_LIBFABRIC_PROVIDER: "cxi"
+          - NVSHMEM_DISABLE_CUDA_VMM: "1"
+          # from the vllm uenv: NCCL user-buffer registration during CUDA graph capture fails
+          # over aws-ofi-nccl/CXI ("unhandled cuda error" in ncclGroupEnd, then
+          # cudaErrorStreamCaptureInvalidated) for inter-node collectives inside CUDA graphs
+          - NCCL_GRAPH_REGISTER: "0"
+          # torch/NCCL jobs on Alps must run with `srun --network=disable_rdzv_get` (CSCS
+          # requirement; FI_CXI_RDZV_PROTO=alt_read above depends on it). A uenv cannot add srun
+          # flags, but sruns started inside the view (sbatch with --uenv/--view, uenv start)
+          # inherit this variable. Direct `srun --uenv=... --view=...` still needs the flag.
+          # Measured: 4-node NCCL all-reduce 74 -> 93 GB/s.
+          - SLURM_NETWORK: "disable_rdzv_get"
+          # from the vllm uenv: JIT/compile caches on node-local /tmp, per user (uenv expands
+          # ${@USER@}); on the shared filesystem concurrent writers on several nodes failed
+          # with "[Errno 116] Stale file handle"
+          - TRITON_CACHE_DIR: "/tmp/${@USER@}/triton-cache"
+          - TORCHINDUCTOR_CACHE_DIR: "/tmp/${@USER@}/inductor-cache"
+          - PYTHONPATH: null
+          - PYTHONUSERBASE: "$@view_path@"
+          - CUDA_HOME: "$@view_path@"
