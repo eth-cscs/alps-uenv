@@ -1,0 +1,11 @@
+name: prgenv-nvfortran
+spack:
+  repo: https://github.com/spack/spack.git
+  commit: releases/v1.2
+  packages:
+    repo: https://github.com/spack/spack-packages.git
+    commit: releases/v2026.10
+store: /user-environment
+default-view: nvfort
+description: NVIDIA compiler toolchain (nvhpc) with cray-mpich, Python, CMake and other development tools.
+version: 3
