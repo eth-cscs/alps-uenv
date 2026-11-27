@@ -1,0 +1,186 @@
+name: AI recipe review
+
+# A review runs automatically when an owner/member/collaborator opens a PR (or
+# marks a draft ready) that changes recipes/. Maintainers can also trigger a
+# review on any PR, including fork PRs, by commenting "/ai-review".
+# The review runs Claude Code against the CSCS Inference Service and posts the
+# result as a PR comment. It is advisory only.
+#
+# Security notes:
+# - issue_comment and pull_request_target run in the context of the base
+#   repository, so the secret is available for fork PRs too. Only
+#   OWNER/MEMBER/COLLABORATOR can trigger it (as commenter or as PR author).
+# - pull_request_target always uses this workflow file from the base branch;
+#   changes to it take effect only after merging.
+# - The PR code is checked out into a separate directory and is only read, never
+#   executed. Prompt and checklist are taken from the base branch, and any Claude
+#   Code project configuration in the PR (.claude/, CLAUDE.md, .mcp.json) is
+#   removed and ignored.
+# - Stackinator (main, the latest recipe version) and
+#   cscs-reframe-tests are checked out as trusted reference material.
+# - The model gets read-only tools and no GitHub token; the workflow posts the comment.
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, ready_for_review]
+    paths: ['recipes/**']
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: >-
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       startsWith(github.event.comment.body, '/ai-review') &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)) ||
+      (github.event_name == 'pull_request_target' &&
+       !github.event.pull_request.draft &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association))
+    runs-on: ubuntu-latest
+    # the review is capped at 20 + 5 min (timeouts in run-review.sh), so the
+    # job has time left to report a timeout on the PR
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch PR head into a separate worktree
+        id: pr
+        run: |
+          base_ref=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json baseRefName -q .baseRefName)
+          git -C base fetch --no-tags origin "pull/$PR/head:pr-head" "$base_ref:pr-base"
+          git -C base worktree add ../pr pr-head
+          # never load Claude Code configuration supplied by the PR
+          rm -rf pr/.claude pr/CLAUDE.md pr/CLAUDE.local.md pr/.mcp.json
+          if git -C pr diff --name-only pr-base...HEAD | grep -q '^recipes/'; then
+            echo "recipes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "recipes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: No recipe changes
+        if: steps.pr.outputs.recipes != 'true' && github.event_name == 'issue_comment'
+        run: |
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" \
+            --body "AI review: this PR does not change anything under \`recipes/\`, nothing to review."
+
+      # Trusted reference material for the review (read-only).
+      # main, not the latest release tag: releases can lag behind the latest recipe
+      # version. Only the latest recipe version is accepted.
+      - name: Checkout Stackinator main (latest recipe version)
+        if: steps.pr.outputs.recipes == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: eth-cscs/stackinator
+          ref: main
+          path: stackinator
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout CSCS ReFrame tests
+        if: steps.pr.outputs.recipes == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: eth-cscs/cscs-reframe-tests
+          ref: main
+          path: cscs-reframe-tests
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.pr.outputs.recipes == 'true'
+        with:
+          node-version: 22
+
+      - name: Install Claude Code
+        if: steps.pr.outputs.recipes == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.330
+
+      - name: Run review
+        id: review
+        if: steps.pr.outputs.recipes == 'true'
+        working-directory: pr
+        env:
+          ANTHROPIC_BASE_URL: https://api.inference.cscs.ch
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3-Flash' }}
+        # the script is taken from the base branch, never from the PR
+        run: |
+          ../base/.github/ai-review/run-review.sh "$RUNNER_TEMP"
+          for f in status subtype wrapup; do
+            echo "$f=$(cat "$RUNNER_TEMP/$f")" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Check review log for the API key
+        if: always() && steps.pr.outputs.recipes == 'true'
+        env:
+          SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+        run: |
+          log="$RUNNER_TEMP/review.jsonl"
+          if [ -f "$log" ] && [ -n "$SECRET" ] && grep -qF "$SECRET" "$log"; then
+            echo "::error::review log contains the API key, not uploading"
+            rm -f "$log"
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && steps.pr.outputs.recipes == 'true'
+        with:
+          name: ai-review-log
+          path: ${{ runner.temp }}/review.jsonl
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Post review
+        if: steps.pr.outputs.recipes == 'true'
+        env:
+          SECRET: ${{ secrets.CSCS_INFERENCE_API_KEY }}
+          MODEL: ${{ vars.AI_REVIEW_MODEL || 'zai-org/GLM-5.3-Flash' }}
+          TRIGGER: ${{ github.event_name == 'issue_comment' && format('Triggered by @{0}.', github.event.comment.user.login) || 'Triggered automatically, comment `/ai-review` to re-run.' }}
+          STATUS: ${{ steps.review.outputs.status }}
+          SUBTYPE: ${{ steps.review.outputs.subtype }}
+          WRAPUP: ${{ steps.review.outputs.wrapup }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          review="$RUNNER_TEMP/review.md"
+          if [ -n "$SECRET" ] && grep -qF "$SECRET" "$review"; then
+            echo "::error::review output contains the API key, not posting"
+            exit 1
+          fi
+          if [ "$STATUS" != 0 ] || [ "$SUBTYPE" != success ] || [ ! -s "$review" ]; then
+            case "$STATUS/$SUBTYPE" in
+              124/*) reason="timed out" ;;
+              */error_max_turns) reason="hit the turn limit" ;;
+              *) reason="failed (exit status ${STATUS:-?}, result ${SUBTYPE:-none})" ;;
+            esac
+            echo "::error::AI review $reason"
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body \
+              "AI review (\`$MODEL\`) $reason, no review posted. Log: $RUN_URL"
+            exit 1
+          fi
+          {
+            echo "### AI review (CSCS Inference, \`$MODEL\`)"
+            echo "_Advisory only, may be wrong. ${TRIGGER}_"
+            if [ "$WRAPUP" = true ]; then
+              echo
+              echo "_The review hit its turn limit and was written from a partial check._"
+            fi
+            echo
+            cat "$review"
+          } > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
